@@ -1,4 +1,4 @@
-# wecross-explorer
+# WeCross-WebApp
 
 ## Project setup
 ```

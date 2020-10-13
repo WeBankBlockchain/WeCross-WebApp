@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img src="./assets/logo_wecross.svg" width="720">
+    <img alt="WeCross" src="./assets/logo_wecross.svg" width="720">
     <HelloWorld msg="Welcome to WeCross"/>
   </div>
 </template>

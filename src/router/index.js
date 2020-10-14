@@ -20,8 +20,6 @@ import Layout from '@/layout'
     roles: ['admin','editor']    control the page roles (you can set multiple roles)
     title: 'title'               the name show in sidebar and breadcrumb (recommend set)
     icon: 'svg-name'/'el-icon-x' the icon show in the sidebar
-    noCache: true                if set true, the page will no be cached(default is false)
-    affix: true                  if set true, the tag will affix in the tags-view
     breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
     activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
   }
@@ -38,92 +36,87 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
+
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+
   {
     path: '/',
     component: Layout,
-    redirect: '/helloWorld',
-    children: [
-      {
-        path: 'helloWorld',
-        // component: () => import('@/views/dashboard/index'),
-        component: () => import('@/views/HelloWorld'),
-        name: 'HelloWorld',
-        meta: { title: 'HelloWorld', icon: 'dashboard', affix: true }
-      }
-    ]
-  }
-]
+    redirect: '/home',
+    children: [{
+      path: 'home',
+      name: 'homepage',
+      component: () => import('@/views/homepage/index'),
+      meta: { title: '个人主页', icon: 'el-icon-s-home' }
+    }]
+  },
 
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
   {
     path: '/accountAdmin',
     component: Layout,
-    name: 'accountAdmin',
-    meta: {
-      title: 'Account Admin',
-      icon: 'el-icon-s-help'
-    },
+    name: 'AccountAdmin',
+    meta: { title: '账号管理', icon: 'el-icon-user-solid' },
     children: [
       {
         path: 'accountAdmin',
-        component: () => import('@/views/AccountAdmin/index'),
-        name: 'accountAdmin',
-        meta: { title: 'Account Admin', icon: 'el-icon-s-help' }
+        name: 'AccountAdmin',
+        // component: () => import('@/views/AccountAdmin/index'),
+        meta: { title: '账号管理', icon: 'el-icon-user-solid' },
+        children: [
+          {
+            path: 'register',
+            name: 'register',
+            component: () => import('@/views/AccountAdmin/index'),
+            meta: { title: '账号注册', icon: 'el-icon-user' }
+          }
+        ]
       }
     ]
   },
+
   {
     path: '/chainAdmin',
     component: Layout,
-    name: 'chainAdmin',
-    meta: {
-      title: 'Chain Admin',
-      icon: 'el-icon-s-help'
-    },
+    name: 'ChainAdmin',
+    meta: { title: '跨链管理' },
     children: [
       {
         path: 'chainAdmin',
+        name: 'ChainAdmin',
         component: () => import('@/views/ChainAdmin/index'),
-        name: 'chainAdmin',
-        meta: { title: 'Chain Admin', icon: 'el-icon-s-help' }
+        meta: { title: '跨链管理', icon: 'el-icon-connection' }
       }
     ]
   },
   {
     path: '/resourceAdmin',
     component: Layout,
-    name: 'resourceAdmin',
-    meta: {
-      title: 'Resource Admin',
-      icon: 'el-icon-s-help'
-    },
+    name: 'ResourceAdmin',
+    meta: { title: '资源管理', icon: 'el-icon-notebook-1' },
     children: [
       {
         path: 'resourceAdmin',
+        name: 'ResourceAdmin',
         component: () => import('@/views/ResourceAdmin/index'),
-        name: 'resourceAdmin',
-        meta: { title: 'Resource Admin', icon: 'el-icon-s-help' }
+        meta: { title: '资源管理', icon: 'el-icon-notebook-1' }
       }
     ]
   },
   {
     path: '/transactionAdmin',
     component: Layout,
-    name: 'transactionAdmin',
-    meta: {
-      title: 'Transaction Admin',
-      icon: 'el-icon-s-help'
-    },
+    name: 'TransactionAdmin',
+    meta: { title: '交易管理', icon: 'el-icon-s-promotion' },
     children: [
       {
         path: 'transactionAdmin',
+        name: 'TransactionAdmin',
         component: () => import('@/views/TransactionAdmin/index'),
-        name: 'transactionAdmin',
-        meta: { title: 'Transaction Admin', icon: 'el-icon-s-help' }
+        meta: { title: '交易管理', icon: 'el-icon-s-promotion' }
       }
     ]
   },

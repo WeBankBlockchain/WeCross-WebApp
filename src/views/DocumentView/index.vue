@@ -1,6 +1,7 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <img src="../../assets/logo_wecross.svg" width="720">
+    <h1>Welcome to WeCross</h1>
     <p>
       WeCross是由微众银行自主研发并完全开源的区块链跨链协作平台，致力于促进跨行业、机构和地域的跨区块链信任传递和商业合作。<br>
       WeCross不局限于满足同构区块链平行扩展后的可信数据交换需求，还进一步探索解决异构区块链之间因底层架构、<br>
@@ -21,15 +22,37 @@
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
+  name: 'DocumentView',
+  props: {},
+  data() {
+    return {}
+  },
+  created() {},
+  mounted() {},
+  methods: {}
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
+.hello {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+img{
+	max-width:100%;
+	margin:20px auto;
+	height:auto;
+	border:0;
+	outline:0;
+  /*set the images aligned*/
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+	}
 h3 {
   margin: 40px 0 0;
 }

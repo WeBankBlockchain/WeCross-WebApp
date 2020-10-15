@@ -54,18 +54,29 @@ export const constantRoutes = [
       meta: { title: '个人主页', icon: 'el-icon-s-home' }
     }]
   },
-
+  {
+    path: '/profile',
+    component: Layout,
+    redirect: '/profile/index',
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/profile/index'),
+        name: 'Profile',
+        meta: { title: 'Profile', icon: 'user', noCache: true }
+      }
+    ]
+  },
   {
     path: '/accountAdmin',
     component: Layout,
     name: 'AccountAdmin',
+    redirect: 'accountAdmin/index',
     meta: { title: '账号管理', icon: 'el-icon-user-solid' },
     children: [
       {
-        path: 'accountAdmin',
-        name: 'AccountAdmin',
-        // component: () => import('@/views/AccountAdmin/index'),
-        meta: { title: '账号管理', icon: 'el-icon-user-solid' },
+        path: 'index',
         children: [
           {
             path: 'register',
@@ -82,11 +93,11 @@ export const constantRoutes = [
     path: '/chainAdmin',
     component: Layout,
     name: 'ChainAdmin',
+    redirect: 'chainAdmin/index',
     meta: { title: '跨链管理' },
     children: [
       {
-        path: 'chainAdmin',
-        name: 'ChainAdmin',
+        path: 'index',
         component: () => import('@/views/ChainAdmin/index'),
         meta: { title: '跨链管理', icon: 'el-icon-connection' }
       }
@@ -96,11 +107,11 @@ export const constantRoutes = [
     path: '/resourceAdmin',
     component: Layout,
     name: 'ResourceAdmin',
+    redirect: '/resourceAdmin/index',
     meta: { title: '资源管理', icon: 'el-icon-notebook-1' },
     children: [
       {
-        path: 'resourceAdmin',
-        name: 'ResourceAdmin',
+        path: 'index',
         component: () => import('@/views/ResourceAdmin/index'),
         meta: { title: '资源管理', icon: 'el-icon-notebook-1' }
       }
@@ -110,13 +121,27 @@ export const constantRoutes = [
     path: '/transactionAdmin',
     component: Layout,
     name: 'TransactionAdmin',
+    redirect: 'transactionAdmin/index',
     meta: { title: '交易管理', icon: 'el-icon-s-promotion' },
     children: [
       {
-        path: 'transactionAdmin',
-        name: 'TransactionAdmin',
+        path: 'index',
         component: () => import('@/views/TransactionAdmin/index'),
         meta: { title: '交易管理', icon: 'el-icon-s-promotion' }
+      }
+    ]
+  },
+  {
+    path: '/documents',
+    component: Layout,
+    name: 'Documents',
+    redirect: '/documents/index',
+    meta: { title: '参考文档', icon: 'el-icon-document' },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/DocumentView/index'),
+        meta: { title: '参考文档', icon: 'el-icon-document' }
       }
     ]
   },

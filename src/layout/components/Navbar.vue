@@ -11,19 +11,24 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
+          <router-link to="/profile">
+            <el-dropdown-item>
+              个人信息
+            </el-dropdown-item>
+          </router-link>
           <router-link to="/">
             <el-dropdown-item>
-              Home
+              主页目录
             </el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://github.com/WeBankFinTech/WeCross">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://wecross.readthedocs.io/zh_CN/latest/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
+          <router-link to="/documents">
+            <el-dropdown-item>参考文档</el-dropdown-item>
+          </router-link>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
+            <span style="display:block;">用户登出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

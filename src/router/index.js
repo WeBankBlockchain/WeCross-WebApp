@@ -107,7 +107,7 @@ export const constantRoutes = [
     path: '/resourceAdmin',
     component: Layout,
     name: 'ResourceAdmin',
-    redirect: '/resourceAdmin/index',
+    redirect: '/resourceAdmin/resourceList',
     meta: { title: '资源管理', icon: 'el-icon-notebook-1' },
     children: [
       {

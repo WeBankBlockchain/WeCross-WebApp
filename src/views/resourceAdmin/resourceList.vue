@@ -9,9 +9,9 @@
                 刷新
               </el-button>
           </div>
-          <el-input v-model="path" placeholder="path" :disabled="true">
-            <el-button slot="append" class="pan-btn light-blue-btn">Call</el-button>
-            <el-button slot="append" class="pan-btn light-blue-btn">SendTransaction</el-button>
+          <el-input v-model="path" placeholder="Path" :disabled="true">
+            <el-button slot="append" class="pan-btn light-blue-btn" @click="handleCall">Call</el-button>
+            <el-button slot="append" class="pan-btn light-blue-btn" @click="handleSendTX">SendTransaction</el-button>
           </el-input>
         </el-card>
       </el-row>
@@ -27,8 +27,7 @@
        fit
        highlight-current-row
        @current-change='handleCurrentChange'
-       style="width: 100%"
-     >
+       style="width: 100%">
         <el-table-column label="Path" min-width="200">
          <template slot-scope="scope">
             {{ scope.row.path }}
@@ -39,8 +38,7 @@
        min-width="130"
        align="center"
        :filters="[{text:'BCOS2.0', value: 'BCOS2.0'},{text:'GM_BCOS2.0', value: 'GM_BCOS2.0'},{text:'Fabric1.4', value: 'Fabric1.4'}]"
-       :filter-method="filterStub"
-       >
+       :filter-method="filterStub">
          <template slot-scope="scope">
           <el-tag :type="scope.row.stubtype | stubFilter">{{ scope.row.stubtype }}</el-tag>
          </template>
@@ -119,8 +117,10 @@ export default {
       })
     },
     handleCurrentChange(val) {
-      this.currentRow = val
-      this.path = this.currentRow.path
+      if (val != null) {
+        this.currentRow = val
+        this.path = this.currentRow.path
+      }
     },
     filterStub(value, row) {
       return row.stubtype === value
@@ -129,7 +129,19 @@ export default {
       console.log(row)
     },
     handleFresh() {
-      console.log('fresh')
+      this.path = null
+      this.$refs.singleTable.setCurrentRow(null)
+      this.fetchData()
+    },
+    handleCall() {
+      if (this.path != null) {
+        console.log(this.path)
+      }
+    },
+    handleSendTX() {
+      if (this.path != null) {
+        console.log(this.path)
+      }
     }
   }
 }

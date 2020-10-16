@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-logo-container" :class="{'collapse':collapse}">
+  <div class="sidebar-logo-container" >
     <transition name="sidebarLogoFade">
       <router-link key="expand" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo">
@@ -63,10 +63,5 @@ export default {
     }
   }
 
-  &.collapse {
-    .sidebar-logo {
-      margin-right: 0px;
-    }
-  }
 }
 </style>

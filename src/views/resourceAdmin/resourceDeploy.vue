@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'ResourceAdmin',
+  name: 'ResourceDeploy',
   props: {},
   data() {
     return {}

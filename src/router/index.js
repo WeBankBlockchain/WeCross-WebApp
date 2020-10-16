@@ -81,7 +81,7 @@ export const constantRoutes = [
           {
             path: 'register',
             name: 'register',
-            component: () => import('@/views/AccountAdmin/index'),
+            component: () => import('@/views/accountAdmin/index'),
             meta: { title: '账号注册', icon: 'el-icon-user' }
           }
         ]
@@ -98,7 +98,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/ChainAdmin/index'),
+        component: () => import('@/views/chainAdmin/index'),
         meta: { title: '跨链管理', icon: 'el-icon-connection' }
       }
     ]
@@ -111,10 +111,16 @@ export const constantRoutes = [
     meta: { title: '资源管理', icon: 'el-icon-notebook-1' },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/ResourceAdmin/index'),
-        meta: { title: '资源管理', icon: 'el-icon-notebook-1' }
+        path: 'resourceList',
+        component: () => import('@/views/resourceAdmin/resourceList'),
+        meta: { title: '资源列表', icon: 'table' }
+      },
+      {
+        path: 'resourceDeploy',
+        component: () => import('@/views/resourceAdmin/resourceDeploy'),
+        meta: { title: '资源部署', icon: 'el-icon-upload' }
       }
+
     ]
   },
   {
@@ -126,7 +132,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/TransactionAdmin/index'),
+        component: () => import('@/views/transactionAdmin/index'),
         meta: { title: '交易管理', icon: 'el-icon-s-promotion' }
       }
     ]
@@ -140,7 +146,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/DocumentView/index'),
+        component: () => import('@/views/documentView/index'),
         meta: { title: '参考文档', icon: 'el-icon-document' }
       }
     ]

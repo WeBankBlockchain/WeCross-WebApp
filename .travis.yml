@@ -9,6 +9,6 @@ matrix:
 
     -   language: node_js
         node_js: 10
-        script: npm run tests:ci
+        script: npm run test:ci
         os: linux
         dist: xenial

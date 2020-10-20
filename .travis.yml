@@ -1,0 +1,14 @@
+# safelist
+branches:
+  only:
+    - /.*/
+
+matrix:
+  fast_finish: true
+  include:
+
+    -   language: node_js
+        node_js: 10
+        script: npm run test:ci
+        os: linux
+        dist: xenial

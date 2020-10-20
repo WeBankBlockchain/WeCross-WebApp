@@ -197,18 +197,8 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.$message('submit!')
+      this.$message('执行!')
       this.stepActive = 3
-      console.log(this.form.stubType)
-      console.log(this.form.method)
-      console.log(this.form.path)
-      console.log(this.form.classname)
-      console.log(this.form.address)
-      console.log(this.form.version)
-      console.log(this.form.org)
-      console.log(this.form.lang)
-      console.log(this.form.policy)
-      console.log(this.form.args)
     },
     onCancel() {
       this.$message({
@@ -243,8 +233,6 @@ export default {
 </script>
 
 <style scoped>
-.line{
-  text-align: center;
-}
+
 </style>
 

@@ -115,3 +115,7 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+export function uniqueFilter(element, index, self) {
+  return self.indexOf(element) === index
+}

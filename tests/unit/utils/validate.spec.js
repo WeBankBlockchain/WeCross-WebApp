@@ -3,7 +3,7 @@ describe('Utils:validate', () => {
   it('validUsername', () => {
     expect(validUsername('admin1')).toBe(true)
     expect(validUsername('org-user1')).toBe(true)
-    expect(validUsername('xxxx')).toBe(false)
+    expect(validUsername('xx')).toBe(false)
   })
   it('validURL', () => {
     expect(validURL('https://github.com/WeBankFinTech/WeCross-WebApp.git')).toBe(true)

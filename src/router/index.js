@@ -72,19 +72,13 @@ export const constantRoutes = [
     path: '/accountAdmin',
     component: Layout,
     name: 'AccountAdmin',
-    redirect: 'accountAdmin/index',
-    meta: { title: '账号管理', icon: 'el-icon-user-solid' },
+    redirect: '/accountAdmin/register',
+    meta: { title: '账号管理', icon: 'el-icon-notebook-1' },
     children: [
       {
-        path: 'index',
-        children: [
-          {
-            path: 'register',
-            name: 'register',
-            component: () => import('@/views/accountAdmin/index'),
-            meta: { title: '账号注册', icon: 'el-icon-user' }
-          }
-        ]
+        path: 'register',
+        component: () => import('@/views/accountAdmin/register'),
+        meta: { title: '账号注册', icon: 'el-icon-user' }
       }
     ]
   },

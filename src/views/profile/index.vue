@@ -54,7 +54,7 @@ export default {
     getUser() {
       this.user = {
         name: this.name,
-        email: 'admin@test.com',
+        email: 'admin@tests.com',
         avatar: this.avatar
       }
     }

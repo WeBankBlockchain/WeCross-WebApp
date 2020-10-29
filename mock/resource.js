@@ -1,12 +1,12 @@
 const Mock = require('mockjs')
 
 const data = Mock.mock({
-  'items|10': [{
+  'items|100': [{
     id: '@id',
-    path: '@word(5).@pick([\'bcos\',\'fabric\']).@word(3,5)',
+    path: '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\']).@word(3,5)',
     checksum: 'checksum',
     'stubtype|1': ['BCOS2.0', 'GM_BCOS2.0', 'Fabric1.4'],
-    properties: '@sentence(3,5)',
+    properties: '@sentence(3,3)',
     distance: '@integer(0, 3)'
   }]
 })

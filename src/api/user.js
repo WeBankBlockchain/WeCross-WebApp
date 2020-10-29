@@ -13,7 +13,7 @@ export function login(data) {
 
 export function logout(data) {
   return request({
-    url: '/user/logout',
+    url: '/auth/logout',
     method: 'post',
     data: data
   })
@@ -21,16 +21,8 @@ export function logout(data) {
 
 export function register(data) {
   return request({
-    url: '/user/register',
+    url: '/auth/register',
     method: 'post',
-    data
-  })
-}
-
-export function getInfo(token) {
-  return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
+    params: data
   })
 }

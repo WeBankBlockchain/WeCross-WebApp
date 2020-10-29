@@ -93,13 +93,18 @@ export const constantRoutes = [
     path: '/chainAdmin',
     component: Layout,
     name: 'ChainAdmin',
-    redirect: 'chainAdmin/index',
-    meta: { title: '跨链管理' },
+    redirect: '/chainAdmin/routerManage',
+    meta: { title: '跨链管理', icon: 'el-icon-menu' },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/chainAdmin/index'),
-        meta: { title: '跨链管理', icon: 'el-icon-connection' }
+        path: 'routerManage',
+        component: () => import('@/views/chainAdmin/routerManage'),
+        meta: { title: '跨链路由管理', icon: 'el-icon-connection' }
+      },
+      {
+        path: 'chainManage',
+        component: () => import('@/views/chainAdmin/chainManage'),
+        meta: { title: '区块链管理', icon: 'el-icon-share' }
       }
     ]
   },
@@ -120,7 +125,6 @@ export const constantRoutes = [
         component: () => import('@/views/resourceAdmin/resourceDeploy'),
         meta: { title: '资源部署', icon: 'el-icon-upload' }
       }
-
     ]
   },
   {

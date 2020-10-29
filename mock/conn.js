@@ -1,28 +1,27 @@
 const Mock = require('mockjs')
 
-const response = Mock.mock({
-  'data|100': [{
-    id: '@id',
-    zone: '@pick([\'payment\',\'load\', \'resource\'])',
-    chain: '@pick([\'bcos\',\'fabric\',\'bcos_gm\'])',
-    'type|1': ['BCOS2.0', 'GM_BCOS2.0', 'Fabric1.4'],
-    properties: '@sentence(3,3)'
+const data = Mock.mock({
+  'items|100': [{
+    nodeID: "@id",
+    address: "127.0.0.1:25501",
+    seq: 1,
+    chainInfos: [{
+      name: "fabric",
+      stubType: "Fabirc1.4"
+    }]
   }]
 })
 
-module.exports = [
-  {
-    url: '/conn/listChains',
-    type: 'get',
-    response: config => {
-      const data = response.data
-      return {
-        code: 20000,
-        data: {
-          total: data.length,
-          items: data
-        }
-      }
+module.exports = [{
+  url: '/conn/listPeers',
+  type: 'get',
+  response: config => {
+    const items = data.items
+    return {
+      version: "1",
+      errorCode: 0,
+      message: "success",
+      data: items
     }
   }
-]
+}]

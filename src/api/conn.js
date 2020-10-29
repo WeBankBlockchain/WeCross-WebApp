@@ -7,3 +7,11 @@ export function getChainsList(params) {
     params
   })
 }
+
+export function listPeers(params) {
+  return request({
+    url: '/conn/listPeers',
+    method: 'get',
+    params
+  })
+}

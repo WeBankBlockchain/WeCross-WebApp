@@ -20,6 +20,10 @@ service.interceptors.request.use(
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
       config.headers['X-Token'] = getToken()
+      // config.headers['Access-Control-Allow-Origin'] = '*'
+      // config.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
+      // config.headers['Access-Control-Allow-Headers'] = 'X-Requested-With'
+      // config.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     }
     return config
   },
@@ -44,9 +48,8 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    const status = response.status
+    if (status !== 200) {
       Message({
         message: res.message || 'Error',
         type: 'error',
@@ -54,7 +57,7 @@ service.interceptors.response.use(
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+      if (status === 401 || res.errorCode === 50012 || res.errorCode === 50014) {
         // to re-login
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',

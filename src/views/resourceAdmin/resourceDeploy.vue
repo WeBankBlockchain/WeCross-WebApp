@@ -61,21 +61,19 @@
               <el-upload
                   class="upload-demo"
                   ref="upload"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :on-preview="handlePreview"
-                  :on-remove="handleRemove"
-                  :file-list="fileList"
+                  action=""
+                  :on-change="changeFile"
+                  :before-remove="handleRemove"
+                  :http-request="uploadHandler"
                   :auto-upload="false">
                 <el-button slot="trigger" size="mini" type="primary">选取文件</el-button>
-                <el-button style="margin-left: 10px;" size="mini" type="success" @click="submitUpload">上传到服务器
-                </el-button>
               </el-upload>
             </el-form-item>
             <el-form-item
                 label="合约类名："
-                prop="classname"
+                prop="className"
                 :rules="[{required: true, message: '合约类名不能为空', trigger: 'blur'}]">
-              <el-input v-model="form.classname" placeholder="Class Name"></el-input>
+              <el-input v-model="form.className" placeholder="Class Name"></el-input>
             </el-form-item>
             <el-form-item
                 label="合约版本号："
@@ -111,14 +109,12 @@
               <el-upload
                   class="upload-demo"
                   ref="upload"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :on-preview="handlePreview"
-                  :on-remove="handleRemove"
-                  :file-list="fileList"
+                  action=""
+                  :on-change="changeFile"
+                  :before-remove="handleRemove"
+                  :http-request="uploadHandler"
                   :auto-upload="false">
                 <el-button slot="trigger" size="mini" type="primary">选取文件</el-button>
-                <el-button style="margin-left: 10px;" size="mini" type="success" @click="submitUpload">上传到服务器
-                </el-button>
               </el-upload>
             </el-form-item>
             <el-form ref="form" :model="form" label-width="120px" :inline="true" class="demo-form-inline">
@@ -162,7 +158,8 @@
 
 <script>
 
-import clearForm from '@/utils/resource'
+import { buildBCOSDeployRequest, buildBCOSRegisterRequest, buildFabricInstallRequest, buildFabricInstantiateRequest } from '@/utils/resource'
+import { bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade } from '@/api/resource'
 
 export default {
   data() {
@@ -171,13 +168,14 @@ export default {
         stubType: null,
         method: null,
         path: null,
-        classname: null,
+        className: null,
         version: null,
         address: null,
         org: null,
         lang: null,
         policy: null,
-        args: null
+        args: null,
+        sourceContent: null
       },
       fileList: [],
       stepActive: 0
@@ -185,6 +183,35 @@ export default {
   },
   methods: {
     onSubmit() {
+      switch (this.form.method) {
+        case 'deploy' :
+          bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
+            console.log(response)
+          })
+          break
+        case 'register':
+          bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
+            console.log(response)
+          })
+          break
+        case 'install':
+          fabricInstantiate(buildFabricInstallRequest(this.form)).then(response => {
+            console.log(response)
+          })
+          break
+        case 'instantiate':
+          fabricInstall(buildFabricInstantiateRequest(this.form)).then(response => {
+            console.log(response)
+          })
+          break
+        case 'upgrade':
+          fabricUpgrade(buildFabricInstantiateRequest(this.form)).then(response => {
+            console.log(response)
+          })
+          break
+        default:
+          console.log(this.form)
+      }
       this.$message('执行!')
       this.stepActive = 3
     },
@@ -194,27 +221,43 @@ export default {
         type: 'warning'
       })
       this.stepActive = 0
-      this.form.stubType = null
       this.form.method = null
-      clearForm(this.form)
+      this.form.stubType = null
+      this.$refs.form.resetFields()
     },
-    submitUpload() {
+    handleRemove(file) {
+      return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    changeFile(file, fileList) {
+      if (fileList.length === 2) {
+        fileList.shift()
+      }
       this.$refs.upload.submit()
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
+    uploadHandler(params) {
+      params.onProgress({ percent: 20 })
+      setTimeout(() => {
+        this.readText(params)
+      }, 100)
     },
-    handlePreview(file) {
-      console.log(file)
+    async readText(params) {
+      // UTF-8,GBK,GB2312
+      const readFile = new FileReader()
+      readFile.onload = (e) => {
+        this.form.sourceContent = e.target.result
+        params.onProgress({ percent: 100 })
+        params.onSuccess()
+      }
+      readFile.readAsText(params.file)
     },
     stubTypeChange() {
       this.stepActive = 1
       this.form.method = null
-
-      clearForm(this.form)
+      this.$refs.form.clearValidate()
     },
     methodChange() {
       this.stepActive = 2
+      this.$refs.form.clearValidate()
     }
   }
 }

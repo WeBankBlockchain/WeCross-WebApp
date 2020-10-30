@@ -23,3 +23,11 @@ export function removePeer(params) {
     data: params
   })
 }
+
+export function listChains(params) {
+  return request({
+    url: '/conn/listChains',
+    method: 'get',
+    params
+  })
+}

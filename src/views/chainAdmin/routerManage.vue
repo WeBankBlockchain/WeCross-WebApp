@@ -4,8 +4,8 @@
       <el-card>
         <el-row :gutter="18">
           <el-col :span="6">
-            <el-button type="info" plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
-            <el-button type="info" plain icon="el-icon-plus" @click="addRouter">添加跨链路由</el-button>
+            <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
+            <el-button plain icon="el-icon-plus" @click="addRouter">添加跨链路由</el-button>
           </el-col>
         </el-row>
         <el-row :gutter="20">
@@ -30,7 +30,7 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="item">
-                <el-button type="info" plain icon="el-icon-minus" @click="deleteRouter(item.row.address)">移除</el-button>
+                <el-button plain icon="el-icon-minus" @click="deleteRouter(item.row.address)">移除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -73,9 +73,10 @@ export default {
       })
     },
     addRouter() {
-      this.$prompt('请输入待添加跨链路由的IP和端口，IP和端口使用:分隔，例如\'127.0.0.1:8051\'', {
+      this.$prompt('请输入待添加跨链路由的IP和端口，IP和端口使用:分隔', {
         inputPlaceholder: '例子：127.0.0.1:8051',
-        inputPattern: /^\d+\.{1}\d+\.{1}\d+\.{1}\d+\:{1}\d+$/
+        inputPattern: /^\d+\.{1}\d+\.{1}\d+\.{1}\d+\:{1}\d+$/,
+        inputErrorMessage: '请输入正确格式的IP和端口，例如\'127.0.0.1:8051\''
       }).then(data => {
         addPeer({
           version: '1',

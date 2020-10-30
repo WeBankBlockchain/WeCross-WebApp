@@ -157,7 +157,6 @@
 </template>
 
 <script>
-
 import { buildBCOSDeployRequest, buildBCOSRegisterRequest, buildFabricInstallRequest, buildFabricInstantiateRequest } from '@/utils/resource'
 import { bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade } from '@/api/resource'
 

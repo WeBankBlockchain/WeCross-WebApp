@@ -199,7 +199,6 @@ export default {
         return
       }
       getResourceList({ chain: this.chainValue, offset: this.currentPage * 10, size: 10 }).then(response => {
-        console.log(response)
         this.resourceList = response.data.resourceDetails
         const filter = this.chainValue
         this.resourceList = this.resourceList.filter(function(element) {

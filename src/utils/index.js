@@ -119,3 +119,12 @@ export function param2Obj(url) {
 export function uniqueFilter(element, index, self) {
   return self.indexOf(element) === index
 }
+
+export function buildRequest(path, method, data) {
+  return {
+    version: 1,
+    path: path,
+    method: method,
+    data: data
+  }
+}

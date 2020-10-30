@@ -29,16 +29,6 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-  */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
   response => {
     const res = response.data
     const status = response.status
@@ -68,6 +58,32 @@ service.interceptors.response.use(
     }
   },
   error => {
+    const status = error.toString().match(/\d{3}/)[0]
+    switch (status) {
+      case '401' :
+        MessageBox.confirm('您的登录态已超时，请重新登录', '超时提醒', {
+          confirmButtonText: '重登录',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          store.dispatch('user/resetToken').then(() => {
+            location.reload()
+          })
+        })
+        break
+      case '400':
+        Message.error({
+          message: '参数异常'
+        })
+        break
+      case '500':
+        Message.error({
+          message: '服务器异常'
+        })
+        break
+      default:
+        console.log(status)
+    }
     console.log('err' + error) // for debug
     Message({
       message: error.message,

@@ -32,6 +32,18 @@ module.exports = [{
     url: '/conn/addPeer',
     type: 'post',
     response: config => {
+      console.log(config.body);
+      var address = config.body.data.address;
+      data.items.push({
+        nodeID: "@id",
+        address: address,
+        seq: 1,
+        chainInfos: [{
+          name: "bcos",
+          stubType: "BCOS2.0",
+        }]
+      });
+
       return {
         code: 20000,
         data: {
@@ -45,8 +57,7 @@ module.exports = [{
         }
       }
     }
-  },
-  {
+  }, {
     url: '/conn/removePeer',
     type: 'post',
     response: config => {
@@ -59,6 +70,7 @@ module.exports = [{
           break;
         }
       }
+
       return {
         code: 20000,
         data: {

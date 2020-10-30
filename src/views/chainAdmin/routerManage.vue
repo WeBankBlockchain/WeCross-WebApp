@@ -9,13 +9,7 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-table
-ref="singleTable"
-:data="routers"
-element-loading-text="加载中..."
-fit
-highlight-current-row
-            @current-change='onRowChange'>
+          <el-table ref="singleTable" :data="routers" element-loading-text="加载中..." fit highlight-current-row>
             <el-table-column label="跨链路由标识">
               <template slot-scope="item">
                 {{ item.row.nodeID }}
@@ -79,8 +73,20 @@ export default {
       })
     },
     addRouter() {
-      addPeer().then(response => {
-        this.getPeers()
+      this.$prompt('请输入待添加跨链路由的IP和端口，IP和端口使用:分隔，例如\'127.0.0.1:8051\'', {
+        inputPlaceholder: '例子：127.0.0.1:8051',
+        inputPattern: /^\d+\.{1}\d+\.{1}\d+\.{1}\d+\:{1}\d+$/
+      }).then(data => {
+        addPeer({
+          version: '1',
+          data: {
+            address: data.value
+          }
+        }).then(response => {
+          this.getPeers()
+        })
+      }).catch(() => {
+
       })
     },
     deleteRouter(address) {
@@ -105,14 +111,11 @@ export default {
           } else {
             this.$message({
               type: 'error',
-              message: '删除失败 错误码:' + response.data.errorCode
+              message: '删除失败，错误码: ' + response.data.errorCode + ' 错误信息: ' + response.data.message
             })
           }
         })
       }).catch(() => {})
-    },
-    onRowChange() {
-
     }
   }
 }

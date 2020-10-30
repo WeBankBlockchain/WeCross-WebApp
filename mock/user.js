@@ -1,36 +1,10 @@
-
-const tokens = {
-  admin: {
-    token: 'admin-token'
-  },
-  editor: {
-    token: 'editor-token'
-  }
-}
-
-const users = {
-  'admin-token': {
-    roles: ['admin'],
-    introduction: 'I am a super administrator',
-    avatar: 'https://wecross.readthedocs.io/zh_CN/latest/_static/images/menu_logo_wecross.svg',
-    name: 'Super Admin'
-  },
-  'editor-token': {
-    roles: ['editor'],
-    introduction: 'I am an editor',
-    avatar: 'https://wecross.readthedocs.io/zh_CN/latest/_static/images/menu_logo_wecross.svg',
-    name: 'Normal Editor'
-  }
-}
-
 module.exports = [
   // user login
   {
-    url: '/user/login',
+    url: '/auth/login',
     type: 'post',
     response: config => {
-      const { username } = config.body
-      const token = tokens[username]
+      const token = 'admin-token'
 
       // mock error
       if (!token) {
@@ -41,43 +15,29 @@ module.exports = [
       }
 
       return {
-        code: 20000,
-        data: token
-      }
-    }
-  },
-
-  // get user info
-  {
-    url: '/user/info\.*',
-    type: 'get',
-    response: config => {
-      const { token } = config.query
-      const info = users[token]
-
-      // mock error
-      if (!info) {
-        return {
-          code: 50008,
-          message: 'Login failed, unable to get user details.'
+        version: '1',
+        errorCode: 0,
+        message: 'xxx',
+        data: {
+          errorCode: 0,
+          message: 'success',
+          credential: 'Bearer XXXXX',
+          universalAccount: {
+            username: 'xxx',
+            pubKey: 'xxx',
+            uaID: 'xxx'
+          }
         }
       }
-
-      return {
-        code: 20000,
-        data: info
-      }
     }
   },
-
   // user logout
   {
     url: '/user/logout',
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
-        data: 'success'
+        code: 200
       }
     }
   }

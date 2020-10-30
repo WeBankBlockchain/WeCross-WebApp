@@ -116,7 +116,7 @@
 
 <script>
 import { getResourceList } from '@/api/resource'
-import { getChainsList } from '@/api/conn'
+import { listChains } from '@/api/conn'
 import { uniqueFilter } from '@/utils'
 
 export default {
@@ -149,8 +149,8 @@ export default {
   },
   methods: {
     fetchChainTypeData() {
-      getChainsList().then(response => {
-        this.chainList = response.data.items
+      listChains().then(response => {
+        this.chainList = response.data.data
         for (const chainListKey of this.chainList) {
           this.chainType.push(chainListKey.zone + '.' + chainListKey.chain)
         }

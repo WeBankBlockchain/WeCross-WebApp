@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'ChainAdmin',
+  name: 'ChainManage',
   props: {},
   data() {
     return {}

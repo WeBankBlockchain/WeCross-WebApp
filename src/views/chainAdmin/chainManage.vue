@@ -12,12 +12,12 @@
           <el-table ref="singleTable" :data="chains" element-loading-text="加载中..." fit highlight-current-row>
             <el-table-column label="区块链路径">
               <template slot-scope="item">
-                {{ item.row.zone }}.{{item.row.chain}}
+                {{ item.row.path }}
               </template>
             </el-table-column>
             <el-table-column label="类型" min-width=30>
               <template slot-scope="item">
-                {{ item.row.type }}
+                {{ item.row.stubType }}
               </template>
             </el-table-column>
             <el-table-column label="属性" min-width=100>
@@ -59,7 +59,8 @@ export default {
   methods: {
     refresh() {
       listChains().then(response => {
-        this.chains = response.data.data
+        console.log(response)
+        this.chains = response.data.chains
       })
     },
     addChain() {

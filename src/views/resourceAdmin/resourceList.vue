@@ -148,7 +148,7 @@ export default {
   methods: {
     fetchChainTypeData() {
       listChains().then(response => {
-        this.chainList = response.data.data
+        this.chainList = response.data.chains
         for (const chainListKey of this.chainList) {
           this.chainType.push(chainListKey.path)
         }

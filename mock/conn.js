@@ -7,9 +7,29 @@ const data = Mock.mock({
       ':' + '@integer(1, 65535)',
     seq: 1,
     chainInfos: [{
-      name: "fabric",
+      name: "@id",
       stubType: "Fabirc1.4"
+    },
+    {
+      name: "@id",
+      stubType: "BCOS2.0"
     }]
+  }]
+})
+
+const chainData = Mock.mock({
+  'items|10': [{
+    zone: "@id",
+    chain: "@id",
+    type: "BCOS2.0",
+    "properties": {
+      "BCOS_PROPERTY_CHAIN_ID": "1",
+      "WeCrossProxyABI": "xxxxxxxxx",
+      "BCOS_PROPERTY_GROUP_ID": "1",
+      "WeCrossProxy": "0x8f9a2f54ca70f6a3f50b1ed27bdccad363b126f0",
+      "BCOS_PROPERTY_STUB_TYPE": "BCOS2.0",
+      "WeCrossHub": "0x894b85761beec3aa08b00b9012c4ccd45c43ed84"
+    }
   }]
 })
 
@@ -94,40 +114,7 @@ module.exports = [{
           "version": "1",
           "errorCode": 0,
           "message": "success",
-          "data": [{
-              "zone": "payment",
-              "chain": "fabric",
-              "type": "Fabric1.4",
-              "properties": {
-                "ChannelName": "mychannel"
-              }
-            },
-            {
-              "zone": "payment",
-              "chain": "bcos",
-              "type": "BCOS2.0",
-              "properties": {
-                "BCOS_PROPERTY_CHAIN_ID": "1",
-                "WeCrossProxyABI": "xxxxxxxxx",
-                "BCOS_PROPERTY_GROUP_ID": "1",
-                "WeCrossProxy": "0x8f9a2f54ca70f6a3f50b1ed27bdccad363b126f0",
-                "BCOS_PROPERTY_STUB_TYPE": "BCOS2.0",
-                "WeCrossHub": "0x894b85761beec3aa08b00b9012c4ccd45c43ed84"
-              }
-            }, {
-              "zone": "payment",
-              "chain": "bcos_gm",
-              "type": "BCOS2.0_GM",
-              "properties": {
-                "BCOS_PROPERTY_CHAIN_ID": "1",
-                "WeCrossProxyABI": "xxxxxxxxx",
-                "BCOS_PROPERTY_GROUP_ID": "1",
-                "WeCrossProxy": "0x8f9a2f54ca70f6a3f50b1ed27bdccad363b126f0",
-                "BCOS_PROPERTY_STUB_TYPE": "BCOS2.0_GM",
-                "WeCrossHub": "0x894b85761beec3aa08b00b9012c4ccd45c43ed84"
-              }
-            }
-          ]
+          "data": chainData.items
         }
       }
     }

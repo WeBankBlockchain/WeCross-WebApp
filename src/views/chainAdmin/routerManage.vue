@@ -22,7 +22,9 @@
             </el-table-column>
             <el-table-column label="已接入区块链">
               <template slot-scope="item">
-                {{ item.row.chainInfos }}
+                <li style="list-style-type:none" v-for="chainItem in item.row.chainInfos">
+                  {{ chainItem.name }} <el-tag type="info">{{ chainItem.stubType }}</el-tag>
+                </li>
               </template>
             </el-table-column>
             <el-table-column label="运行状态">
@@ -60,14 +62,11 @@ export default {
     }
   },
   created() {
-    this.getPeers()
+    this.refresh()
   },
   mounted() {},
   methods: {
     refresh() {
-      this.getPeers()
-    },
-    getPeers() {
       listPeers().then(response => {
         this.routers = response.data.data
       })
@@ -84,7 +83,7 @@ export default {
             address: data.value
           }
         }).then(response => {
-          this.getPeers()
+          this.refresh()
         })
       }).catch(() => {
 
@@ -103,7 +102,7 @@ export default {
           }
         }).then(response => {
           if (response.data.errorCode === 0) {
-            this.getPeers()
+            this.refresh()
 
             this.$message({
               type: 'success',

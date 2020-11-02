@@ -11,11 +11,11 @@ export function login(data) {
   })
 }
 
-export function logout(data) {
+export function logout() {
   return request({
     url: '/auth/logout',
     method: 'post',
-    data: data
+    data: {}
   })
 }
 

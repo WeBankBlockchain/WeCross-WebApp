@@ -9,7 +9,7 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-table ref="singleTable" :data="routers" element-loading-text="加载中..." fit highlight-current-row>
+          <el-table ref="singleTable" :data="routers" element-loading-text="加载中..." fit>
             <el-table-column label="跨链路由标识">
               <template slot-scope="item">
                 {{ item.row.nodeID }}

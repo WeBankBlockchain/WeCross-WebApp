@@ -9,7 +9,7 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-table ref="singleTable" :data="chains" element-loading-text="加载中..." fit highlight-current-row>
+          <el-table ref="singleTable" :data="chains" element-loading-text="加载中..." fit>
             <el-table-column label="区块链路径">
               <template slot-scope="item">
                 {{ item.row.zone }}.{{item.row.chain}}

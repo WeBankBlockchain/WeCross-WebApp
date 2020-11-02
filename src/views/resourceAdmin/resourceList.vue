@@ -56,11 +56,9 @@
             <el-table-column
                 label="Stub Type"
                 min-width="130"
-                align="center"
-                :filters="[{text:'BCOS2.0', value: 'BCOS2.0'},{text:'GM_BCOS2.0', value: 'GM_BCOS2.0'},{text:'Fabric1.4', value: 'Fabric1.4'}]"
-                :filter-method="(row,value)=> {return row.stubtype === value}">
+                align="center">
               <template slot-scope="scope">
-                <el-tag :type="scope.row.stubtype | stubFilter">{{ scope.row.stubtype }}</el-tag>
+                <el-tag :type="scope.row.stubType | stubFilter">{{ scope.row.stubType }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="Distance" min-width="110" align="center">
@@ -70,7 +68,7 @@
             </el-table-column>
             <el-table-column label="Checksum" min-width="110" align="center">
               <template slot-scope="scope">
-                {{ scope.row.checksum }}
+                {{ scope.row.checksum || 'null' }}
               </template>
             </el-table-column>
             <el-table-column label="Properties" min-width="300" align="center">
@@ -117,16 +115,16 @@
 <script>
 import { getResourceList } from '@/api/resource'
 import { listChains } from '@/api/conn'
-import { uniqueFilter } from '@/utils'
+import { buildRequest, uniqueFilter } from '@/utils'
 
 export default {
   name: 'ResourceList',
   filters: {
     stubFilter(stub) {
       const stubMap = {
-        'BCOS2.0': 'success',
+        'BCOS2.0': 'gray',
         'GM_BCOS2.0': 'gray',
-        'Fabric1.4': 'danger'
+        'Fabric1.4': 'gray'
       }
       return stubMap[stub]
     }
@@ -152,7 +150,7 @@ export default {
       listChains().then(response => {
         this.chainList = response.data.data
         for (const chainListKey of this.chainList) {
-          this.chainType.push(chainListKey.zone + '.' + chainListKey.chain)
+          this.chainType.push(chainListKey.path)
         }
         this.chainType = this.chainType.filter(uniqueFilter).sort()
       })
@@ -198,14 +196,16 @@ export default {
       if (this.chainValue == null || this.currentPage == null) {
         return
       }
-      getResourceList({ chain: this.chainValue, offset: this.currentPage * 10, size: 10 }).then(response => {
-        this.resourceList = response.data.resourceDetails
-        const filter = this.chainValue
-        this.resourceList = this.resourceList.filter(function(element) {
-          return element.path.startsWith(filter + '.')
+      getResourceList({ chain: this.chainValue, offset: this.currentPage * 10, size: 10 },
+        buildRequest('', 'listResources', {}))
+        .then(response => {
+          this.resourceList = response.data.resourceDetails
+          const filter = this.chainValue
+          this.resourceList = this.resourceList.filter(function(element) {
+            return element.path.startsWith(filter + '.')
+          })
+          this.totalSize = this.resourceList.length
         })
-        this.totalSize = this.resourceList.length
-      })
     },
     handleReset() {
       this.chainValue = null

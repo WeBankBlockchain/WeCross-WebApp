@@ -10,12 +10,17 @@
         </el-row>
         <el-row :gutter="20">
           <el-table ref="singleTable" :data="routers" element-loading-text="加载中..." fit>
-            <el-table-column label="跨链路由标识">
+            <el-table-column label="跨链路由别名" min-width=40 :show-overflow-tooltip="true">:show-overflow-tooltip="true"
+              <template slot-scope="item">
+                {{ getAlias(item.row.nodeID) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="跨链路由标识" :show-overflow-tooltip="true">
               <template slot-scope="item">
                 {{ item.row.nodeID }}
               </template>
             </el-table-column>
-            <el-table-column label="IP端口">
+            <el-table-column label="IP端口" min-width=40>
               <template slot-scope="item">
                 {{ item.row.address }}
               </template>
@@ -23,15 +28,17 @@
             <el-table-column label="已接入区块链">
               <template slot-scope="item">
                 <li style="list-style-type:none" v-for="chainItem in item.row.chainInfos">
-                  {{ chainItem.name }} <el-tag type="info">{{ chainItem.stubType }}</el-tag>
+                  {{ chainItem.name }}
+                  <el-tag type="info">{{ chainItem.stubType }}</el-tag>
                 </li>
               </template>
             </el-table-column>
-            <el-table-column label="运行状态">
+            <el-table-column label="运行状态" min-width=20>
               正常
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="item">
+                <el-button plain icon="el-icon-edit" @click="setAlias(item.row.nodeID)">设置别名</el-button>
                 <el-button plain icon="el-icon-minus" @click="deleteRouter(item.row.address)">移除</el-button>
               </template>
             </el-table-column>
@@ -68,7 +75,19 @@ export default {
   methods: {
     refresh() {
       listPeers().then(response => {
+        if (this.routers.length > 0) {
+          this.$message({
+            type: 'success',
+            message: '刷新成功'
+          })
+        }
+
         this.routers = response.data
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '刷新失败，网络异常'
+        })
       })
     },
     addRouter() {
@@ -114,8 +133,23 @@ export default {
               message: '删除失败，错误码: ' + response.data.errorCode + ' 错误信息: ' + response.data.message
             })
           }
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: '删除失败，网络异常'
+          })
         })
       }).catch(() => {})
+    },
+    setAlias(nodeID) {
+      this.$prompt('为当前跨链路由设置别名', {}).then(data => {
+        localStorage.setItem('routerAlias-' + nodeID, data.value)
+
+        this.refresh()
+      })
+    },
+    getAlias(nodeID) {
+      return localStorage.getItem('routerAlias-' + nodeID)
     }
   }
 }

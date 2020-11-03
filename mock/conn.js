@@ -74,7 +74,7 @@ module.exports = [{
     }
   }
 }, {
-  url: '/sys/listChains',
+  url: '/conn/listChains',
   type: 'get',
   response: _ => {
     return {

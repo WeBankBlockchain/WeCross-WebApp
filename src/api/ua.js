@@ -16,3 +16,11 @@ export function setDefaultAccount(data) {
   })
 }
 
+export function addChainAccount(data) {
+  return request({
+    url: '/auth/addChainAccount',
+    method: 'post',
+    data: data
+  })
+}
+

@@ -68,7 +68,16 @@ export default {
   methods: {
     refresh() {
       listPeers().then(response => {
-        this.routers = response.data.data
+        this.routers = response.data
+        this.$message({
+          type: 'success',
+          message: '刷新成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '刷新失败，网络异常'
+        })
       })
     },
     addRouter() {
@@ -114,6 +123,11 @@ export default {
               message: '删除失败，错误码: ' + response.data.errorCode + ' 错误信息: ' + response.data.message
             })
           }
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: '删除失败，网络异常'
+          })
         })
       }).catch(() => {})
     }

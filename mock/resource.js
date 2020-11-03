@@ -2,8 +2,8 @@ const Mock = require('mockjs')
 
 module.exports = [
   {
-    url: '/resource/listResources',
-    type: 'get',
+    url: '/sys/listResources',
+    type: 'post',
     response: config => {
       return {
         ...Mock.mock({
@@ -16,7 +16,7 @@ module.exports = [
               id: '@id',
               path: '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\']).@word(3,5)',
               checksum: 'checksum',
-              'stubtype|1': ['BCOS2.0', 'GM_BCOS2.0', 'Fabric1.4'],
+              'stubType|1': ['BCOS2.0', 'GM_BCOS2.0', 'Fabric1.4'],
               properties: '@sentence(3,3)',
               distance: '@integer(0, 3)'
             }]

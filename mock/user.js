@@ -37,7 +37,11 @@ module.exports = [
     type: 'post',
     response: _ => {
       return {
-        code: 200
+        'version': '1',
+        'errorCode': 0,
+        'message': 'xxx',
+        'data': {
+        }
       }
     }
   },
@@ -48,19 +52,19 @@ module.exports = [
     type: 'post',
     response: _ => {
       return {
-        "version": "1",
-        "errorCode": 0,
-        "message": "xxx",
-        "data": {
-          "errorCode": 0,
-          "message": "success",
-          "universalAccount": {
-            "username": "xxx",
-            "pubKey": "xxx",
-            "uaID": "xxx"
+        'version': '1',
+        'errorCode': 0,
+        'message': 'xxx',
+        'data': {
+          'errorCode': 0,
+          'message': 'success',
+          'universalAccount': {
+            'username': 'xxx',
+            'pubKey': 'xxx',
+            'uaID': 'xxx'
           }
         }
       }
+    }
   }
-}
 ]

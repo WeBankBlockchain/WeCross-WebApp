@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getResourceList(params, data) {
   return request({
-    url: '/listResources',
+    url: '/sys/listResources',
     method: 'post',
     params: params,
     data: data

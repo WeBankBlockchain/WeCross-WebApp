@@ -71,3 +71,12 @@ export function isArray(arg) {
   }
   return Array.isArray(arg)
 }
+
+/**
+ * @param {string} path
+ * @return {Boolean}
+ */
+export function isValidPath(path) {
+  const reg = /^[A-Za-z]+\.[A-Za-z]+\.[A-Za-z]+$/
+  return reg.test(path)
+}

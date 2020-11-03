@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <img src="../../assets/logo_wecross.svg" width="720">
+    <img :src="require('@/assets/wecross.svg')" width="720">
     <h1>Welcome to WeCross</h1>
     <p>
       WeCross是由微众银行自主研发并完全开源的区块链跨链协作平台，致力于促进跨行业、机构和地域的跨区块链信任传递和商业合作。<br>

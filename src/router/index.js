@@ -130,13 +130,28 @@ export const constantRoutes = [
     path: '/transactionAdmin',
     component: Layout,
     name: 'TransactionAdmin',
-    redirect: 'transactionAdmin/index',
+    redirect: 'transactionAdmin/callContract',
     meta: { title: '交易管理', icon: 'el-icon-s-promotion' },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/transactionAdmin/index'),
-        meta: { title: '交易管理', icon: 'el-icon-s-promotion' }
+        path: 'callContract',
+        component: () => import('@/views/transactionAdmin/callContract'),
+        meta: { title: '交易发起', icon: 'el-icon-s-opportunity' }
+      },
+      {
+        path: 'transactionList',
+        component: () => import('@/views/transactionAdmin/transactionList'),
+        meta: { title: '交易列表', icon: 'el-icon-notebook-2' }
+      },
+      {
+        path: 'xaTransaction',
+        component: () => import('@/views/transactionAdmin/xaTransaction'),
+        meta: { title: '事务交易', icon: 'el-icon-s-order' }
+      },
+      {
+        path: 'xaTransactionList',
+        component: () => import('@/views/transactionAdmin/xaTransactionList'),
+        meta: { title: '事务列表', icon: 'el-icon-tickets' }
       }
     ]
   },
@@ -145,7 +160,6 @@ export const constantRoutes = [
     component: Layout,
     name: 'Documents',
     redirect: '/documents/index',
-    meta: { title: '参考文档', icon: 'el-icon-document' },
     children: [
       {
         path: 'index',

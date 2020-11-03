@@ -1,3 +1,15 @@
+export function clearForm(formData) {
+  formData.path = null
+  formData.className = null
+  formData.version = null
+  formData.address = null
+  formData.org = null
+  formData.lang = null
+  formData.policy = null
+  formData.args = null
+  formData.sourceContent = null
+}
+
 export function buildBCOSDeployRequest(formData) {
   return {
     path: formData.path,
@@ -41,4 +53,8 @@ export function buildFabricInstantiateRequest(formData) {
     policy: formData.policy,
     args: formData.args
   }
+}
+
+export function splitPath(path) {
+
 }

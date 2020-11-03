@@ -26,7 +26,7 @@ export function removePeer(params) {
 
 export function listChains(params) {
   return request({
-    url: '/sys/listChains',
+    url: '/conn/listChains',
     method: 'get',
     params
   })

@@ -59,8 +59,18 @@ export default {
   methods: {
     refresh() {
       listChains().then(response => {
-        console.log(response)
-        this.chains = response.data.chains
+        if (this.chains.length > 0) {
+          this.$message({
+            type: 'success',
+            message: '刷新成功'
+          })
+        }
+        this.chains = response.chains
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '刷新失败，网络异常'
+        })
       })
     },
     addChain() {

@@ -1,12 +1,11 @@
 'use strict'
 const path = require('path')
-const defaultSettings = require('./src/settings.js')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'WeCross Web App' // page title
+const name = 'WeCross Web App' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -31,6 +30,7 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
+    host: 'localhost',
     open: true,
     overlay: {
       warnings: false,

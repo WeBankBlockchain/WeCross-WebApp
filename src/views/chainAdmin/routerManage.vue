@@ -110,7 +110,7 @@ export default {
             address: address
           }
         }).then(response => {
-          if (response.data.errorCode === 0) {
+          if (response.peerData.errorCode === 0) {
             this.refresh()
 
             this.$message({

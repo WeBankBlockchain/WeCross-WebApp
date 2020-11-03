@@ -40,7 +40,7 @@ service.interceptors.response.use(
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (status === 401 || res.errorCode === 50012 || res.errorCode === 50014) {
+      if (res.errorCode === 10502 || res.errorCode === 50012 || res.errorCode === 50014) {
         // to re-login
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',
@@ -58,6 +58,7 @@ service.interceptors.response.use(
     }
   },
   error => {
+    console.log('error message: ' + error.response)
     const status = error.toString().match(/\d{3}/)[0]
     switch (status) {
       case '401' :

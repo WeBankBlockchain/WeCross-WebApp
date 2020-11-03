@@ -104,18 +104,13 @@ export default {
 
         // register operation
         var params = {
-          version: '1',
-          data: {
-            username: this.registerForm.username,
-            password: this.registerForm.pass
-          }
+          username: this.registerForm.username,
+          password: this.registerForm.pass
         }
 
         register(params)
           .then((resp) => {
-            console.log(' ==> ' + JSON.stringify(resp))
-
-            var errorCode0 = resp.errorCode
+            console.log(' resp ==> ' + JSON.stringify(resp))
 
             var data = resp.data
             var errorCode = data.errorCode
@@ -123,7 +118,7 @@ export default {
 
             console.log('resp = ' + JSON.stringify(resp))
 
-            if (typeof errorCode0 !== 'undefined' && errorCode0 !== 0) {
+            if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
               this.$message({
                 type: 'error',
                 message: JSON.stringify(resp)

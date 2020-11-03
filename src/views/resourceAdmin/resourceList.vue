@@ -33,9 +33,9 @@
                   :value="chain"></el-option>
             </el-select>
           </el-col>
-          <el-col :span="6">
-            <el-button type="primary" plain icon="el-icon-search" @click="handleSearch">搜索</el-button>
-            <el-button type="info" plain icon="el-icon-delete" @click="handleReset">重置</el-button>
+          <el-col :span="12">
+            <el-button type="primary" plain icon="el-icon-search" @click="handleSearch" >搜索</el-button>
+            <el-button type="info" plain icon="el-icon-delete" @click="handleReset" >重置</el-button>
           </el-col>
         </el-row>
         <el-row :gutter="20">
@@ -220,25 +220,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.demo-table-expand {
-  font-size: 0;
-}
-
-.demo-table-expand label {
-  width: 90px;
-  color: #99a9bf;
-}
-
-.demo-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  width: 50%;
-}
-
-.cascadeText {
-  display: block;
-  color: #8492a6;
-  font-size: 14px;
-  margin-bottom: 20px;
-}
 </style>

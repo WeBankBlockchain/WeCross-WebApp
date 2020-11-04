@@ -56,7 +56,7 @@ export const constantRoutes = [
       path: 'home',
       name: 'homepage',
       component: () => import('@/views/homepage/index'),
-      meta: { title: '个人主页', icon: 'el-icon-s-home' }
+      meta: { title: '首页', icon: 'el-icon-s-home' }
     }]
   },
   {
@@ -99,6 +99,11 @@ export const constantRoutes = [
         path: 'routerManage',
         component: () => import('@/views/chainAdmin/routerManage'),
         meta: { title: '跨链路由管理', icon: 'el-icon-connection' }
+      },
+      {
+        path: 'routerGuide',
+        component: () => import('@/views/chainAdmin/routerGuide'),
+        meta: { title: '路由部署向导', icon: 'el-icon-upload' }
       },
       {
         path: 'chainManage',

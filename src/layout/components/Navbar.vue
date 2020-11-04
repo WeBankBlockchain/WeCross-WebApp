@@ -7,8 +7,9 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
+          <i class="el-icon-info"></i>
+          <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/profile">
@@ -16,19 +17,8 @@
               个人信息
             </el-dropdown-item>
           </router-link>
-          <router-link to="/">
-            <el-dropdown-item>
-              主页目录
-            </el-dropdown-item>
-          </router-link>
-          <a target="_blank" href="https://github.com/WeBankFinTech/WeCross">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <router-link to="/documents">
-            <el-dropdown-item>参考文档</el-dropdown-item>
-          </router-link>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">用户登出</span>
+            <span style="display:block;">登出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

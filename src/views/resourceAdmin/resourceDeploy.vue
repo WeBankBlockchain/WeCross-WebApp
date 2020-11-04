@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-col :span="4" style="margin-top:10px;height: 170px">
+      <el-col :span="5" offset="1" style="margin-top:10px;height: 170px">
         <el-steps direction="vertical" :active="stepActive">
-          <el-step title="步骤 1" description="选择区块链类型"></el-step>
+          <el-step title="步骤 1" description="选择链类型"></el-step>
           <el-step title="步骤 2" description="选择操作类型"></el-step>
           <el-step title="步骤 3" description="设置操作参数"></el-step>
         </el-steps>
       </el-col>
-      <el-col :span="20">
+      <el-col :span="16">
         <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
           <el-form-item label="选择链类型：">
             <el-select v-model="form.stubType" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
@@ -290,7 +290,7 @@ export default {
     onCancel() {
       this.$message({
         message: '已重置表单',
-        type: 'warning'
+        type: 'info'
       })
       this.stepActive = 0
       this.form.method = null

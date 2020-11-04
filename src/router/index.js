@@ -56,7 +56,7 @@ export const constantRoutes = [
       path: 'home',
       name: 'homepage',
       component: () => import('@/views/homepage/index'),
-      meta: { title: '首页', icon: 'el-icon-s-home' }
+      meta: { title: '平台首页', icon: 'el-icon-s-home' }
     }]
   },
   {

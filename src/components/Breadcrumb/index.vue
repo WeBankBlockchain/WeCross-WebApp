@@ -33,7 +33,7 @@ export default {
       const first = matched[0]
 
       if (!this.isHomepage(first)) {
-        matched = [{ path: '/', meta: { title: 'Home' }}].concat(matched)
+        matched = [{ path: '/', meta: { title: 'WeCross云管理平台' }}].concat(matched)
       }
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)

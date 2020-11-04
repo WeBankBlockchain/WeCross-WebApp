@@ -87,33 +87,41 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/routerAdmin',
+    component: Layout,
+    name: 'routerAdmin',
+    redirect: '/routerAdmin/routerManage',
+    meta: { title: '路由管理', icon: 'el-icon-menu' },
+    children: [
+      {
+        path: 'routerManage',
+        component: () => import('@/views/routerAdmin/routerManage'),
+        meta: { title: '路由浏览', icon: 'el-icon-connection' }
+      },
+      {
+        path: 'routerGuide',
+        component: () => import('@/views/routerAdmin/routerGuide'),
+        meta: { title: '路由部署', icon: 'el-icon-upload' }
+      }
+    ]
+  },
   {
     path: '/chainAdmin',
     component: Layout,
     name: 'ChainAdmin',
     redirect: '/chainAdmin/routerManage',
-    meta: { title: '跨链管理', icon: 'el-icon-menu' },
+    meta: { title: '区块链管理', icon: 'el-icon-menu' },
     children: [
-      {
-        path: 'routerManage',
-        component: () => import('@/views/chainAdmin/routerManage'),
-        meta: { title: '跨链路由管理', icon: 'el-icon-connection' }
-      },
-      {
-        path: 'routerGuide',
-        component: () => import('@/views/chainAdmin/routerGuide'),
-        meta: { title: '路由部署向导', icon: 'el-icon-upload' }
-      },
-      {
-        path: 'routerGuide',
-        component: () => import('@/views/chainAdmin/routerGuide'),
-        meta: { title: '路由部署向导', icon: 'el-icon-upload' }
-      },
       {
         path: 'chainManage',
         component: () => import('@/views/chainAdmin/chainManage'),
-        meta: { title: '区块链管理', icon: 'el-icon-share' }
+        meta: { title: '区块链浏览', icon: 'el-icon-share' }
+      },
+      {
+        path: 'chainDeploy',
+        component: () => import('@/views/chainAdmin/chainDeploy'),
+        meta: { title: '区块链部署', icon: 'el-icon-upload2' }
       }
     ]
   },

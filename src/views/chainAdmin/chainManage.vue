@@ -3,10 +3,8 @@
     <el-row style="margin-top:20px;">
       <el-card>
         <el-row :gutter="18">
-          <el-col :span="6">
-            <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
-            <el-button plain icon="el-icon-plus" @click="addChain">添加区块链</el-button>
-          </el-col>
+          <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
+          <el-button plain icon="el-icon-plus" @click="addChain">添加区块链</el-button>
         </el-row>
         <el-row :gutter="20">
           <el-table ref="singleTable" :data="chains" element-loading-text="加载中..." fit>

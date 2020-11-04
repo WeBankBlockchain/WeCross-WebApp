@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'TransactionAdmin',
+  name: 'CallContract',
   props: {},
   data() {
     return {}

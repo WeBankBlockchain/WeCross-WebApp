@@ -39,8 +39,8 @@ export default {
   height: 1em;
 }
 .sub-el-title {
-  padding-left:15px;
-  letter-spacing: 2px;
-  font-size: 120%;
+  padding-left:0px;
+  letter-spacing: 0.4px;
+  font-size: 115%;
 }
 </style>

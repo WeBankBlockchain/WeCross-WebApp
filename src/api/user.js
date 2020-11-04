@@ -23,6 +23,9 @@ export function register(data) {
   return request({
     url: '/auth/register',
     method: 'post',
-    params: data
+    data: {
+      version: '1',
+      data: data
+    }
   })
 }

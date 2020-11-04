@@ -10,7 +10,7 @@
         </el-row>
         <el-row :gutter="20">
           <el-table ref="singleTable" :data="chains" element-loading-text="加载中..." fit>
-            <el-table-column label="区块链路径">
+            <el-table-column label="区块链路径" min-width=50>
               <template slot-scope="item">
                 {{ item.row.path }}
               </template>
@@ -29,6 +29,8 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="item">
+                <el-button plain icon="el-icon-edit-outline">发送交易</el-button>
+                <el-button plain icon="el-icon-upload2">部署资源</el-button>
                 <el-button plain icon="el-icon-minus" @click="removeChain(item.row.zone, item.row.chain)">断开</el-button>
               </template>
             </el-table-column>
@@ -59,8 +61,19 @@ export default {
   methods: {
     refresh() {
       listChains().then(response => {
-        console.log(response)
+        if (this.chains.length > 0) {
+          this.$message({
+            type: 'success',
+            message: '刷新成功'
+          })
+        }
+
         this.chains = response.data.chains
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '刷新失败，网络异常'
+        })
       })
     },
     addChain() {

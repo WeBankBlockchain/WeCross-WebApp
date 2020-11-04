@@ -14,8 +14,8 @@ export default {
   name: 'SidebarLogo',
   data() {
     return {
-      title: 'WeCross WebApp',
-      logo: 'https://wecross.readthedocs.io/zh_CN/latest/_static/images/menu_logo_wecross.svg'
+      title: 'WeCross云管理平台'
+      // logo: 'https://wecross.readthedocs.io/zh_CN/latest/_static/images/menu_logo_wecross.svg'
     }
   }
 }
@@ -37,7 +37,8 @@ export default {
   height: 50px;
   line-height: 50px;
   background: #2b2f3a;
-  text-align: center;
+  text-align: left;
+  padding-left: 20px;
   overflow: hidden;
 
   & .sidebar-logo-link {
@@ -57,7 +58,7 @@ export default {
       color: #fff;
       font-weight: 600;
       line-height: 50px;
-      font-size: 14px;
+      font-size: 15px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
     }

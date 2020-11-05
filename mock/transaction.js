@@ -191,6 +191,50 @@ module.exports = [
       }
     }
   }, {
+    url: 'trans/getTransaction',
+    type: 'get',
+    response: _ => {
+      return {
+        ...Mock.mock(
+          {
+            "version": 1,
+            "errorCode": 0,
+            "message": "success",
+            "data": {
+              "path": "payment.bcos.hello",
+              "username": "hehe",
+              "blockNumber": 1,
+              "txHash": "0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39",
+              "xaTransactionID": "001",
+              "xaTransactionSeq": 1,
+              "method": "set",
+              "args": [
+                "0x11",
+                "0x22",
+                "0x33"
+              ],
+              "result": [
+                "0x11",
+                "0x22",
+                "0x33"
+              ],
+              "byProxy": true,
+              "txBytes": [
+                0,
+                1,
+                0
+              ],
+              "receiptBytes": [
+                0,
+                1,
+                0
+              ]
+            }
+          }
+        )
+      }
+    }
+  }, {
     url: '/trans/listTransactions',
     type: 'get',
     response: _ => {
@@ -204,11 +248,11 @@ module.exports = [
               "nextOffset": 20,
               "transactions": [
                 {
-                  "txHash": "0x11",
+                  "txHash": "0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39",
                   "blockNumber": 1
                 },
                 {
-                  "txHash": "0x22",
+                  "txHash": "0xf83b79144ad8beba846f720bd81fe1e8df3753e3d38d9e526665647ac807937a",
                   "blockNumber": 2
                 }
               ]
@@ -218,3 +262,4 @@ module.exports = [
     }
   }
 ]
+

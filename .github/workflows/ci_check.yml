@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2-beta
-          with:
+        with:
           node-version: '10'
       - uses: stefanoeb/eslint-action@1.0.2
       - name: Test

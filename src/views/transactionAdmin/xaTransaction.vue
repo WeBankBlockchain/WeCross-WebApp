@@ -312,6 +312,7 @@ import { v4 as uuidV4 } from 'uuid'
 import { Message } from 'element-ui'
 import treeTransfer from 'el-tree-transfer'
 import { listChains } from '@/api/conn'
+import { uniqueFilter } from '@/utils'
 
 export default {
   name: 'XATransaction',
@@ -351,7 +352,11 @@ export default {
   methods: {
     addBtn(fromData, toData, obj) {
       console.log('from', fromData)
+      console.log('this.from', this.fromData)
       console.log('to', toData)
+      console.log('this.to', this.toData)
+      this.fromData = fromData
+      this.toData = toData
     },
     loadResource(node, resolve, from) {
       console.log(node)
@@ -361,13 +366,19 @@ export default {
     getPaths() {
       listChains().then(response => {
         const chainList = response.data.data
+        let chainTypeList = []
         for (const chainListKey in chainList) {
+          chainTypeList.push(chainList[chainListKey].zone + '.' + chainList[chainListKey].chain)
+        }
+        chainTypeList = chainTypeList.filter(uniqueFilter).sort()
+        for (const chainTypeListKey in chainTypeList) {
           this.fromData.push({
-            id: chainListKey,
+            id: chainTypeListKey,
             pid: 0,
-            label: chainList[chainListKey].zone + '.' + chainList[chainListKey].chain,
+            label: chainTypeList[chainTypeListKey],
             children: []
           })
+          this.pathDic[chainTypeListKey] = chainTypeList[chainTypeListKey]
         }
       })
       // getResourceList(null, { 'version': '1', 'data': {}})
@@ -403,7 +414,7 @@ export default {
     },
     startTransaction() {
       this.$refs['transactionForm'].validate(validate => {
-        if (this.chosenPaths == null || this.chosenPaths.length < 1) {
+        if (this.toData == null || this.toData.length < 1) {
           this.$message({
             message: '开启事务前请先选择资源！', type: 'error', center: true
           })
@@ -412,8 +423,8 @@ export default {
         if (validate) {
           this.loading = true
           var chosenData = []
-          for (const chosenPath of this.chosenPaths) {
-            chosenData.push(this.pathDic[chosenPath])
+          for (const data of this.toData) {
+            chosenData.push(this.pathDic[data.id])
           }
           this.$store.dispatch('transaction/startTransaction', {
             version: '1',

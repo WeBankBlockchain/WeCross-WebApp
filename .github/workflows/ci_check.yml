@@ -10,7 +10,8 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '10'
-      - uses: stefanoeb/eslint-action@1.0.2
+      - name: npm install
+        run: npm install
       - name: Test
         run: npm run test:ci
 

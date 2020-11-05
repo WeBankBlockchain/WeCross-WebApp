@@ -2,11 +2,26 @@
   <div class="app-container">
     <el-row style="margin-top:20px;">
       <el-card>
-        <el-row :gutter="18">
-          <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
-          <el-button plain icon="el-icon-plus" @click="addRouter">添加跨链路由</el-button>
+        <el-row>
+          <el-button-group>
+            <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
+            <el-button plain icon="el-icon-plus" @click="addRouter">添加跨链路由</el-button>
+          </el-button-group>
+
+          <el-pagination
+background
+:page-size="pageSize"
+pager-count=9
+layout="prev, pager, next"
+:total="total"
+style="float: right;"
+            :current-page="currentPage"
+@prev-click="prevPage"
+@next-click="nextPage"
+@current-change="setPage">
+          </el-pagination>
         </el-row>
-        <el-row :gutter="20">
+        <el-row>
           <el-table ref="singleTable" :data="routers" element-loading-text="加载中..." fit>
             <el-table-column label="跨链路由别名" min-width=40 :show-overflow-tooltip="true">:show-overflow-tooltip="true"
               <template slot-scope="item">
@@ -36,11 +51,27 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="item">
-                <el-button plain icon="el-icon-edit" @click="setAlias(item.row.nodeID)">设置别名</el-button>
-                <el-button plain icon="el-icon-minus" @click="deleteRouter(item.row.address)">移除</el-button>
+                <el-button-group>
+                  <el-button plain icon="el-icon-edit" @click="setAlias(item.row.nodeID)">设置别名</el-button>
+                  <el-button plain icon="el-icon-minus" @click="deleteRouter(item.row.address)">移除</el-button>
+                </el-button-group>
               </template>
             </el-table-column>
           </el-table>
+        </el-row>
+        <el-row>
+          <el-pagination
+background
+:page-size="pageSize"
+pager-count=9
+layout="prev, pager, next"
+:total="total"
+style="float: right;"
+            :current-page="currentPage"
+@prev-click="prevPage"
+@next-click="nextPage"
+@current-change="setPage">
+          </el-pagination>
         </el-row>
       </el-card>
     </el-row>
@@ -63,7 +94,10 @@ export default {
   props: {},
   data() {
     return {
-      routers: []
+      routers: [],
+      pageSize: 10,
+      total: 0,
+      currentPage: 1
     }
   },
   created() {
@@ -72,15 +106,12 @@ export default {
   mounted() {},
   methods: {
     refresh() {
-      listPeers().then(response => {
-        if (this.routers.length > 0) {
-          this.$message({
-            type: 'success',
-            message: '刷新成功'
-          })
-        }
-
-        this.routers = response.data
+      listPeers({
+        offset: (this.currentPage - 1) * 10,
+        size: this.pageSize
+      }).then(response => {
+        this.total = response.data.size
+        this.routers = response.data.data
       }).catch(() => {
         this.$message({
           type: 'error',
@@ -148,6 +179,18 @@ export default {
     },
     getAlias(nodeID) {
       return localStorage.getItem('routerAlias-' + nodeID)
+    },
+    nextPage() {
+      ++this.currentPage
+      this.refresh()
+    },
+    prevPage() {
+      --this.currentPage
+      this.refresh()
+    },
+    setPage(page) {
+      this.currentPage = page
+      this.refresh()
     }
   }
 }

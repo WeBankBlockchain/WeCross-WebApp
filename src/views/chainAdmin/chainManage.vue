@@ -2,20 +2,40 @@
   <div class="app-container">
     <el-row style="margin-top:20px;">
       <el-card>
-        <el-row :gutter="18">
-          <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
-          <el-button plain icon="el-icon-plus" @click="addChain">添加区块链</el-button>
+        <el-row>
+          <el-button-group>
+            <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
+            <el-button plain icon="el-icon-plus" @click="addChain">添加区块链</el-button>
+          </el-button-group>
+
+          <el-pagination
+background
+:page-size="pageSize"
+pager-count=9
+layout="prev, pager, next"
+:total="total"
+style="float: right;"
+            :current-page="currentPage"
+@prev-click="prevPage"
+@next-click="nextPage"
+@current-change="setPage">
+          </el-pagination>
         </el-row>
-        <el-row :gutter="20">
+        <el-row>
           <el-table ref="singleTable" :data="chains" element-loading-text="加载中..." fit>
-            <el-table-column label="区块链路径" min-width=50>
+            <el-table-column label="区块链路径" min-width=40>
               <template slot-scope="item">
-                {{ item.row.path }}
+                {{ item.row.zone }}.{{ item.row.chain}}
               </template>
             </el-table-column>
             <el-table-column label="类型" min-width=30>
               <template slot-scope="item">
-                {{ item.row.stubType }}
+                {{ item.row.type }}
+              </template>
+            </el-table-column>
+            <el-table-column label="块高" min-width=30>
+              <template slot-scope="item">
+                {{ item.row.blockNumber }}
               </template>
             </el-table-column>
             <el-table-column label="属性" min-width=100>
@@ -27,12 +47,29 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="item">
-                <el-button plain icon="el-icon-edit-outline">发送交易</el-button>
-                <el-button plain icon="el-icon-upload2">部署资源</el-button>
-                <el-button plain icon="el-icon-minus" @click="removeChain(item.row.zone, item.row.chain)">断开</el-button>
+                <el-button-group>
+                  <el-button plain icon="el-icon-edit-outline">调用</el-button>
+                  <el-button plain icon="el-icon-magic-stick">发起事务</el-button>
+                  <el-button plain icon="el-icon-upload2">部署资源</el-button>
+                  <el-button plain icon="el-icon-minus" @click="removeChain(item.row.zone, item.row.chain)">断开</el-button>
+                </el-button-group>
               </template>
             </el-table-column>
           </el-table>
+        </el-row>
+        <el-row>
+          <el-pagination
+background
+:page-size="pageSize"
+pager-count=9
+layout="prev, pager, next"
+:total="total"
+style="float: right;"
+            :current-page="currentPage"
+@prev-click="prevPage"
+@next-click="nextPage"
+@current-change="setPage">
+          </el-pagination>
         </el-row>
       </el-card>
     </el-row>
@@ -49,7 +86,10 @@ export default {
   props: {},
   data() {
     return {
-      chains: []
+      chains: [],
+      pageSize: 10,
+      total: 0,
+      currentPage: 1
     }
   },
   created() {
@@ -58,15 +98,12 @@ export default {
   mounted() {},
   methods: {
     refresh() {
-      listChains().then(response => {
-        if (this.chains.length > 0) {
-          this.$message({
-            type: 'success',
-            message: '刷新成功'
-          })
-        }
-
-        this.chains = response.data.chains
+      listChains({
+        offset: (this.currentPage - 1) * 10,
+        size: this.pageSize
+      }).then(response => {
+        this.chains = response.data.data
+        this.total = response.data.size
       }).catch(() => {
         this.$message({
           type: 'error',
@@ -85,6 +122,18 @@ export default {
         type: 'info',
         message: '该功能尚未支持'
       })
+    },
+    nextPage() {
+      ++this.currentPage
+      this.refresh()
+    },
+    prevPage() {
+      --this.currentPage
+      this.refresh()
+    },
+    setPage(page) {
+      this.currentPage = page
+      this.refresh()
     }
   }
 }

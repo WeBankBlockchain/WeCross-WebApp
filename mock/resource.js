@@ -11,8 +11,8 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            total: 100,
-            'resourceDetails|100': [{
+            total: 10,
+            'resourceDetails|10': [{
               id: '@id',
               path: '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\']).@word(3,5)',
               checksum: 'checksum',

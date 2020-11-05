@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-col :span="5" offset="1" style="margin-top:10px;height: 170px">
+      <el-col :span="5" :offset="1" style="margin-top:10px;height: 170px">
         <el-steps direction="vertical" :active="stepActive">
           <el-step title="步骤 1" description="选择链类型"></el-step>
           <el-step title="步骤 2" description="选择操作类型"></el-step>

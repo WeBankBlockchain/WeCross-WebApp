@@ -1,4 +1,5 @@
 import { validUsername, validURL, validLowerCase, validUpperCase, validAlphabets, isString } from '@/utils/validate.js'
+import { path2Url } from '@/utils'
 describe('Utils:validate', () => {
   it('validUsername', () => {
     expect(validUsername('admin1')).toBe(true)
@@ -33,5 +34,8 @@ describe('Utils:validate', () => {
     expect(isString(obj.str)).toBe(true)
     expect(isString(obj)).toBe(false)
     expect(isString(123)).toBe(false)
+  })
+  it('path2URL', () => {
+    expect(path2Url('test.test.test')).toBe('/test/test/test')
   })
 })

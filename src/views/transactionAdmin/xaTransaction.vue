@@ -37,12 +37,18 @@
                   label-width="auto"
                   label-position="right"
                   :model="transactionForm">
-                <el-form-item label="事务ID：" prop="transactionID">
+                <el-form-item
+                    label="事务ID："
+                    :rules="[
+                        {required: true, message: '事务ID不能为空', trigger: 'blur'},
+                        { pattern: /^[0-9a-zA-Z]+$/, required: true, message: '事务ID不支持特殊字符', trigger: 'blur'}
+                        ]"
+                    prop="transactionID">
                   <el-input v-model="transactionForm.transactionID" placeholder="请输入事务ID"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="startTransaction">开启事务</el-button>
-                  <el-button icon="el-icon-circle-plus" style="margin-left: 15px">生成事务ID</el-button>
+                  <el-button type="primary" @click="startTransaction" v-loading.fullscreen.lock="loading">开启事务</el-button>
+                  <el-button icon="el-icon-circle-plus" style="margin-left: 15px" @click="creatUUID">生成事务ID</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -77,7 +83,7 @@
             <transaction-form
                 :transaction="transactionForm"
                 @clearClick="clearTransaction"
-                @submitClick="submitTransaction"></transaction-form>
+                @submitClick="execTransaction"></transaction-form>
           </el-col>
           <el-col :span="12">
             <el-row>
@@ -145,45 +151,47 @@
                 <el-table-column
                     prop="username"
                     label="用户名"
-                    min-width="50">
+                    min-width="30">
                 </el-table-column>
                 <el-table-column
                     prop="xaTransactionID"
                     label="事务ID"
-                    min-width="70">
+                    min-width="80">
                 </el-table-column>
                 <el-table-column
                     prop="status"
-                    min-width="60"
+                    min-width="50"
                     label="事务状态">
                 </el-table-column>
                 <el-table-column
                     prop="startTimestamp"
-                    min-width="70"
+                    min-width="50"
                     label="事务开始时间">
                 </el-table-column>
                 <el-table-column
-                    v-if="this.transactionDetail[0].commitTimestamp >0"
+                    v-if="this.transactionDetail.length >0 && this.transactionDetail[0].commitTimestamp >0"
                     prop="commitTimestamp"
-                    min-width="70"
+                    min-width="50"
                     label="事务提交时间">
                 </el-table-column>
                 <el-table-column
-                    v-if="this.transactionDetail[0].rollbackTimestamp > 0"
+                    v-if="this.transactionDetail.length >0 && this.transactionDetail[0].rollbackTimestamp > 0"
                     prop="rollbackTimestamp"
-                    min-width="70"
+                    min-width="50"
                     label="事务回滚时间">
                 </el-table-column>
                 <el-table-column
-                    min-width="50"
+                    min-width="80"
                     label="事务资源">
                   <template slot-scope="scope">
-                    {{ scope.row.paths.toString() }}
+                    <div v-for="path in scope.row.paths">
+                      {{path}}<br>
+                    </div>
                   </template>
                 </el-table-column>
                 <el-table-column
                     type="expand"
-                    width="80px"
+                    width="80"
                     label="事务步骤">
                   <template slot-scope="props">
                     <div v-for="step in props.row.xaTransactionSteps">
@@ -220,7 +228,7 @@
           <el-row style="margin-top: 20px;">
             <el-col style="text-align: center">
               <el-button-group>
-                <el-button icon="el-icon-back">返回上一步</el-button>
+                <el-button icon="el-icon-back" @click="()=>this.stepActive=1">返回上一步</el-button>
                 <el-button type="primary" icon="el-icon-check" @click="commitTransaction">提交事务</el-button>
                 <el-button type="primary" icon="el-icon-refresh-left" @click="rollbackTransaction">回滚事务</el-button>
               </el-button-group>
@@ -235,7 +243,7 @@
       <el-row style="margin-top: 15px" v-if="stepActive === 3">
         <el-card>
           <el-row :gutter="24">
-           <el-col :span="2" offset="11">
+           <el-col :span="2" :offset="11">
              <el-image
                  style="width: 100%; height: 100%"
                  :src="require('@/assets/check-pass.svg')"
@@ -250,8 +258,8 @@
           <el-row >
             <el-col style="text-align: center; margin-top: 20px">
               <el-button-group>
-                <el-button type="primary" icon="el-icon-circle-plus-outline">再开启一段事务</el-button>
-                <el-button icon="el-icon-search">查看事务列表</el-button>
+                <el-button type="primary" icon="el-icon-circle-plus-outline" @click="reloadTransaction">再开启一段事务</el-button>
+                <el-button icon="el-icon-search" >查看事务列表</el-button>
               </el-button-group>
             </el-col>
           </el-row>
@@ -263,82 +271,24 @@
 
 <script>
 import TransactionForm from '@/views/transactionAdmin/components/TransactionForm'
+import { uuid } from '@/utils/transaction'
+import { getResourceList } from '@/api/resource'
+import { getXATransaction, sendTransaction } from '@/api/transaction'
+import { Message } from 'element-ui'
 
 export default {
   name: 'XATransaction',
   components: {
     TransactionForm
   },
-  props: {},
   data() {
     return {
       stepHeader: '事务交易列表',
       stepActive: 0,
-      transactionDetail: [{
-        'username': 'user',
-        'xaTransactionID': '001',
-        'status': 'committed',
-        'startTimestamp': '2384923894',
-        'commitTimestamp': '2384923894',
-        'rollbackTimestamp': '0',
-        'paths': [
-          'a.b.1',
-          'a.b.2'
-        ],
-        'xaTransactionSteps': [
-          {
-            'username': 'user',
-            'xaTransactionSeq': 1,
-            'path': 'a.b.1',
-            'hash': '0x12',
-            'method': 'set',
-            'args': 'hello',
-            'timestamp': '121289384'
-          },
-          {
-            'username': 'user',
-            'xaTransactionSeq': 2,
-            'path': 'a.b.2',
-            'hash': '0x123',
-            'method': 'set',
-            'args': 'world',
-            'timestamp': '121289384'
-          }
-        ]
-      }],
-      transactionStep: [
-        {
-          'username': 'user',
-          'xaTransactionSeq': 1,
-          'path': 'a.b.1',
-          'hash': '0x12',
-          'method': 'set',
-          'args': 'hello',
-          'timestamp': '121289384'
-        },
-        {
-          'username': 'user',
-          'xaTransactionSeq': 2,
-          'path': 'a.b.2',
-          'hash': '0x123',
-          'method': 'set',
-          'args': 'world',
-          'timestamp': '121289384'
-        }
-      ],
-      paths: [{
-        label: 'payment.bcos.1',
-        key: 1,
-        value: 'payment.bcos.1'
-      }, {
-        label: 'payment.bcos.2',
-        key: 2,
-        value: 'payment.bcos.2'
-      }, {
-        label: 'payment.fabric.1',
-        key: 3,
-        value: 'payment.fabric.1'
-      }],
+      transactionDetail: [],
+      transactionStep: [],
+      paths: [],
+      pathDic: {},
       chosenPaths: [],
       transactionForm: {
         transactionID: null,
@@ -349,17 +299,34 @@ export default {
           key: 0
         }],
         isXATransaction: true
-      }
+      },
+      loading: false
     }
   },
   created() {
+    this.getPaths()
   },
   mounted() {
   },
   methods: {
-    submitTransaction(transaction) {
-      console.log('外部')
-      console.log(transaction)
+    clearData() {},
+    getPaths() {
+      getResourceList(null, { 'version': '1', 'data': {}})
+        .then(response => {
+          const resourceList = response.data.resourceDetails
+          for (const resourceListKey in resourceList) {
+            this.paths.push({
+              label: resourceList[resourceListKey].path,
+              key: resourceListKey,
+              value: resourceList[resourceListKey].path
+            })
+            this.pathDic[resourceListKey] = resourceList[resourceListKey].path
+          }
+        })
+    },
+    creatUUID() {
+      this.transactionForm.transactionID = uuid(32, 32)
+      this.$refs['transactionForm'].clearValidate('transactionID')
     },
     clearTransaction() {
       this.transactionForm.args = [{
@@ -375,13 +342,106 @@ export default {
       return item.value.indexOf(query) > -1
     },
     startTransaction() {
-      this.stepActive = 1
+      this.$refs['transactionForm'].validate(validate => {
+        if (this.chosenPaths == null || this.chosenPaths.length < 1) {
+          this.$message({ message: '开启事务前请先选择资源！', type: 'error', center: true })
+          return
+        }
+        if (validate) {
+          this.loading = true
+          var chosenData = []
+          for (const chosenPath of this.chosenPaths) {
+            chosenData.push(this.pathDic[chosenPath])
+          }
+          this.$store.dispatch('transaction/startTransaction', {
+            version: '1',
+            data: {
+              xaTransactionID: this.transactionForm.transactionID,
+              paths: chosenData
+            }
+          }).then(() => {
+            this.loading = false
+            this.stepHeader += ' - 当前事务ID：'.concat(this.$store.getters.transactionID)
+            this.stepActive = 1
+          }).catch(_ => {
+            this.loading = false
+          })
+        }
+      })
+    },
+    execTransaction(transaction) {
+      this.loading = true
+      sendTransaction({
+        version: '1',
+        path: 'test.test.test', // TODO
+        data: {
+          method: transaction.method,
+          args: transaction.args,
+          options: {
+            'XA_TRANSACTION_ID': this.$store.getters.transactionID,
+            'XA_TRANSACTION_SEQ': Date.now()
+          }
+        }
+      }).then(_ => {
+        this.getXADetail()
+        this.loading = false
+      })
     },
     commitTransaction() {
-      this.stepActive = 3
+      if (this.$store.getters.transactionID !== null && this.$store.getters.paths !== []) {
+        this.loading = true
+        this.$store.dispatch('transaction/commitTransaction', {
+          version: '1',
+          data: {
+            xaTransactionID: this.$store.getters.transactionID,
+            paths: this.$store.getters.XAPaths
+          }
+        }).then(() => {
+          this.loading = false
+          this.stepActive = 3
+        }).catch(_ => {
+          this.loading = false
+        })
+      }
     },
     rollbackTransaction() {
-      this.stepActive = 3
+      if (this.$store.getters.transactionID !== null && this.$store.getters.paths !== []) {
+        this.loading = true
+        this.$store.dispatch('transaction/rollbackTransaction', {
+          version: '1',
+          data: {
+            xaTransactionID: this.$store.getters.transactionID,
+            paths: this.$store.getters.XAPaths
+          }
+        }).then(() => {
+          this.loading = false
+          this.stepActive = 3
+        }).catch(() => {
+          this.loading = false
+        })
+      }
+    },
+    getXADetail() {
+      getXATransaction({
+        version: 1,
+        data: {
+          xaTransactionID: this.$store.getters.transactionID,
+          paths: this.$store.getters.XAPaths
+        }
+      }).then(response => {
+        if (response.errorCode !== 0) {
+          Message.error({ message: '获取事务详情失败，错误：' + response.message, center: true })
+        } else {
+          this.transactionDetail.push(response.data.xaTransaction)
+          this.transactionStep = response.data.xaTransaction.xaTransactionSteps
+          console.log(this.transactionDetail)
+        }
+      })
+    },
+    reloadTransaction() {
+      this.stepActive = 0
+      Object.assign(this.$data, this.$options.data())
+      location.reload()
     }
   }
 }

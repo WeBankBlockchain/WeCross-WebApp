@@ -190,5 +190,31 @@ module.exports = [
         })
       }
     }
+  }, {
+    url: '/trans/listTransactions',
+    type: 'get',
+    response: _ => {
+      return {
+        ...Mock.mock({
+          'version': 1,
+          'errorCode': 0,
+          'message': 'Success',
+          'data': {
+            'nextBlockNumber': 10,
+            'nextOffset': 20,
+            'transactions': [
+              {
+                'txHash': '0x11',
+                'blockNumber': 1
+              },
+              {
+                'txHash': '0x22',
+                'blockNumber': 2
+              }
+            ]
+          }
+        })
+      }
+    }
   }
 ]

@@ -20,6 +20,8 @@
             <tree-transfer
                 :title="['待选资源列表', '已选资源列表']"
                 filter
+                lazy
+                :lazyFn="loadResource"
                 mode="transfer"
                 :button_text="['选择资源', '取消选择']"
                 :from_data="fromData"
@@ -325,27 +327,7 @@ export default {
       paths: [],
       pathDic: {},
       chosenPaths: [],
-      fromData: [
-        {
-          id: '1',
-          pid: 0,
-          label: '一级 1',
-          children: [
-            {
-              id: '1-1',
-              pid: '1',
-              label: '二级 1-1',
-              children: []
-            },
-            {
-              id: '1-2',
-              pid: '1',
-              label: '二级 1-2',
-              children: []
-            }
-          ]
-        }
-      ],
+      fromData: [],
       toData: [],
       transactionForm: {
         transactionID: null,
@@ -371,6 +353,11 @@ export default {
       console.log('from', fromData)
       console.log('to', toData)
     },
+    loadResource(node, resolve, from) {
+      console.log(node)
+      console.log(resolve)
+      console.log(from)
+    },
     getPaths() {
       listChains().then(response => {
         const chainList = response.data.data
@@ -378,7 +365,7 @@ export default {
           this.fromData.push({
             id: chainListKey,
             pid: 0,
-            label: chainList[chainListKey].zone + chainList[chainListKey].chain,
+            label: chainList[chainListKey].zone + '.' + chainList[chainListKey].chain,
             children: []
           })
         }
@@ -415,8 +402,6 @@ export default {
       return item.value.indexOf(query) > -1
     },
     startTransaction() {
-      console.log('fromData', this.fromData)
-      console.log('toData', this.toData)
       this.$refs['transactionForm'].validate(validate => {
         if (this.chosenPaths == null || this.chosenPaths.length < 1) {
           this.$message({

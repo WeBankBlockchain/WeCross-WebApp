@@ -1,30 +1,48 @@
 <template>
   <div class="app-container">
-    <el-row style="margin-top:20px;">
-      <el-card class="box-card">
-        <ChainExplorer></ChainExplorer>
-      </el-card>
+    <el-row :gutter="30">
+      <el-col :span="5">
+        <ChainExplorer @chain-click='onChainClick'></ChainExplorer>
+      </el-col>
+      <el-col :span="18">
+        <el-tabs>
+          <el-tab-pane label="资源" name="first">
+            <ResourceExplorer :chain='chainPath' :pageSize=10></ResourceExplorer>
+          </el-tab-pane>
+          <el-tab-pane label="交易" name="second">
+            <TransactionExplorer :chain='chainPath' :pageSize=10></TransactionExplorer>
+          </el-tab-pane>
+        </el-tabs>
+      </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
 import ChainExplorer from '@/components/ChainExplorer'
+import ResourceExplorer from '@/components/ResourceExplorer'
+import TransactionExplorer from '@/components/TransactionExplorer'
 
 export default {
   name: 'ChainDeploy',
   components: {
-    ChainExplorer
+    ChainExplorer,
+    ResourceExplorer,
+    TransactionExplorer
   },
   props: {},
   data() {
     return {
-      chains: []
+      chainPath: ''
     }
   },
   created() {},
   mounted() {},
-  methods: {}
+  methods: {
+    onChainClick(path) {
+      this.chainPath = path
+    }
+  }
 }
 </script>
 

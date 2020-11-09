@@ -14,7 +14,7 @@ import {
 } from '@/api/conn'
 
 export default {
-  name: 'Explorer',
+  name: 'ChainExplorer',
   props: ['keyword', 'selected', 'current'],
   data: function() {
     return {

@@ -2,19 +2,19 @@
   <div class="app-container">
     <el-row style="margin-top:20px;">
       <el-card class="box-card">
-        <Explorer></Explorer>
+        <ChainExplorer></ChainExplorer>
       </el-card>
     </el-row>
   </div>
 </template>
 
 <script>
-import Explorer from '@/components/Explorer'
+import ChainExplorer from '@/components/ChainExplorer'
 
 export default {
   name: 'ChainDeploy',
   components: {
-    Explorer
+    ChainExplorer
   },
   props: {},
   data() {

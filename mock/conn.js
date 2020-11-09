@@ -100,5 +100,19 @@ module.exports = [{
         }
       }
     }
+  }, {
+    url: '/conn/listZones',
+    type: 'get',
+    response: param => {
+      return {
+        'version': '1',
+        'errorCode': 0,
+        'message': 'success',
+        data: {
+          size: 10,
+          "data|10": ["@id"],
+        }
+      }
+    }
   }
 ]

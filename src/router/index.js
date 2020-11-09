@@ -111,7 +111,7 @@ export const constantRoutes = [
     component: Layout,
     name: 'ChainAdmin',
     redirect: '/chainAdmin/routerManage',
-    meta: { title: '区块链管理', icon: 'el-icon-menu' },
+    meta: { title: '区块链管理', icon: 'el-icon-s-grid' },
     children: [
       {
         path: 'chainManage',

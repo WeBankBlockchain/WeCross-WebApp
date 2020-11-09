@@ -23,33 +23,38 @@ style="float: right;"
         </el-row>
         <el-row>
           <el-table ref="singleTable" :data="chains" element-loading-text="加载中..." fit>
-            <el-table-column label="区块链路径" min-width=40>
+            <el-table-column type="expand">
+              <!--
+              <template slot-scope="item">
+                <el-form label-position="left" class="demo-table-expand">
+
+                  <el-form-item v-for="(propItem, propName) in item.row.properties" v-bind:label="propName">
+                    <span>{{ propItem }}</span>
+                  </el-form-item>
+
+                </el-form>
+              </template>
+              -->
+            </el-table-column>
+            <el-table-column label="区块链路径">
               <template slot-scope="item">
                 {{ item.row.zone }}.{{ item.row.chain}}
               </template>
             </el-table-column>
-            <el-table-column label="类型" min-width=30>
+            <el-table-column label="类型">
               <template slot-scope="item">
                 {{ item.row.type }}
               </template>
             </el-table-column>
-            <el-table-column label="块高" min-width=30>
+            <el-table-column label="块高">
               <template slot-scope="item">
                 {{ item.row.blockNumber }}
-              </template>
-            </el-table-column>
-            <el-table-column label="属性" min-width=100>
-              <template slot-scope="item">
-                <li style="list-style-type:none" v-for="(propItem, propName) in item.row.properties">
-                  {{ propName }}:{{ propItem }}
-                </li>
               </template>
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="item">
                 <el-button-group>
-                  <el-button plain icon="el-icon-edit-outline">调用</el-button>
-                  <el-button plain icon="el-icon-magic-stick">发起事务</el-button>
+                  <el-button plain icon="el-icon-magic-stick">资源浏览</el-button>
                   <el-button plain icon="el-icon-upload2">部署资源</el-button>
                   <el-button plain icon="el-icon-minus" @click="removeChain(item.row.zone, item.row.chain)">断开</el-button>
                 </el-button-group>

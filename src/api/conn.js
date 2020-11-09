@@ -31,3 +31,11 @@ export function listChains(params) {
     params
   })
 }
+
+export function listZones(params) {
+  return request({
+    url: '/conn/listZones',
+    method: 'get',
+    params
+  })
+}

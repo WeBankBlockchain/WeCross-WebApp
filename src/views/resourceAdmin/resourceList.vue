@@ -148,9 +148,9 @@ export default {
   methods: {
     fetchChainTypeData() {
       listChains().then(response => {
-        this.chainList = response.data.chains
+        this.chainList = response.data.data
         for (const chainListKey of this.chainList) {
-          this.chainType.push(chainListKey.path)
+          this.chainType.push(chainListKey.zone + '.' + chainListKey.chain)
         }
         this.chainType = this.chainType.filter(uniqueFilter).sort()
       })

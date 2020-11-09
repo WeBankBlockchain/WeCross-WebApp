@@ -17,28 +17,17 @@
       <el-row style="margin-top: 15px;" v-if="stepActive === 0">
         <el-card header="开启事务">
           <el-row :gutter="24">
-            <tree-transfer
-                :title="['待选资源列表', '已选资源列表']"
-                filter
-                lazy
-                :lazyFn="loadResource"
-                mode="transfer"
-                :button_text="['选择资源', '取消选择']"
-                :from_data="fromData"
-                :to_data="toData"
-                @addBtn="addBtn"
-                width="100%"></tree-transfer>
-            <!--            <el-col style="text-align: center">-->
-            <!--              <el-transfer-->
-            <!--                  filterable-->
-            <!--                  :filter-method="filterMethod"-->
-            <!--                  filter-placeholder="请输入资源"-->
-            <!--                  :button-texts="['取消','选择']"-->
-            <!--                  :titles="['待选资源列表', '已选资源列表']"-->
-            <!--                  v-model="chosenPaths"-->
-            <!--                  :data="paths">-->
-            <!--              </el-transfer>-->
-            <!--            </el-col>-->
+            <el-col style="text-align: center">
+              <el-transfer
+                  filterable
+                  :filter-method="filterMethod"
+                  filter-placeholder="请输入资源"
+                  :button-texts="['取消','选择']"
+                  :titles="['待选资源列表', '已选资源列表']"
+                  v-model="chosenPaths"
+                  :data="paths">
+              </el-transfer>
+            </el-col>
           </el-row>
           <el-divider>完成资源路径选择</el-divider>
           <el-row style="margin-top: 20px">
@@ -148,13 +137,13 @@
                         <span>{{ props.row.path }}</span>
                       </el-form-item>
                       <el-form-item label="交易哈希：">
-                        <span>{{ props.row.hash }}</span>
+                        <span>{{ props.row.hash || 'null' }}</span>
                       </el-form-item>
                       <el-form-item label="调用方法：">
                         <span>{{ props.row.method }}</span>
                       </el-form-item>
                       <el-form-item label="方法参数：">
-                        <span>{{ props.row.args }}</span>
+                        <span>{{ props.row.args || 'null' }}</span>
                       </el-form-item>
                       <el-form-item label="交易时间戳：">
                         <span>{{ props.row.timestamp }}</span>
@@ -240,13 +229,13 @@
                           <span>{{ step.path }}</span>
                         </el-form-item>
                         <el-form-item label="交易哈希：">
-                          <span>{{ step.hash }}</span>
+                          <span>{{ step.hash || 'null' }}</span>
                         </el-form-item>
                         <el-form-item label="调用方法：">
                           <span>{{ step.method }}</span>
                         </el-form-item>
                         <el-form-item label="方法参数：">
-                          <span>{{ step.args }}</span>
+                          <span>{{ step.args || 'null' }}</span>
                         </el-form-item>
                         <el-form-item label="交易时间戳：">
                           <span>{{ step.timestamp }}</span>
@@ -306,19 +295,15 @@
 
 <script>
 import TransactionForm from '@/views/transactionAdmin/components/TransactionForm'
-// import { getResourceList } from '@/api/resource'
+import { getResourceList } from '@/api/resource'
 import { getXATransaction, sendTransaction } from '@/api/transaction'
 import { v4 as uuidV4 } from 'uuid'
 import { Message } from 'element-ui'
-import treeTransfer from 'el-tree-transfer'
-import { listChains } from '@/api/conn'
-import { uniqueFilter } from '@/utils'
 
 export default {
   name: 'XATransaction',
   components: {
-    TransactionForm,
-    treeTransfer
+    TransactionForm
   },
   data() {
     return {
@@ -350,49 +335,19 @@ export default {
   mounted() {
   },
   methods: {
-    addBtn(fromData, toData, obj) {
-      console.log('from', fromData)
-      console.log('this.from', this.fromData)
-      console.log('to', toData)
-      console.log('this.to', this.toData)
-      this.fromData = fromData
-      this.toData = toData
-    },
-    loadResource(node, resolve, from) {
-      console.log(node)
-      console.log(resolve)
-      console.log(from)
-    },
     getPaths() {
-      listChains().then(response => {
-        const chainList = response.data.data
-        let chainTypeList = []
-        for (const chainListKey in chainList) {
-          chainTypeList.push(chainList[chainListKey].zone + '.' + chainList[chainListKey].chain)
-        }
-        chainTypeList = chainTypeList.filter(uniqueFilter).sort()
-        for (const chainTypeListKey in chainTypeList) {
-          this.fromData.push({
-            id: chainTypeListKey,
-            pid: 0,
-            label: chainTypeList[chainTypeListKey],
-            children: []
-          })
-          this.pathDic[chainTypeListKey] = chainTypeList[chainTypeListKey]
-        }
-      })
-      // getResourceList(null, { 'version': '1', 'data': {}})
-      //   .then(response => {
-      //     const resourceList = response.data.resourceDetails
-      //     for (const resourceListKey in resourceList) {
-      //       this.paths.push({
-      //         label: resourceList[resourceListKey].path,
-      //         key: resourceListKey,
-      //         value: resourceList[resourceListKey].path
-      //       })
-      //       this.pathDic[resourceListKey] = resourceList[resourceListKey].path
-      //     }
-      //   })
+      getResourceList(null, { 'version': '1', 'data': {}})
+        .then(response => {
+          const resourceList = response.data.resourceDetails
+          for (const resourceListKey in resourceList) {
+            this.paths.push({
+              label: resourceList[resourceListKey].path,
+              key: resourceListKey,
+              value: resourceList[resourceListKey].path
+            })
+            this.pathDic[resourceListKey] = resourceList[resourceListKey].path
+          }
+        })
     },
     creatUUID() {
       this.transactionForm.transactionID = uuidV4().replaceAll('-', '')
@@ -414,7 +369,7 @@ export default {
     },
     startTransaction() {
       this.$refs['transactionForm'].validate(validate => {
-        if (this.toData == null || this.toData.length < 1) {
+        if (this.chosenPaths == null || this.chosenPaths.length < 1) {
           this.$message({
             message: '开启事务前请先选择资源！', type: 'error', center: true
           })
@@ -423,8 +378,8 @@ export default {
         if (validate) {
           this.loading = true
           var chosenData = []
-          for (const data of this.toData) {
-            chosenData.push(this.pathDic[data.id])
+          for (const data of this.chosenPaths) {
+            chosenData.push(this.pathDic[data])
           }
           this.$store.dispatch('transaction/startTransaction', {
             version: '1',
@@ -443,21 +398,26 @@ export default {
     },
     execTransaction(transaction) {
       this.loading = true
+      const args = []
+      for (const arg of transaction.args) {
+        args.push(arg.value)
+      }
       sendTransaction({
         version: '1',
-        path: 'test.test.test', // transaction.path,
+        path: transaction.path,
         data: {
           method: transaction.method,
-          args: transaction.args,
+          args: args,
           options: {
             'XA_TRANSACTION_ID': this.$store.getters.transactionID,
             'XA_TRANSACTION_SEQ': Date.now()
           }
         }
       }).then(response => {
-        if (response.errorCode !== 0) {
+        if (response.errorCode !== 0 || response.data.errorCode !== 0) {
+          this.submitResponse = null
           this.$message({
-            message: '执行事务失败，错误：' + response.message, type: 'error', center: true
+            message: '执行事务失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, type: 'error', center: true
           })
         } else {
           this.getXADetail()
@@ -480,6 +440,8 @@ export default {
           this.stepActive = 3
         }).catch(_ => {
           this.loading = false
+          // TODO: error page
+          this.stepActive = 3
         })
       }
     },
@@ -497,6 +459,8 @@ export default {
           this.stepActive = 3
         }).catch(() => {
           this.loading = false
+          // TODO: error page
+          this.stepActive = 3
         })
       }
     },
@@ -508,12 +472,14 @@ export default {
           paths: this.$store.getters.XAPaths
         }
       }).then(response => {
-        if (response.errorCode !== 0) {
+        if (response.errorCode !== 0 || response.data.xaResponse.status !== 0) {
           Message.error({
-            message: '获取事务详情失败，错误：' + response.message, center: true
+            message: '获取事务详情失败，错误：' + JSON.stringify(response.data.xaResponse, null, 4) || response.message, center: true, duration: 5000
           })
         } else {
-          this.transactionDetail.push(response.data.xaTransaction)
+          const detail = []
+          detail.push(response.data.xaTransaction)
+          this.transactionDetail = detail
           this.transactionStep = response.data.xaTransaction.xaTransactionSteps
         }
       })

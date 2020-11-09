@@ -1,30 +1,39 @@
 <template>
-  <div class="app-container">
-    <el-row style="margin-top:20px;">
-      <el-card class="box-card">
-        <ChainExplorer></ChainExplorer>
-      </el-card>
-    </el-row>
-  </div>
+  <el-container>
+    <el-aside>
+      <ChainExplorer @chain-click='onChainClick'></ChainExplorer>
+    </el-aside>
+    <el-container>
+      <el-main>
+        <ResourceExplorer :chain='chainPath'></ResourceExplorer>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <script>
 import ChainExplorer from '@/components/ChainExplorer'
+import ResourceExplorer from '@/components/ResourceExplorer'
 
 export default {
   name: 'ChainDeploy',
   components: {
-    ChainExplorer
+    ChainExplorer,
+    ResourceExplorer
   },
   props: {},
   data() {
     return {
-      chains: []
+      chainPath: ''
     }
   },
   created() {},
   mounted() {},
-  methods: {}
+  methods: {
+    onChainClick(path) {
+      this.chainPath = path
+    }
+  }
 }
 </script>
 

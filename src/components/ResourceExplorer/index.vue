@@ -1,0 +1,129 @@
+<template>
+  <div>
+    <el-table ref="singleTable" :data="resources" element-loading-text="Loading" fit highlight-current-row>
+      <el-table-column label="资源路径">
+        <template slot-scope="scope">
+          {{ scope.row.path }}
+        </template>
+      </el-table-column>
+      <el-table-column label="资源类型">
+        <template slot-scope="scope">
+          {{ scope.row.stubType }}
+        </template>
+      </el-table-column>
+      <el-table-column label="校验码">
+        <template slot-scope="scope">
+          {{ scope.row.checksum || 'null' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="属性">
+        <template slot-scope="scope">
+          <span>{{ scope.row.properties }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+background
+:page-size=10
+layout="prev, pager, next"
+:total="total"
+style="float: right;"
+      :current-page="page"
+@prev-click="prevPage"
+@next-click="nextPage"
+@current-change="setPage">
+    </el-pagination>
+  </div>
+</template>
+
+<script>
+import {
+  getResourceList
+} from '@/api/resource'
+
+export default {
+  name: 'ResourceExplorer',
+  props: ['chain'],
+  data: function() {
+    return {
+      total: 0,
+      page: 1,
+      resources: [],
+      queryStatus: {}
+    }
+  },
+  watch: {
+    chain: function(val) {
+      this.refresh()
+    }
+  },
+  methods: {
+    getQueryStatus(path) {
+      var status = this.queryStatus[path]
+      if (status === undefined) {
+        this.queryStatus[path] = {
+          page: 0
+        }
+
+        status = this.queryStatus[path]
+      }
+
+      return status
+    },
+    refresh() {
+      var path = this.chain
+      var status = this.getQueryStatus(path)
+
+      getResourceList({
+        ignoreRemote: false,
+        path: path,
+        offset: status.page * 10,
+        size: 10
+      }).then((response) => {
+        if (response.errorCode === 0) {
+          this.resources = response.data.resourceDetails
+          this.total = response.data.total
+        } else {
+          this.$message({
+            type: 'error',
+            message: '查询交易列表失败, errorCode: ' + response.errorCode
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+        this.$message({
+          type: 'error',
+          message: '网络异常'
+        })
+      })
+    },
+    prevPage() {
+      var status = this.getQueryStatus(this.chain)
+
+      --status.page
+      this.page = status.page
+
+      this.refresh()
+    },
+    nextPage() {
+      var status = this.getQueryStatus(this.chain)
+
+      ++status.page
+      this.page = status.page
+
+      this.refresh()
+    },
+    setPage(value) {
+      var status = this.getQueryStatus(this.chain)
+
+      status.page = value - 1
+      this.page = status.page
+
+      this.refresh()
+    }
+  }
+}
+</script>
+
+<style>
+</style>

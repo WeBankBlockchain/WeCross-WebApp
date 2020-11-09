@@ -1,7 +1,6 @@
 const Mock = require('mockjs')
 
-module.exports = [
-  {
+module.exports = [{
     url: '/sys/listResources',
     type: 'post',
     response: config => {
@@ -11,7 +10,7 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            total: 10,
+            total: 1000,
             'resourceDetails|10': [{
               id: '@id',
               path: '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\']).@word(3,5)',

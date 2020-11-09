@@ -1,6 +1,14 @@
 <template>
   <div>
-    <el-tree :props="props" :load="loadData" check-strictly lazy show-checkbox>
+    <el-tree
+:props="props"
+:load="loadData"
+@node-click='onChainClick'
+@check-change='onChainSelect'
+ref="tree"
+      check-strictly
+lazy
+show-checkbox>
     </el-tree>
   </div>
 </template>
@@ -22,14 +30,11 @@ export default {
         label: 'name',
         children: 'children',
         isLeaf: 'hasChildren'
-      },
-      offsets: {}
+      }
     }
   },
   methods: {
     loadData(node, resolve) {
-      console.log(node)
-
       if (node.level === 0) {
         // query the zones
         listZones({
@@ -43,6 +48,7 @@ export default {
                 name: zone,
                 children: [],
                 hasChildren: false,
+                type: 'zone',
                 key: zone
               })
             }
@@ -75,12 +81,12 @@ export default {
             var chains = []
             for (var index in response.data.data) {
               var chain = response.data.data[index]
-              console.log(chain)
 
               chains.push({
                 name: chain.zone + '.' + chain.chain,
                 children: [],
-                hasChildren: false,
+                hasChildren: true,
+                type: 'chain',
                 key: chain.zone + '.' + chain.chain
               })
             }
@@ -98,14 +104,25 @@ export default {
             message: '网络异常'
           })
         })
-      } else if (node.level === 2) {
-        // second level, query the resource
-        // var chain = node.data.key
-        // var zone = node.parent.data.key
-
-        // query the resources
-        return resolve([])
       }
+    },
+    onChainClick(data, node, self) {
+      console.log(data, node, self)
+      if (data.type === 'zone') {
+        this.$emit('zone-click', data.key)
+      } else if (data.type === 'chain') {
+        this.$emit('chain-click', data.key)
+      }
+    },
+    onChainSelect(data, isChecked, isChildrenChecked) {
+      var selectedItems = this.$refs.tree.getCheckedNodes(false, true)
+
+      var paths = []
+      for (var selectedItem in selectedItems) {
+        paths.push(selectedItem.data.key)
+      }
+
+      this.$emit('path-selected', paths)
     }
   }
 }

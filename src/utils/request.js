@@ -58,10 +58,9 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('error message: ' + error.response)
-    const status = error.toString().match(/\d{3}/)[0]
+    const status = error.response.status
     switch (status) {
-      case '401' :
+      case 401 :
         MessageBox.confirm('您的登录态已超时，请重新登录', '超时提醒', {
           confirmButtonText: '重登录',
           cancelButtonText: '取消',
@@ -72,25 +71,31 @@ service.interceptors.response.use(
           })
         })
         break
-      case '400':
+      case 400:
         Message.error({
           message: '参数异常'
         })
         break
-      case '500':
+      case 404:
+        Message.error({
+          message: '请求URL错误：' + error.message,
+          center: true,
+          duration: 5 * 1000
+        })
+        break
+      case 500:
         Message.error({
           message: '服务器异常'
         })
         break
       default:
-        console.log(status)
+        Message({
+          message: error.message,
+          type: 'error',
+          duration: 5 * 1000
+        })
     }
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    console.log('err: ' + error) // for debug
     return Promise.reject(error)
   }
 )

@@ -48,7 +48,7 @@ module.exports = [
       return {
         ...Mock.mock({
           version: 1,
-          errorCode: 1,
+          errorCode: 0,
           message: 'success',
           data: {
             status: -1,
@@ -159,7 +159,7 @@ module.exports = [
             'receipt': {
               'errorCode': 0,
               'errorMessage': 'Success',
-              'hash': '0x4342748923789',
+              'hash': '0x@word(9,15)',
               'extraHashes': ['xxx', 'xxx'],
               'blockNumber': 123,
               'restult': ['xxx', 'XXX']
@@ -196,23 +196,23 @@ module.exports = [
     response: _ => {
       return {
         ...Mock.mock({
-            "version": 1,
-            "errorCode": 0,
-            "message": "Success",
-            "data": {
-              "nextBlockNumber": 10,
-              "nextOffset": 20,
-              "transactions": [
-                {
-                  "txHash": "0x11",
-                  "blockNumber": 1
-                },
-                {
-                  "txHash": "0x22",
-                  "blockNumber": 2
-                }
-              ]
-            }
+          'version': 1,
+          'errorCode': 0,
+          'message': 'Success',
+          'data': {
+            'nextBlockNumber': 10,
+            'nextOffset': 20,
+            'transactions': [
+              {
+                'txHash': '0x11',
+                'blockNumber': 1
+              },
+              {
+                'txHash': '0x22',
+                'blockNumber': 2
+              }
+            ]
+          }
         })
       }
     }

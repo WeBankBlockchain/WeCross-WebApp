@@ -24,7 +24,7 @@
     </el-table>
     <el-pagination
 background
-:page-size=10
+:page-size='pageSize'
 layout="prev, pager, next"
 :total="total"
 style="float: right;"
@@ -43,7 +43,7 @@ import {
 
 export default {
   name: 'ResourceExplorer',
-  props: ['chain'],
+  props: ['chain', 'pageSize'],
   data: function() {
     return {
       total: 0,
@@ -77,8 +77,8 @@ export default {
       getResourceList({
         ignoreRemote: false,
         path: path,
-        offset: status.page * 10,
-        size: 10
+        offset: status.page * this.pageSize,
+        size: this.pageSize
       }).then((response) => {
         if (response.errorCode === 0) {
           this.resources = response.data.resourceDetails
@@ -101,7 +101,7 @@ export default {
       var status = this.getQueryStatus(this.chain)
 
       --status.page
-      this.page = status.page
+      this.page = status.page + 1
 
       this.refresh()
     },
@@ -109,7 +109,7 @@ export default {
       var status = this.getQueryStatus(this.chain)
 
       ++status.page
-      this.page = status.page
+      this.page = status.page + 1
 
       this.refresh()
     },
@@ -117,7 +117,7 @@ export default {
       var status = this.getQueryStatus(this.chain)
 
       status.page = value - 1
-      this.page = status.page
+      this.page = status.page + 1
 
       this.refresh()
     }

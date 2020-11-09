@@ -5,7 +5,7 @@
     </el-aside>
     <el-container>
       <el-main>
-        <ResourceExplorer :chain='chainPath'></ResourceExplorer>
+        <ResourceExplorer :chain='chainPath' :pageSize=10></ResourceExplorer>
       </el-main>
     </el-container>
   </el-container>

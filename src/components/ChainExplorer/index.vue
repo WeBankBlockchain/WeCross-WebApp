@@ -23,7 +23,7 @@ import {
 
 export default {
   name: 'ChainExplorer',
-  props: ['keyword', 'selected', 'current'],
+  props: [],
   data: function() {
     return {
       props: {

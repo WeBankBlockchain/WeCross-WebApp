@@ -12,6 +12,10 @@
       <el-table-column prop="properties" label="更多属性">
       </el-table-column>
     </el-table>
+    <el-button-group style="float: right;">
+      <el-button plain icon="el-icon-edit" @click="prevPage">上一页</el-button>
+      <el-button plain icon="el-icon-minus" @click="nextPage">下一页</el-button>
+    </el-button-group>
   </div>
 </template>
 
@@ -22,12 +26,17 @@ import {
 
 export default {
   name: 'TransactionExplorer',
-  props: ['chain'],
+  props: ['chain', 'pageSize'],
   data: function() {
     return {
+      page: 1,
       transactions: [],
-      resourceTotal: 0,
       queryStatus: {}
+    }
+  },
+  watch: {
+    chain: function(val) {
+      this.refresh()
     }
   },
   methods: {
@@ -35,8 +44,8 @@ export default {
       var status = this.queryStatus[path]
       if (status === undefined) {
         this.queryStatus[path] = {
-          transactionIndex: 0,
-          transactionSteps: [{
+          index: 0,
+          steps: [{
             offset: 0,
             blockNumber: -1
           }]
@@ -47,12 +56,16 @@ export default {
 
       return status
     },
-    refreshTransaction() {
+    refresh() {
       var path = this.chain
       var status = this.getQueryStatus(path)
+      var step = status.steps[status.index]
 
       listTransactions({
-        // status.transactionSteps[status.transactionIndex]
+        path: path,
+        blockNumber: step.blockNumber,
+        offset: step.offset,
+        size: this.pageSize
       }).then((response) => {
         if (typeof response.errorCode === undefined || response.errorCode !== 0) {
           this.$message({
@@ -63,7 +76,7 @@ export default {
         }
 
         if (!(response.data.nextOffset === -1 || response.data.nextBlockNumber === -1)) {
-          status.transactionSteps.push({
+          status.steps.push({
             offset: response.data.nextOffset,
             blockNumber: response.data.nextBlockNumber
           })
@@ -78,6 +91,26 @@ export default {
           message: '网络异常'
         })
       })
+    },
+    prevPage() {
+      var path = this.chain
+      var status = this.getQueryStatus(path)
+
+      if (status.index > 0) {
+        --status.index
+      }
+
+      this.refresh()
+    },
+    nextPage() {
+      var path = this.chain
+      var status = this.getQueryStatus(path)
+
+      if (status.index + 1 < status.steps.length) {
+        ++status.index
+      }
+
+      this.refresh()
     }
   }
 }

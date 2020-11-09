@@ -5,7 +5,14 @@
     </el-aside>
     <el-container>
       <el-main>
-        <ResourceExplorer :chain='chainPath' :pageSize=10></ResourceExplorer>
+        <el-tabs>
+            <el-tab-pane label="资源" name="first">
+              <ResourceExplorer :chain='chainPath' :pageSize=10></ResourceExplorer>
+            </el-tab-pane>
+            <el-tab-pane label="交易" name="second">
+              <TransactionExplorer :chain='chainPath' :pageSize=10></TransactionExplorer>
+            </el-tab-pane>
+          </el-tabs>
       </el-main>
     </el-container>
   </el-container>
@@ -14,12 +21,14 @@
 <script>
 import ChainExplorer from '@/components/ChainExplorer'
 import ResourceExplorer from '@/components/ResourceExplorer'
+import TransactionExplorer from '@/components/TransactionExplorer'
 
 export default {
   name: 'ChainDeploy',
   components: {
     ChainExplorer,
-    ResourceExplorer
+    ResourceExplorer,
+    TransactionExplorer
   },
   props: {},
   data() {

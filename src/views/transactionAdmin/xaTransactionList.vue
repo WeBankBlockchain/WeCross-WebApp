@@ -3,19 +3,17 @@
     <el-row style="margin-top: 20px">
       <el-card>
         <el-row :gutter="18">
-          <el-col :span="6">
-            <el-button plain type="primary" icon="el-icon-refresh" @click="refresh">刷新</el-button>
-          </el-col>
+          <el-button plain type="primary" icon="el-icon-refresh" @click="refresh">刷新</el-button>
         </el-row>
         <el-row :gutter="20">
-          <el-table ref="singleTable" :data="xaList" element-loading-text="加载中..." fit highlight-current-row @expand-change="onExpandChange">
-            <el-table-column prop="date" label="开始时间">
+          <el-table ref="singleTable" :data="xaList" element-loading-text="加载中..." fit highlight-current-row @expand-change="onExpandChange" style="width: 100%">
+            <el-table-column label="开始时间">
               <template slot-scope="scope">
                 <span>{{ scope.row.timestamp | formatDate }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="username" label="账户"> </el-table-column>
-            <el-table-column prop="xaTransactionID" label="ID"> </el-table-column>
+            <el-table-column width="400" prop="xaTransactionID" label="ID"> </el-table-column>
             <el-table-column prop="status" label="状态"> </el-table-column>
             <el-table-column label="锁定资源">
               <template slot-scope="scope">
@@ -25,53 +23,57 @@
             <el-table-column type="expand" label="步骤">
               <template slot-scope="scope">
                 <el-card class="box-card">
-                <el-divider></el-divider>
-                <el-form class="table-expand">
-                  <div v-for="step in xaTransaction.xaTransactionSteps">
-                      <el-form-item label="日期：">
-                        <span>{{ step.timestamp | formatDate }}</span>
-                      </el-form-item>
-                      <el-form-item label="序列：">
-                        <span>{{ step.xaTransactionSeq }}</span>
-                      </el-form-item>
-                      <el-form-item label="账户：">
-                        <span>{{ step.username }}</span>
-                      </el-form-item>
-                      <el-form-item label="资源：">
-                        <span>{{ step.path }}</span>
-                      </el-form-item>
-                      <el-form-item label="方法：">
-                        <span>{{ step.method }}</span>
-                      </el-form-item>
-                      <!-- <el-form-item label="参数：">
-                          <span>{{ step.args }}</span>
-                      </el-form-item> -->
-                    <el-divider></el-divider>
-                  </div>
-                  <template>
-                    <el-form-item label="提交时间：" v-if="scope.row.status === 'committed'">
-                      <span>{{ xaTransaction.commitTimestamp | formatDate }}</span>
-                    </el-form-item>
-                    <el-form-item label="回滚时间：" v-if="scope.row.status === 'rolledback'">
-                      <span>{{ xaTransaction.rollbackTimestamp | formatDate }}</span>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button type="primary" v-if="scope.row.status === 'processing'" @click="onExecXATransaction">继续执行</el-button>
-                    </el-form-item>
-                  </template>
-                </el-form>
+                  <el-form inline class="table-expand">
+                    <el-table ref="singleTable" :data="xaTransaction.xaTransactionSteps" element-loading-text="加载中..." fit highlight-current-row>
+                      <el-table-column label="日期">
+                        <template slot-scope="scope">
+                          <span>{{ scope.row.timestamp | formatDate }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="xaTransactionSeq" label="序号"> </el-table-column>
+                      <el-table-column prop="username" label="账户"> </el-table-column>
+                      <el-table-column prop="path" label="资源"> </el-table-column>
+                      <el-table-column prop="method" label="方法"> </el-table-column>
+                    </el-table>
+                    <el-row>
+                      <br>
+                      <template>
+                        <el-form-item label="提交时间：" v-if="scope.row.status === 'committed'">
+                          <span>{{ xaTransaction.commitTimestamp | formatDate }}</span>
+                        </el-form-item>
+                        <el-form-item label="回滚时间：" v-if="scope.row.status === 'rolledback'">
+                          <span>{{ xaTransaction.rollbackTimestamp | formatDate }}</span>
+                        </el-form-item>
+                        <el-form-item>
+                          <el-button type="primary" v-if="scope.row.status === 'processing'" @click="onExecXATransaction(xaTransaction.xaTransactionID, xaTransaction.paths)">继续执行</el-button>
+                        </el-form-item>
+                      </template>
+                    </el-row>
+                  </el-form>
                 </el-card>
               </template>
             </el-table-column>
           </el-table>
         </el-row>
         <el-row :gutter="20" style="margin-top: 20px;text-align: center;">
-          <el-pagination
-            @next-click="handleNextClick"
-            @prev-click	="handlePrevClick"
-            :current-page="currentPage"
-            layout="prev, pager, next"
-          ></el-pagination>
+          <el-button
+            :disabled="preClickDisable"
+            size="small"
+            type="primary"
+            plain
+            icon="el-icon-back"
+            @click="handlePrevClick"
+            >上一页</el-button
+          >
+          <el-button
+            :disabled="nextClickDisable"
+            size="small"
+            type="primary"
+            plain
+            icon="el-icon-right"
+            @click="handleNextClick"
+            >下一页</el-button
+          >
         </el-row>
       </el-card>
     </el-row>
@@ -99,8 +101,10 @@ export default {
       tableSize: 10,
       currentPage: 1,
       isFinished: false,
-      offsetsCache: null,
-      offsets: {},
+      offsetsCache: [{}],
+      offsets: new Map(),
+      preClickDisable: true,
+      nextClickDisable: false,
       xaList: [
         {
           xaTransactionID: null,
@@ -138,16 +142,17 @@ export default {
     resetAllData() {
       this.currentPage = 1
       this.isFinished = false
-      this.offsetsCache = new Map()
-      this.offsets = {}
+      this.offsetsCache = [{}]
+      this.offsets = new Map()
       this.xaList = []
       this.xaTransaction = null
+      this.preClickDisable = true
+      this.nextClickDisable = false
     },
     refresh() {
       this.resetAllData()
-      this.updateCurrentOffsets()
+      console.log('[offset0] status => offsets: ' + JSON.stringify(this.offsets))
       this.fetchXATransactionList()
-      this.offsetsCache.set(this.currentPage + 1, this.offsets)
     },
     fetchXATransactionList() {
       this.xaList = []
@@ -171,7 +176,19 @@ export default {
         this.isFinished = response.data.finished
         this.offsets = response.data.nextOffsets
         this.xaList = response.data.xaList
+
+        // update offsets cache
+        this.offsetsCache[this.currentPage] = this.offsets
+
+        // update disable button
+        this.updateDisableButtonStatus()
+
+        console.log('[after listXATransactions] status => isFinished:', this.isFinished + ', offsets: ' + JSON.stringify(this.offsets) + ', offsetsCache: ' + JSON.stringify(this.offsetsCache) + ', preClickDisable:', this.preClickDisable + ', nextClickDisable:', this.nextClickDisable)
       })
+    },
+    onExecXATransaction(xaTID, xaPaths) {
+      this.$store.commit('transaction/SET_TRANSACTION', { transactionID: xaTID, paths: xaPaths })
+      this.$router.push({ path: '/transactionAdmin/xaTransaction' })
     },
     onExpandChange(row, expandedRows) {
       this.fetchXATransaction(row.xaTransactionID, row.paths)
@@ -204,7 +221,6 @@ export default {
         this.currentPage = this.currentPage + 1
         this.updateCurrentOffsets()
         this.fetchXATransactionList()
-        this.updateOffsetsCache()
       }
     },
     handlePrevClick() {
@@ -213,16 +229,35 @@ export default {
       this.fetchXATransactionList()
     },
     updateCurrentOffsets() {
-      this.offsets = this.offsetsCache.get(this.currentPage)
+      this.offsets = this.offsetsCache[this.currentPage - 1]
       console.log('current page: ' + this.currentPage + ' offsets: ' + JSON.stringify(this.offsets))
     },
-    updateOffsetsCache() {
-      this.offsetsCache.set(this.currentPage, this.offsets)
-      console.log('current page: ' + this.currentPage + ' offsets: ' + JSON.stringify(this.offsets))
+    updateDisableButtonStatus() {
+      console.log(
+        ' update button status, current page: ' +
+          this.currentPage +
+          ' offsets: ' +
+          JSON.stringify(this.offsets)
+      )
+
+      // next page
+      if (this.isFinished) {
+        this.nextClickDisable = true
+      } else {
+        this.nextClickDisable = false
+      }
+
+      // prev page
+      if (this.currentPage > 1) {
+        this.preClickDisable = false
+      } else {
+        this.preClickDisable = true
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+
 </style>

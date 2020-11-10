@@ -42,7 +42,7 @@ export function listXATransactions(data) {
 
 export function call(data) {
   return request({
-    url: path2Url(data.path) + '/call',
+    url: 'resource' + path2Url(data.path) + '/call',
     method: 'post',
     data: data
   })
@@ -50,7 +50,7 @@ export function call(data) {
 
 export function sendTransaction(data) {
   return request({
-    url: 'resource/' + path2Url(data.path) + '/sendTransaction',
+    url: 'resource' + path2Url(data.path) + '/sendTransaction',
     method: 'post',
     data: data
   })

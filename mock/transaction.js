@@ -11,7 +11,7 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            status: -1,
+            status: 0,
             'chainErrorMessages|2': [{
               chain: '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\'])',
               message: 'error'
@@ -31,7 +31,7 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            status: -1,
+            status: 0,
             'chainErrorMessages|2': [{
               chain: '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\'])',
               message: 'error'
@@ -51,7 +51,7 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            status: -1,
+            status: 0,
             'chainErrorMessages|2': [{
               chain: '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\'])',
               message: 'error'
@@ -72,7 +72,7 @@ module.exports = [
           message: 'success',
           data: {
             xaResponse: {
-              status: -1,
+              status: 0,
               'chainErrorMessages|2': [{
                 chain: '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\'])',
                 message: 'error'
@@ -149,7 +149,7 @@ module.exports = [
       }
     }
   }, {
-    url: '/test/test/test/sendTransaction',
+    url: '/resource/test/test/test/sendTransaction',
     type: 'post',
     response: _ => {
       return {
@@ -158,20 +158,18 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            'receipt': {
-              'errorCode': 0,
-              'errorMessage': 'Success',
-              'hash': '0x@word(9,15)',
-              'extraHashes': ['xxx', 'xxx'],
-              'blockNumber': 123,
-              'restult': ['xxx', 'XXX']
-            }
+            'errorCode': 0,
+            'errorMessage': 'Success',
+            'hash': '0x@word(9,15)',
+            'extraHashes': ['xxx', 'xxx'],
+            'blockNumber': 123,
+            'restult': ['xxx', 'XXX']
           }
         })
       }
     }
   }, {
-    url: '/test/test/test/call',
+    url: '/resource/test/test/test/call',
     type: 'post',
     response: _ => {
       return {
@@ -180,14 +178,12 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            'receipt': {
-              'errorCode': 0,
-              'errorMessage': 'Success',
-              'hash': '0x4342748923789',
-              'extraHashes': ['xxx', 'xxx'],
-              'blockNumber': 123,
-              'restult': ['xxx', 'XXX']
-            }
+            'errorCode': 0,
+            'errorMessage': 'Success',
+            'hash': '0x4342748923789',
+            'extraHashes': ['xxx', 'xxx'],
+            'blockNumber': 123,
+            'restult': ['xxx', 'XXX']
           }
         })
       }
@@ -199,34 +195,34 @@ module.exports = [
       return {
         ...Mock.mock(
           {
-            "version": 1,
-            "errorCode": 0,
-            "message": "success",
-            "data": {
-              "path": "payment.bcos.hello",
-              "username": "hehe",
-              "blockNumber": 1,
-              "txHash": "0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39",
-              "xaTransactionID": "001",
-              "xaTransactionSeq": 1,
-              "method": "set",
-              "args": [
-                "0x11",
-                "0x22",
-                "0x33"
+            'version': 1,
+            'errorCode': 0,
+            'message': 'success',
+            'data': {
+              'path': 'payment.bcos.hello',
+              'username': 'hehe',
+              'blockNumber': 1,
+              'txHash': '0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39',
+              'xaTransactionID': '001',
+              'xaTransactionSeq': 1,
+              'method': 'set',
+              'args': [
+                '0x11',
+                '0x22',
+                '0x33'
               ],
-              "result": [
-                "0x11",
-                "0x22",
-                "0x33"
+              'result': [
+                '0x11',
+                '0x22',
+                '0x33'
               ],
-              "byProxy": true,
-              "txBytes": [
+              'byProxy': true,
+              'txBytes': [
                 0,
                 1,
                 0
               ],
-              "receiptBytes": [
+              'receiptBytes': [
                 0,
                 1,
                 0
@@ -242,23 +238,23 @@ module.exports = [
     response: _ => {
       return {
         ...Mock.mock({
-            "version": 1,
-            "errorCode": 0,
-            "message": "Success",
-            "data": {
-              "nextBlockNumber": 10,
-              "nextOffset": 20,
-              "transactions": [
-                {
-                  "txHash": "0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39",
-                  "blockNumber": 1
-                },
-                {
-                  "txHash": "0xf83b79144ad8beba846f720bd81fe1e8df3753e3d38d9e526665647ac807937a",
-                  "blockNumber": 2
-                }
-              ]
-            }
+          'version': 1,
+          'errorCode': 0,
+          'message': 'Success',
+          'data': {
+            'nextBlockNumber': 10,
+            'nextOffset': 20,
+            'transactions': [
+              {
+                'txHash': '0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39',
+                'blockNumber': 1
+              },
+              {
+                'txHash': '0xf83b79144ad8beba846f720bd81fe1e8df3753e3d38d9e526665647ac807937a',
+                'blockNumber': 2
+              }
+            ]
+          }
         })
       }
     }

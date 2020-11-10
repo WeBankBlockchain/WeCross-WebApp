@@ -206,15 +206,15 @@ export default {
         })
       } else {
         this.currentStep = this.currentStep - 1
-        this.transactionList = this.historyData[this.currentStep]
+        this.transactionList = this.historyData[this.currentStep - 1]
       }
       this.updateDisableButtonStatus()
     },
     handleNextClick() {
       console.log(' =>[next] click, currentStep: ' + this.currentStep)
-      if (this.currentStep + 1 < this.historyData.length) {
-        this.currentStep += 1
+      if (this.currentStep < this.historyData.length) {
         this.transactionList = this.historyData[this.currentStep]
+        this.currentStep += 1
         this.updateDisableButtonStatus()
       } else {
         this.doSearchOperation()
@@ -276,7 +276,7 @@ export default {
 
       listTransactions(params).then((resp) => {
         console.log(
-          '[listTransactions] params => ' +
+          ' listTransactions params => ' +
             JSON.stringify(params) +
             ' ,resp => ' +
             JSON.stringify(resp)
@@ -336,20 +336,32 @@ export default {
               properties: resp.data
             }
           }
-          console.log(' fetch all total txs: ' + txs.length)
+
+          console.log(
+            ' listTransactions => transactions length: ' + txs.length
+          )
 
           return txs
         }
 
         fetchAllTx(this.chainValue, resp.data.transactions)
           .then((response) => {
-            this.transactionList = response
             this.nextBlockNumber = resp.data.nextBlockNumber
             this.nextOffset = resp.data.nextOffset
+
+            if (response.length === 0) {
+              this.$message({
+                type: 'error',
+                message:
+                  '查询交易列表为空，查询参数: ' + JSON.stringify(params)
+              })
+              this.updateDisableButtonStatus()
+              return
+            }
+
+            this.transactionList = response
             this.historyData[this.currentStep] = response
             this.currentStep += 1
-
-            this.updateDisableButtonStatus()
 
             console.log(
               ' currentStep: ' +
@@ -361,8 +373,11 @@ export default {
                 ' ,data: ' +
                 JSON.stringify(resp.data)
             )
+
+            this.updateDisableButtonStatus()
           })
           .catch((err) => {
+            console.log(' An error occurred !')
             this.$message({ type: 'error', message: err.toString() })
           })
       })

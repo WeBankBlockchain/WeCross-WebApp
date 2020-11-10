@@ -132,13 +132,15 @@ module.exports = [
                 'xaTransactionID': '001',
                 'username': 'hehe',
                 'status': 'processing',
-                'timestamp': 8989889
+                'timestamp': 8989889,
+                'paths':['payment.bcos.hello','payment.bcos.hello','payment.bcos.hello']
               },
               {
                 'xaTransactionID': '002',
                 'username': 'hehe',
                 'status': 'committed',
-                'timestamp': 8989889
+                'timestamp': 8989889,
+                'paths':['payment.bcos.hello','payment.bcos.hello','payment.bcos.hello']
               }
             ]
 

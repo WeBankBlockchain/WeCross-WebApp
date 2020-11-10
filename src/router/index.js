@@ -148,12 +148,12 @@ export const constantRoutes = [
     path: '/transactionAdmin',
     component: Layout,
     name: 'TransactionAdmin',
-    redirect: 'transactionAdmin/callContract',
+    redirect: 'transactionAdmin/transaction',
     meta: { title: '交易管理', icon: 'el-icon-s-promotion' },
     children: [
       {
-        path: 'callContract',
-        component: () => import('@/views/transactionAdmin/callContract'),
+        path: 'transaction',
+        component: () => import('@/views/transactionAdmin/transaction'),
         meta: { title: '交易发起', icon: 'el-icon-s-opportunity' }
       },
       {

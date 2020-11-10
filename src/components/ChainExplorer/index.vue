@@ -1,16 +1,14 @@
 <template>
-  <div>
     <el-tree
 :props="props"
 :load="loadData"
 @node-click='onChainClick'
 @check-change='onChainSelect'
+node-key="key"
 ref="tree"
-      check-strictly
-lazy
-show-checkbox>
+highlight-current
+lazy>
     </el-tree>
-  </div>
 </template>
 
 <script>
@@ -23,7 +21,7 @@ import {
 
 export default {
   name: 'ChainExplorer',
-  props: [],
+  props: ['chain'],
   data: function() {
     return {
       props: {
@@ -31,6 +29,11 @@ export default {
         children: 'children',
         isLeaf: 'hasChildren'
       }
+    }
+  },
+  watch: {
+    chain: function(value) {
+      this.$refs['tree'].setCurrentKey(value)
     }
   },
   methods: {
@@ -43,7 +46,8 @@ export default {
         }).then(response => {
           if (response.errorCode === 0) {
             var zones = []
-            for (var zone in response.data.data) {
+            for (var index in response.data.data) {
+              var zone = response.data.data[index]
               zones.push({
                 name: zone,
                 children: [],
@@ -87,7 +91,8 @@ export default {
                 children: [],
                 hasChildren: true,
                 type: 'chain',
-                key: chain.zone + '.' + chain.chain
+                key: chain.zone + '.' + chain.chain,
+                data: chain
               })
             }
 
@@ -111,7 +116,7 @@ export default {
       if (data.type === 'zone') {
         this.$emit('zone-click', data.key)
       } else if (data.type === 'chain') {
-        this.$emit('chain-click', data.key)
+        this.$emit('chain-click', data.key, data.data)
       }
     },
     onChainSelect(data, isChecked, isChildrenChecked) {

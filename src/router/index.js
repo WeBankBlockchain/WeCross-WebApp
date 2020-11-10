@@ -107,25 +107,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/chainAdmin',
-    component: Layout,
-    name: 'ChainAdmin',
-    redirect: '/chainAdmin/routerManage',
-    meta: { title: '区块链管理', icon: 'el-icon-s-grid' },
-    children: [
-      {
-        path: 'chainManage',
-        component: () => import('@/views/chainAdmin/chainManage'),
-        meta: { title: '区块链浏览', icon: 'el-icon-share' }
-      },
-      {
-        path: 'chainDeploy',
-        component: () => import('@/views/chainAdmin/chainDeploy'),
-        meta: { title: '区块链部署', icon: 'el-icon-upload2' }
-      }
-    ]
-  },
-  {
     path: '/resourceAdmin',
     component: Layout,
     name: 'ResourceAdmin',
@@ -134,7 +115,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'resourceList',
-        component: () => import('@/views/resourceAdmin/resourceList'),
+        component: () => import('@/views/resourceAdmin/explorer'),
         meta: { title: '资源列表', icon: 'table' }
       },
       {

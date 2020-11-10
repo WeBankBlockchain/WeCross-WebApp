@@ -73,16 +73,6 @@
                 {{ item.row.method }}
               </template>
             </el-table-column>
-            <el-table-column label="参数" min-width="50" align="center">
-              <template slot-scope="item">
-                <li
-                  style="list-style-type:none"
-                  v-for="(propItem, propName) in item.row.params"
-                >
-                  {{ propName }}:{{ propItem }}
-                </li>
-              </template>
-            </el-table-column>
             <el-table-column label="交易回执" min-width="50" align="center">
               <template slot-scope="item">
                 <el-button
@@ -209,10 +199,10 @@ export default {
     },
     handlePrevClick() {
       console.log(' <=[pre] click, currentStep: ' + this.currentStep)
-      if (this.currentStep <= 1) {
+      if (this.currentStep <= 0) {
         this.$message({
           type: 'warning',
-          message: '历史记录显示完毕'
+          message: '回退完毕！'
         })
       } else {
         this.currentStep = this.currentStep - 1
@@ -227,12 +217,12 @@ export default {
         this.transactionList = this.historyData[this.currentStep]
         this.updateDisableButtonStatus()
       } else {
-        this.doSearchOperation(this.updateDisableButtonStatus())
+        this.doSearchOperation()
       }
     },
     handleFresh() {
       this.resetAllData()
-      this.refreshChainList(this.handleSearch)
+      this.refreshChainList(this.doSearchOperation)
     },
     handleClick(row) {
       console.log('properties => ' + JSON.stringify(row))
@@ -243,7 +233,7 @@ export default {
     },
     updateDisableButtonStatus() {
       console.log(
-        ' setButton status, nextBlk: ' +
+        ' update button status, nextBlk: ' +
           this.nextBlockNumber +
           ' currentStep: ' +
           this.currentStep +
@@ -251,14 +241,17 @@ export default {
           this.historyData.length
       )
 
-      // 上一页
-      if (this.nextBlockNumber === -1) {
+      // 下一页
+      if (
+        this.nextBlockNumber <= 0 &&
+        this.currentStep >= this.historyData.length
+      ) {
         this.nextClickDisable = true
       } else {
         this.nextClickDisable = false
       }
 
-      // 下一页
+      // 上一页
       if (this.currentStep > 1) {
         this.preClickDisable = false
       } else {
@@ -269,7 +262,7 @@ export default {
       if (this.chainValue === null) {
         this.$message({
           type: 'warning',
-          message: '链类型为空，请选择链类型'
+          message: '链类型为空，请选择链类型！'
         })
         return
       }
@@ -282,12 +275,25 @@ export default {
       }
 
       listTransactions(params).then((resp) => {
-        console.log('[listTransactions] resp => ' + JSON.stringify(resp))
+        console.log(
+          '[listTransactions] params => ' +
+            JSON.stringify(params) +
+            ' ,resp => ' +
+            JSON.stringify(resp)
+        )
 
         if (typeof resp.errorCode === undefined || resp.errorCode !== 0) {
           this.$message({
             type: 'error',
             message: '查询交易列表失败, 详情: ' + JSON.stringify(resp)
+          })
+          return
+        }
+
+        if (resp.data.transactions.length === 0) {
+          this.$message({
+            type: 'error',
+            message: '查询交易列表为空，查询参数: ' + JSON.stringify(params)
           })
           return
         }
@@ -342,10 +348,9 @@ export default {
             this.nextOffset = resp.data.nextOffset
             this.historyData[this.currentStep] = response
             this.currentStep += 1
-            if (callback !== null && callback !== undefined) {
-              console.log(' ====>>>> callback => ' + callback)
-              callback()
-            }
+
+            this.updateDisableButtonStatus()
+
             console.log(
               ' currentStep: ' +
                 this.currentStep +
@@ -354,7 +359,7 @@ export default {
                 ' ,nextOffset: ' +
                 this.nextOffset +
                 ' ,data: ' +
-                this.transactionList
+                JSON.stringify(resp.data)
             )
           })
           .catch((err) => {

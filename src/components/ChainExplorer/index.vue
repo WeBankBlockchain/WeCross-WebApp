@@ -5,10 +5,11 @@
 :load="loadData"
 @node-click='onChainClick'
 @check-change='onChainSelect'
+node-key="key"
 ref="tree"
       check-strictly
-lazy
-show-checkbox>
+highlight-current
+lazy>
     </el-tree>
   </div>
 </template>
@@ -23,7 +24,7 @@ import {
 
 export default {
   name: 'ChainExplorer',
-  props: [],
+  props: ['chain'],
   data: function() {
     return {
       props: {
@@ -31,6 +32,11 @@ export default {
         children: 'children',
         isLeaf: 'hasChildren'
       }
+    }
+  },
+  watch: {
+    chain: function(value) {
+      this.$refs['tree'].setCurrentKey(value)
     }
   },
   methods: {

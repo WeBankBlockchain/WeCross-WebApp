@@ -11,15 +11,16 @@
           {{ scope.row.stubType }}
         </template>
       </el-table-column>
-      <el-table-column label="校验码">
-        <template slot-scope="scope">
-          {{ scope.row.checksum || 'null' }}
-        </template>
-      </el-table-column>
       <el-table-column label="属性">
         <template slot-scope="scope">
           <span>{{ scope.row.properties }}</span>
         </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <el-button-group>
+          <el-button plain icon="el-icon-magic-stick">调用</el-button>
+          <el-button plain icon="el-icon-info">详情</el-button>
+        </el-button-group>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -83,6 +84,7 @@ export default {
         if (response.errorCode === 0) {
           this.resources = response.data.resourceDetails
           this.total = response.data.total
+          this.page = status.page + 1
         } else {
           this.$message({
             type: 'error',

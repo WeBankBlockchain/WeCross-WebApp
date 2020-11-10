@@ -75,7 +75,8 @@ export default {
           return
         }
 
-        if (!(response.data.nextOffset === -1 || response.data.nextBlockNumber === -1)) {
+        if (!(response.data.nextOffset === -1 || response.data.nextBlockNumber === -1) && (status.index === (
+          status.steps.length - 1))) {
           status.steps.push({
             offset: response.data.nextOffset,
             blockNumber: response.data.nextBlockNumber

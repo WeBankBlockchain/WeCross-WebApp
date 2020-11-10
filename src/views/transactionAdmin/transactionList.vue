@@ -75,15 +75,38 @@
             </el-table-column>
             <el-table-column label="交易回执" min-width="50" align="center">
               <template slot-scope="item">
-                <el-button
-                  @click="handleClick(item.row)"
-                  type="text"
-                  size="small"
-                  >查看</el-button
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="点击查看交易回执详情"
+                  placement="top"
                 >
+                  <el-button
+                    @click="handleReceiptDetails(item.row)"
+                    type="text"
+                    size="small"
+                    >详情</el-button
+                  >
+                </el-tooltip>
               </template>
             </el-table-column>
           </el-table>
+          <el-drawer
+            title="交易回执详情"
+            :visible.sync="drawer"
+            :with-header="true"
+          >
+            <vue-json-pretty
+              :expand-depth="2"
+              :deep="3"
+              boxed
+              copyable
+              :data="txReceipt"
+              @click="handleClick"
+            >
+            </vue-json-pretty>
+            <!-- <el-input autosize type="textarea" v-model="txReceipt"> </el-input> -->
+          </el-drawer>
         </el-row>
         <!--pagination-->
         <el-row :gutter="20" style="margin-top: 20px;text-align: center;">
@@ -116,9 +139,14 @@ import { uniqueFilter } from '@/utils'
 import { listChains } from '@/api/conn'
 import { listTransactions } from '@/api/transaction'
 import { getTransaction } from '@/api/transaction'
+import VueJsonPretty from 'vue-json-pretty'
+import 'vue-json-pretty/lib/styles.css'
 
 export default {
   name: 'TransactionList',
+  components: {
+    VueJsonPretty
+  },
   data() {
     return {
       transactionList: [],
@@ -131,7 +159,9 @@ export default {
       currentStep: 0,
       historyData: [],
       preClickDisable: true,
-      nextClickDisable: false
+      nextClickDisable: false,
+      drawer: false,
+      txReceipt: ''
     }
   },
   created() {
@@ -196,6 +226,11 @@ export default {
       if (val != null) {
         console.log('val: ' + val)
       }
+    },
+    handleReceiptDetails(val) {
+      this.drawer = true
+      this.txReceipt = val
+      console.log('handleReceipt val: ' + JSON.stringify(val))
     },
     handlePrevClick() {
       console.log(' <=[pre] click, currentStep: ' + this.currentStep)
@@ -386,4 +421,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.el-drawer.rtl {
+  overflow-y: auto;
+}
+</style>

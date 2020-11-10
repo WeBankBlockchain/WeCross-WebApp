@@ -1,5 +1,4 @@
 <template>
-  <div>
     <el-tree
 :props="props"
 :load="loadData"
@@ -11,7 +10,6 @@ ref="tree"
 highlight-current
 lazy>
     </el-tree>
-  </div>
 </template>
 
 <script>

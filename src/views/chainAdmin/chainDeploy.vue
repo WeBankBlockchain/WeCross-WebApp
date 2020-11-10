@@ -1,25 +1,33 @@
 <template>
   <div class="app-container">
+
     <el-row>
-      <el-button-group>
-        <el-button icon="el-icon-back" @click="back" v-bind:disabled="history.index === 0">后退</el-button>
-        <el-button @click="forward" v-bind:disabled="history.index + 1 === history.list.length">前进<i class="el-icon-arrow-right el-icon-right"></i></el-button>
-      </el-button-group>
-      <el-button-group style="margin-left: 100px; width:50%">
-        <el-input size="large" placeholder="搜索资源..." prefix-icon="el-icon-search" v-model="searchPath" clearable></el-input>
-      </el-button-group>
-      <el-button-group>
-        <el-button icon="el-icon-search">搜索</el-button>
-      </el-button-group>
+      <el-card class="box-card">
+        <el-button-group>
+          <el-button icon="el-icon-d-arrow-left" @click="back" v-bind:disabled="history.index === 0">后退</el-button>
+          <el-button @click="forward" v-bind:disabled="history.index + 1 >= history.list.length">前进<i class="el-icon-d-arrow-right"></i></el-button>
+        </el-button-group>
+        <el-button-group style="margin-left: 10px; width:40%">
+          <el-input size="large" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="chainPath" readonly></el-input>
+        </el-button-group>
+        <el-button-group>
+          <el-button icon="el-icon-upload" @click="deploy" v-bind:disabled="chainPath === ''">部署资源</el-button>
+        </el-button-group>
+      </el-card>
     </el-row>
-    <el-row :gutter="30" style="margin-top: 20px">
+    <el-row :gutter="10" style="margin-top: 10px">
       <el-col :span="4">
-        <ChainExplorer :chain='chainPath' @chain-click='onChainClick'></ChainExplorer>
+        <el-card class="box-card">
+          <ChainExplorer :chain='chainPath' @chain-click='onChainClick'></ChainExplorer>
+        </el-card>
       </el-col>
-      <el-col :span="18">
-        <ResourceExplorer :chain='chainPath' :pageSize=10></ResourceExplorer>
+      <el-col :span="20">
+        <el-card class="box-card">
+          <ResourceExplorer :chain='chainPath' :pageSize=10></ResourceExplorer>
+        </el-card>
       </el-col>
     </el-row>
+
   </div>
 </template>
 
@@ -65,6 +73,9 @@ export default {
         ++this.history.index
         this.chainPath = this.history.list[this.history.index]
       }
+    },
+    deploy() {
+
     }
   }
 }

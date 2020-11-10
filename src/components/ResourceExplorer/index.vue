@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table ref="singleTable" :data="resources" element-loading-text="Loading" fit highlight-current-row>
+    <el-table ref="singleTable" :data="resources" element-loading-text="Loading" highlight-current-row>
       <el-table-column label="资源路径">
         <template slot-scope="scope">
           {{ scope.row.path }}
@@ -28,7 +28,7 @@ background
 :page-size='pageSize'
 layout="prev, pager, next"
 :total="total"
-style="float: right;"
+style="text-align: center;"
       :current-page="page"
 @prev-click="prevPage"
 @next-click="nextPage"

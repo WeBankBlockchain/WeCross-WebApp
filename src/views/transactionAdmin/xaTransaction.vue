@@ -296,7 +296,7 @@
 <script>
 import TransactionForm from '@/views/transactionAdmin/components/TransactionForm'
 import { getResourceList } from '@/api/resource'
-import { getXATransaction, sendTransaction } from '@/api/transaction'
+import { call, getXATransaction, sendTransaction } from '@/api/transaction'
 import { v4 as uuidV4 } from 'uuid'
 import { Message } from 'element-ui'
 
@@ -323,6 +323,7 @@ export default {
           value: null,
           key: 0
         }],
+        execMethod: '',
         isXATransaction: true
       },
       loading: false,
@@ -402,29 +403,58 @@ export default {
       for (const arg of transaction.args) {
         args.push(arg.value)
       }
-      sendTransaction({
-        version: '1',
-        path: transaction.path,
-        data: {
-          method: transaction.method,
-          args: args,
-          options: {
-            'XA_TRANSACTION_ID': this.$store.getters.transactionID,
-            'XA_TRANSACTION_SEQ': Date.now()
+      console.log(transaction.execMethod)
+      if (transaction.execMethod === 'sendTransaction') {
+        sendTransaction({
+          version: '1',
+          path: 'test.test.test', // transaction.path,
+          data: {
+            method: transaction.method,
+            args: args,
+            options: {
+              'XA_TRANSACTION_ID': this.$store.getters.transactionID,
+              'XA_TRANSACTION_SEQ': Date.now()
+            }
           }
-        }
-      }).then(response => {
-        if (response.errorCode !== 0 || response.data.errorCode !== 0) {
-          this.submitResponse = null
-          this.$message({
-            message: '执行事务失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, type: 'error', center: true
-          })
-        } else {
-          this.getXADetail()
-          this.submitResponse = JSON.stringify(response, null, 4)
-          this.loading = false
-        }
-      })
+        }).then(response => {
+          if (response.errorCode !== 0 || response.data.errorCode !== 0) {
+            this.submitResponse = null
+            this.$message({
+              message: '执行事务失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
+              type: 'error',
+              center: true
+            })
+          } else {
+            this.getXADetail()
+            this.submitResponse = JSON.stringify(response, null, 4)
+            this.loading = false
+          }
+        })
+      } else if (transaction.execMethod === 'call') {
+        call({
+          version: '1',
+          path: 'test.test.test', // transaction.path,
+          data: {
+            method: transaction.method,
+            args: args,
+            options: {
+              'XA_TRANSACTION_ID': this.$store.getters.transactionID
+            }
+          }
+        }).then(response => {
+          if (response.errorCode !== 0 || response.data.errorCode !== 0) {
+            this.submitResponse = null
+            this.$message({
+              message: '执行事务失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
+              type: 'error',
+              center: true
+            })
+          } else {
+            this.submitResponse = JSON.stringify(response, null, 4)
+            this.loading = false
+          }
+        })
+      }
     },
     commitTransaction() {
       if (this.$store.getters.transactionID !== null && this.$store.getters.paths !== []) {

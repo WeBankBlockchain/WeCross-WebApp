@@ -8,6 +8,18 @@
           :model="transaction"
           :rules="transactionRules"
           class="dynamicForm">
+        <el-form-item label="执行方式：" prop="execMethod">
+          <el-select style="width: 75%" placeholder="请选择执行方式" v-model="transaction.execMethod">
+            <el-option label="SendTransaction" value="sendTransaction">
+              <span style="float: left">SendTransaction</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">发送交易</span>
+            </el-option>
+            <el-option label="Call" value="call">
+              <span style="float: left">Call</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">调用方法</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="资源路径：" prop="path">
           <slot name="path"></slot>
         </el-form-item>
@@ -26,9 +38,11 @@
           </el-form-item>
         </div>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit" size="small" style="padding: 8px">执行调用</el-button>
-          <el-button @click="clearForm" size="small" style="padding: 8px">重置表单</el-button>
-          <el-button @click="addArg" size="small" style="padding: 8px">添加参数</el-button>
+          <el-button-group >
+          <el-button type="primary" @click="onSubmit" size="small">执行调用</el-button>
+            <el-button @click="clearForm" size="small">重置表单</el-button>
+            <el-button @click="addArg" size="small">添加参数</el-button>
+          </el-button-group>
         </el-form-item>
       </el-form>
     </el-row>
@@ -62,6 +76,7 @@ export default {
             value: null,
             key: 0
           }],
+          execMethod: null,
           isXATransaction: false
         }
       }
@@ -71,9 +86,14 @@ export default {
   data() {
     return {
       transactionRules: {
+        execMethod: [
+          {
+            required: true, message: '执行方式不能为空', trigger: 'change'
+          }
+        ],
         path: [
           {
-            required: true, message: '资源路径不能为空', trigger: 'blur'
+            required: true, message: '资源路径不能为空', trigger: 'change'
           },
           {
             required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40

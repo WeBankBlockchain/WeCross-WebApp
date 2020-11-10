@@ -85,7 +85,7 @@ module.exports = [{
           "data|10": [{
             zone: '@pick([\'payment\',\'evidence\'])',
             chain: '@pick([\'bcos\',\'bcos_gm\',\'fabric\'])',
-            type: '@pick([\'BCOS2.0\',\'BCOS2.0_GM\',\'Fabric1.4\'])',
+            type: '@pick([\'BCOS2.0\',\'GM_BCOS2.0\',\'Fabric1.4\'])',
             blockNumber: '@integer(1,1000000)',
             isLocal: '@pick(true,false)',
             'properties': {

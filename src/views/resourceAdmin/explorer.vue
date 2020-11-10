@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-
     <el-row>
       <el-card class="box-card">
         <el-button-group>
@@ -32,7 +31,6 @@
         </el-card>
       </el-col>
     </el-row>
-
   </div>
 </template>
 
@@ -46,6 +44,13 @@ export default {
     ChainExplorer,
     ResourceExplorer
   },
+  /*
+    beforeRouteLeave(to, from, next) {
+      cached = this.$data
+
+      next()
+    },
+    */
   props: {},
   data() {
     return {
@@ -59,7 +64,15 @@ export default {
       }
     }
   },
-  created() {},
+  /*
+    created() {
+      if(cached !== undefined) {
+        for(var i in cached) {
+          this.$data[i] = cached[i]
+        }
+      }
+    },
+    */
   mounted() {},
   methods: {
     onZoneClick(path) {

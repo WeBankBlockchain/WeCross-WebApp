@@ -155,6 +155,23 @@ import {
 import { bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade } from '@/api/resource'
 
 export default {
+  created() {
+    console.log(this.$route)
+
+    if (this.$route.query.path !== undefined) {
+      this.form.path = this.$route.query.path
+    }
+
+    if (this.$route.query.stubType !== undefined) {
+      this.form.stubType = this.$route.query.stubType
+
+      if (this.form.stubType === 'Fabric1.4') {
+        this.form.method = 'install'
+      } else {
+        this.form.method = 'deploy'
+      }
+    }
+  },
   data() {
     return {
       form: {

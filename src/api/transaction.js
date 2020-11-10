@@ -50,7 +50,7 @@ export function call(data) {
 
 export function sendTransaction(data) {
   return request({
-    url: path2Url(data.path) + '/sendTransaction',
+    url: 'resource/' + path2Url(data.path) + '/sendTransaction',
     method: 'post',
     data: data
   })

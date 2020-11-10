@@ -14,7 +14,6 @@
   "dependencies": {
     "axios": "0.18.1",
     "echarts": "^4.9.0",
-    "el-tree-transfer": "^2.3.1",
     "element-ui": "2.13.2",
     "js-cookie": "2.2.0",
     "jsonlint": "1.6.3",

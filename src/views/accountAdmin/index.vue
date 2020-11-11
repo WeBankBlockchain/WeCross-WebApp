@@ -2,96 +2,109 @@
   <transition name="el-fade-in-linear">
     <div v-show="show" class="transition-box">
       <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span>
-            <el-tag>{{ ua.admin ? "路由管理员" : "普通用户" }}</el-tag>
-          </span>
-          <el-button style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
-        </div>
         <el-form label-position="left" size="small" label-width="80px">
-          <el-form-item label="用户名">
-            <span>{{ ua.username }}</span>
-          </el-form-item>
-          <el-form-item label="UAID">
-            <span>{{ ua.uaID }}</span>
+          <el-form-item label="跨链账户">
+            <el-tooltip class="item" effect="light" :content="ua.uaID" placement="right">
+              <div slot="content">UAID:<br>{{ua.uaID.substr(0,64)}}<br>{{ua.uaID.substr(64,64)}}<br>{{ua.uaID.substr(128)}}</div>
+            <el-tag v-bind:type="ua.admin ? 'warning': 'success'" ><span>{{ ua.username }}</span></el-tag>
+            </el-tooltip>
+            <el-button style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
           </el-form-item>
           <el-form-item label="UA公钥">
-            <span>{{ ua.pubKey }}</span>
+            <el-input type="textarea" readonly autosize resize="none" v-model="ua.pubKey"></el-input>
           </el-form-item>
         </el-form>
-
         <el-table
           :data="chainAccountTable"
           style="width: 100%"
           row-key="id"
-          border
-          stripe
+          :row-class-name="chainAccountTableRowClassName"
           lazy
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
           <el-table-column prop="type" label="链账户类型" width="180">
           </el-table-column>
           <el-table-column prop="keyID" label="KeyID" width="180">
+            <template slot-scope="scope">
+              <el-tooltip class="item" effect="light" content="点击获取详情" placement="top">
+              <div @click="showChainAccount(scope.row)">{{ scope.row.keyID }}</div>
+              </el-tooltip>
+            </template>
           </el-table-column>
-          <el-table-column prop="details" label="信息"> </el-table-column>
-          <el-table-column>
+          <el-table-column prop="details" label="信息">
+            <template slot-scope="scope">
+              <el-tooltip class="item" effect="light" content="点击获取详情" placement="top">
+              <div @click="showChainAccount(scope.row)">{{ scope.row.details }}</div>
+              </el-tooltip>
+            </template>
+
+          </el-table-column>
+          <el-table-column width="120">
             <template slot-scope="scope">
               <el-button
-                @click="showChainAccount(scope.row)"
-                type="primary"
-                style="margin-left: 16px"
+                v-if="scope.row.isDefault"
+                style="float: right"
               >
-                详情
+                默认账户
+              </el-button>
+              <el-button
+                v-else
+                @click="querySetDefaultAccountByColum(scope.row)"
+                type="primary"
+                style="float: right"
+              >
+                设为默认
               </el-button>
             </template>
           </el-table-column>
         </el-table>
-        <el-drawer
-          :visible.sync="chainAccountDrawer.show"
-          :direction="chainAccountDrawer.direction"
-          :with-header="false"
-        >
-          <el-card class="box-card">
-            <div slot="header" class="clearfix">
-              <span> 链账户 </span>
-              <el-button
-                v-if="!chainAccountDrawer.info.isDefault"
-                @click="querySetDefaultAccount()"
-                style="float: right"
-                type="primary"
-                >设为默认账户</el-button
-              >
-            </div>
-            <el-form label-position="top" size="small" label-width="80px">
-              <el-form-item label="KeyID">
-                <span>{{ chainAccountDrawer.info.keyID }}</span>
-              </el-form-item>
-              <el-form-item label="链账户类型">
-                <span>{{ chainAccountDrawer.info.type }}</span>
-              </el-form-item>
-              <el-form-item label="Identity">
-                <span>{{ chainAccountDrawer.info.identity }}</span>
-              </el-form-item>
-              <el-form-item label="公钥">
-                <span>{{ chainAccountDrawer.info.pubKey }}</span>
-              </el-form-item>
-              <el-form-item label="私钥">
-                <span>{{ chainAccountDrawer.info.secKey }}</span>
-              </el-form-item>
-              <el-form-item label="其它">
-                <span>{{ chainAccountDrawer.info.ext }}</span>
-              </el-form-item>
-            </el-form>
-          </el-card>
-        </el-drawer>
       </el-card>
-
+      <el-drawer
+        :visible.sync="chainAccountDrawer.show"
+        :direction="chainAccountDrawer.direction"
+        :with-header="false"
+        size="670px"
+      >
+        <el-card class="box-card" style="height:100%">
+          <div slot="header" class="clearfix">
+            <span> 链账户 </span>
+            <el-button
+              v-if="!chainAccountDrawer.info.isDefault"
+              @click="querySetDefaultAccount()"
+              style="float: right"
+              type="primary"
+              >设为默认账户</el-button
+            >
+          </div>
+          <el-form label-position="top" size="small" label-width="80px">
+            <el-form-item label="KeyID">
+              <span>{{ chainAccountDrawer.info.keyID }}</span>
+            </el-form-item>
+            <el-form-item label="链账户类型">
+              <span>{{ chainAccountDrawer.info.type }}</span>
+            </el-form-item>
+            <el-form-item label="Identity">
+              <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.identity"></el-input>
+            </el-form-item>
+            <el-form-item label="公钥">
+              <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.pubKey"></el-input>
+            </el-form-item>
+            <el-form-item label="私钥">
+              <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.secKey"></el-input>
+            </el-form-item>
+            <el-form-item label="其它">
+              <span>{{ chainAccountDrawer.info.ext }}</span>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </el-drawer>
       <el-drawer
           :visible.sync="addChainAccountDrawer.show"
           :direction="addChainAccountDrawer.direction"
           :with-header="false"
+          size="670px"
       >
-        <el-card class="box-card">
+        <el-card class="box-card"  style="height:100%">
             <div slot="header" class="clearfix">
               <span> 添加链账户 </span>
             </div>
@@ -101,9 +114,9 @@
                 v-model="addChainAccountDrawer.params.type"
                 placeholder="请选择"
               >
-                <el-option label="BCOS2.0" value="BCOS2.0"></el-option>
-                <el-option label="国密BCOS2.0" value="GM_BCOS2.0"></el-option>
-                <el-option label="Fabric1.4" value="Fabric1.4"></el-option>
+                <el-option label="FISCO BCOS2.0" value="BCOS2.0"></el-option>
+                <el-option label="FISCO BCOS2.0 国密" value="GM_BCOS2.0"></el-option>
+                <el-option label="HyperLedger Fabric1.4" value="Fabric1.4"></el-option>
               </el-select>
             </el-form-item>
 
@@ -244,6 +257,13 @@ export default {
         })
       })
     },
+    querySetDefaultAccountByColum(chainAccount) {
+      console.log(chainAccount)
+      this.chainAccountDrawer.header = chainAccount.details
+      this.chainAccountDrawer.info = chainAccount
+
+      this.querySetDefaultAccount()
+    },
     queryAddChainAccount() {
       var loadingText = 'Loading'
       const loading = this.$loading({
@@ -265,26 +285,32 @@ export default {
     handleResponse(response) {
       console.log('Response' + response)
       if (response.errorCode !== 0) {
-        this.$notify({
-          title: '提示',
+        this.$message({
           message: '设置失败：' + response.message,
-          duration: 0
+          type: 'error'
         })
       } else if (response.data.errorCode !== 0) {
-        this.$notify({
-          title: '提示',
+        this.$message({
           message: '设置失败：' + response.data.message,
-          duration: 0
+          type: 'error'
         })
       } else {
-        this.$notify({
-          title: '提示',
+        this.$message({
           message: '设置成功',
-          duration: 2000
+          type: 'success'
         })
       }
     }
   },
+  chainAccountTableRowClassName({ row, rowIndex }) {
+    console.log('xxxxx ' + row)
+    if (row.isDefault) {
+      return 'success-row'
+    } else {
+      return ''
+    }
+  },
+
   created() {
     this.getUA()
   }
@@ -315,6 +341,7 @@ function buildChainAccountTable(ua) {
   for (chainAccount of ua.chainAccounts) {
     if (chainAccount.isDefault === true) {
       chainAccount.id = id++
+      // chainAccount.hasChildren = true
       localChainAccounts.push(chainAccount)
     }
   }
@@ -340,5 +367,8 @@ function buildChainAccountTable(ua) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.el-drawer.rtl{
+    overflow-y: auto;
+}
 </style>

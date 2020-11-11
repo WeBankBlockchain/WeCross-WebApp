@@ -120,6 +120,10 @@ export function uniqueFilter(element, index, self) {
   return self.indexOf(element) === index
 }
 
+export function uniqueObjectArray(objectArray) {
+  return [...new Set(objectArray.map(e => JSON.stringify(e)))].map(e => JSON.parse(e))
+}
+
 export function buildRequest(path, method, data) {
   return {
     version: 1,

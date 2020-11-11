@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { path2Url } from '@/utils'
 
 export function getResourceList(params, data) {
   return request({
@@ -9,42 +10,42 @@ export function getResourceList(params, data) {
   })
 }
 
-export function bcosDeploy(params) {
+export function bcosDeploy(data) {
   return request({
-    url: params.path + '/customCommand/deploy',
+    url: 'resource' + path2Url(data.path) + '/customCommand/deploy',
     method: 'post',
-    data: params
+    data: data
   })
 }
 
-export function bcosRegister(params) {
+export function bcosRegister(data) {
   return request({
-    url: '/resource/customCommand/register',
+    url: 'resource' + path2Url(data.path) + '/customCommand/register',
     method: 'post',
-    data: params
+    data: data
   })
 }
 
-export function fabricInstall(params) {
+export function fabricInstall(data) {
   return request({
-    url: '/resource/customCommand/install',
+    url: 'resource' + path2Url(data.path) + '/customCommand/install',
     method: 'post',
-    data: params
+    data: data
   })
 }
 
-export function fabricInstantiate(params) {
+export function fabricInstantiate(data) {
   return request({
-    url: '/resource/customCommand/instantiate',
+    url: 'resource' + path2Url(data.path) + '/customCommand/instantiate',
     method: 'post',
-    data: params
+    data: data
   })
 }
 
-export function fabricUpgrade(params) {
+export function fabricUpgrade(data) {
   return request({
-    url: '/resource/customCommand/upgrade',
+    url: 'resource' + path2Url(data.path) + '/customCommand/upgrade',
     method: 'post',
-    data: params
+    data: data
   })
 }

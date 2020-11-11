@@ -1,14 +1,14 @@
 <template>
-    <el-tree
-:props="props"
-:load="loadData"
-@node-click='onChainClick'
-@check-change='onChainSelect'
-node-key="key"
-ref="tree"
-highlight-current
-lazy>
-    </el-tree>
+  <el-tree
+      :props="props"
+      :load="loadData"
+      @node-click='onChainClick'
+      @check-change='onChainSelect'
+      node-key="key"
+      ref="tree"
+      highlight-current
+      lazy>
+  </el-tree>
 </template>
 
 <script>
@@ -18,6 +18,7 @@ import {
 import {
   listZones
 } from '@/api/conn'
+import { uniqueObjectArray } from '@/utils'
 
 export default {
   name: 'ChainExplorer',
@@ -56,7 +57,7 @@ export default {
                 key: zone
               })
             }
-
+            zones = uniqueObjectArray(zones)
             return resolve(zones)
           } else {
             this.$message({
@@ -87,7 +88,7 @@ export default {
               var chain = response.data.data[index]
 
               chains.push({
-                name: chain.zone + '.' + chain.chain,
+                name: chain.chain,
                 children: [],
                 hasChildren: true,
                 type: 'chain',
@@ -112,7 +113,6 @@ export default {
       }
     },
     onChainClick(data, node, self) {
-      console.log(data, node, self)
       if (data.type === 'zone') {
         this.$emit('zone-click', data.key)
       } else if (data.type === 'chain') {

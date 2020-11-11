@@ -7,42 +7,25 @@
         </el-card>
       </el-row>
     </div>
-    <el-row style="margin-top:10px;">
+    <el-row style="margin-top: 10px">
       <el-card>
-        <el-row :gutter="18" style="margin-top:10px;">
+        <el-row :gutter="18" style="margin-top: 10px">
           <el-col :span="12">
             <el-select
               placeholder="zone.chain"
               size="medium"
               v-model="chainValue"
-              style="width: 100%; margin: 2px;"
+              style="width: 100%; margin: 2px"
             >
-              <el-option
-                v-for="chain in chainType"
-                :key="chain"
-                :label="chain"
-                :value="chain"
-              ></el-option>
+              <el-option v-for="chain in chainType" :key="chain" :label="chain" :value="chain"></el-option>
             </el-select>
           </el-col>
           <el-col :span="12">
-            <el-button
-              type="primary"
-              plain
-              icon="el-icon-search"
-              @click="handleSearch"
-              >搜索</el-button
-            >
-            <el-button
-              type="primary"
-              plain
-              icon="el-icon-edit"
-              @click="handleFresh"
-              >刷新</el-button
-            >
+            <el-button type="primary" plain icon="el-icon-search" @click="handleSearch">搜索</el-button>
+            <el-button type="primary" plain icon="el-icon-edit" @click="handleFresh">刷新</el-button>
           </el-col>
         </el-row>
-        <el-row :gutter="20" style="margin-top:10px;">
+        <el-row :gutter="20" style="margin-top: 10px">
           <el-table
             ref="singleTable"
             :data="transactionList"
@@ -54,48 +37,26 @@
             style="width: 100%"
           >
             <el-table-column label="交易哈希" min-width="100" align="center">
-              <template slot-scope="item">
-                {{ item.row.txHash }}
-              </template>
+              <template slot-scope="item">{{ item.row.txHash }}</template>
             </el-table-column>
             <el-table-column label="块高" min-width="15" align="center">
-              <template slot-scope="item">
-                {{ item.row.blockNumber }}
-              </template>
+              <template slot-scope="item">{{ item.row.blockNumber }}</template>
             </el-table-column>
             <el-table-column label="资源路径" min-width="40" align="center">
-              <template slot-scope="item">
-                {{ item.row.path }}
-              </template>
+              <template slot-scope="item">{{ item.row.path }}</template>
             </el-table-column>
             <el-table-column label="方法" min-width="30" align="center">
-              <template slot-scope="item">
-                {{ item.row.method }}
-              </template>
+              <template slot-scope="item">{{ item.row.method }}</template>
             </el-table-column>
             <el-table-column label="交易回执" min-width="50" align="center">
               <template slot-scope="item">
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  content="点击查看交易回执详情"
-                  placement="top"
-                >
-                  <el-button
-                    @click="handleReceiptDetails(item.row)"
-                    type="text"
-                    size="small"
-                    >详情</el-button
-                  >
+                <el-tooltip class="item" effect="dark" content="点击查看交易回执详情" placement="top">
+                  <el-button @click="handleReceiptDetails(item.row)" type="text" size="small">详情</el-button>
                 </el-tooltip>
               </template>
             </el-table-column>
           </el-table>
-          <el-drawer
-            title="交易回执详情"
-            :visible.sync="drawer"
-            :with-header="true"
-          >
+          <el-drawer title="交易回执详情" :visible.sync="drawer" :with-header="true">
             <vue-json-pretty
               :expand-depth="2"
               :deep="3"
@@ -103,13 +64,12 @@
               copyable
               :data="txReceipt"
               @click="handleClick"
-            >
-            </vue-json-pretty>
+            ></vue-json-pretty>
             <!-- <el-input autosize type="textarea" v-model="txReceipt"> </el-input> -->
           </el-drawer>
         </el-row>
         <!--pagination-->
-        <el-row :gutter="20" style="margin-top: 20px;text-align: center;">
+        <el-row :gutter="20" style="margin-top: 20px; text-align: center">
           <el-button
             :disabled="preClickDisable"
             size="small"
@@ -117,8 +77,7 @@
             plain
             icon="el-icon-back"
             @click="handlePrevClick"
-            >上一页</el-button
-          >
+          >上一页</el-button>
           <el-button
             :disabled="nextClickDisable"
             size="small"
@@ -126,8 +85,7 @@
             plain
             icon="el-icon-right"
             @click="handleNextClick"
-            >下一页</el-button
-          >
+          >下一页</el-button>
         </el-row>
       </el-card>
     </el-row>
@@ -203,9 +161,9 @@ export default {
         this.chainType = this.chainType.filter(uniqueFilter).sort()
         console.log(
           ' chainCount => ' +
-            this.chainTotalCount +
-            ',chainType => ' +
-            JSON.stringify(this.chainType)
+          this.chainTotalCount +
+          ',chainType => ' +
+          JSON.stringify(this.chainType)
         )
         if (typeof this.chainType !== undefined && this.chainType.length > 0) {
           this.chainValue = this.chainType[0]
@@ -269,11 +227,11 @@ export default {
     updateDisableButtonStatus() {
       console.log(
         ' update button status, nextBlk: ' +
-          this.nextBlockNumber +
-          ' currentStep: ' +
-          this.currentStep +
-          ' ,historyData: ' +
-          this.historyData.length
+        this.nextBlockNumber +
+        ' currentStep: ' +
+        this.currentStep +
+        ' ,historyData: ' +
+        this.historyData.length
       )
 
       // 下一页
@@ -312,9 +270,9 @@ export default {
       listTransactions(params).then((resp) => {
         console.log(
           ' listTransactions params => ' +
-            JSON.stringify(params) +
-            ' ,resp => ' +
-            JSON.stringify(resp)
+          JSON.stringify(params) +
+          ' ,resp => ' +
+          JSON.stringify(resp)
         )
 
         if (typeof resp.errorCode === undefined || resp.errorCode !== 0) {
@@ -356,9 +314,9 @@ export default {
             if (typeof resp.errorCode === undefined || resp.errorCode !== 0) {
               throw new Error(
                 '查询交易失败，交易哈希: ' +
-                  txHashes[idx].txhash +
-                  '，详情: ' +
-                  JSON.stringify(resp)
+                txHashes[idx].txhash +
+                '，详情: ' +
+                JSON.stringify(resp)
               )
             }
 
@@ -400,13 +358,13 @@ export default {
 
             console.log(
               ' currentStep: ' +
-                this.currentStep +
-                ' ,nextBlk: ' +
-                this.nextBlockNumber +
-                ' ,nextOffset: ' +
-                this.nextOffset +
-                ' ,data: ' +
-                JSON.stringify(resp.data)
+              this.currentStep +
+              ' ,nextBlk: ' +
+              this.nextBlockNumber +
+              ' ,nextOffset: ' +
+              this.nextOffset +
+              ' ,data: ' +
+              JSON.stringify(resp.data)
             )
 
             this.updateDisableButtonStatus()

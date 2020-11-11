@@ -1,24 +1,25 @@
 <template>
   <div>
-    <el-row>
+    <el-row
+      v-loading="loading"
+      element-loading-text="执行中"
+      element-loading-spinner="el-icon-loading"
+    >
       <el-form
-          ref="transactionForm"
-          label-width="auto"
-          label-position="right"
-          :model="transaction"
-          :rules="transactionRules"
-          class="dynamicForm">
-        <el-form-item label="执行方式：" prop="execMethod">
-          <el-select style="width: 75%" placeholder="请选择执行方式" v-model="transaction.execMethod">
-            <el-option label="SendTransaction" value="sendTransaction">
-              <span style="float: left">SendTransaction</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">发送交易</span>
-            </el-option>
-            <el-option label="Call" value="call">
-              <span style="float: left">Call</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">调用方法</span>
-            </el-option>
-          </el-select>
+        ref="transactionForm"
+        label-width="auto"
+        label-position="right"
+        :model="transaction"
+        :rules="transactionRules"
+        class="dynamicForm"
+      >
+        <el-form-item>
+          <el-col :offset="4">
+            <el-radio-group v-model="transaction.execMethod">
+              <el-radio label="sendTransaction">发交易</el-radio>
+              <el-radio label="call">读状态</el-radio>
+            </el-radio-group>
+          </el-col>
         </el-form-item>
         <el-form-item label="资源路径：" prop="path">
           <slot name="path"></slot>
@@ -26,42 +27,55 @@
         <el-form-item label="调用方法：" prop="method">
           <el-input v-model="transaction.method" placeholder="请输入调用方法"></el-input>
         </el-form-item>
-        <div
-            v-for="(arg, index) in transaction.args"
-            :key="arg.key">
+        <div v-for="(arg, index) in transaction.args" :key="arg.key">
           <el-form-item
-              :label="'调用参数' + (index+1) + ':'"
-              :prop="'args.'+index+'.value'"
-              :rules="[{ required: true, message: '参数输入不能为空，可删除该参数置空', trigger: 'blur', min: 1, max: 40 }]">
+            :label="'调用参数' + (index + 1) + ':'"
+            :prop="'args.' + index + '.value'"
+            :rules="[
+              {
+                required: true,
+                message: '参数输入不能为空，可删除该参数置空',
+                trigger: 'blur',
+                min: 1,
+                max: 40,
+              },
+            ]"
+          >
             <el-input v-model="arg.value" placeholder="请输入调用参数"></el-input>
-            <el-button @click.prevent="removeArg(arg)" size="small" style="padding: 3px 0" type="text">删除</el-button>
+            <el-button
+              @click.prevent="removeArg(arg)"
+              size="small"
+              style="padding: 3px 0"
+              type="text"
+            >删除</el-button>
           </el-form-item>
         </div>
         <el-form-item>
-          <el-button-group >
-          <el-button type="primary" @click="onSubmit" size="small">执行调用</el-button>
+          <el-col :offset="3">
+            <el-button type="primary" @click="onSubmit" size="small">执行调用</el-button>
             <el-button @click="clearForm" size="small">重置表单</el-button>
             <el-button @click="addArg" size="small">添加参数</el-button>
-          </el-button-group>
+          </el-col>
         </el-form-item>
       </el-form>
     </el-row>
     <el-row>
       <el-collapse-transition>
         <el-input
-            autosize
-            type="textarea"
-            readonly
-            v-model="submitResponse"
-            v-if="submitResponse !== null"
-            style="margin-bottom: 20px;width: 90%">
-        </el-input>
+          autosize
+          type="textarea"
+          readonly
+          v-model="submitResponse"
+          v-if="submitResponse !== null"
+          style="margin-bottom: 20px; width: 90%"
+        ></el-input>
       </el-collapse-transition>
     </el-row>
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'TransactionForm',
   props: {
@@ -81,16 +95,12 @@ export default {
         }
       }
     },
+    loading: null,
     submitResponse: null
   },
   data() {
     return {
       transactionRules: {
-        execMethod: [
-          {
-            required: true, message: '执行方式不能为空', trigger: 'change'
-          }
-        ],
         path: [
           {
             required: true, message: '资源路径不能为空', trigger: 'change'
@@ -169,6 +179,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+body {
+  margin: 0;
+}
 .dynamicForm {
   .el-input {
     margin-right: 10px;

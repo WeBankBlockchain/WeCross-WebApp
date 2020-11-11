@@ -6,46 +6,76 @@
           <el-button plain type="primary" icon="el-icon-refresh" @click="refresh">刷新</el-button>
         </el-row>
         <el-row :gutter="20">
-          <el-table ref="singleTable" :data="xaList" element-loading-text="加载中..." fit highlight-current-row @expand-change="onExpandChange" style="width: 100%">
+          <el-table
+            ref="singleTable"
+            :data="xaList"
+            element-loading-text="加载中..."
+            fit
+            highlight-current-row
+            @expand-change="onExpandChange"
+            style="width: 100%"
+          >
             <el-table-column label="开始时间">
               <template slot-scope="scope">
                 <span>{{ scope.row.timestamp | formatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="username" label="账户"> </el-table-column>
-            <el-table-column width="400" prop="xaTransactionID" label="ID"> </el-table-column>
-            <el-table-column prop="status" label="状态"> </el-table-column>
+            <el-table-column prop="username" label="账户"></el-table-column>
+            <el-table-column width="400" prop="xaTransactionID" label="ID"></el-table-column>
+            <el-table-column prop="status" label="状态"></el-table-column>
             <el-table-column label="锁定资源">
               <template slot-scope="scope">
-                <li style="list-style-type:none" v-for="path in scope.row.paths"> {{ path }} </li>
+                <li style="list-style-type: none" v-for="path in scope.row.paths">{{ path }}</li>
               </template>
             </el-table-column>
             <el-table-column type="expand" label="步骤">
               <template slot-scope="scope">
                 <el-card class="box-card">
                   <el-form inline class="table-expand">
-                    <el-table ref="singleTable" :data="xaTransaction.xaTransactionSteps" element-loading-text="加载中..." fit highlight-current-row>
+                    <el-table
+                      ref="singleTable"
+                      :data="xaTransaction.xaTransactionSteps"
+                      element-loading-text="加载中..."
+                      fit
+                      highlight-current-row
+                    >
                       <el-table-column label="日期">
                         <template slot-scope="scope">
                           <span>{{ scope.row.timestamp | formatDate }}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="xaTransactionSeq" label="序号"> </el-table-column>
-                      <el-table-column prop="username" label="账户"> </el-table-column>
-                      <el-table-column prop="path" label="资源"> </el-table-column>
-                      <el-table-column prop="method" label="方法"> </el-table-column>
+                      <el-table-column prop="xaTransactionSeq" label="序号"></el-table-column>
+                      <el-table-column prop="username" label="账户"></el-table-column>
+                      <el-table-column prop="path" label="资源"></el-table-column>
+                      <el-table-column prop="method" label="方法"></el-table-column>
                     </el-table>
-                    <el-row>
-                      <br>
+                    <el-row style="margin-top: 20px">
                       <template>
                         <el-form-item label="提交时间：" v-if="scope.row.status === 'committed'">
-                          <span>{{ xaTransaction.commitTimestamp | formatDate }}</span>
+                          <span>
+                            {{
+                            xaTransaction.commitTimestamp | formatDate
+                            }}
+                          </span>
                         </el-form-item>
                         <el-form-item label="回滚时间：" v-if="scope.row.status === 'rolledback'">
-                          <span>{{ xaTransaction.rollbackTimestamp | formatDate }}</span>
+                          <span>
+                            {{
+                            xaTransaction.rollbackTimestamp | formatDate
+                            }}
+                          </span>
                         </el-form-item>
                         <el-form-item>
-                          <el-button type="primary" v-if="scope.row.status === 'processing'" @click="onExecXATransaction(xaTransaction.xaTransactionID, xaTransaction.paths)">继续执行</el-button>
+                          <el-button
+                            type="primary"
+                            v-if="scope.row.status === 'processing'"
+                            @click="
+                              onExecXATransaction(
+                                xaTransaction.xaTransactionID,
+                                xaTransaction.paths
+                              )
+                            "
+                          >继续执行</el-button>
                         </el-form-item>
                       </template>
                     </el-row>
@@ -55,7 +85,7 @@
             </el-table-column>
           </el-table>
         </el-row>
-        <el-row :gutter="20" style="margin-top: 20px;text-align: center;">
+        <el-row :gutter="20" style="margin-top: 20px; text-align: center">
           <el-button
             :disabled="preClickDisable"
             size="small"
@@ -63,8 +93,7 @@
             plain
             icon="el-icon-back"
             @click="handlePrevClick"
-            >上一页</el-button
-          >
+          >上一页</el-button>
           <el-button
             :disabled="nextClickDisable"
             size="small"
@@ -72,8 +101,7 @@
             plain
             icon="el-icon-right"
             @click="handleNextClick"
-            >下一页</el-button
-          >
+          >下一页</el-button>
         </el-row>
       </el-card>
     </el-row>
@@ -137,7 +165,7 @@ export default {
   created() {
     this.refresh()
   },
-  mounted() {},
+  mounted() { },
   methods: {
     resetAllData() {
       this.currentPage = 1
@@ -235,9 +263,9 @@ export default {
     updateDisableButtonStatus() {
       console.log(
         ' update button status, current page: ' +
-          this.currentPage +
-          ' offsets: ' +
-          JSON.stringify(this.offsets)
+        this.currentPage +
+        ' offsets: ' +
+        JSON.stringify(this.offsets)
       )
 
       // next page
@@ -259,5 +287,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>

@@ -9,7 +9,7 @@
     "lint": "eslint --ext .js,.vue src",
     "new": "plop",
     "test:unit": "jest --clearCache && vue-cli-service test:unit",
-    "test:ci": "npm run lint && npm run test:unit && npm run build:prod"
+    "test:ci": "npm run lint && npm run test:unit && npm install && npm run build:prod"
   },
   "dependencies": {
     "axios": "0.18.1",

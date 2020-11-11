@@ -78,7 +78,6 @@ export const constantRoutes = [
     component: Layout,
     name: 'AccountAdmin',
     redirect: '/accountAdmin/index',
-    meta: { title: '账号管理', icon: 'el-icon-notebook-1' },
     children: [
       {
         path: 'index',

@@ -26,14 +26,14 @@
           </el-table-column>
           <el-table-column prop="keyID" label="KeyID" width="180">
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="light" content="点击获取详情" placement="top">
+              <el-tooltip class="item" effect="light" content="点击查看详情" placement="top">
               <div @click="showChainAccount(scope.row)">{{ scope.row.keyID }}</div>
               </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column prop="details" label="信息">
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="light" content="点击获取详情" placement="top">
+              <el-tooltip class="item" effect="light" content="点击查看详情" placement="top">
               <div @click="showChainAccount(scope.row)">{{ scope.row.details }}</div>
               </el-tooltip>
             </template>
@@ -164,6 +164,8 @@
   </transition>
 </template>
 <script>
+import { MessageBox } from 'element-ui'
+import store from '@/store'
 import { listAccount } from '@/api/ua.js'
 import { setDefaultAccount } from '@/api/ua.js'
 import { addChainAccount } from '@/api/ua.js'
@@ -237,48 +239,59 @@ export default {
       this.chainAccountDrawer.show = true
     },
     querySetDefaultAccount() {
-      var loadingText = 'Loading'
-      const loading = this.$loading({
-        lock: true,
-        text: loadingText
-      })
+      MessageBox.confirm('设置成功后，需重新登录', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var loadingText = 'Loading'
+        const loading = this.$loading({
+          lock: true,
+          text: loadingText
+        })
 
-      this.chainAccountDrawer.show = false
-      setDefaultAccount({
-        version: '1',
-        data: {
-          type: this.chainAccountDrawer.info.type,
-          keyID: this.chainAccountDrawer.info.keyID
-        }
-      }).then((response) => {
-        this.handleResponse(response)
-        this.getUA().then(() => {
-          loading.close()
+        this.chainAccountDrawer.show = false
+        setDefaultAccount({
+          version: '1',
+          data: {
+            type: this.chainAccountDrawer.info.type,
+            keyID: this.chainAccountDrawer.info.keyID
+          }
+        }).then((response) => {
+          this.handleResponse(response)
+          this.getUA().then(() => {
+            loading.close()
+          })
         })
       })
     },
     querySetDefaultAccountByColum(chainAccount) {
-      console.log(chainAccount)
       this.chainAccountDrawer.header = chainAccount.details
       this.chainAccountDrawer.info = chainAccount
 
       this.querySetDefaultAccount()
     },
     queryAddChainAccount() {
-      var loadingText = 'Loading'
-      const loading = this.$loading({
-        lock: true,
-        text: loadingText
-      })
+      MessageBox.confirm('设置成功后，需重新登录', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var loadingText = 'Loading'
+        const loading = this.$loading({
+          lock: true,
+          text: loadingText
+        })
 
-      this.addChainAccountDrawer.show = false
-      addChainAccount({
-        version: '1',
-        data: this.addChainAccountDrawer.params
-      }).then((response) => {
-        this.handleResponse(response)
-        this.getUA().then(() => {
-          loading.close()
+        this.addChainAccountDrawer.show = false
+        addChainAccount({
+          version: '1',
+          data: this.addChainAccountDrawer.params
+        }).then((response) => {
+          this.handleResponse(response)
+          this.getUA().then(() => {
+            loading.close()
+          })
         })
       })
     },
@@ -296,8 +309,12 @@ export default {
         })
       } else {
         this.$message({
-          message: '设置成功',
+          message: '设置成功，需重新登录',
           type: 'success'
+        })
+
+        store.dispatch('user/resetToken').then(() => {
+          location.reload()
         })
       }
     }

@@ -51,7 +51,7 @@
         <el-input
             autosize
             type="textarea"
-            :disabled="true"
+            readonly
             v-model="submitResponse"
             v-if="submitResponse !== null"
             style="margin-bottom: 20px;width: 90%">

@@ -139,6 +139,16 @@
             <el-button type="primary" @click="onSubmit">执行</el-button>
             <el-button @click="onCancel">重置</el-button>
           </el-form-item>
+          <el-form-item>
+            <el-input
+                autosize
+                type="textarea"
+                readonly
+                v-model="submitResponse"
+                v-if="submitResponse !== null"
+                style="margin-bottom: 20px;width: 90%">
+            </el-input>
+          </el-form-item>
         </el-form>
       </el-col>
     </el-card>
@@ -189,6 +199,7 @@ export default {
       },
       fileList: [],
       stepActive: 0,
+      submitResponse: null,
       formRules: {
         sourceContent: [
           { required: true, message: '合约文件不能为空', trigger: 'blur' }
@@ -262,7 +273,23 @@ export default {
           switch (this.form.method) {
             case 'deploy' :
               bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
-                console.log(response)
+                if (response.errorCode !== 0) {
+                  this.$message({
+                    message: '执行FISCO BCOS部署合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
+                    type: 'error',
+                    center: true
+                  })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
+                } else {
+                  this.$message({
+                    message: '执行FISCO BCOS部署合约成功！',
+                    type: 'success',
+                    center: true
+                  })
+                  this.submitResponse = JSON.stringify(response, null, 4)
+                }
               }).catch(err => {
                 this.$message(
                   {
@@ -274,22 +301,114 @@ export default {
               break
             case 'register':
               bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
-                console.log(response)
+                if (response.errorCode !== 0) {
+                  this.$message({
+                    message: '执行FISCO BCOS注册合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
+                    type: 'error',
+                    center: true
+                  })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
+                } else {
+                  this.$message({
+                    message: '执行FISCO BCOS注册合约成功！',
+                    type: 'success',
+                    center: true
+                  })
+                  this.submitResponse = JSON.stringify(response, null, 4)
+                }
+              }).catch(err => {
+                this.$message(
+                  {
+                    message: err,
+                    type: 'error'
+                  }
+                )
               })
               break
             case 'install':
               fabricInstantiate(buildFabricInstallRequest(this.form)).then(response => {
-                console.log(response)
+                if (response.errorCode !== 0) {
+                  this.$message({
+                    message: '执行Hyperledger Fabric合约安装失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
+                    type: 'error',
+                    center: true
+                  })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
+                } else {
+                  this.$message({
+                    message: '执行Hyperledger Fabric合约安装成功！',
+                    type: 'success',
+                    center: true
+                  })
+                  this.submitResponse = JSON.stringify(response, null, 4)
+                }
+              }).catch(err => {
+                this.$message(
+                  {
+                    message: err,
+                    type: 'error'
+                  }
+                )
               })
               break
             case 'instantiate':
               fabricInstall(buildFabricInstantiateRequest(this.form)).then(response => {
-                console.log(response)
+                if (response.errorCode !== 0) {
+                  this.$message({
+                    message: '执行Hyperledger Fabric合约实例化失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
+                    type: 'error',
+                    center: true
+                  })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
+                } else {
+                  this.$message({
+                    message: '执行Hyperledger Fabric合约实例化成功！',
+                    type: 'success',
+                    center: true
+                  })
+                  this.submitResponse = JSON.stringify(response, null, 4)
+                }
+              }).catch(err => {
+                this.$message(
+                  {
+                    message: err,
+                    type: 'error'
+                  }
+                )
               })
               break
             case 'upgrade':
               fabricUpgrade(buildFabricInstantiateRequest(this.form)).then(response => {
-                console.log(response)
+                if (response.errorCode !== 0) {
+                  this.$message({
+                    message: '执行Hyperledger Fabric合约升级失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
+                    type: 'error',
+                    center: true
+                  })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
+                } else {
+                  this.$message({
+                    message: '执行Hyperledger Fabric合约升级成功！',
+                    type: 'success',
+                    center: true
+                  })
+                  this.submitResponse = JSON.stringify(response, null, 4)
+                }
+              }).catch(err => {
+                this.$message(
+                  {
+                    message: err,
+                    type: 'error'
+                  }
+                )
               })
               break
             default:
@@ -310,6 +429,7 @@ export default {
         type: 'info'
       })
       this.stepActive = 0
+      this.fileList = []
       this.form.method = null
       this.form.stubType = null
       this.$refs.deployForm.resetFields()
@@ -355,12 +475,14 @@ export default {
     },
     stubTypeChange() {
       this.stepActive = 1
+      this.fileList = []
       this.$refs.deployForm.clearValidate()
       this.form.method = null
       clearForm(this.form)
     },
     methodChange() {
       this.stepActive = 2
+      this.fileList = []
       this.$refs.deployForm.clearValidate()
       clearForm(this.form)
     }

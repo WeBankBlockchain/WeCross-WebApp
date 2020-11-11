@@ -1,5 +1,4 @@
 export function clearForm(formData) {
-  formData.path = null
   formData.className = null
   formData.version = null
   formData.address = null

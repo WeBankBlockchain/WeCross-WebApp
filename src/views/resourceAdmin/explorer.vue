@@ -1,32 +1,35 @@
 <template>
   <div class="app-container">
     <el-row>
-      <el-card class="box-card">
+      <el-card>
         <el-button-group>
           <el-button icon="el-icon-d-arrow-left" @click="onBack" v-bind:disabled="history.index === 0">后退</el-button>
-          <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">前进<i class="el-icon-d-arrow-right"></i></el-button>
+          <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">前进
+            <i class="el-icon-d-arrow-right"></i>
+          </el-button>
         </el-button-group>
         <el-button-group style="margin-left: 10px; width:40%">
-          <el-input size="large" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly></el-input>
+          <el-input
+              size="large"
+              placeholder="当前路径"
+              prefix-icon="el-icon-folder"
+              v-model="currentChain"
+              readonly>
+          </el-input>
         </el-button-group>
         <el-button-group>
-          <el-button icon="el-icon-upload" @click="onDeploy" v-bind:disabled="currentChain === ''">部署资源</el-button>
+          <el-button icon="el-icon-upload" @click="onDeploy" :disabled="currentChain === ''" style="margin-left: 10px">部署资源</el-button>
         </el-button-group>
       </el-card>
     </el-row>
     <el-row :gutter="10" style="margin-top: 10px">
       <el-col :span="4">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <el-button-group>
-              <el-button icon="el-icon-circle-plus-outline" @click="onAddChain" v-bind:disabled="currentZone === ''">新增区块链</el-button>
-            </el-button-group>
-          </div>
+        <el-card header="资源选择">
           <ChainExplorer :chain='currentChain' @zone-click='onZoneClick' @chain-click='onChainClick'></ChainExplorer>
         </el-card>
       </el-col>
       <el-col :span="20">
-        <el-card class="box-card">
+        <el-card header="资源列表">
           <ResourceExplorer :chain='currentChain' :pageSize=10></ResourceExplorer>
         </el-card>
       </el-col>
@@ -64,16 +67,8 @@ export default {
       }
     }
   },
-  /*
-    created() {
-      if(cached !== undefined) {
-        for(var i in cached) {
-          this.$data[i] = cached[i]
-        }
-      }
-    },
-    */
-  mounted() {},
+  mounted() {
+  },
   methods: {
     onZoneClick(path) {
       if (this.currentZone !== path) {

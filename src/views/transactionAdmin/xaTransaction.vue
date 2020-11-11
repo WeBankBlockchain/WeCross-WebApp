@@ -403,7 +403,6 @@ export default {
       for (const arg of transaction.args) {
         args.push(arg.value)
       }
-      console.log(transaction.execMethod)
       if (transaction.execMethod === 'sendTransaction') {
         sendTransaction({
           version: '1',

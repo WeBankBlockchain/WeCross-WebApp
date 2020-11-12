@@ -180,7 +180,6 @@
                 :data="transactionDetail"
                 fit
                 stripe
-                element-loading-text="Loading"
                 style="width: 100%"
               >
                 <el-table-column prop="username" label="用户名" min-width="30"></el-table-column>
@@ -422,6 +421,7 @@ export default {
             }
           }
         }).then(response => {
+          this.loading = false
           if (response.errorCode !== 0 || response.data.errorCode !== 0) {
             this.submitResponse = null
             this.$message({
@@ -432,7 +432,6 @@ export default {
           } else {
             this.getXADetail()
             this.submitResponse = JSON.stringify(response, null, 4)
-            this.loading = false
           }
         })
       } else if (transaction.execMethod === 'call') {
@@ -447,6 +446,7 @@ export default {
             }
           }
         }).then(response => {
+          this.loading = false
           if (response.errorCode !== 0 || response.data.errorCode !== 0) {
             this.submitResponse = null
             this.$message({
@@ -456,7 +456,6 @@ export default {
             })
           } else {
             this.submitResponse = JSON.stringify(response, null, 4)
-            this.loading = false
           }
         })
       }

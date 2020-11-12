@@ -1,10 +1,6 @@
 <template>
   <div>
-    <el-row
-      v-loading="loading"
-      element-loading-text="执行中"
-      element-loading-spinner="el-icon-loading"
-    >
+    <el-row v-loading="loading">
       <el-form
         ref="transactionForm"
         label-width="auto"
@@ -67,7 +63,7 @@
           readonly
           v-model="submitResponse"
           v-if="submitResponse !== null"
-          style="margin-bottom: 20px; width: 90%"
+          style="margin-bottom: 20px; width: 80%"
         ></el-input>
       </el-collapse-transition>
     </el-row>

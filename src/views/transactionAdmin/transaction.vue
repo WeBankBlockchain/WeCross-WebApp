@@ -93,6 +93,7 @@ export default {
             args: args
           }
         }).then(response => {
+          this.loading = false
           if (response.errorCode !== 0 || response.data.errorCode !== 0) {
             this.submitResponse = null
             this.$message({
@@ -100,7 +101,6 @@ export default {
             })
           } else {
             this.submitResponse = JSON.stringify(response, null, 4)
-            this.loading = false
           }
         })
       } else {
@@ -112,6 +112,7 @@ export default {
             args: args
           }
         }).then(response => {
+          this.loading = false
           if (response.errorCode !== 0 || response.data.errorCode !== 0) {
             this.submitResponse = null
             this.$message({
@@ -119,7 +120,6 @@ export default {
             })
           } else {
             this.submitResponse = JSON.stringify(response, null, 4)
-            this.loading = false
           }
         })
       }

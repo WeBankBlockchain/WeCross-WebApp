@@ -120,7 +120,7 @@ export default {
         } else {
           this.$message({
             type: 'error',
-            message: '查询交易列表失败, errorCode: ' + response.errorCode
+            message: '查询资源列表失败, errorCode: ' + response.errorCode
           })
         }
       }).catch((error) => {

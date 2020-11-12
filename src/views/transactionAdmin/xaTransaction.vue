@@ -15,18 +15,16 @@
     <el-collapse-transition>
       <el-row style="margin-top: 15px" v-if="stepActive === 0">
         <el-card header="开启事务">
-          <el-row :gutter="24">
-            <el-col style="text-align: center">
-              <el-transfer
-                filterable
-                :filter-method="filterMethod"
-                filter-placeholder="请输入资源"
-                :button-texts="['取消', '选择']"
-                :titles="['待选资源列表', '已选资源列表']"
-                v-model="chosenPaths"
-                :data="paths"
-              ></el-transfer>
-            </el-col>
+          <el-row style="margin-top: 20px">
+            <resource-transfer
+                :page-object="pageObject"
+                :resource-data="resourceData"
+                :to_data.sync="toResourceData"
+                @prev-click="prevPage"
+                @next-click="nextPage"
+                @current-change="setPage"
+                @chain-click='onChainClick'
+            ></resource-transfer>
           </el-row>
           <el-divider>完成资源路径选择</el-divider>
           <el-row style="margin-top: 20px">
@@ -38,22 +36,12 @@
                 :model="transactionForm"
               >
                 <el-form-item
-                  label="事务ID："
-                  :rules="[
-                    {
-                      required: true,
-                      message: '事务ID不能为空',
-                      trigger: 'blur',
-                    },
-                    {
-                      pattern: /^[0-9a-zA-Z]+$/,
-                      required: true,
-                      message: '事务ID不支持特殊字符',
-                      trigger: 'blur',
-                    },
-                  ]"
-                  prop="transactionID"
-                >
+                    label="事务ID："
+                    :rules="[
+                        {required: true, message: '事务ID不能为空', trigger: 'blur'},
+                        { pattern: /^[0-9a-fA-F]+$/, required: true, message: '请检查事务ID格式：16进制', trigger: 'blur'}
+                        ]"
+                    prop="transactionID">
                   <el-input v-model="transactionForm.transactionID" placeholder="请输入事务ID"></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -300,6 +288,7 @@
 
 <script>
 import TransactionForm from '@/views/transactionAdmin/components/TransactionForm'
+import ResourceTransfer from '@/components/ResourceTransfer/index'
 import { getResourceList } from '@/api/resource'
 import { call, getXATransaction, sendTransaction } from '@/api/transaction'
 import { v4 as uuidV4 } from 'uuid'
@@ -308,18 +297,24 @@ import { Message } from 'element-ui'
 export default {
   name: 'XATransaction',
   components: {
-    TransactionForm
+    TransactionForm,
+    ResourceTransfer
   },
   data() {
     return {
       stepActive: 0,
       transactionDetail: [],
       transactionStep: [],
-      paths: [],
-      pathDic: {},
-      chosenPaths: [],
-      fromData: [],
-      toData: [],
+      resourceData: [],
+      toResourceData: [],
+
+      currentChain: null,
+      queryStatus: {},
+      pageObject: {
+        currentPage: 1,
+        totalPageNumber: 0,
+        pageSize: 10
+      },
       transactionForm: {
         transactionID: null,
         path: null,
@@ -336,24 +331,76 @@ export default {
     }
   },
   created() {
-    this.getPaths()
+  },
+  watch: {
   },
   mounted() {
   },
   methods: {
-    getPaths() {
-      getResourceList(null, { 'version': '1', 'data': {}})
-        .then(response => {
+    getQueryStatus(path) {
+      let status = this.queryStatus[path]
+      if (typeof (status) === 'undefined') {
+        this.queryStatus[path] = {
+          page: 0
+        }
+        status = this.queryStatus[path]
+      }
+      return status
+    },
+    refresh() {
+      const path = this.currentChain
+      const status = this.getQueryStatus(path)
+      this.resourceData = []
+      getResourceList({
+        path: path,
+        offset: status.page * this.pageObject.pageSize,
+        size: this.pageObject.pageSize
+      }, {
+        ignoreRemote: false
+      }).then((response) => {
+        if (response.errorCode === 0) {
           const resourceList = response.data.resourceDetails
-          for (const resourceListKey in resourceList) {
-            this.paths.push({
-              label: resourceList[resourceListKey].path,
-              key: resourceListKey,
-              value: resourceList[resourceListKey].path
+          for (const resource of resourceList) {
+            this.resourceData.push({
+              path: resource.path
             })
-            this.pathDic[resourceListKey] = resourceList[resourceListKey].path
           }
+          this.pageObject.totalPageNumber = response.data.total
+          this.pageObject.currentPage = status.page + 1
+        } else {
+          this.$message({
+            type: 'error',
+            message: '查询资源列表失败, errorCode: ' + response.errorCode
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+        this.$message({
+          type: 'error',
+          message: '网络异常'
         })
+      })
+    },
+    prevPage() {
+      const status = this.getQueryStatus(this.currentChain)
+      --status.page
+      this.pageObject.currentPage = status.page + 1
+    },
+    nextPage() {
+      const status = this.getQueryStatus(this.currentChain)
+      status.page++
+      this.pageObject.currentPage = status.page + 1
+    },
+    setPage(value) {
+      const status = this.getQueryStatus(this.currentChain)
+      status.page = value - 1
+      this.pageObject.currentPage = status.page + 1
+      this.refresh()
+    },
+    onChainClick(path, data) {
+      this.currentChain = path
+      this.resourceData = []
+      this.refresh()
     },
     creatUUID() {
       this.transactionForm.transactionID = uuidV4().replaceAll('-', '')
@@ -370,12 +417,9 @@ export default {
       // turn to step3
       this.stepActive = 2
     },
-    filterMethod(query, item) {
-      return item.value.indexOf(query) > -1
-    },
     startTransaction() {
       this.$refs['transactionForm'].validate(validate => {
-        if (this.chosenPaths == null || this.chosenPaths.length < 1) {
+        if (this.toResourceData == null || this.toResourceData.length < 1) {
           this.$message({
             message: '开启事务前请先选择资源！', type: 'error', center: true
           })
@@ -384,8 +428,8 @@ export default {
         if (validate) {
           this.loading = true
           var chosenData = []
-          for (const data of this.chosenPaths) {
-            chosenData.push(this.pathDic[data])
+          for (const data of this.toResourceData) {
+            chosenData.push(data.path)
           }
           this.$store.dispatch('transaction/startTransaction', {
             version: '1',
@@ -528,16 +572,6 @@ export default {
 </script>
 
 <style lang="scss">
-.el-transfer {
-  .el-transfer-panel {
-    width: 220px;
-  }
-
-  .el-checkbox {
-    text-align: left;
-  }
-}
-
 .table-expand {
   font-size: 0;
 }

@@ -13,7 +13,7 @@ module.exports = [{
           total: 1000,
           'resourceDetails|10': [{
             id: '@id',
-            path: '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\']).@word(3,5)',
+            path: config.query.path ? config.query.path + '.@word(3,5)' : '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\']).@word(3,5)',
             checksum: 'checksum',
             'stubType|1': ['BCOS2.0', 'GM_BCOS2.0', 'Fabric1.4'],
             properties: '@sentence(3,3)',

@@ -3,7 +3,8 @@
     <el-row style="margin-top: 20px">
       <el-card>
         <el-row :gutter="18">
-          <el-button plain type="primary" icon="el-icon-refresh" @click="refresh">刷新</el-button>
+          <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
+          <el-button plain icon="el-icon-s-order" @click="onStartXATransaction">发起事务</el-button>
         </el-row>
         <el-row :gutter="20">
           <el-table
@@ -182,6 +183,9 @@ export default {
       console.log('[offset0] status => offsets: ' + JSON.stringify(this.offsets))
       this.fetchXATransactionList()
     },
+    onStartXATransaction() {
+      this.$router.push({ path: 'xaTransaction' })
+    },
     fetchXATransactionList() {
       this.xaList = []
       listXATransactions({
@@ -216,7 +220,7 @@ export default {
     },
     onExecXATransaction(xaTID, xaPaths) {
       this.$store.commit('transaction/SET_TRANSACTION', { transactionID: xaTID, paths: xaPaths })
-      this.$router.push({ path: '/transactionAdmin/xaTransaction' })
+      this.$router.push({ path: 'xaTransaction' })
     },
     onExpandChange(row, expandedRows) {
       this.fetchXATransaction(row.xaTransactionID, row.paths)

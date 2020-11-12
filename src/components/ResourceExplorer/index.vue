@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table ref="singleTable" :data="resources" element-loading-text="Loading" highlight-current-row>
+    <el-table ref="singleTable" :data="resources" v-loading="loading" highlight-current-row>
       <el-table-column label="资源路径" min-width="80px">
         <template slot-scope="scope">
           {{ scope.row.path }}
@@ -65,6 +65,7 @@ export default {
   },
   data: function() {
     return {
+      loading: false,
       total: 0,
       page: 1,
       resources: [],
@@ -101,6 +102,8 @@ export default {
       return status
     },
     refresh() {
+      this.loading = true
+
       var path = this.chain
       var status = this.getQueryStatus(path)
 
@@ -127,6 +130,8 @@ export default {
           message: '网络异常'
         })
       })
+
+      this.loading = false
     },
     prevPage() {
       var status = this.getQueryStatus(this.chain)

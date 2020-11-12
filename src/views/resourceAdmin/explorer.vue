@@ -9,12 +9,7 @@
           </el-button>
         </el-button-group>
         <el-button-group style="margin-left: 10px; width:40%">
-          <el-input
-              size="large"
-              placeholder="当前路径"
-              prefix-icon="el-icon-folder"
-              v-model="currentChain"
-              readonly>
+          <el-input size="large" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly>
           </el-input>
         </el-button-group>
         <el-button-group>
@@ -48,12 +43,12 @@ export default {
     ResourceExplorer
   },
   /*
-    beforeRouteLeave(to, from, next) {
-      cached = this.$data
+      beforeRouteLeave(to, from, next) {
+        cached = this.$data
 
-      next()
-    },
-    */
+        next()
+      },
+      */
   props: {},
   data() {
     return {
@@ -67,8 +62,7 @@ export default {
       }
     }
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     onZoneClick(path) {
       if (this.currentZone !== path) {

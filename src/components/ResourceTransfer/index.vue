@@ -297,9 +297,11 @@ export default {
         return
       }
       if (val) {
+        const check_keys = []
         for (const toData of this.toDataFilter) {
-          this.to_check_keys.push(toData.path)
+          check_keys.push(toData.path)
         }
+        this.to_check_keys = check_keys
       } else {
         this.to_check_keys = []
       }

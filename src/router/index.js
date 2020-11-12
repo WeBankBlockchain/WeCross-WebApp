@@ -91,7 +91,6 @@ export const constantRoutes = [
     component: Layout,
     name: 'routerAdmin',
     redirect: '/routerAdmin/routerManage',
-    meta: { title: '路由管理', icon: 'el-icon-menu' },
     children: [
       {
         name: 'routerManage',
@@ -111,7 +110,6 @@ export const constantRoutes = [
     path: '/resourceAdmin',
     component: Layout,
     redirect: '/resourceAdmin/resourceList',
-    meta: { title: '资源管理', icon: 'el-icon-s-grid' },
     children: [
       {
         name: 'resourceList',
@@ -132,8 +130,7 @@ export const constantRoutes = [
     path: '/transactionAdmin',
     component: Layout,
     name: 'TransactionAdmin',
-    redirect: 'transactionAdmin/transaction',
-    meta: { title: '交易管理', icon: 'el-icon-s-promotion' },
+    redirect: 'transactionAdmin/transactionList',
     children: [
       {
         path: 'transaction',
@@ -153,7 +150,6 @@ export const constantRoutes = [
     component: Layout,
     name: 'XATransactionAdmin',
     redirect: 'transactionAdmin/xaTransactionList',
-    meta: { title: '事务管理', icon: 'el-icon-tickets' },
     children: [
       {
         name: 'xaTransaction',

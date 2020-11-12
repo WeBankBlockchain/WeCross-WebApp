@@ -21,20 +21,21 @@
           :row-class-name="chainAccountTableRowClassName"
           lazy
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+          @row-click="showChainAccount"
         >
           <el-table-column prop="type" label="链账户类型" width="180">
           </el-table-column>
           <el-table-column prop="keyID" label="KeyID" width="180">
             <template slot-scope="scope">
               <el-tooltip class="item" effect="light" content="点击查看详情" placement="top">
-              <div @click="showChainAccount(scope.row)">{{ scope.row.keyID }}</div>
+              <div>{{ scope.row.keyID }}</div>
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="details" label="信息">
+          <el-table-column prop="details" label="摘要" @click="showChainAccount(scope.row)">
             <template slot-scope="scope">
               <el-tooltip class="item" effect="light" content="点击查看详情" placement="top">
-              <div @click="showChainAccount(scope.row)">{{ scope.row.details }}</div>
+              <div>{{ scope.row.details }}</div>
               </el-tooltip>
             </template>
 
@@ -49,7 +50,7 @@
               </el-button>
               <el-button
                 v-else
-                @click="querySetDefaultAccountByColum(scope.row)"
+                @click.stop="querySetDefaultAccountByColum(scope.row)"
                 type="primary"
                 style="float: right"
               >
@@ -337,10 +338,12 @@ function buildChainDetails(chainAccount) {
   var details = ''
   details +=
     chainAccount.type +
-    '-' +
+    '---' +
     chainAccount.keyID +
-    '-' +
-    chainAccount.identity.substr(0, 32)
+    '---' +
+    chainAccount.identity.replace('-----BEGIN CERTIFICATE-----', '').substr(0, 64) +
+    '---' +
+    chainAccount.ext
   return details
 }
 

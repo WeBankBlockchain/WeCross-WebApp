@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row style="margin-top: 20px">
-      <el-card>
+      <el-card v-loading="loadingList">
         <el-row :gutter="18">
           <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
           <el-button plain icon="el-icon-s-order" @click="onStartXATransaction">发起事务</el-button>
@@ -10,7 +10,6 @@
           <el-table
             ref="singleTable"
             :data="xaList"
-            element-loading-text="加载中..."
             fit
             highlight-current-row
             @expand-change="onExpandChange"
@@ -31,12 +30,11 @@
             </el-table-column>
             <el-table-column type="expand" label="步骤">
               <template slot-scope="scope">
-                <el-card class="box-card">
+                <el-card class="box-card" v-loading="loadingXA">
                   <el-form inline class="table-expand">
                     <el-table
                       ref="singleTable"
                       :data="xaTransaction.xaTransactionSteps"
-                      element-loading-text="加载中..."
                       fit
                       highlight-current-row
                     >
@@ -127,6 +125,8 @@ export default {
   },
   data() {
     return {
+      loadingList: false,
+      loadingXA: false,
       tableSize: 10,
       currentPage: 1,
       isFinished: false,
@@ -187,6 +187,7 @@ export default {
       this.$router.push({ path: 'xaTransaction' })
     },
     fetchXATransactionList() {
+      this.loadingList = true
       this.xaList = []
       listXATransactions({
         version: '1',
@@ -195,6 +196,7 @@ export default {
           offsets: this.offsets
         }
       }).then(response => {
+        this.loadingList = false
         console.log('[listXATransactions] response => ' + JSON.stringify(response))
 
         if (typeof response.errorCode === undefined || response.errorCode !== 0) {
@@ -228,6 +230,7 @@ export default {
     fetchXATransaction(xaTransactionID, paths) {
       console.log('xaTransactionID ', xaTransactionID)
       console.log('paths ', paths)
+      this.loadingXA = true
       this.xaTransaction = null
       getXATransaction({
         version: '1',
@@ -237,7 +240,7 @@ export default {
         }
       }).then(response => {
         console.log('[getXATransaction] response => ' + JSON.stringify(response))
-
+        this.loadingXA = false
         if (typeof response.errorCode === undefined || response.errorCode !== 0) {
           this.$message({
             type: 'error',

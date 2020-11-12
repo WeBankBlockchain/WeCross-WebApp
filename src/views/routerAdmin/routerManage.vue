@@ -8,6 +8,9 @@
             <el-button plain icon="el-icon-plus" @click="addRouter">添加跨链路由</el-button>
           </el-button-group>
 
+          <el-button-group style="margin-left: 10px">
+            <el-button plain icon="el-icon-circle-plus" @click="onDeployRouter">跨链路由部署向导</el-button>
+          </el-button-group>
           <el-pagination
 background
 :page-size="pageSize"
@@ -169,6 +172,9 @@ export default {
           })
         })
       }).catch(() => {})
+    },
+    onDeployRouter() {
+      this.$router.push('routerGuide')
     },
     setAlias(nodeID) {
       this.$prompt('为当前跨链路由设置别名', {}).then(data => {

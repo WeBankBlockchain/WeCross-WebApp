@@ -94,12 +94,14 @@ export const constantRoutes = [
     meta: { title: '路由管理', icon: 'el-icon-menu' },
     children: [
       {
+        name: 'routerManage',
         path: 'routerManage',
         component: () => import('@/views/routerAdmin/routerManage'),
-        meta: { title: '路由浏览', icon: 'el-icon-connection' }
+        meta: { title: '路由管理', icon: 'el-icon-connection' }
       },
       {
         path: 'routerGuide',
+        hidden: true,
         component: () => import('@/views/routerAdmin/routerGuide'),
         meta: { title: '路由部署', icon: 'el-icon-upload' }
       }
@@ -108,17 +110,19 @@ export const constantRoutes = [
   {
     path: '/resourceAdmin',
     component: Layout,
-    name: 'ResourceAdmin',
     redirect: '/resourceAdmin/resourceList',
-    meta: { title: '资源管理', icon: 'el-icon-notebook-1' },
+    meta: { title: '资源管理', icon: 'el-icon-s-grid' },
     children: [
       {
+        name: 'resourceList',
         path: 'resourceList',
         component: () => import('@/views/resourceAdmin/explorer'),
-        meta: { title: '资源列表', icon: 'table' }
+        meta: { title: '资源管理', icon: 'el-icon-s-grid' }
       },
       {
+        name: 'resourceDeploy',
         path: 'resourceDeploy',
+        hidden: true,
         component: () => import('@/views/resourceAdmin/resourceDeploy'),
         meta: { title: '资源部署', icon: 'el-icon-upload' }
       }
@@ -133,23 +137,36 @@ export const constantRoutes = [
     children: [
       {
         path: 'transaction',
+        hidden: true,
         component: () => import('@/views/transactionAdmin/transaction'),
         meta: { title: '交易发起', icon: 'el-icon-s-opportunity' }
       },
       {
         path: 'transactionList',
         component: () => import('@/views/transactionAdmin/transactionList'),
-        meta: { title: '交易列表', icon: 'el-icon-notebook-2' }
-      },
+        meta: { title: '交易管理', icon: 'el-icon-notebook-2' }
+      }
+    ]
+  },
+  {
+    path: '/xaTransactionAdmin',
+    component: Layout,
+    name: 'XATransactionAdmin',
+    redirect: 'transactionAdmin/xaTransactionList',
+    meta: { title: '事务管理', icon: 'el-icon-tickets' },
+    children: [
       {
+        name: 'xaTransaction',
         path: 'xaTransaction',
+        hidden: true,
         component: () => import('@/views/transactionAdmin/xaTransaction'),
         meta: { title: '事务交易', icon: 'el-icon-s-order' }
       },
       {
+        name: 'xaTransactionList',
         path: 'xaTransactionList',
         component: () => import('@/views/transactionAdmin/xaTransactionList'),
-        meta: { title: '事务列表', icon: 'el-icon-tickets' }
+        meta: { title: '事务管理', icon: 'el-icon-tickets' }
       }
     ]
   },

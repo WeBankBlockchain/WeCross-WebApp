@@ -23,6 +23,7 @@
           <el-col :span="12">
             <el-button type="primary" plain icon="el-icon-search" @click="handleSearch">搜索</el-button>
             <el-button type="primary" plain icon="el-icon-edit" @click="handleFresh">刷新</el-button>
+            <el-button type="primary" plain icon="el-icon-notebook-2" @click="onSendTransaction">发送交易</el-button>
           </el-col>
         </el-row>
         <el-row :gutter="20" style="margin-top: 10px">
@@ -216,6 +217,11 @@ export default {
     handleFresh() {
       this.resetAllData()
       this.refreshChainList(this.doSearchOperation)
+    },
+    onSendTransaction() {
+      this.$router.push({
+        path: 'transaction'
+      })
     },
     handleClick(row) {
       console.log('properties => ' + JSON.stringify(row))

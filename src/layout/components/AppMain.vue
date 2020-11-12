@@ -38,3 +38,6 @@ export default {
   }
 }
 </style>
+<keep-alive :include="cachedViews">
+  <router-view></router-view>
+</keep-alive>

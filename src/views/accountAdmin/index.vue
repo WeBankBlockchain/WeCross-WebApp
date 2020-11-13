@@ -18,7 +18,6 @@
           :data="chainAccountTable"
           style="width: 100%"
           row-key="id"
-          :row-class-name="chainAccountTableRowClassName"
           lazy
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           @row-click="showChainAccount"
@@ -115,26 +114,46 @@
                 v-model="addChainAccountDrawer.params.type"
                 placeholder="请选择"
               >
-                <el-option label="FISCO BCOS2.0" value="BCOS2.0"></el-option>
-                <el-option label="FISCO BCOS2.0 国密" value="GM_BCOS2.0"></el-option>
-                <el-option label="HyperLedger Fabric1.4" value="Fabric1.4"></el-option>
+                <el-option label="FISCO BCOS 2.0" value="BCOS2.0"></el-option>
+                <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0"></el-option>
+                <el-option label="HyperLedger Fabric 1.4" value="Fabric1.4"></el-option>
               </el-select>
             </el-form-item>
 
             <el-form-item label="公钥">
+              <el-upload
+                class="upload-demo"
+                action=""
+                :show-file-list="false"
+                :file-list="pubKeyFileList"
+                :http-request="uploadPubKeyHandler"
+                :auto-upload="false">
+                <el-button slot="trigger" size="mini" type="primary">点击上传</el-button>
+              </el-upload>
               <el-input
                 type="textarea"
                 :rows="2"
                 placeholder="请输入"
+                autosize
                 v-model="addChainAccountDrawer.params.pubKey">
               </el-input>
             </el-form-item>
 
             <el-form-item label="私钥">
+                <el-upload
+                class="upload-demo"
+                action=""
+                :show-file-list="false"
+                :file-list="pubKeyFileList"
+                :http-request="uploadSecKeyHandler"
+                :auto-upload="false">
+                <el-button slot="trigger" size="mini" type="primary">点击上传</el-button>
+              </el-upload>
               <el-input
                 type="textarea"
                 :rows="2"
                 placeholder="请输入"
+                autosize
                 v-model="addChainAccountDrawer.params.secKey">
               </el-input>
             </el-form-item>
@@ -221,7 +240,9 @@ export default {
         }
       },
       fullscreenLoading: false,
-      show: true
+      show: true,
+      pubKeyFileList: [],
+      privateKeyFileList: []
     }
   },
   methods: {
@@ -318,14 +339,51 @@ export default {
           location.reload()
         })
       }
-    }
-  },
-  chainAccountTableRowClassName({ row, rowIndex }) {
-    console.log('xxxxx ' + row)
-    if (row.isDefault) {
-      return 'success-row'
-    } else {
-      return ''
+    },
+    uploadPubKeyHandler(params) {
+      var reader = new FileReader()
+      reader.onload = (event) => {
+        var key = event.target.result
+        if (!this.checkPubKeyFormat(key)) {
+          return
+        }
+
+        this.addChainAccountDrawer.params.pubKey = key
+      }
+      reader.readAsText(params.file)
+    },
+    uploadSecKeyHandler(params) {
+      var reader = new FileReader()
+      reader.onload = (event) => {
+        var key = event.target.result
+        if (!this.checkSecKeyFormat(key)) {
+          return
+        }
+        this.addChainAccountDrawer.params.secKey = key
+      }
+      reader.readAsText(params.file)
+    },
+    checkPubKeyFormat(key) {
+      if (!key.includes('-----BEGIN') || key.includes('PRIVATE')) {
+        this.$message({
+          type: 'error',
+          message: '证书格式错误'
+        })
+        return false
+      } else {
+        return true
+      }
+    },
+    checkSecKeyFormat(key) {
+      if (!key.includes('-----BEGIN PRIVATE KEY-----')) {
+        this.$message({
+          type: 'error',
+          message: '证书格式错误'
+        })
+        return false
+      } else {
+        return true
+      }
     }
   },
 
@@ -373,11 +431,11 @@ function buildChainAccountTable(ua) {
         (u) => u.type === chainAccount.type
       )
       if (defaultChainAccount !== undefined) {
-        chainAccount.id = defaultChainAccount.id * 10000
+        chainAccount.id = defaultChainAccount.id * 10000 + defaultChainAccount.children.length + 1
         defaultChainAccount.children.push(chainAccount)
       } else {
-        chainAccount.id =
-          defaultChainAccount.id * 10000 + defaultChainAccount.children.length
+        chainAccount.id = id++
+        chainAccount.isDefault = true
         localChainAccounts.push(chainAccount)
       }
     }
@@ -385,6 +443,7 @@ function buildChainAccountTable(ua) {
   console.log('localChainAccounts', localChainAccounts)
   return localChainAccounts
 }
+
 </script>
 
 <style lang="scss">

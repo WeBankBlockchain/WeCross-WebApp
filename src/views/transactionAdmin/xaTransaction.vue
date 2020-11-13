@@ -455,7 +455,7 @@ export default {
       if (transaction.execMethod === 'sendTransaction') {
         sendTransaction({
           version: '1',
-          path: 'test.test.test', // transaction.path,
+          path: transaction.path,
           data: {
             method: transaction.method,
             args: args,
@@ -481,7 +481,7 @@ export default {
       } else if (transaction.execMethod === 'call') {
         call({
           version: '1',
-          path: 'test.test.test', // transaction.path,
+          path: transaction.path,
           data: {
             method: transaction.method,
             args: args,

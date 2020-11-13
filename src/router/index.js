@@ -140,7 +140,7 @@ export const constantRoutes = [
       },
       {
         path: 'transactionList',
-        component: () => import('@/views/transactionAdmin/transactionList'),
+        component: () => import('@/views/transactionAdmin/explorer'),
         meta: { title: '交易管理', icon: 'el-icon-notebook-2' }
       }
     ]

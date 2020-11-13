@@ -25,68 +25,14 @@ module.exports = [{
   }
 },
 {
-  url: '/customCommand/deploy',
+  url: '/customCommand',
   type: 'post',
   response: config => {
     return {
       ...Mock.mock({
         'version': 1,
         'errorCode': 0,
-        'message': 'Success',
-        'data': 'result'
-      })
-    }
-  }
-},
-{
-  url: '/customCommand/register',
-  type: 'post',
-  response: config => {
-    return {
-      ...Mock.mock({
-        'version': 1,
-        'errorCode': 0,
-        'message': 'Success',
-        'data': 'result'
-      })
-    }
-  }
-},
-{
-  url: '/customCommand/install',
-  type: 'post',
-  response: config => {
-    return {
-      ...Mock.mock({
-        'version': 1,
-        'errorCode': 0,
-        'message': 'Success',
-        'data': 'result'
-      })
-    }
-  }
-}, {
-  url: '/customCommand/instantiate',
-  type: 'post',
-  response: config => {
-    return {
-      ...Mock.mock({
-        'version': 1,
-        'errorCode': 0,
-        'message': 'Success',
-        'data': 'result'
-      })
-    }
-  }
-}, {
-  url: '/customCommand/upgrade',
-  type: 'post',
-  response: config => {
-    return {
-      ...Mock.mock({
-        'version': 1,
-        'errorCode': 0,
-        'message': 'Success',
+        'message': 'Success: ' + config.body.command,
         'data': 'result'
       })
     }

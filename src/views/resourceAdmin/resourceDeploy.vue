@@ -1,14 +1,17 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-col :span="5" :offset="1" style="margin-top:10px;height: 170px">
+      <el-page-header @back="() => {this.$router.push({ path: 'resourceList' })}" content="资源部署页面" title="资源管理">
+      </el-page-header>
+      <el-row style="margin-top: 20px">
+        <el-col :span="5" :offset="1" style="margin-top:10px;height: 170px">
         <el-steps direction="vertical" :active="stepActive">
           <el-step title="步骤 1" description="选择链类型"></el-step>
           <el-step title="步骤 2" description="选择操作类型"></el-step>
           <el-step title="步骤 3" description="设置操作参数"></el-step>
         </el-steps>
       </el-col>
-      <el-col :span="16">
+        <el-col :span="16">
         <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
           <el-form-item label="选择链类型：">
             <el-select v-model="form.stubType" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
@@ -151,6 +154,7 @@
           </el-form-item>
         </el-form>
       </el-col>
+      </el-row>
     </el-card>
   </div>
 </template>
@@ -208,7 +212,7 @@ export default {
           { required: true, message: '资源路径不能为空', trigger: 'blur' },
           { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40 },
           {
-            pattern: /^[A-Za-z]+\.[A-Za-z_-]+\.[A-Za-z0-9_-]+$/,
+            pattern: /^[A-Za-z]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
             required: true,
             message: '资源路径格式错误，应形如 \'path.to.resource\'',
             trigger: 'blur'

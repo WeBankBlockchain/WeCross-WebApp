@@ -31,6 +31,7 @@ const actions = {
           resolve()
         }
       }).catch(error => {
+        Message.error({ message: '开启事务失败，错误：', center: true, duration: 5000 })
         reject(error)
       })
     })

@@ -38,7 +38,7 @@
           @selection-change="handleSelectionChange">
         <el-table-column
             fixed
-            width="55px"
+            width="42px"
             type="selection">
         </el-table-column>
         <el-table-column label="可选资源路径" show-overflow-tooltip>

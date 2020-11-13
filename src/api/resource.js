@@ -12,7 +12,7 @@ export function getResourceList(params, data) {
 
 export function bcosDeploy(data) {
   return request({
-    url: 'resource' + path2Url(data.path) + '/customCommand/deploy',
+    url: 'resource' + path2Url(data.path) + '/customCommand',
     method: 'post',
     data: data
   })
@@ -20,7 +20,7 @@ export function bcosDeploy(data) {
 
 export function bcosRegister(data) {
   return request({
-    url: 'resource' + path2Url(data.path) + '/customCommand/register',
+    url: 'resource' + path2Url(data.path) + '/customCommand',
     method: 'post',
     data: data
   })
@@ -28,7 +28,7 @@ export function bcosRegister(data) {
 
 export function fabricInstall(data) {
   return request({
-    url: 'resource' + path2Url(data.path) + '/customCommand/install',
+    url: 'resource' + path2Url(data.path) + '/customCommand',
     method: 'post',
     data: data
   })
@@ -36,7 +36,7 @@ export function fabricInstall(data) {
 
 export function fabricInstantiate(data) {
   return request({
-    url: 'resource' + path2Url(data.path) + '/customCommand/instantiate',
+    url: 'resource' + path2Url(data.path) + '/customCommand',
     method: 'post',
     data: data
   })
@@ -44,7 +44,7 @@ export function fabricInstantiate(data) {
 
 export function fabricUpgrade(data) {
   return request({
-    url: 'resource' + path2Url(data.path) + '/customCommand/upgrade',
+    url: 'resource' + path2Url(data.path) + '/customCommand',
     method: 'post',
     data: data
   })

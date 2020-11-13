@@ -11,19 +11,18 @@
             ref="singleTable"
             :data="xaList"
             fit
-            highlight-current-row
             @expand-change="onExpandChange"
             style="width: 100%"
           >
-            <el-table-column label="开始时间">
+            <el-table-column label="开始时间" width="160px">
               <template slot-scope="scope">
                 <span>{{ scope.row.timestamp | formatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="username" label="账户"></el-table-column>
-            <el-table-column width="400" prop="xaTransactionID" label="ID"></el-table-column>
-            <el-table-column prop="status" label="状态"></el-table-column>
-            <el-table-column label="锁定资源">
+            <el-table-column prop="username" label="账户" min-width="50px"></el-table-column>
+            <el-table-column min-width="110px" prop="xaTransactionID" label="事务ID"></el-table-column>
+            <el-table-column prop="status" label="状态" width="100px"></el-table-column>
+            <el-table-column label="锁定资源" min-width="100px">
               <template slot-scope="scope">
                 <li style="list-style-type: none" v-for="path in scope.row.paths">{{ path }}</li>
               </template>
@@ -34,19 +33,19 @@
                   <el-form inline class="table-expand">
                     <el-table
                       ref="singleTable"
-                      :data="xaTransaction.xaTransactionSteps"
+                      :data="xaTransaction ? xaTransaction.xaTransactionSteps : null"
                       fit
                       highlight-current-row
                     >
-                      <el-table-column label="日期">
+                      <el-table-column label="日期" width="160px">
                         <template slot-scope="scope">
                           <span>{{ scope.row.timestamp | formatDate }}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="xaTransactionSeq" label="序号"></el-table-column>
-                      <el-table-column prop="username" label="账户"></el-table-column>
-                      <el-table-column prop="path" label="资源"></el-table-column>
-                      <el-table-column prop="method" label="方法"></el-table-column>
+                      <el-table-column prop="xaTransactionSeq" label="序号" min-width="100px"></el-table-column>
+                      <el-table-column prop="username" label="账户" min-width="50px"></el-table-column>
+                      <el-table-column prop="path" label="资源" min-width="100px"></el-table-column>
+                      <el-table-column prop="method" label="方法" min-width="50px"></el-table-column>
                     </el-table>
                     <el-row style="margin-top: 20px">
                       <template>
@@ -98,9 +97,9 @@
             size="small"
             type="primary"
             plain
-            icon="el-icon-right"
             @click="handleNextClick"
-          >下一页</el-button>
+          >下一页
+            <i class="el-icon-right"></i></el-button>
         </el-row>
       </el-card>
     </el-row>

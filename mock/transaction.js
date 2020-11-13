@@ -129,18 +129,18 @@ module.exports = [
             },
             'xaList': [
               {
-                'xaTransactionID': '001',
+                'xaTransactionID': '@id(32)',
                 'username': 'hehe',
                 'status': 'processing',
                 'timestamp': 8989889,
-                'paths':['payment.bcos.hello','payment.bcos.hello','payment.bcos.hello']
+                'paths': ['payment.bcos.hello1', 'payment.bcos.hello2', 'payment.bcos.hello3']
               },
               {
-                'xaTransactionID': '002',
+                'xaTransactionID': '@id(32)',
                 'username': 'hehe',
                 'status': 'committed',
                 'timestamp': 8989889,
-                'paths':['payment.bcos.hello','payment.bcos.hello','payment.bcos.hello']
+                'paths': ['payment.bcos.hello1', 'payment.bcos.hello2', 'payment.bcos.hello3']
               }
             ]
 
@@ -149,7 +149,7 @@ module.exports = [
       }
     }
   }, {
-    url: '/resource/test/test/test/sendTransaction',
+    url: '/sendTransaction',
     type: 'post',
     response: _ => {
       return {
@@ -169,7 +169,7 @@ module.exports = [
       }
     }
   }, {
-    url: '/resource/test/test/test/call',
+    url: '/call',
     type: 'post',
     response: _ => {
       return {

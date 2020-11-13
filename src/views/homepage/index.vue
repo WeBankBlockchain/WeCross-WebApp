@@ -86,8 +86,8 @@ export default {
           edgeMinimization: true,
           parentCentralization: true,
           direction: 'UD',        // UD, DU, LR, RL
-          sortMethod: 'hubsize',  // hubsize, directed
-          shakeTowards: 'leaves'  // roots, leaves
+          sortMethod: 'hubsize'  // hubsize, directed
+          // shakeTowards: 'leaves'  // roots, leaves
         }
       }
     }}

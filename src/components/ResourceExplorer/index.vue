@@ -1,22 +1,22 @@
 <template>
   <div>
-    <el-table ref="singleTable" :data="resources" v-loading="loading" highlight-current-row>
-      <el-table-column label="资源路径" min-width="80px">
+    <el-table ref="singleTable" :data="resources" v-loading="loading">
+      <el-table-column label="资源路径" min-width="100px">
         <template slot-scope="scope">
           {{ scope.row.path }}
         </template>
       </el-table-column>
-      <el-table-column label="资源类型" min-width="50px">
+      <el-table-column label="资源类型" width="110px">
         <template slot-scope="scope">
           {{ scope.row.stubType }}
         </template>
       </el-table-column>
-      <el-table-column label="属性" min-width="100px">
+      <el-table-column label="属性" min-width="100px" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{ scope.row.properties }}</span>
+          <span>{{ JSON.stringify(scope.row.properties)  }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" style="min-width: 70px">
+      <el-table-column label="操作" width="190px">
         <template slot-scope="scope">
           <el-button-group style="padding: 5px">
             <el-button plain icon="el-icon-view" @click="onCall(scope.row.path)" style="padding: 8px">调用</el-button>

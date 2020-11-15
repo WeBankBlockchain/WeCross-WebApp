@@ -1,5 +1,5 @@
 import { commitXATransaction, startXATransaction, rollbackXATransaction } from '@/api/transaction'
-import { Message } from 'element-ui'
+import { MessageBox } from 'element-ui'
 
 const getDefaultState = () => {
   return {
@@ -24,14 +24,20 @@ const actions = {
     return new Promise((resolve, reject) => {
       startXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
-          Message.error({ message: '开启事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, center: true, duration: 5000 })
+          MessageBox.alert('开启事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          })
           reject()
         } else {
           commit('SET_TRANSACTION', { transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths })
           resolve()
         }
       }).catch(error => {
-        Message.error({ message: '开启事务失败，错误：', center: true, duration: 5000 })
+        MessageBox.alert('开启事务失败，错误：' + error, '错误', {
+          confirmButtonText: '确定',
+          type: 'error'
+        })
         reject(error)
       })
     })
@@ -40,13 +46,20 @@ const actions = {
     return new Promise((resolve, reject) => {
       commitXATransaction(transaction).then(response => {
         if (response.data.status !== 0) {
-          Message.error({ message: '提交事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, center: true, duration: 5000 })
+          MessageBox.alert('提交事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          })
           reject()
         } else {
           commit('RESET_STATE')
           resolve()
         }
       }).catch(error => {
+        MessageBox.alert('提交事务失败，错误：' + error, '错误', {
+          confirmButtonText: '确定',
+          type: 'error'
+        })
         reject(error)
       })
     })
@@ -55,13 +68,20 @@ const actions = {
     return new Promise((resolve, reject) => {
       rollbackXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
-          Message.error({ message: '回滚事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, center: true, duration: 5000 })
+          MessageBox.alert('回滚事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          })
           reject()
         } else {
           commit('RESET_STATE')
           resolve()
         }
       }).catch(error => {
+        MessageBox.alert('回滚事务失败，错误：' + error, '错误', {
+          confirmButtonText: '确定',
+          type: 'error'
+        })
         reject(error)
       })
     })

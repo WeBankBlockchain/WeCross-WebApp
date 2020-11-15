@@ -1,10 +1,10 @@
 <template>
-  <div class="login-container">
+  <div class="register-container">
     <el-form
       ref="registerForm"
       :model="registerForm"
       :rules="registerRules"
-      class="login-form"
+      class="register-form"
       auto-complete="on"
       label-position="left"
     >
@@ -32,7 +32,7 @@
 
       <el-tooltip placement="top">
         <div slot="content">
-          长度为8~14个字符<br />字母/数字以及标点符号至少包含2种<br />不允许有空格、中文
+          长度为6~18个字符，至少有一个数字，一个大写字母
         </div>
         <el-form-item prop="password">
           <span class="svg-container">
@@ -41,7 +41,7 @@
           <el-input
             :key="passwordType"
             ref="password"
-            v-model="registerForm.pass"
+            v-model="registerForm.password"
             :type="passwordType"
             placeholder="密码"
             name="password"
@@ -57,15 +57,14 @@
       </el-tooltip>
       <el-tooltip placement="top">
         <div slot="content">
-          长度为8~14个字符<br />字母/数字以及标点符号至少包含2种<br />不允许有空格、中文
+          长度为6~18个字符，至少有一个数字，一个大写字母
         </div>
-        <el-form-item prop="password">
+        <el-form-item prop="checkPass">
           <span class="svg-container">
             <svg-icon icon-class="password" />
           </span>
           <el-input
             :key="passwordType"
-            ref="password"
             v-model="registerForm.checkPass"
             :type="passwordType"
             placeholder="确认密码"
@@ -97,32 +96,30 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { validUsername, validPassword } from '@/utils/validate'
 import { register } from '@/api/user'
 
 export default {
   name: 'Register',
   data() {
-    var checkUsername = (rule, value, callback) => {
+    const checkUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
         callback(new Error('无效的用户名'))
       } else {
         callback()
       }
     }
-    var verifyPwd = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'))
-      } else if (value.length < 8 || value.length > 16) {
-        callback(new Error('密码长度8～16个字符'))
+    const verifyPwd = (rule, value, callback) => {
+      if (!validPassword(value)) {
+        callback(new Error('请输入正确密码格式：长度为6~18个字符，至少有一个数字，一个大写字母'))
       } else {
         callback()
       }
     }
-    var confirmPwd = (rule, value, callback) => {
+    const confirmPwd = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
-      } else if (value !== this.registerForm.pass) {
+      } else if (value !== this.registerForm.password) {
         callback(new Error('两次输入密码不一致!'))
       } else {
         callback()
@@ -130,7 +127,7 @@ export default {
     }
     return {
       registerForm: {
-        pass: '',
+        password: '',
         checkPass: '',
         username: ''
       },
@@ -138,7 +135,7 @@ export default {
         username: [
           { required: true, validator: checkUsername, trigger: 'change' }
         ],
-        pass: [{ required: true, validator: verifyPwd, trigger: 'change' }],
+        password: [{ required: true, validator: verifyPwd, trigger: 'blur' }],
         checkPass: [
           { required: true, validator: confirmPwd, trigger: 'change' }
         ]
@@ -173,7 +170,7 @@ export default {
 
         var params = {
           username: this.registerForm.username,
-          password: this.registerForm.pass
+          password: this.registerForm.password
         }
 
         register(params)
@@ -229,13 +226,13 @@ $light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
+  .register-container .el-input input {
     color: $cursor;
   }
 }
 
 /* reset element-ui css */
-.login-container {
+.register-container {
   .el-input {
     display: inline-block;
     height: 47px;
@@ -272,13 +269,13 @@ $bg: #2d3a4b;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 
-.login-container {
+.register-container {
   min-height: 100%;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
 
-  .login-form {
+  .register-form {
     position: relative;
     width: 520px;
     max-width: 100%;

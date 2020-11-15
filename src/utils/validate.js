@@ -15,6 +15,14 @@ export function validUsername(str) {
 }
 
 /**
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function validPassword(str) {
+  return /^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,18}$/.test(str)
+}
+
+/**
  * @param {string} url
  * @returns {Boolean}
  */

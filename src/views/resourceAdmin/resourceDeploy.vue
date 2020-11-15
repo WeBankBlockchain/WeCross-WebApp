@@ -3,6 +3,7 @@
     <el-card>
       <el-page-header @back="() => {this.$router.push({ path: 'resourceList' })}" content="资源部署页面" title="资源管理">
       </el-page-header>
+      <el-divider></el-divider>
       <el-row style="margin-top: 20px">
         <el-col :span="5" :offset="1" style="margin-top:10px;height: 170px">
         <el-steps direction="vertical" :active="stepActive">
@@ -64,10 +65,12 @@
                   class="upload-demo"
                   ref="upload"
                   action=""
+                  accept=".abi,.sol"
                   :on-change="changeFile"
                   :before-remove="beforeRemove"
                   :http-request="uploadHandler"
                   :auto-upload="false">
+                <div slot="tip" class="el-upload__tip">Tips：只能上传abi/sol文件</div>
                 <el-button slot="trigger" size="mini" type="primary">选取文件</el-button>
               </el-upload>
             </el-form-item>
@@ -107,10 +110,12 @@
                   class="upload-demo"
                   ref="upload"
                   action=""
+                  accept=".tar,.gz"
                   :on-change="changeFile"
                   :before-remove="beforeRemove"
                   :http-request="uploadHandler"
                   :auto-upload="false">
+                <div slot="tip" class="el-upload__tip">Tips：只能上传tar/gz文件</div>
                 <el-button slot="trigger" size="mini" type="primary">选取文件</el-button>
               </el-upload>
             </el-form-item>
@@ -164,7 +169,7 @@ import {
   buildBCOSDeployRequest,
   buildBCOSRegisterRequest,
   buildFabricInstallRequest,
-  buildFabricInstantiateRequest, clearForm
+  buildFabricInstantiateRequest, buildFabricUpgradeRequest, clearForm
 } from '@/utils/resource'
 import { bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade } from '@/api/resource'
 
@@ -197,9 +202,10 @@ export default {
         address: null,
         org: null,
         lang: null,
-        policy: null,
+        policy: 'default',
         args: null,
-        sourceContent: null
+        sourceContent: null,
+        fileType: null
       },
       fileList: [],
       stepActive: 0,
@@ -278,10 +284,9 @@ export default {
             case 'deploy' :
               bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
                 if (response.errorCode !== 0) {
-                  this.$message({
-                    message: '执行FISCO BCOS部署合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
-                    type: 'error',
-                    center: true
+                  this.$alert('执行FISCO BCOS部署合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+                    confirmButtonText: '确定',
+                    type: 'error'
                   })
                   this.stepActive = 2
                   this.fileList = []
@@ -292,6 +297,9 @@ export default {
                     type: 'success',
                     center: true
                   })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
                   this.submitResponse = JSON.stringify(response, null, 4)
                 }
               }).catch(err => {
@@ -306,10 +314,9 @@ export default {
             case 'register':
               bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
                 if (response.errorCode !== 0) {
-                  this.$message({
-                    message: '执行FISCO BCOS注册合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
-                    type: 'error',
-                    center: true
+                  this.$alert('执行FISCO BCOS注册合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+                    confirmButtonText: '确定',
+                    type: 'error'
                   })
                   this.stepActive = 2
                   this.fileList = []
@@ -320,6 +327,9 @@ export default {
                     type: 'success',
                     center: true
                   })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
                   this.submitResponse = JSON.stringify(response, null, 4)
                 }
               }).catch(err => {
@@ -334,10 +344,9 @@ export default {
             case 'install':
               fabricInstantiate(buildFabricInstallRequest(this.form)).then(response => {
                 if (response.errorCode !== 0) {
-                  this.$message({
-                    message: '执行Hyperledger Fabric合约安装失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
-                    type: 'error',
-                    center: true
+                  this.$alert('执行Hyperledger Fabric合约安装失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+                    confirmButtonText: '确定',
+                    type: 'error'
                   })
                   this.stepActive = 2
                   this.fileList = []
@@ -348,6 +357,9 @@ export default {
                     type: 'success',
                     center: true
                   })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
                   this.submitResponse = JSON.stringify(response, null, 4)
                 }
               }).catch(err => {
@@ -362,10 +374,9 @@ export default {
             case 'instantiate':
               fabricInstall(buildFabricInstantiateRequest(this.form)).then(response => {
                 if (response.errorCode !== 0) {
-                  this.$message({
-                    message: '执行Hyperledger Fabric合约实例化失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
-                    type: 'error',
-                    center: true
+                  this.$alert('执行Hyperledger Fabric合约实例化失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+                    confirmButtonText: '确定',
+                    type: 'error'
                   })
                   this.stepActive = 2
                   this.fileList = []
@@ -376,6 +387,9 @@ export default {
                     type: 'success',
                     center: true
                   })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
                   this.submitResponse = JSON.stringify(response, null, 4)
                 }
               }).catch(err => {
@@ -388,12 +402,11 @@ export default {
               })
               break
             case 'upgrade':
-              fabricUpgrade(buildFabricInstantiateRequest(this.form)).then(response => {
+              fabricUpgrade(buildFabricUpgradeRequest(this.form)).then(response => {
                 if (response.errorCode !== 0) {
-                  this.$message({
-                    message: '执行Hyperledger Fabric合约升级失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
-                    type: 'error',
-                    center: true
+                  this.$alert('执行Hyperledger Fabric合约升级失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+                    confirmButtonText: '确定',
+                    type: 'error'
                   })
                   this.stepActive = 2
                   this.fileList = []
@@ -404,6 +417,9 @@ export default {
                     type: 'success',
                     center: true
                   })
+                  this.stepActive = 2
+                  this.fileList = []
+                  this.$refs.deployForm.resetFields()
                   this.submitResponse = JSON.stringify(response, null, 4)
                 }
               }).catch(err => {
@@ -462,6 +478,7 @@ export default {
     },
     uploadHandler(params) {
       params.onProgress({ percent: 20 })
+      this.form.fileType = params.file.name.split('.')[1]
       setTimeout(() => {
         this.readText(params)
       }, 100)

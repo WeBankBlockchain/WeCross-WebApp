@@ -62,8 +62,6 @@
                 :page-object="pageObject"
                 :resource-data="resourceData"
                 :to_data.sync="toResourceData"
-                @prev-click="prevPage"
-                @next-click="nextPage"
                 @current-change="setPage"
                 @chain-click='onChainClick'
             ></resource-transfer>
@@ -89,14 +87,6 @@
               <el-col :span="13" style="text-align: left">
                 <el-divider direction="vertical"></el-divider>
                 <span style="margin-left: 10px">事务交易列表</span>
-                <el-button
-                    @click="endTransaction"
-                    icon="el-icon-circle-close"
-                    size="medium"
-                    style="float: right; padding: 3px 0"
-                    type="text"
-                >结束事务
-                </el-button>
               </el-col>
             </el-row>
           </div>
@@ -150,14 +140,11 @@
                       <el-form-item label="资源路径：">
                         <span>{{ props.row.path }}</span>
                       </el-form-item>
-                      <el-form-item label="交易哈希：">
-                        <span>{{ props.row.hash || "null" }}</span>
+                      <el-form-item label="交易时间：">
+                        <span>{{ props.row.timestamp | formatDate }}</span>
                       </el-form-item>
                       <el-form-item label="调用方法：">
                         <span>{{ props.row.method }}</span>
-                      </el-form-item>
-                      <el-form-item label="交易时间戳：">
-                        <span>{{ props.row.timestamp }}</span>
                       </el-form-item>
                     </el-form>
                   </template>
@@ -225,17 +212,11 @@
                         <el-form-item label="资源路径：">
                           <span>{{ step.path }}</span>
                         </el-form-item>
-                        <el-form-item label="交易哈希：">
-                          <span>{{ step.hash || "null" }}</span>
+                        <el-form-item label="交易时间：">
+                          <span>{{ step.timestamp | formatDate }}</span>
                         </el-form-item>
                         <el-form-item label="调用方法：">
                           <span>{{ step.method }}</span>
-                        </el-form-item>
-                        <el-form-item label="方法参数：">
-                          <span>{{ step.args || "null" }}</span>
-                        </el-form-item>
-                        <el-form-item label="交易时间戳：">
-                          <span>{{ step.timestamp }}</span>
                         </el-form-item>
                       </el-form>
                       <el-divider></el-divider>
@@ -306,6 +287,7 @@ import { getResourceList } from '@/api/resource'
 import { call, getXATransaction, sendTransaction } from '@/api/transaction'
 import { v4 as uuidV4 } from 'uuid'
 import { Message } from 'element-ui'
+import { parseTime } from '@/utils'
 
 export default {
   name: 'XATransaction',
@@ -318,14 +300,12 @@ export default {
       stepActive: 0,
       stepBackBtnText: '上一步',
       stepForwardBtnText: '开启事务',
-      stepForwardBtnType: 'plain',
       transactionDetail: [],
       transactionStep: [],
       resourceData: [],
       toResourceData: [],
 
       currentChain: null,
-      queryStatus: {},
       pageObject: {
         currentPage: 1,
         totalPageNumber: 0,
@@ -354,11 +334,19 @@ export default {
       if (value === 1) {
         this.stepForwardBtnText = '结束事务'
         this.stepBackBtnText = '上一步'
+        this.getXADetail()
       }
       if (value === 2) {
         this.stepForwardBtnText = '下一步'
         this.stepBackBtnText = '返回执行'
       }
+    }
+  },
+  filters: {
+    formatDate(time) {
+      time = time * 1000
+      const date = new Date(time)
+      return parseTime(date)
     }
   },
   mounted() {
@@ -382,23 +370,12 @@ export default {
         this.stepActive = 1
       }
     },
-    getQueryStatus(path) {
-      let status = this.queryStatus[path]
-      if (typeof (status) === 'undefined') {
-        this.queryStatus[path] = {
-          page: 0
-        }
-        status = this.queryStatus[path]
-      }
-      return status
-    },
     refresh() {
       const path = this.currentChain
-      const status = this.getQueryStatus(path)
       this.resourceData = []
       getResourceList({
         path: path,
-        offset: status.page * this.pageObject.pageSize,
+        offset: (this.pageObject.currentPage - 1) * this.pageObject.pageSize,
         size: this.pageObject.pageSize
       }, {
         ignoreRemote: false
@@ -411,7 +388,6 @@ export default {
             })
           }
           this.pageObject.totalPageNumber = response.data.total
-          this.pageObject.currentPage = status.page + 1
         } else {
           this.$message({
             type: 'error',
@@ -426,20 +402,8 @@ export default {
         })
       })
     },
-    prevPage() {
-      const status = this.getQueryStatus(this.currentChain)
-      --status.page
-      this.pageObject.currentPage = status.page + 1
-    },
-    nextPage() {
-      const status = this.getQueryStatus(this.currentChain)
-      status.page++
-      this.pageObject.currentPage = status.page + 1
-    },
     setPage(value) {
-      const status = this.getQueryStatus(this.currentChain)
-      status.page = value - 1
-      this.pageObject.currentPage = status.page + 1
+      this.pageObject.currentPage = value
       this.refresh()
     },
     onChainClick(path, data) {

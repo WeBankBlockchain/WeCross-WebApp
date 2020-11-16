@@ -5,13 +5,18 @@
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span>资源操作</span>
-            <el-button size="mini" type="text" style="margin-left:20px;" icon="el-icon-refresh" @click="handleFresh">
-              刷新
-            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              style="margin-left:20px;"
+              icon="el-icon-refresh"
+              @click="handleFresh"
+            >刷新</el-button>
           </div>
           <el-input v-model="path" placeholder="Path" :disabled="true">
-            <el-button slot="append" class="pan-btn light-blue-btn" @click="handleCall">Call</el-button>
-            <el-button slot="append" class="pan-btn light-blue-btn" @click="handleSendTransaction">SendTransaction
+            <el-button slot="append" class="pan-btn light-blue-btn" @click="handleSendTransaction">
+              发交易
+              <el-button slot="append" class="pan-btn light-blue-btn" @click="handleCall">查 询</el-button>
             </el-button>
           </el-input>
         </el-card>
@@ -22,54 +27,42 @@
         <el-row :gutter="18">
           <el-col :span="12">
             <el-select
-                placeholder="请选择链类型"
-                size="medium"
-                v-model="chainValue"
-                style="width: 100%; margin: 2px;">
-              <el-option
-                  v-for="chain in chainType"
-                  :key="chain"
-                  :label="chain"
-                  :value="chain"></el-option>
+              placeholder="请选择链类型"
+              size="medium"
+              v-model="chainValue"
+              style="width: 100%; margin: 2px;"
+            >
+              <el-option v-for="chain in chainType" :key="chain" :label="chain" :value="chain"></el-option>
             </el-select>
           </el-col>
           <el-col :span="12">
-            <el-button type="primary" plain icon="el-icon-search" @click="handleSearch" >搜索</el-button>
-            <el-button type="info" plain icon="el-icon-delete" @click="handleReset" >重置</el-button>
+            <el-button type="primary" plain icon="el-icon-search" @click="handleSearch">搜索</el-button>
+            <el-button type="info" plain icon="el-icon-delete" @click="handleReset">重置</el-button>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-table
-              ref="singleTable"
-              :data="resourceList"
-              element-loading-text="Loading"
-              stripe
-              fit
-              highlight-current-row
-              @current-change='handleCurrentRowChange'
-              style="width: 100%">
+            ref="singleTable"
+            :data="resourceList"
+            stripe
+            fit
+            highlight-current-row
+            @current-change="handleCurrentRowChange"
+            style="width: 100%"
+          >
             <el-table-column label="Path" min-width="200">
-              <template slot-scope="scope">
-                {{ scope.row.path }}
-              </template>
+              <template slot-scope="scope">{{ scope.row.path }}</template>
             </el-table-column>
-            <el-table-column
-                label="Stub Type"
-                min-width="130"
-                align="center">
+            <el-table-column label="Stub Type" min-width="130" align="center">
               <template slot-scope="scope">
                 <el-tag :type="scope.row.stubType | stubFilter">{{ scope.row.stubType }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="Distance" min-width="110" align="center">
-              <template slot-scope="scope">
-                {{ scope.row.distance }}
-              </template>
+              <template slot-scope="scope">{{ scope.row.distance }}</template>
             </el-table-column>
             <el-table-column label="Checksum" min-width="110" align="center">
-              <template slot-scope="scope">
-                {{ scope.row.checksum || 'null' }}
-              </template>
+              <template slot-scope="scope">{{ scope.row.checksum || 'null' }}</template>
             </el-table-column>
             <el-table-column label="Properties" min-width="300" align="center">
               <template slot-scope="scope">
@@ -99,13 +92,13 @@
         <!--pagination-->
         <el-row :gutter="20" style="margin-top: 20px;text-align: center;">
           <el-pagination
-                @current-change="handleCurrentPageChange"
-                :current-page="currentPage"
-                :page-sizes="[10]"
-                :page-size="10"
-                layout="total, prev, pager, next, jumper"
-                :total="totalSize"
-            ></el-pagination>
+            @current-change="handleCurrentPageChange"
+            :current-page="currentPage"
+            :page-sizes="[10]"
+            :page-size="10"
+            layout="total, prev, pager, next, jumper"
+            :total="totalSize"
+          ></el-pagination>
         </el-row>
       </el-card>
     </el-row>

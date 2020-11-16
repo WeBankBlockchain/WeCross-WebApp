@@ -7,12 +7,9 @@
             icon="el-icon-d-arrow-left"
             @click="onBack"
             v-bind:disabled="history.index === 0"
-            >后退</el-button
-          >
-          <el-button
-            @click="onForward"
-            v-bind:disabled="history.index + 1 >= history.list.length"
-            >前进
+          >后退</el-button>
+          <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">
+            前进
             <i class="el-icon-d-arrow-right"></i>
           </el-button>
         </el-button-group>
@@ -23,24 +20,21 @@
             prefix-icon="el-icon-folder"
             v-model="currentChain"
             readonly
-          >
-          </el-input>
+          ></el-input>
         </el-button-group>
         <el-button-group>
-          <el-button
-            icon="el-icon-search"
-            @click="handleSearch"
-            :disabled="currentChain === ''"
-            style="margin-left: 10px"
-            >查询交易</el-button
-          >
           <el-button
             plain
             icon="el-icon-notebook-2"
             @click="handleSendTransaction"
             style="margin-left: 10px"
-            >发送交易</el-button
-          >
+          >调用资源</el-button>
+          <el-button
+            icon="el-icon-search"
+            @click="handleSearch"
+            :disabled="currentChain === ''"
+            style="margin-left: 10px"
+          >查询交易</el-button>
         </el-button-group>
       </el-card>
     </el-row>
@@ -56,11 +50,7 @@
       </el-col>
       <el-col :span="20">
         <el-card header="交易列表">
-          <TransactionListExplorer
-            ref="transactionList"
-            :chain="currentChain"
-            :pageSize="10"
-          ></TransactionListExplorer>
+          <TransactionListExplorer ref="transactionList" :chain="currentChain" :pageSize="10"></TransactionListExplorer>
         </el-card>
       </el-col>
     </el-row>
@@ -97,7 +87,7 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() { },
   methods: {
     onZoneClick(path) {
       if (this.currentZone !== path) {

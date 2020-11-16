@@ -1,113 +1,94 @@
 <template>
-  <div class="wl-transfer" :style="{ width, height }">
-    <!-- transfer left -->
-    <div class="transfer-left">
-      <h3 class="transfer-title">
+  <div class="wl-finder" :style="{ width, height }">
+    <!-- finder left -->
+    <div class="finder-left">
+      <h3 class="finder-title">
         <span>待选链列表</span>
       </h3>
-      <!-- transfer left panel -->
-      <div class="transfer-main">
-        <el-input
-            placeholder='输入关键字进行过滤'
-            v-model="filterFrom"
-            size="small"
-            class="filter-tree">
-        </el-input>
+      <!-- finder left panel -->
+      <div class="finder-main">
+        <el-input placeholder="输入关键字进行过滤" v-model="filterFrom" size="small" class="filter-tree"></el-input>
         <el-tree
-            ref="from-tree"
-            lazy
-            node-key="key"
-            :load="leftLoadNode"
-            :props="defaultProps"
-            highlight-current
-            :filter-node-method="filterNodeFrom"
-            @node-click='onChainClick'
+          ref="from-tree"
+          lazy
+          node-key="key"
+          :load="leftLoadNode"
+          :props="defaultProps"
+          highlight-current
+          :filter-node-method="filterNodeFrom"
+          @node-click="onChainClick"
         ></el-tree>
       </div>
     </div>
-    <div class="transfer-left-table">
-      <h3 class="transfer-title">
+    <div class="finder-left-table">
+      <h3 class="finder-title">
         <span>待选资源列表</span>
       </h3>
       <el-table
-          stripe
-          tooltip-effect="dark"
-          ref="transferTable"
-          :data="tableShowData"
-          height="80%"
-          @selection-change="handleSelectionChange">
-        <el-table-column
-            fixed
-            width="42px"
-            type="selection">
-        </el-table-column>
+        stripe
+        tooltip-effect="dark"
+        ref="finderTable"
+        :data="tableShowData"
+        height="80%"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column fixed width="42px" type="selection"></el-table-column>
         <el-table-column label="可选资源路径" show-overflow-tooltip>
           <template slot-scope="scope">{{ scope.row.path }}</template>
         </el-table-column>
       </el-table>
       <el-pagination
-          small
-          :pager-count="5"
-          :page-size='pageObject.pageSize'
-          layout="prev, pager, next, jumper"
-          :total="pageObject.totalPageNumber"
-          style="text-align: center; margin-top: 5px"
-          :current-page.sync="pageObject.currentPage"
-          @current-change="setPage"
-          @prev-click="prevPage"
-          @next-click="nextPage">
-      </el-pagination>
+        small
+        :pager-count="5"
+        :page-size="pageObject.pageSize"
+        layout="prev, pager, next, jumper"
+        :total="pageObject.totalPageNumber"
+        style="text-align: center; margin-top: 5px"
+        :current-page.sync="pageObject.currentPage"
+        @current-change="setPage"
+        @prev-click="prevPage"
+        @next-click="nextPage"
+      ></el-pagination>
     </div>
-    <!-- transfer button -->
-    <div class="transfer-center">
+    <!-- finder button -->
+    <div class="finder-center">
       <template>
-        <p class="transfer-center-item">
-          <el-button
-              type="primary"
-              @click="addToAims"
-              :disabled="from_disabled">
+        <p class="finder-center-item">
+          <el-button type="primary" @click="addToAims" :disabled="from_disabled">
             {{ "添加" }}
             <i class="el-icon-arrow-right"></i>
           </el-button>
         </p>
-        <p class="transfer-center-item">
+        <p class="finder-center-item">
           <el-button
-              type="primary"
-              @click="removeToSource"
-              :disabled="to_disabled"
-              icon="el-icon-arrow-left">
-            {{ "移除" }}
-          </el-button>
+            type="primary"
+            @click="removeToSource"
+            :disabled="to_disabled"
+            icon="el-icon-arrow-left"
+          >{{ "移除" }}</el-button>
         </p>
       </template>
     </div>
-    <!-- transfer right  -->
-    <div class="transfer-right">
-      <h3 class="transfer-title">
+    <!-- finder right  -->
+    <div class="finder-right">
+      <h3 class="finder-title">
         <el-checkbox
-            :indeterminate="to_is_indeterminate"
-            v-model="to_check_all"
-            @change="toAllBoxChange">
-        </el-checkbox>
+          :indeterminate="to_is_indeterminate"
+          v-model="to_check_all"
+          @change="toAllBoxChange"
+        ></el-checkbox>
         <span>已选资源列表</span>
       </h3>
-      <!-- transfer right panel -->
-      <div class="transfer-main">
-        <el-input
-            placeholder='输入关键字进行过滤'
-            v-model="filterTo"
-            size="small"
-            class="filter-tree"
-        ></el-input>
-        <el-checkbox-group
-            v-model="to_check_keys"
-            class="el-transfer-panel__list">
+      <!-- finder right panel -->
+      <div class="finder-main">
+        <el-input placeholder="输入关键字进行过滤" v-model="filterTo" size="small" class="filter-tree"></el-input>
+        <el-checkbox-group v-model="to_check_keys" class="el-finder-panel__list">
           <el-checkbox
-              class="el-transfer-panel__item"
-              :label="item.path"
-              :key="item.path"
-              v-for="item in toDataFilter">
-          </el-checkbox>
+            class="el-finder-panel__item"
+            :label="item.path"
+            :key="item.path"
+            v-for="item in toDataFilter"
+          ></el-checkbox>
         </el-checkbox-group>
       </div>
     </div>
@@ -120,7 +101,7 @@ import { listChains, listZones } from '@/api/conn'
 import { uniqueObjectArray } from '@/utils'
 
 export default {
-  name: 'ResourceTransfer',
+  name: 'ResourceFinder',
   data() {
     return {
       to_is_indeterminate: false,
@@ -352,36 +333,70 @@ body {
   font-size: 14px;
 }
 
-body, h1, h2, h3, h4, h5, h6, ul, ol, li, p, dl, dt, dd, table, th, td {
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+ol,
+li,
+p,
+dl,
+dt,
+dd,
+table,
+th,
+td {
   margin: 0;
   padding: 0;
 }
 
-table, th, td, img {
+table,
+th,
+td,
+img {
   border: 0;
 }
 
-em, i, th {
+em,
+i,
+th {
   font-style: normal;
   text-decoration: none;
 }
 
-h1, h2, h3, h4, h5, h6, th, strong {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th,
+strong {
   font-size: 100%;
   font-weight: normal;
 }
 
-input, select, button, textarea, table {
+input,
+select,
+button,
+textarea,
+table {
   margin: 0;
   font-family: inherit;
   font-size: 100%;
 }
 
-input, button {
+input,
+button {
   outline: none;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -390,7 +405,8 @@ table {
   border-spacing: 0;
 }
 
-th, caption {
+th,
+caption {
   text-align: left;
 }
 
@@ -401,7 +417,7 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-.wl-transfer {
+.wl-finder {
   position: relative;
   overflow: hidden;
 
@@ -410,44 +426,44 @@ a {
     display: inline-block !important;
   }
 
-  .transfer-left {
+  .finder-left {
     position: absolute;
     top: 0;
     left: 0;
   }
 
-  .transfer-left-table {
+  .finder-left-table {
     position: absolute;
     top: 0;
     left: 31%;
   }
 
-  .transfer-right {
+  .finder-right {
     position: absolute;
     top: 0;
     right: 0;
   }
 
-  .transfer-right-item {
+  .finder-right-item {
     height: calc((100% - 41px) / 2);
   }
 
-  .transfer-right-small {
+  .finder-right-small {
     height: 41px;
   }
 
-  .transfer-right-only {
+  .finder-right-only {
     height: 100%;
   }
 
-  .transfer-main {
+  .finder-main {
     padding: 10px;
     height: calc(100% - 41px);
     box-sizing: border-box;
     overflow: auto;
   }
 
-  .transfer-left {
+  .finder-left {
     border: 1px solid #ebeef5;
     width: 30%;
     height: 100%;
@@ -456,7 +472,7 @@ a {
     vertical-align: middle;
   }
 
-  .transfer-left-table {
+  .finder-left-table {
     border: 1px solid #ebeef5;
     width: 30%;
     height: 100%;
@@ -465,7 +481,7 @@ a {
     vertical-align: middle;
   }
 
-  .transfer-right {
+  .finder-right {
     border: 1px solid #ebeef5;
     width: 25%;
     height: 100%;
@@ -474,7 +490,7 @@ a {
     vertical-align: middle;
   }
 
-  .transfer-center {
+  .finder-center {
     position: absolute;
     top: 50%;
     left: 58%;
@@ -483,12 +499,12 @@ a {
     text-align: center;
   }
 
-  .transfer-center-item {
+  .finder-center-item {
     padding: 10px;
     overflow: hidden;
   }
 
-  .transfer-title {
+  .finder-title {
     border-bottom: 1px solid #ebeef5;
     padding: 0 15px;
     height: 40px;
@@ -498,7 +514,7 @@ a {
     background-color: #f5f7fa;
   }
 
-  .transfer-title .el-checkbox {
+  .finder-title .el-checkbox {
     margin-right: 10px;
   }
 

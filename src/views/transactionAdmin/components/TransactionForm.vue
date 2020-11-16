@@ -9,23 +9,24 @@
         :rules="transactionRules"
         class="dynamicForm"
       >
-        <el-form-item>
-          <el-col :offset="4">
-            <el-radio-group v-model="transaction.execMethod">
-              <el-radio label="sendTransaction">发交易</el-radio>
-              <el-radio label="call">读状态</el-radio>
+        <el-form-item label="调用方式:" prop="path">
+          <el-col :offset="5">
+            <el-radio-group v-model="transaction.execMethod" size="small">
+              >
+              <el-radio-button label="sendTransaction">发交易</el-radio-button>
+              <el-radio-button label="call">查&emsp;询</el-radio-button>
             </el-radio-group>
           </el-col>
         </el-form-item>
-        <el-form-item label="资源路径：" prop="path">
+        <el-form-item label="资源路径:" prop="path">
           <slot name="path"></slot>
         </el-form-item>
-        <el-form-item label="调用方法：" prop="method">
-          <el-input v-model="transaction.method" placeholder="请输入调用方法"></el-input>
+        <el-form-item label="调用函数:" prop="method">
+          <el-input v-model="transaction.method" placeholder="请输入调用函数"></el-input>
         </el-form-item>
         <div v-for="(arg, index) in transaction.args" :key="arg.key">
           <el-form-item
-            :label="'调用参数' + (index + 1) + ':'"
+            :label="'调用参数:'"
             :prop="'args.' + index + '.value'"
             :rules="[
               {
@@ -37,7 +38,7 @@
               },
             ]"
           >
-            <el-input v-model="arg.value" placeholder="请输入调用参数"></el-input>
+            <el-input v-model="arg.value" :placeholder="'请输入调用参数'+index"></el-input>
             <el-button
               @click.prevent="removeArg(arg)"
               size="small"
@@ -48,24 +49,27 @@
         </div>
         <el-form-item>
           <el-col :offset="3">
-            <el-button type="primary" @click="onSubmit" size="small" v-loading.fullscreen.lock="loading">执行调用</el-button>
+            <el-button
+              type="primary"
+              @click="onSubmit"
+              size="small"
+              v-loading.fullscreen.lock="loading"
+            >执行调用</el-button>
             <el-button @click="clearForm" size="small">重置表单</el-button>
             <el-button @click="addArg" size="small">添加参数</el-button>
           </el-col>
         </el-form-item>
+        <el-form-item label="调用结果:" v-if="submitResponse !== null">
+          <el-input
+            autosize
+            type="textarea"
+            readonly
+            v-model="submitResponse"
+            v-if="submitResponse !== null"
+            style="margin-bottom: 20px; width: 75%"
+          ></el-input>
+        </el-form-item>
       </el-form>
-    </el-row>
-    <el-row>
-      <el-collapse-transition>
-        <el-input
-          autosize
-          type="textarea"
-          readonly
-          v-model="submitResponse"
-          v-if="submitResponse !== null"
-          style="margin-bottom: 20px; width: 80%"
-        ></el-input>
-      </el-collapse-transition>
     </el-row>
   </div>
 </template>
@@ -144,21 +148,23 @@ export default {
     onSubmit() {
       this.$refs['transactionForm'].validate((validate) => {
         if (validate) {
-          this.$confirm(`确定执行该调用？`, '确认信息', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-            center: true
-          }).then(() => {
-            this.loading = true
-            this.$emit('submitClick', this.transaction)
-            this.loading = false
-          }).catch(_ => {
-            this.$message({
-              message: '已取消执行',
-              type: 'info'
+          if (this.transaction.execMethod === 'sendTransaction') {
+            this.$confirm(`确定执行该调用？`, '确认信息', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning',
+              center: true
+            }).then(() => {
+              this.$emit('submitClick', this.transaction)
+            }).catch(_ => {
+              this.$message({
+                message: '已取消执行',
+                type: 'info'
+              })
             })
-          })
+          } else {
+            this.$emit('submitClick', this.transaction)
+          }
         } else {
           this.$message({
             message: '请检查所有输入',

@@ -34,6 +34,13 @@
             style="margin-left: 10px"
             >查询交易</el-button
           >
+          <el-button
+            plain
+            icon="el-icon-notebook-2"
+            @click="handleSendTransaction"
+            style="margin-left: 10px"
+            >发送交易</el-button
+          >
         </el-button-group>
       </el-card>
     </el-row>
@@ -118,11 +125,19 @@ export default {
         this.currentChain = this.history.list[this.history.index]
       }
     },
-    handleSearch(path, stubType) {
-      this.$refs['transactionList'].handleSearch(path, stubType)
+    handleSearch() {
+      this.$refs['transactionList'].handleSearch(
+        this.currentChain,
+        this.currentChainData.type
+      )
       console.log(
         'research: ' + this.currentChain + ' ' + this.currentChainData.type
       )
+    },
+    handleSendTransaction() {
+      this.$router.push({
+        path: 'transaction'
+      })
     }
   }
 }

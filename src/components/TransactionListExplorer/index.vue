@@ -167,7 +167,7 @@ export default {
     },
     handleSearch(chainValue) {
       this.reset()
-      console.log('handleRearch => ' + chainValue)
+      console.log('handleRearch => ' + JSON.stringify(chainValue))
       this.chainValue = chainValue
       this.doSearchOperation()
     },

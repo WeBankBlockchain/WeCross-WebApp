@@ -4,10 +4,7 @@
       <el-card class="box-card">
         <el-form label-position="left" size="small" label-width="80px">
           <el-form-item label="跨链账户">
-            <el-tooltip class="item" effect="light" :content="ua.uaID" placement="right">
-              <div slot="content">UAID:<br>{{ua.uaID.substr(0,64)}}<br>{{ua.uaID.substr(64,64)}}<br>{{ua.uaID.substr(128)}}</div>
             <el-tag v-bind:type="ua.admin ? 'warning': 'success'" ><span>{{ ua.username }}</span></el-tag>
-            </el-tooltip>
             <el-button style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
           </el-form-item>
           <el-form-item label="UA公钥">
@@ -113,6 +110,7 @@
               <el-select
                 v-model="addChainAccountDrawer.params.type"
                 placeholder="请选择"
+                @change="addChainAccountDrawer.params.pubKey = undefined; addChainAccountDrawer.params.secKey = undefined"
               >
                 <el-option label="FISCO BCOS 2.0" value="BCOS2.0"></el-option>
                 <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0"></el-option>
@@ -120,16 +118,64 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label="公钥">
+            <el-row v-if="addChainAccountDrawer.params.type == 'BCOS2.0'">
+              <el-row>
+                <el-button
+                @click="generateECDSAKeyPairPem()"
+                type="primary">生成</el-button>
+                <el-upload
+                  class="upload-demo"
+                  action=""
+                  accept=".pem"
+                  :show-file-list="false"
+                  :file-list="pubKeyFileList"
+                  :http-request="uploadECDSAPemSecKeyHandler"
+                  :auto-upload="true">
+                  <el-button slot="trigger" type="primary">上传私钥</el-button>
+                </el-upload>
+              </el-row>
+            </el-row>
+
+            <el-row v-if="addChainAccountDrawer.params.type == 'GM_BCOS2.0'">
+              <el-button
+              @click="generateSM2KeyPairPem()"
+              type="primary">生成</el-button>
+                <el-upload
+                class="upload-demo"
+                action=""
+                accept=".pem"
+                :show-file-list="false"
+                :file-list="pubKeyFileList"
+                :http-request="uploadSM2PemSecKeyHandler"
+                :auto-upload="true">
+                <el-button slot="trigger" type="primary">上传私钥</el-button>
+              </el-upload>
+            </el-row>
+
+            <el-row v-if="addChainAccountDrawer.params.type == 'Fabric1.4'">
               <el-upload
                 class="upload-demo"
                 action=""
+                accept=".pem"
                 :show-file-list="false"
                 :file-list="pubKeyFileList"
                 :http-request="uploadPubKeyHandler"
-                :auto-upload="false">
-                <el-button slot="trigger" size="mini" type="primary">点击上传</el-button>
+                :auto-upload="true">
+                <el-button slot="trigger" type="primary">上传公钥</el-button>
               </el-upload>
+              <el-upload
+                class="upload-demo"
+                action=""
+                accept=".pem"
+                :show-file-list="false"
+                :file-list="pubKeyFileList"
+                :http-request="uploadSecKeyHandler"
+                :auto-upload="true">
+                <el-button slot="trigger" type="primary">上传私钥</el-button>
+              </el-upload>
+            </el-row>
+
+            <el-form-item label="公钥" v-if="addChainAccountDrawer.params.type">
               <el-input
                 type="textarea"
                 :rows="2"
@@ -139,16 +185,7 @@
               </el-input>
             </el-form-item>
 
-            <el-form-item label="私钥">
-                <el-upload
-                class="upload-demo"
-                action=""
-                :show-file-list="false"
-                :file-list="pubKeyFileList"
-                :http-request="uploadSecKeyHandler"
-                :auto-upload="false">
-                <el-button slot="trigger" size="mini" type="primary">点击上传</el-button>
-              </el-upload>
+            <el-form-item label="私钥"  v-if="addChainAccountDrawer.params.type">
               <el-input
                 type="textarea"
                 :rows="2"
@@ -166,11 +203,11 @@
               </el-input>
             </el-form-item>
 
-            <el-form-item label="设为默认账户">
+            <el-form-item label="设为默认账户"   v-if="addChainAccountDrawer.params.type">
                 <el-switch v-model="addChainAccountDrawer.params.isDefault"></el-switch>
             </el-form-item>
           </el-form>
-          <div class="clearfix">
+          <div class="clearfix"   v-if="addChainAccountDrawer.params.type">
               <el-button
                 @click="queryAddChainAccount()"
                 style="float: right"
@@ -189,6 +226,8 @@ import store from '@/store'
 import { listAccount } from '@/api/ua.js'
 import { setDefaultAccount } from '@/api/ua.js'
 import { addChainAccount } from '@/api/ua.js'
+import { ec as EC } from 'elliptic'
+import { sm2 } from 'sm-crypto'
 
 export default {
   name: 'AccountAdmin',
@@ -341,10 +380,11 @@ export default {
       }
     },
     uploadPubKeyHandler(params) {
+      console.log('uploadPubKeyHandler')
       var reader = new FileReader()
       reader.onload = (event) => {
         var key = event.target.result
-        if (!this.checkPubKeyFormat(key)) {
+        if (!checkPubKeyFormat(key)) {
           return
         }
 
@@ -356,34 +396,75 @@ export default {
       var reader = new FileReader()
       reader.onload = (event) => {
         var key = event.target.result
-        if (!this.checkSecKeyFormat(key)) {
+        if (!checkSecKeyFormat(key)) {
           return
         }
         this.addChainAccountDrawer.params.secKey = key
       }
       reader.readAsText(params.file)
     },
-    checkPubKeyFormat(key) {
-      if (!key.includes('-----BEGIN') || key.includes('PRIVATE')) {
-        this.$message({
-          type: 'error',
-          message: '证书格式错误'
-        })
-        return false
-      } else {
-        return true
+    uploadECDSAPemSecKeyHandler(params) {
+      var reader = new FileReader()
+      reader.onload = (event) => {
+        var key = event.target.result
+        if (!checkSecKeyFormat(key) || !isECDSASecPem(key)) {
+          return
+        }
+        this.addChainAccountDrawer.params.secKey = key
+
+        var pubKeyHex = getPubKeyHexFromSecPem(key)
+        this.addChainAccountDrawer.params.pubKey = buildECDSAPubKeyPem(pubKeyHex)
       }
+      reader.readAsText(params.file)
     },
-    checkSecKeyFormat(key) {
-      if (!key.includes('-----BEGIN PRIVATE KEY-----')) {
-        this.$message({
-          type: 'error',
-          message: '证书格式错误'
-        })
-        return false
-      } else {
-        return true
+    uploadSM2PemSecKeyHandler(params) {
+      var reader = new FileReader()
+      reader.onload = (event) => {
+        var key = event.target.result
+        if (!checkSecKeyFormat(key) || !isSM2SecPem(key)) {
+          return
+        }
+
+        this.addChainAccountDrawer.params.secKey = key
+
+        var pubKeyHex = getPubKeyHexFromSecPem(key)
+        this.addChainAccountDrawer.params.pubKey = buildSM2PubKeyPem(pubKeyHex)
       }
+      reader.readAsText(params.file)
+    },
+
+    generateECDSAKeyPairPem() {
+      const secp256k1 = new EC('secp256k1')
+      var keyPair = secp256k1.genKeyPair()
+
+      var pubKey = keyPair.getPublic('hex')
+      var secKey = keyPair.getPrivate('hex')
+
+      console.log(pubKey)
+      console.log(secKey)
+
+      var pubContent = buildECDSAPubKeyPem(pubKey)
+      var secContext = buildECDSASecKeyPem(pubKey, secKey)
+
+      console.log(pubContent)
+      console.log(secContext)
+
+      this.addChainAccountDrawer.params.pubKey = pubContent
+      this.addChainAccountDrawer.params.secKey = secContext
+    },
+    generateSM2KeyPairPem() {
+      const keyPair = sm2.generateKeyPairHex()
+
+      console.log(keyPair)
+
+      var pubContent = buildSM2PubKeyPem(keyPair.publicKey)
+      var secContext = buildSM2SecKeyPem(keyPair.publicKey, keyPair.privateKey)
+
+      console.log(pubContent)
+      console.log(secContext)
+
+      this.addChainAccountDrawer.params.pubKey = pubContent
+      this.addChainAccountDrawer.params.secKey = secContext
     }
   },
 
@@ -442,6 +523,95 @@ function buildChainAccountTable(ua) {
   }
   console.log('localChainAccounts', localChainAccounts)
   return localChainAccounts
+}
+
+const ecdsaSecPemPrefix = '308184020100301006072a8648ce3d020106052b8104000a046d306b0201010420'
+const ecdsaPubPemPrefix = '3056301006072a8648ce3d020106052b8104000a034200'
+
+const sm2SecPemPrefix = '308187020100301306072a8648ce3d020106082a811ccf5501822d046d306b0201010420'
+const sm2PubPemPrefix = '3059301306072a8648ce3d020106082a811ccf5501822d034200'
+
+function buildECDSASecKeyPem(pubKeyHex, secKeyHex) {
+  var asn1HexString = ecdsaSecPemPrefix + secKeyHex + 'a144034200' + pubKeyHex
+  var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')
+
+  return '-----BEGIN PRIVATE KEY-----\n' + base64String + '\n-----END PRIVATE KEY-----\n'
+}
+
+function buildECDSAPubKeyPem(pubKeyHex) {
+  var asn1HexString = ecdsaPubPemPrefix + pubKeyHex
+  var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')
+
+  return '-----BEGIN PUBLIC KEY-----\n' + base64String + '\n-----END PUBLIC KEY-----\n'
+}
+
+function buildSM2SecKeyPem(pubKeyHex, secKeyHex) {
+  var asn1HexString = sm2SecPemPrefix + secKeyHex + 'a144034200' + pubKeyHex
+  var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')
+
+  return '-----BEGIN PRIVATE KEY-----\n' + base64String + '\n-----END PRIVATE KEY-----\n'
+}
+
+function buildSM2PubKeyPem(pubKeyHex) {
+  var asn1HexString = sm2PubPemPrefix + pubKeyHex
+  var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')
+
+  return '-----BEGIN PUBLIC KEY-----\n' + base64String + '\n-----END PUBLIC KEY-----\n'
+}
+
+function isECDSASecPem(secKeyContent) {
+  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
+
+  var buffer = Buffer.from(base64Content, 'base64')
+  var hexString = buffer.toString('hex')
+
+  if (!hexString.includes(ecdsaSecPemPrefix)) {
+    MessageBox.alert('证书内容错误')
+    return false
+  } else {
+    return true
+  }
+}
+
+function isSM2SecPem(secKeyContent) {
+  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
+
+  var buffer = Buffer.from(base64Content, 'base64')
+  var hexString = buffer.toString('hex')
+
+  if (!hexString.includes(sm2SecPemPrefix)) {
+    MessageBox.alert('证书内容错误')
+    return false
+  } else {
+    return true
+  }
+}
+
+function getPubKeyHexFromSecPem(secKeyContent) {
+  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
+
+  var buffer = Buffer.from(base64Content, 'base64')
+  var hexString = buffer.toString('hex')
+  var pubKeyHex = hexString.substr(140, 130)
+  console.log('pubKeyHex: ', pubKeyHex)
+  return pubKeyHex
+}
+
+function checkPubKeyFormat(key) {
+  if (!key.includes('-----BEGIN') || key.includes('PRIVATE')) {
+    MessageBox.alert('证书格式错误')
+    return false
+  } else {
+    return true
+  }
+}
+function checkSecKeyFormat(key) {
+  if (!key.includes('-----BEGIN PRIVATE KEY-----')) {
+    MessageBox.alert('证书格式错误')
+    return false
+  } else {
+    return true
+  }
 }
 
 </script>

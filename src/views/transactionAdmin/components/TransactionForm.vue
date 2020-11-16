@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row v-loading="loading">
+    <el-row>
       <el-form
         ref="transactionForm"
         label-width="auto"
@@ -48,7 +48,7 @@
         </div>
         <el-form-item>
           <el-col :offset="3">
-            <el-button type="primary" @click="onSubmit" size="small">执行调用</el-button>
+            <el-button type="primary" @click="onSubmit" size="small" v-loading.fullscreen.lock="loading">执行调用</el-button>
             <el-button @click="clearForm" size="small">重置表单</el-button>
             <el-button @click="addArg" size="small">添加参数</el-button>
           </el-col>
@@ -91,7 +91,6 @@ export default {
         }
       }
     },
-    loading: null,
     submitResponse: null
   },
   data() {
@@ -99,13 +98,13 @@ export default {
       transactionRules: {
         path: [
           {
-            required: true, message: '资源路径不能为空', trigger: 'change'
+            required: true, message: '资源路径不能为空', trigger: 'blur, change'
           },
           {
             required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40
           },
           {
-            pattern: /^[A-Za-z]+\.[A-Za-z_-]+\.[A-Za-z0-9_-]+$/,
+            pattern: /^[A-Za-z]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
             required: true,
             message: '资源路径格式错误，应形如 \'path.to.resource\'',
             trigger: 'blur'
@@ -125,7 +124,8 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      loading: false
     }
   },
   methods: {
@@ -150,7 +150,9 @@ export default {
             type: 'warning',
             center: true
           }).then(() => {
+            this.loading = true
             this.$emit('submitClick', this.transaction)
+            this.loading = false
           }).catch(_ => {
             this.$message({
               message: '已取消执行',

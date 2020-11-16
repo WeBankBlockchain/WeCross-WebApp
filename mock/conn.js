@@ -1,5 +1,4 @@
 const Mock = require('mockjs')
-const type = { 'bcos': 'BCOS2.0', 'bcos_gm': 'GM_BCOS2.0', 'fabric': 'Fabric1.4' }
 module.exports = [{
   url: '/conn/listPeers',
   type: 'get',
@@ -77,7 +76,6 @@ module.exports = [{
   url: '/conn/listChains',
   type: 'get',
   response: param => {
-    console.log(type)
     return {
       'version': '1',
       'errorCode': 0,
@@ -86,7 +84,7 @@ module.exports = [{
         size: 1000,
         'data|10': [{
           zone: param.query.zone,
-          chain: '@pick([\'bcos\',\'bcos_gm\',\'fabric\'])',
+          'chain|1': ['bcos@integer(1,100)', 'bcos_gm@integer(1,100)', 'fabric@integer(1,100)'],
           'type|1': ['BCOS2.0', 'GM_BCOS2.0', 'Fabric1.4'],
           blockNumber: '@integer(1,1000000)',
           isLocal: '@pick(true,false)',

@@ -12,23 +12,23 @@
             <el-button plain icon="el-icon-circle-plus" @click="onDeployRouter">跨链路由部署向导</el-button>
           </el-button-group>
           <el-pagination
-background
-:page-size="pageSize"
-pager-count=9
-layout="prev, pager, next"
-:total="total"
-style="float: right;"
-            :current-page="currentPage"
-@prev-click="prevPage"
-@next-click="nextPage"
-@current-change="setPage">
+              background
+              :page-size="pageSize"
+              :pager-count= "9"
+              layout="prev, pager, next"
+              :total="total"
+              style="float: right;"
+              :current-page="currentPage"
+              @prev-click="prevPage"
+              @next-click="nextPage"
+              @current-change="setPage">
           </el-pagination>
         </el-row>
         <el-row>
           <el-table ref="singleTable" :data="routers" element-loading-text="加载中..." fit>
-            <el-table-column label="跨链路由别名" min-width=40 :show-overflow-tooltip="true">:show-overflow-tooltip="true"
+            <el-table-column label="跨链路由别名" min-width="40px" :show-overflow-tooltip="true">:show-overflow-tooltip="true"
               <template slot-scope="item">
-                {{ getAlias(item.row.nodeID) }}
+                {{ getAlias(item.row.nodeID) !== null ? getAlias(item.row.nodeID) : '未设置' }}
               </template>
             </el-table-column>
             <el-table-column label="跨链路由标识" :show-overflow-tooltip="true">
@@ -36,12 +36,12 @@ style="float: right;"
                 {{ item.row.nodeID }}
               </template>
             </el-table-column>
-            <el-table-column label="IP端口" min-width=40>
+            <el-table-column label="IP端口" min-width="50px">
               <template slot-scope="item">
                 {{ item.row.address }}
               </template>
             </el-table-column>
-            <el-table-column label="已接入区块链">
+            <el-table-column label="已接入区块链" width="110px">
               <template slot-scope="item">
                 <li style="list-style-type:none" v-for="chainItem in item.row.chainInfos">
                   {{ chainItem.name }}
@@ -49,10 +49,10 @@ style="float: right;"
                 </li>
               </template>
             </el-table-column>
-            <el-table-column label="运行状态" min-width=20>
+            <el-table-column label="运行状态" min-width="30px">
               正常
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="230px">
               <template slot-scope="item">
                 <el-button-group>
                   <el-button plain icon="el-icon-edit" @click="setAlias(item.row.nodeID)">设置别名</el-button>
@@ -64,16 +64,16 @@ style="float: right;"
         </el-row>
         <el-row>
           <el-pagination
-background
-:page-size="pageSize"
-pager-count=9
-layout="prev, pager, next"
-:total="total"
-style="float: right;"
-            :current-page="currentPage"
-@prev-click="prevPage"
-@next-click="nextPage"
-@current-change="setPage">
+              background
+              :page-size="pageSize"
+              :pager-count= 9
+              layout="prev, pager, next"
+              :total="total"
+              style="float: right;"
+              :current-page="currentPage"
+              @prev-click="prevPage"
+              @next-click="nextPage"
+              @current-change="setPage">
           </el-pagination>
         </el-row>
       </el-card>
@@ -106,7 +106,8 @@ export default {
   created() {
     this.refresh()
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     refresh() {
       listPeers({
@@ -171,7 +172,8 @@ export default {
             message: '删除失败，网络异常'
           })
         })
-      }).catch(() => {})
+      }).catch(() => {
+      })
     },
     onDeployRouter() {
       this.$router.push('routerGuide')

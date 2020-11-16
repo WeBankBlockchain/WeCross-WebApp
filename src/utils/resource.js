@@ -6,54 +6,81 @@ export function clearForm(formData) {
   formData.lang = null
   formData.policy = null
   formData.args = null
-  formData.sourceContent = null
 }
 
 export function buildBCOSDeployRequest(formData) {
   return {
+    version: 1,
     path: formData.path,
-    command: formData.method,
-    sourceContent: formData.sourceContent,
-    className: formData.className,
-    version: formData.version
+    data: {
+      command: formData.method,
+      args: [formData.path.split('.')[2], formData.sourceContent, formData.className, formData.version]
+    }
   }
 }
 
 export function buildBCOSRegisterRequest(formData) {
   return {
+    version: 1,
     path: formData.path,
-    command: formData.method,
-    sourceContent: formData.sourceContent,
-    className: formData.className,
-    version: formData.version,
-    address: formData.address
+    data: {
+      command: formData.method,
+      args: [formData.path.split('.')[2], formData.fileType, formData.sourceContent, '0x' + formData.address, formData.className, formData.version]
+    }
   }
 }
 
 export function buildFabricInstallRequest(formData) {
   return {
+    version: 1,
     path: formData.path,
-    command: formData.method,
-    sourceContent: formData.sourceContent,
-    org: formData.org,
-    version: formData.version,
-    lang: formData.lang
+    data: {
+      command: formData.method,
+      args: [
+        formData.path.split('.')[2],
+        formData.version,
+        formData.org,
+        formData.lang,
+        formData.sourceContent
+      ]
+    }
   }
 }
 
 export function buildFabricInstantiateRequest(formData) {
   return {
+    version: 1,
     path: formData.path,
-    command: formData.method,
-    sourceContent: formData.sourceContent,
-    org: formData.org,
-    version: formData.version,
-    lang: formData.lang,
-    policy: formData.policy,
-    args: formData.args
+    data: {
+      command: formData.method,
+      args: [
+        formData.path.split('.')[2],
+        formData.version,
+        formData.org,
+        formData.lang,
+        formData.sourceContent,
+        formData.policy,
+        formData.args
+      ]
+    }
   }
 }
 
-export function splitPath(path) {
-
+export function buildFabricUpgradeRequest(formData) {
+  return {
+    version: 1,
+    path: formData.path,
+    data: {
+      command: formData.method,
+      args: [
+        formData.path.split('.')[2],
+        formData.version,
+        formData.org,
+        formData.lang,
+        formData.sourceContent,
+        formData.policy,
+        formData.args
+      ]
+    }
+  }
 }

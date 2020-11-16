@@ -2,7 +2,7 @@
   <div class="sidebar-logo-container" >
     <transition name="sidebarLogoFade">
       <router-link key="expand" class="sidebar-logo-link" to="/">
-<!--        <img v-if="logo" :src="logo" class="sidebar-logo">-->
+        <img v-if="logo" :src="logo" class="sidebar-logo">
         <h1 class="sidebar-title">{{ title }} </h1>
       </router-link>
     </transition>
@@ -14,8 +14,8 @@ export default {
   name: 'SidebarLogo',
   data() {
     return {
-      title: 'WeCross云管理平台'
-      // logo: 'https://wecross.readthedocs.io/zh_CN/latest/_static/images/menu_logo_wecross.svg'
+      title: 'WeCross云管理平台',
+      logo: require('@/assets/nav-logo.svg')
     }
   }
 }
@@ -46,10 +46,10 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 50px;
-      height: 50px;
+      width: 22px;
+      height: 22px;
       vertical-align: middle;
-      margin-right: 20px;
+      margin-right: 10px;
     }
 
     & .sidebar-title {

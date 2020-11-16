@@ -38,7 +38,7 @@
           @selection-change="handleSelectionChange">
         <el-table-column
             fixed
-            width="55px"
+            width="42px"
             type="selection">
         </el-table-column>
         <el-table-column label="可选资源路径" show-overflow-tooltip>
@@ -49,10 +49,10 @@
           small
           :pager-count="5"
           :page-size='pageObject.pageSize'
-          layout="prev, pager, next"
+          layout="prev, pager, next, jumper"
           :total="pageObject.totalPageNumber"
           style="text-align: center; margin-top: 5px"
-          :current-page="pageObject.currentPage"
+          :current-page.sync="pageObject.currentPage"
           @current-change="setPage"
           @prev-click="prevPage"
           @next-click="nextPage">

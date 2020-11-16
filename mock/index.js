@@ -15,9 +15,6 @@ const mocks = [
   ...transaction
 ]
 
-// for front mock
-// please use it cautiously, it will redefine XMLHttpRequest,
-// which will cause many of your third-party libraries to be invalidated(like progress event).
 function mockXHR() {
   // mock patch
   // https://github.com/nuysoft/Mock/issues/300

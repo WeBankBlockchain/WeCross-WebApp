@@ -81,7 +81,10 @@
               <span>{{ chainAccountDrawer.info.type }}</span>
             </el-form-item>
             <el-form-item label="Identity">
-              <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.identity"></el-input>
+              <el-tooltip class="item" effect="dark" content="BCOS：address" placement="top-start">
+                <div slot="content">BCOS：address<br> Fabric: 公钥证书 </div>
+                <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.identity"></el-input>
+              </el-tooltip>
             </el-form-item>
             <el-form-item label="公钥">
               <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.pubKey"></el-input>
@@ -100,7 +103,7 @@
           :visible.sync="addChainAccountDrawer.show"
           :direction="addChainAccountDrawer.direction"
           :with-header="false"
-          size="670px"
+          size="680px"
       >
         <el-card class="box-card"  style="height:100%">
             <div slot="header" class="clearfix">
@@ -147,7 +150,7 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item label="公钥">
+              <el-form-item label="公钥" v-if="addChainAccountDrawer.params.secKey !== undefined">
                 <el-input
                   readonly
                   type="textarea"
@@ -158,7 +161,7 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item label="address">
+              <el-form-item label="address" v-if="addChainAccountDrawer.params.secKey !== undefined">
                 <el-input
                   readonly
                   placeholder=""
@@ -197,7 +200,7 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item label="公钥">
+              <el-form-item label="公钥" v-if="addChainAccountDrawer.params.secKey !== undefined">
                 <el-input
                   readonly
                   type="textarea"
@@ -208,7 +211,7 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item label="address">
+              <el-form-item label="address" v-if="addChainAccountDrawer.params.secKey !== undefined">
                 <el-input
                   readonly
                   placeholder=""
@@ -269,17 +272,17 @@
 
             </div>
 
-            <el-form-item label="设为默认账户"   v-if="addChainAccountDrawer.params.type">
+            <el-form-item label="设为默认账户"   v-if="addChainAccountDrawer.params.type && addChainAccountDrawer.params.secKey !== undefined">
                 <el-switch v-model="addChainAccountDrawer.params.isDefault"></el-switch>
             </el-form-item>
           </el-form>
-          <div class="clearfix"   v-if="addChainAccountDrawer.params.type">
+          <div class="clearfix" >
               <el-button
+                :disabled="!addChainAccountDrawer.params.type || addChainAccountDrawer.params.secKey === undefined"
                 @click="queryAddChainAccount()"
                 style="float: right"
                 type="primary"
-                >确认</el-button
-              >
+                >确认</el-button>
           </div>
         </el-card>
       </el-drawer>

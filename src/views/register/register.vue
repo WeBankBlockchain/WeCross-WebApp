@@ -226,7 +226,9 @@ export default {
 
         var params = {
           username: this.registerForm.username,
-          password: this.registerForm.password
+          password: this.registerForm.password,
+          imageAuthCode: this.registerForm.imageAuthCode,
+          imageToken: this.imageAuthCode.imageToken
         }
 
         register(params)

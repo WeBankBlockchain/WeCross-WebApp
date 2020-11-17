@@ -60,7 +60,7 @@
         :visible.sync="chainAccountDrawer.show"
         :direction="chainAccountDrawer.direction"
         :with-header="false"
-        size="670px"
+        size="680px"
       >
         <el-card class="box-card" style="height:100%">
           <div slot="header" class="clearfix">
@@ -87,7 +87,8 @@
               <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.pubKey"></el-input>
             </el-form-item>
             <el-form-item label="私钥">
-              <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.secKey"></el-input>
+              <el-button size="mini" class="primary" @click="chainAccountDrawer.showSec = !chainAccountDrawer.showSec" >查看 <i class="el-icon-chat-line-round"></i> </el-button>
+              <el-input v-if="chainAccountDrawer.showSec && chainAccountDrawer.show" type="textarea" readonly autosize show-password resize="none" v-model=" chainAccountDrawer.info.secKey"></el-input>
             </el-form-item>
             <el-form-item label="其它">
               <span>{{ chainAccountDrawer.info.ext }}</span>
@@ -110,7 +111,7 @@
               <el-select
                 v-model="addChainAccountDrawer.params.type"
                 placeholder="请选择"
-                @change="addChainAccountDrawer.params.pubKey = undefined; addChainAccountDrawer.params.secKey = undefined"
+                @change="addChainAccountDrawer.params.pubKey = undefined; addChainAccountDrawer.params.secKey = undefined; addChainAccountDrawer.params.ext = undefined; addChainAccountDrawer.params.isDefault = false "
               >
                 <el-option label="FISCO BCOS 2.0" value="BCOS2.0"></el-option>
                 <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0"></el-option>
@@ -118,90 +119,155 @@
               </el-select>
             </el-form-item>
 
-            <el-row v-if="addChainAccountDrawer.params.type == 'BCOS2.0'">
-              <el-row>
-                <el-button
-                @click="generateECDSAKeyPairPem()"
-                type="primary">生成</el-button>
+            <div v-if="addChainAccountDrawer.params.type == 'BCOS2.0'">
+              <el-form-item label="私钥" >
+                <el-upload
+                    class="upload-demo"
+                    action=""
+                    accept=".pem"
+                    :show-file-list="false"
+                    :file-list="pubKeyFileList"
+                    :http-request="uploadECDSAPemSecKeyHandler"
+                    :auto-upload="true">
+                    <el-button-group  slot="trigger" >
+                    <el-button  type="primary">上传</el-button>
+                    <el-button
+                    @click.stop="generateECDSAKeyPairPem()"
+                    size="small"
+                    type="primary">生成</el-button>
+                    </el-button-group>
+                  </el-upload>
+
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入"
+                  autosize
+                  v-model="addChainAccountDrawer.params.secKey">
+                </el-input>
+              </el-form-item>
+
+              <el-form-item label="公钥">
+                <el-input
+                  readonly
+                  type="textarea"
+                  :rows="2"
+                  placeholder=""
+                  autosize
+                  v-model="addChainAccountDrawer.params.pubKey">
+                </el-input>
+              </el-form-item>
+
+              <el-form-item label="address">
+                <el-input
+                  readonly
+                  placeholder=""
+                  v-model="addChainAccountDrawer.params.ext"
+                  clearable>
+                </el-input>
+              </el-form-item>
+
+            </div>
+
+            <div  v-if="addChainAccountDrawer.params.type == 'GM_BCOS2.0'">
+
+              <el-form-item label="私钥" >
+                  <el-upload
+                    class="upload-demo"
+                    action=""
+                    accept=".pem"
+                    :show-file-list="false"
+                    :file-list="pubKeyFileList"
+                    :http-request="uploadSM2PemSecKeyHandler"
+                    :auto-upload="true">
+                    <el-button-group slot="trigger">
+                      <el-button  type="primary">上传</el-button>
+                      <el-button
+                      size="small"
+                      @click.stop="generateSM2KeyPairPem()"
+                      type="primary">生成</el-button>
+                    </el-button-group>
+                  </el-upload>
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入"
+                  autosize
+                  v-model="addChainAccountDrawer.params.secKey">
+                </el-input>
+              </el-form-item>
+
+              <el-form-item label="公钥">
+                <el-input
+                  readonly
+                  type="textarea"
+                  :rows="2"
+                  placeholder=""
+                  autosize
+                  v-model="addChainAccountDrawer.params.pubKey">
+                </el-input>
+              </el-form-item>
+
+              <el-form-item label="address">
+                <el-input
+                  readonly
+                  placeholder=""
+                  v-model="addChainAccountDrawer.params.ext"
+                  clearable>
+                </el-input>
+              </el-form-item>
+            </div>
+
+            <div v-if="addChainAccountDrawer.params.type == 'Fabric1.4'">
+              <el-form-item label="私钥"  v-if="addChainAccountDrawer.params.type">
                 <el-upload
                   class="upload-demo"
                   action=""
                   accept=".pem"
                   :show-file-list="false"
                   :file-list="pubKeyFileList"
-                  :http-request="uploadECDSAPemSecKeyHandler"
+                  :http-request="uploadSecKeyHandler"
                   :auto-upload="true">
-                  <el-button slot="trigger" type="primary">上传私钥</el-button>
+                  <el-button slot="trigger" type="primary">上传</el-button>
                 </el-upload>
-              </el-row>
-            </el-row>
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入"
+                  autosize
+                  v-model="addChainAccountDrawer.params.secKey">
+                </el-input>
+              </el-form-item>
 
-            <el-row v-if="addChainAccountDrawer.params.type == 'GM_BCOS2.0'">
-              <el-button
-              @click="generateSM2KeyPairPem()"
-              type="primary">生成</el-button>
+              <el-form-item label="公钥" v-if="addChainAccountDrawer.params.type">
                 <el-upload
-                class="upload-demo"
-                action=""
-                accept=".pem"
-                :show-file-list="false"
-                :file-list="pubKeyFileList"
-                :http-request="uploadSM2PemSecKeyHandler"
-                :auto-upload="true">
-                <el-button slot="trigger" type="primary">上传私钥</el-button>
-              </el-upload>
-            </el-row>
+                  class="upload-demo"
+                  action=""
+                  accept=".pem"
+                  :show-file-list="false"
+                  :file-list="pubKeyFileList"
+                  :http-request="uploadPubKeyHandler"
+                  :auto-upload="true">
+                  <el-button slot="trigger" type="primary">上传</el-button>
+                </el-upload>
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入"
+                  autosize
+                  v-model="addChainAccountDrawer.params.pubKey">
+                </el-input>
+              </el-form-item>
 
-            <el-row v-if="addChainAccountDrawer.params.type == 'Fabric1.4'">
-              <el-upload
-                class="upload-demo"
-                action=""
-                accept=".pem"
-                :show-file-list="false"
-                :file-list="pubKeyFileList"
-                :http-request="uploadPubKeyHandler"
-                :auto-upload="true">
-                <el-button slot="trigger" type="primary">上传公钥</el-button>
-              </el-upload>
-              <el-upload
-                class="upload-demo"
-                action=""
-                accept=".pem"
-                :show-file-list="false"
-                :file-list="pubKeyFileList"
-                :http-request="uploadSecKeyHandler"
-                :auto-upload="true">
-                <el-button slot="trigger" type="primary">上传私钥</el-button>
-              </el-upload>
-            </el-row>
+              <el-form-item v-if="addChainAccountDrawer.params.type=='Fabric1.4'" label="MSPID">
+                <el-input
+                  placeholder="请输入"
+                  v-model="addChainAccountDrawer.params.ext"
+                  clearable>
+                </el-input>
+              </el-form-item>
 
-            <el-form-item label="公钥" v-if="addChainAccountDrawer.params.type">
-              <el-input
-                type="textarea"
-                :rows="2"
-                placeholder="请输入"
-                autosize
-                v-model="addChainAccountDrawer.params.pubKey">
-              </el-input>
-            </el-form-item>
-
-            <el-form-item label="私钥"  v-if="addChainAccountDrawer.params.type">
-              <el-input
-                type="textarea"
-                :rows="2"
-                placeholder="请输入"
-                autosize
-                v-model="addChainAccountDrawer.params.secKey">
-              </el-input>
-            </el-form-item>
-
-            <el-form-item v-if="addChainAccountDrawer.params.type=='Fabric1.4'" label="MSPID">
-              <el-input
-                placeholder="请输入"
-                v-model="addChainAccountDrawer.params.ext"
-                clearable>
-              </el-input>
-            </el-form-item>
+            </div>
 
             <el-form-item label="设为默认账户"   v-if="addChainAccountDrawer.params.type">
                 <el-switch v-model="addChainAccountDrawer.params.isDefault"></el-switch>
@@ -227,7 +293,9 @@ import { listAccount } from '@/api/ua.js'
 import { setDefaultAccount } from '@/api/ua.js'
 import { addChainAccount } from '@/api/ua.js'
 import { ec as EC } from 'elliptic'
+import { keccak256 } from 'js-sha3'
 import { sm2 } from 'sm-crypto'
+import { sm3Hex } from '@/utils/sm3.js'
 
 export default {
   name: 'AccountAdmin',
@@ -263,6 +331,7 @@ export default {
       chainAccountTable: [],
       chainAccountDrawer: {
         show: false,
+        showSec: false,
         direction: 'rtl',
         header: '',
         info: {}
@@ -298,6 +367,7 @@ export default {
       this.chainAccountDrawer.header = chainAccount.details
       this.chainAccountDrawer.info = chainAccount
       this.chainAccountDrawer.show = true
+      this.chainAccountDrawer.showSec = false
     },
     querySetDefaultAccount() {
       MessageBox.confirm('设置成功后，需重新登录', '提示', {
@@ -412,8 +482,11 @@ export default {
         }
         this.addChainAccountDrawer.params.secKey = key
 
-        var pubKeyHex = getPubKeyHexFromSecPem(key)
+        var pubKeyHex = getPubKeyHexFromECDSASecPem(key)
         this.addChainAccountDrawer.params.pubKey = buildECDSAPubKeyPem(pubKeyHex)
+
+        var address = ecdsaPub2Addr(pubKeyHex)
+        this.addChainAccountDrawer.params.ext = address
       }
       reader.readAsText(params.file)
     },
@@ -427,8 +500,11 @@ export default {
 
         this.addChainAccountDrawer.params.secKey = key
 
-        var pubKeyHex = getPubKeyHexFromSecPem(key)
+        var pubKeyHex = getPubKeyHexFromSM2SecPem(key)
         this.addChainAccountDrawer.params.pubKey = buildSM2PubKeyPem(pubKeyHex)
+
+        var address = sm2Pub2Addr(pubKeyHex)
+        this.addChainAccountDrawer.params.ext = address
       }
       reader.readAsText(params.file)
     },
@@ -451,6 +527,9 @@ export default {
 
       this.addChainAccountDrawer.params.pubKey = pubContent
       this.addChainAccountDrawer.params.secKey = secContext
+
+      var address = ecdsaPub2Addr(pubKey)
+      this.addChainAccountDrawer.params.ext = address
     },
     generateSM2KeyPairPem() {
       const keyPair = sm2.generateKeyPairHex()
@@ -465,6 +544,9 @@ export default {
 
       this.addChainAccountDrawer.params.pubKey = pubContent
       this.addChainAccountDrawer.params.secKey = secContext
+
+      var address = sm2Pub2Addr(keyPair.publicKey)
+      this.addChainAccountDrawer.params.ext = address
     }
   },
 
@@ -587,12 +669,39 @@ function isSM2SecPem(secKeyContent) {
   }
 }
 
-function getPubKeyHexFromSecPem(secKeyContent) {
+function sm2Pub2Addr(pubKeyHex) {
+  var pubKeyHexWithoutPrefix = pubKeyHex.substr(2, 128)
+
+  console.log('pubKeyHexWithoutPrefix: ', pubKeyHexWithoutPrefix)
+
+  var address = '0x' + sm3Hex(pubKeyHexWithoutPrefix).substr(24, 40)
+  return address
+}
+
+function ecdsaPub2Addr(pubKeyHex) {
+  var pubKeyHexWithoutPrefix = pubKeyHex.substr(2, 128) // No prefix 04
+  var address = '0x' + keccak256(Uint8Array.from(Buffer.from(pubKeyHexWithoutPrefix, 'hex'))).substr(24, 40)
+  return address
+}
+
+function getPubKeyHexFromECDSASecPem(secKeyContent) {
   var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
 
   var buffer = Buffer.from(base64Content, 'base64')
   var hexString = buffer.toString('hex')
   var pubKeyHex = hexString.substr(140, 130)
+  console.log('pubCertHex: ', hexString)
+  console.log('pubKeyHex: ', pubKeyHex)
+  return pubKeyHex
+}
+
+function getPubKeyHexFromSM2SecPem(secKeyContent) {
+  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
+
+  var buffer = Buffer.from(base64Content, 'base64')
+  var hexString = buffer.toString('hex')
+  var pubKeyHex = hexString.substr(146, 130)
+  console.log('pubCertHex: ', hexString)
   console.log('pubKeyHex: ', pubKeyHex)
   return pubKeyHex
 }

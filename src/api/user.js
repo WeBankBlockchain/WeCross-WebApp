@@ -29,3 +29,10 @@ export function register(data) {
     }
   })
 }
+
+export function imageAuthCode(data) {
+  return request({
+    url: '/auth/imageAuthCode',
+    method: 'get'
+  })
+}

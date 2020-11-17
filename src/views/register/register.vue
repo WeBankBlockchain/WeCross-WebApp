@@ -79,6 +79,26 @@
           </span>
         </el-form-item>
       </el-tooltip>
+      <el-form-item prop="imageAuthCode">
+        <el-input
+          v-model="registerForm.imageAuthCode"
+          placeholder="认证码"
+          name="imageAuthCode"
+          tabindex="4"
+          auto-complete="on"
+        />
+      </el-form-item>
+      <el-form-item prop="vercode">
+        <div style="width: 100%;height: 10%">
+          <span class="codeUrlImg">
+            <img
+              style="width: 100%;height: 10%"
+              :src="imageAuthCode.imageAuthCodeBase64URL"
+              @click="handleFetchAuthTokenCode"
+            />
+          </span>
+        </div>
+      </el-form-item>
 
       <el-button
         type="primary"
@@ -98,6 +118,7 @@
 <script>
 import { validUsername, validPassword } from '@/utils/validate'
 import { register } from '@/api/user'
+import { imageAuthCode } from '@/api/user'
 
 export default {
   name: 'Register',
@@ -111,7 +132,11 @@ export default {
     }
     const verifyPwd = (rule, value, callback) => {
       if (!validPassword(value)) {
-        callback(new Error('请输入正确密码格式：长度为6~18个字符，至少有一个数字，一个大写字母'))
+        callback(
+          new Error(
+            '请输入正确密码格式：长度为6~18个字符，至少有一个数字，一个大写字母'
+          )
+        )
       } else {
         callback()
       }
@@ -129,7 +154,12 @@ export default {
       registerForm: {
         password: '',
         checkPass: '',
-        username: ''
+        username: '',
+        imageAuthCode: ''
+      },
+      imageAuthCode: {
+        imageAuthCodeBase64URL: '',
+        imageToken: ''
       },
       registerRules: {
         username: [
@@ -142,6 +172,9 @@ export default {
       },
       passwordType: 'password'
     }
+  },
+  created() {
+    this.handleFetchAuthTokenCode()
   },
   methods: {
     showPwd() {
@@ -157,7 +190,30 @@ export default {
         path: '/login'
       })
     },
+    handleFetchAuthTokenCode() {
+      imageAuthCode()
+        .then((resp) => {
+          console.log('handleFetchAuthTokenCode => ' + JSON.stringify(resp))
 
+          if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
+            this.$message({
+              type: 'error',
+              message: JSON.stringify(resp)
+            })
+          } else {
+            var data = resp.data
+            var imageAuthCodeInfo = data.imageAuthCodeInfo
+            this.imageAuthCode.imageToken = imageAuthCodeInfo.imageToken
+            this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${imageAuthCodeInfo.imageBase64}`
+          }
+        })
+        .catch((error) => {
+          this.$message({
+            type: 'error',
+            message: error.toString()
+          })
+        })
+    },
     handleRegister(formName) {
       this.$refs[formName].validate((valid) => {
         if (!valid) {
@@ -196,7 +252,7 @@ export default {
                 type: 'success',
                 message: JSON.stringify(ua)
               })
-              // 跳转
+              //
               this.handleLogin()
             } else {
               this.$message({
@@ -220,7 +276,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;

@@ -5,160 +5,185 @@
       </el-page-header>
       <el-divider></el-divider>
       <el-row style="margin-top: 20px">
-        <el-col :span="5" :offset="1" style="margin-top:10px;height: 170px">
-        <el-steps direction="vertical" :active="stepActive">
-          <el-step title="步骤 1" description="选择链类型"></el-step>
-          <el-step title="步骤 2" description="选择操作类型"></el-step>
-          <el-step title="步骤 3" description="设置操作参数"></el-step>
-        </el-steps>
-      </el-col>
-        <el-col :span="16">
-        <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
-          <el-form-item label="选择链类型：">
-            <el-select v-model="form.stubType" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
-              <el-option-group label="FISCO BCOS">
-                <el-option label="FISCO BCOS 2.0+" value="BCOS2.0"/>
-                <el-option label="FISCO BCOS 2.0+ 国密版" value="GM_BCOS2.0"/>
-              </el-option-group>
-              <el-option-group label="Hyperledger Fabric">
-                <el-option label="Hyperledger Fabric 1.4+" value="Fabric1.4"/>
-              </el-option-group>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="选择操作：" prop="method">
-            <el-select v-model="form.method" placeholder="选择操作类型" @change="methodChange" key="methodSelect">
-              <el-option label="部署合约" value="deploy" v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
-                <span style="float: left">部署合约</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">Deploy</span>
-              </el-option>
-              <el-option
-                  label="注册已有合约"
-                  value="register"
-                  v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
-                <span style="float: left">注册已有合约</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">Register</span>
-              </el-option>
-              <el-option label="安装合约" value="install" v-if="form.stubType ==='Fabric1.4'">
-                <span style="float: left">安装合约</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">Install</span>
-              </el-option>
-              <el-option label="实例化合约" value="instantiate" v-if="form.stubType ==='Fabric1.4'">
-                <span style="float: left">实例化合约</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">Instantiate</span>
-              </el-option>
-              <el-option label="升级合约" value="upgrade" v-if="form.stubType ==='Fabric1.4'">
-                <span style="float: left">升级合约</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">Upgrade</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-
-          <!-- BCOS -->
-          <div v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
-            <el-form-item
-                label="资源路径："
-                prop="path">
-              <el-input v-model="form.path" placeholder="Path"></el-input>
-            </el-form-item>
-            <el-form-item label="合约文件：" prop="sourceContent">
-              <el-upload
-                  class="upload-demo"
-                  ref="upload"
-                  action=""
-                  accept=".abi,.sol"
-                  :on-change="changeFile"
-                  :before-remove="beforeRemove"
-                  :http-request="uploadHandler"
-                  :auto-upload="false">
-                <div slot="tip" class="el-upload__tip">Tips：只能上传abi/sol文件</div>
-                <el-button slot="trigger" size="mini" type="primary">选取文件</el-button>
-              </el-upload>
-            </el-form-item>
-            <el-form-item
-                label="合约类名："
-                prop="className">
-              <el-input v-model="form.className" placeholder="Class Name"></el-input>
-            </el-form-item>
-            <el-form-item
-                label="合约版本号："
-                prop="version">
-              <el-input v-model="form.version" placeholder="Version"></el-input>
-            </el-form-item>
-            <el-form-item
-                label="已有合约地址："
-                v-if="form.method ==='register'"
-                prop="address">
-              <el-input v-model="form.address" placeholder="Address">
-                <template slot="prepend">0x</template>
-              </el-input>
-            </el-form-item>
-          </div>
-          <!-- Fabric -->
-          <div v-else-if="form.stubType==='Fabric1.4'">
-            <el-form-item
-                label="资源路径："
-                prop="path">
-              <el-input v-model="form.path" placeholder="Path"></el-input>
-            </el-form-item>
-            <el-form-item
-                label="所在组织名："
-                prop="org">
-              <el-input v-model="form.org" placeholder="Organization"></el-input>
-            </el-form-item>
-            <el-form-item label="合约文件：" prop="sourceContent">
-              <el-upload
-                  class="upload-demo"
-                  ref="upload"
-                  action=""
-                  accept=".tar,.gz"
-                  :on-change="changeFile"
-                  :before-remove="beforeRemove"
-                  :http-request="uploadHandler"
-                  :auto-upload="false">
-                <div slot="tip" class="el-upload__tip">Tips：只能上传tar/gz文件</div>
-                <el-button slot="trigger" size="mini" type="primary">选取文件</el-button>
-              </el-upload>
-            </el-form-item>
-            <el-form-item
-                label="合约版本号："
-                prop="version">
-              <el-input v-model="form.version" placeholder="Version"></el-input>
-            </el-form-item>
-            <el-form-item label="合约语言：" prop="lang">
-              <el-select v-model="form.lang" placeholder="请选择合约语言" style="width:100%">
-                <el-option label="Golang" value="GO_LANG"/>
-                <el-option label="Java" value="JAVA"/>
+        <el-col>
+          <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
+            <el-form-item label="选择链类型：">
+              <el-select v-model="form.stubType" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
+                <el-option-group label="FISCO BCOS">
+                  <el-option label="FISCO BCOS 2.0+" value="BCOS2.0"/>
+                  <el-option label="FISCO BCOS 2.0+ 国密版" value="GM_BCOS2.0"/>
+                </el-option-group>
+                <el-option-group label="Hyperledger Fabric">
+                  <el-option label="Hyperledger Fabric 1.4+" value="Fabric1.4"/>
+                </el-option-group>
               </el-select>
             </el-form-item>
-            <el-form-item
-                label="背书策略："
-                v-if="form.method==='instantiate'||form.method==='upgrade'"
-                prop="policy">
-              <el-input v-model="form.policy" placeholder="Policy"></el-input>
+            <el-form-item label="选择操作：" prop="method">
+              <el-select v-model="form.method" placeholder="选择操作类型" @change="methodChange" key="methodSelect">
+                <el-option
+                    label="部署合约"
+                    value="deploy"
+                    v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
+                  <span style="float: left">部署合约</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">Deploy</span>
+                </el-option>
+                <el-option
+                    label="注册已有合约"
+                    value="register"
+                    v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
+                  <span style="float: left">注册已有合约</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">Register</span>
+                </el-option>
+                <el-option label="安装合约" value="install" v-if="form.stubType ==='Fabric1.4'">
+                  <span style="float: left">安装合约</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">Install</span>
+                </el-option>
+                <el-option label="实例化合约" value="instantiate" v-if="form.stubType ==='Fabric1.4'">
+                  <span style="float: left">实例化合约</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">Instantiate</span>
+                </el-option>
+                <el-option label="升级合约" value="upgrade" v-if="form.stubType ==='Fabric1.4'">
+                  <span style="float: left">升级合约</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">Upgrade</span>
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item
-                label="其他参数："
-                v-if="form.method==='instantiate'||form.method==='upgrade'"
-                prop="args">
-              <el-input v-model="form.args" placeholder="Arguments"></el-input>
+
+            <!-- BCOS -->
+            <div v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
+              <el-form-item
+                  label="资源路径："
+                  prop="path">
+                <el-input v-model="form.path" placeholder="Path"></el-input>
+              </el-form-item>
+              <el-row type="flex">
+                <el-col :span="12">
+                  <el-form-item label="上传文件：">
+                    <el-upload
+                        class="upload-demo"
+                        ref="uploadContract"
+                        action=""
+                        accept=".zip"
+                        :file-list="fileList"
+                        :on-change="changeFile"
+                        :before-remove="beforeRemove"
+                        :http-request="uploadContractSourceHandler"
+                        :auto-upload="false">
+                      <div slot="tip" class="el-upload__tip">上传合约文件打包的zip文件</div>
+                      <el-button slot="trigger" size="mini">选取文件</el-button>
+                    </el-upload>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="合约入口文件：" prop="chosenSolidity">
+                    <el-select v-model="form.chosenSolidity" placeholder="选择编译的合约文件">
+                      <el-option
+                          v-for="item in solidityFiles"
+                          :key="item.path"
+                          :label="item.path"
+                          :value="item.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-form-item
+                  label="合约类名："
+                  prop="className">
+                <el-input v-model="form.className" placeholder="Class Name"></el-input>
+              </el-form-item>
+              <el-form-item
+                  label="合约版本号："
+                  prop="version">
+                <el-input v-model="form.version" placeholder="Version"></el-input>
+              </el-form-item>
+              <el-form-item
+                  label="已有合约地址："
+                  v-if="form.method ==='register'"
+                  prop="address">
+                <el-input v-model="form.address" placeholder="Address">
+                  <template slot="prepend">0x</template>
+                </el-input>
+              </el-form-item>
+            </div>
+            <!-- Fabric -->
+            <div v-else-if="form.stubType==='Fabric1.4'">
+              <el-form-item
+                  label="资源路径："
+                  prop="path">
+                <el-input v-model="form.path" placeholder="Path"></el-input>
+              </el-form-item>
+              <el-form-item
+                  label="所在组织名："
+                  prop="org">
+                <el-input v-model="form.org" placeholder="Organization"></el-input>
+              </el-form-item>
+              <el-form-item label="合约文件：" prop="sourceContent" v-if="this.form.method === 'install'">
+                <el-upload
+                    class="upload-demo"
+                    ref="uploadContract"
+                    action=""
+                    :file-list="fileList"
+                    accept=".tar,.gz"
+                    :on-change="changeFile"
+                    :before-remove="beforeRemove"
+                    :http-request="uploadContractCompressedHandler"
+                    :auto-upload="false">
+                  <div slot="tip" class="el-upload__tip">只能上传chaincode打包的tar/gz文件</div>
+                  <el-button slot="trigger" size="mini">选取文件</el-button>
+                </el-upload>
+              </el-form-item>
+              <el-form-item
+                  label="合约版本号："
+                  prop="version">
+                <el-input v-model="form.version" placeholder="Version"></el-input>
+              </el-form-item>
+              <el-form-item label="合约语言：" prop="lang">
+                <el-select v-model="form.lang" placeholder="请选择合约语言" style="width:100%">
+                  <el-option label="Golang" value="GO_LANG"/>
+                  <el-option label="Java" value="JAVA"/>
+                </el-select>
+              </el-form-item>
+              <el-form-item
+                  label="背书策略："
+                  v-if="form.method==='instantiate'||form.method==='upgrade'"
+                  prop="policy">
+                <el-upload
+                    class="upload-demo"
+                    ref="uploadPolicy"
+                    action=""
+                    accept=".yaml"
+                    :file-list="policyFile"
+                    :on-change="changePolicyFile"
+                    :before-remove="beforeRemove"
+                    :http-request="uploadPolicyHandler"
+                    :auto-upload="false">
+                  <div slot="tip" class="el-upload__tip">只能上传policy的yaml格式文件, 默认为Default</div>
+                  <el-button slot="trigger" size="mini">选取文件</el-button>
+                </el-upload>
+              </el-form-item>
+              <el-form-item
+                  label="其他参数："
+                  v-if="form.method==='instantiate'||form.method==='upgrade'"
+                  prop="args">
+                <el-input v-model="form.args" placeholder="Arguments"></el-input>
+              </el-form-item>
+            </div>
+            <el-form-item>
+              <el-button type="primary" @click="onSubmit">执行</el-button>
+              <el-button @click="onCancel">重置表单</el-button>
             </el-form-item>
-          </div>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">执行</el-button>
-            <el-button @click="onCancel">重置</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-input
-                autosize
-                type="textarea"
-                readonly
-                v-model="submitResponse"
-                v-if="submitResponse !== null"
-                style="margin-bottom: 20px;width: 90%">
-            </el-input>
-          </el-form-item>
-        </el-form>
-      </el-col>
+            <el-form-item>
+              <el-input
+                  autosize
+                  type="textarea"
+                  readonly
+                  v-model="submitResponse"
+                  v-if="submitResponse !== null"
+                  style="margin-bottom: 20px;width: 90%">
+              </el-input>
+            </el-form-item>
+          </el-form>
+        </el-col>
       </el-row>
     </el-card>
   </div>
@@ -171,12 +196,16 @@ import {
   buildFabricInstallRequest,
   buildFabricInstantiateRequest, buildFabricUpgradeRequest, clearForm
 } from '@/utils/resource'
-import { bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade } from '@/api/resource'
+import {
+  bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade
+} from '@/api/resource'
+import { MessageBox } from 'element-ui'
+
+const JSZip = require('jszip')
+const jszip = new JSZip()
 
 export default {
   created() {
-    console.log(this.$route)
-
     if (this.$route.query.path !== undefined) {
       this.form.path = this.$route.query.path
     }
@@ -204,18 +233,21 @@ export default {
         lang: null,
         policy: 'default',
         args: null,
+        chosenSolidity: null,
         sourceContent: null,
+        compressedContent: null,
         fileType: null
       },
+      solidityFiles: [],
+      zipContractFilesMap: {},
       fileList: [],
-      stepActive: 0,
+      policyFile: [],
       submitResponse: null,
+      sourceContractLine: [],
+      dependenciesLine: [],
       formRules: {
-        sourceContent: [
-          { required: true, message: '合约文件不能为空', trigger: 'blur' }
-        ],
-        path: [
-          { required: true, message: '资源路径不能为空', trigger: 'blur' },
+        chosenSolidity: [{ required: true, message: '合约文件不能为空', trigger: 'blur' }],
+        path: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
           { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40 },
           {
             pattern: /^[A-Za-z]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
@@ -241,13 +273,6 @@ export default {
         ],
         lang: [
           { required: true, message: '请选择合约语言', trigger: 'blur' }
-        ],
-        policy: [
-          { required: true, message: '背书策略不能为空', trigger: 'blur' },
-          {
-            required: true, message: '背书策略格式错误', trigger: 'blur',
-            pattern: /^[A-Za-z0-9-_,{}\[\]"'&|]+$/
-          }
         ],
         args: [
           { required: true, message: '其他参数不能为空', trigger: 'blur' },
@@ -277,164 +302,42 @@ export default {
     }
   },
   methods: {
+    mergeSourceContractLineToString() {
+      this.form.sourceContent = ''
+      for (const sourceContractLineElement of this.sourceContractLine) {
+        this.form.sourceContent += sourceContractLineElement + '\n'
+      }
+    },
     onSubmit() {
+      this.mergeSolidityFile('./' + this.form.chosenSolidity)
+      this.mergeSourceContractLineToString()
+      console.log(this.sourceContractLine)
+      console.log(this.form.sourceContent)
       this.$refs['deployForm'].validate((validate) => {
         if (validate) {
           switch (this.form.method) {
             case 'deploy' :
-              bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
-                if (response.errorCode !== 0) {
-                  this.$alert('执行FISCO BCOS部署合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-                    confirmButtonText: '确定',
-                    type: 'error'
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                } else {
-                  this.$message({
-                    message: '执行FISCO BCOS部署合约成功！',
-                    type: 'success',
-                    center: true
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                  this.submitResponse = JSON.stringify(response, null, 4)
-                }
-              }).catch(err => {
-                this.$message(
-                  {
-                    message: err,
-                    type: 'error'
-                  }
-                )
-              })
+              this.mergeSolidityFile('./' + this.form.chosenSolidity)
+              this.mergeSourceContractLineToString()
+              this.onBCOSDeploy()
               break
             case 'register':
-              bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
-                if (response.errorCode !== 0) {
-                  this.$alert('执行FISCO BCOS注册合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-                    confirmButtonText: '确定',
-                    type: 'error'
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                } else {
-                  this.$message({
-                    message: '执行FISCO BCOS注册合约成功！',
-                    type: 'success',
-                    center: true
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                  this.submitResponse = JSON.stringify(response, null, 4)
-                }
-              }).catch(err => {
-                this.$message(
-                  {
-                    message: err,
-                    type: 'error'
-                  }
-                )
-              })
+              this.mergeSolidityFile('./' + this.form.chosenSolidity)
+              this.mergeSourceContractLineToString()
+              this.onBCOSRegister()
               break
             case 'install':
-              fabricInstantiate(buildFabricInstallRequest(this.form)).then(response => {
-                if (response.errorCode !== 0) {
-                  this.$alert('执行Hyperledger Fabric合约安装失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-                    confirmButtonText: '确定',
-                    type: 'error'
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                } else {
-                  this.$message({
-                    message: '执行Hyperledger Fabric合约安装成功！',
-                    type: 'success',
-                    center: true
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                  this.submitResponse = JSON.stringify(response, null, 4)
-                }
-              }).catch(err => {
-                this.$message(
-                  {
-                    message: err,
-                    type: 'error'
-                  }
-                )
-              })
+              this.onFabricInstall()
               break
             case 'instantiate':
-              fabricInstall(buildFabricInstantiateRequest(this.form)).then(response => {
-                if (response.errorCode !== 0) {
-                  this.$alert('执行Hyperledger Fabric合约实例化失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-                    confirmButtonText: '确定',
-                    type: 'error'
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                } else {
-                  this.$message({
-                    message: '执行Hyperledger Fabric合约实例化成功！',
-                    type: 'success',
-                    center: true
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                  this.submitResponse = JSON.stringify(response, null, 4)
-                }
-              }).catch(err => {
-                this.$message(
-                  {
-                    message: err,
-                    type: 'error'
-                  }
-                )
-              })
+              this.onFabricInstantiate()
               break
             case 'upgrade':
-              fabricUpgrade(buildFabricUpgradeRequest(this.form)).then(response => {
-                if (response.errorCode !== 0) {
-                  this.$alert('执行Hyperledger Fabric合约升级失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-                    confirmButtonText: '确定',
-                    type: 'error'
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                } else {
-                  this.$message({
-                    message: '执行Hyperledger Fabric合约升级成功！',
-                    type: 'success',
-                    center: true
-                  })
-                  this.stepActive = 2
-                  this.fileList = []
-                  this.$refs.deployForm.resetFields()
-                  this.submitResponse = JSON.stringify(response, null, 4)
-                }
-              }).catch(err => {
-                this.$message(
-                  {
-                    message: err,
-                    type: 'error'
-                  }
-                )
-              })
+              this.onFabricUpgrade()
               break
             default:
               console.log(this.form)
           }
-          this.stepActive = 3
         } else {
           this.$message({
             message: '请检查所有输入',
@@ -448,11 +351,180 @@ export default {
         message: '已重置表单',
         type: 'info'
       })
-      this.stepActive = 0
       this.fileList = []
+      this.policyFile = []
+      this.sourceContractLine = []
+      this.dependenciesLine = []
+      this.solidityFiles = []
+      this.zipContractFilesMap = {}
       this.form.method = null
       this.form.stubType = null
       this.$refs.deployForm.resetFields()
+    },
+    onBCOSDeploy() {
+      bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
+        if (response.errorCode !== 0) {
+          this.$alert('执行FISCO BCOS部署合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          })
+          this.fileList = []
+          this.$refs.deployForm.resetFields()
+        } else {
+          this.$message({
+            message: '执行FISCO BCOS部署合约成功！',
+            type: 'success',
+            center: true
+          })
+          this.fileList = []
+          this.$refs.deployForm.resetFields()
+          this.submitResponse = JSON.stringify(response, null, 4)
+        }
+      }).catch(err => {
+        this.$message(
+          {
+            message: err,
+            type: 'error'
+          }
+        )
+      })
+    },
+    onBCOSRegister() {
+      bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
+        if (response.errorCode !== 0) {
+          this.$alert('执行FISCO BCOS注册合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          })
+          this.fileList = []
+          this.$refs.deployForm.resetFields()
+        } else {
+          this.$message({
+            message: '执行FISCO BCOS注册合约成功！',
+            type: 'success',
+            center: true
+          })
+          this.fileList = []
+          this.$refs.deployForm.resetFields()
+          this.submitResponse = JSON.stringify(response, null, 4)
+        }
+      }).catch(err => {
+        this.$message(
+          {
+            message: err,
+            type: 'error'
+          }
+        )
+      })
+    },
+    onFabricInstall() {
+      fabricInstall(buildFabricInstallRequest(this.form)).then(response => {
+        if (response.errorCode !== 0) {
+          this.$alert('执行Hyperledger Fabric合约安装失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          })
+          this.fileList = []
+          this.$refs.deployForm.resetFields()
+        } else {
+          this.$message({
+            message: '执行Hyperledger Fabric合约安装成功！',
+            type: 'success',
+            center: true
+          })
+          this.fileList = []
+          this.$refs.deployForm.resetFields()
+          this.submitResponse = JSON.stringify(response, null, 4)
+        }
+      }).catch(err => {
+        this.$message(
+          {
+            message: err,
+            type: 'error'
+          }
+        )
+      })
+    },
+    onFabricInstantiate() {
+      fabricInstantiate(buildFabricInstantiateRequest(this.form)).then(response => {
+        if (response.errorCode !== 0) {
+          this.$alert('执行Hyperledger Fabric合约实例化失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          })
+          this.policyFile = []
+          this.$refs.deployForm.resetFields()
+        } else {
+          this.$message({
+            message: '执行Hyperledger Fabric合约实例化成功！',
+            type: 'success',
+            center: true
+          })
+          this.policyFile = []
+          this.$refs.deployForm.resetFields()
+          this.submitResponse = JSON.stringify(response, null, 4)
+        }
+      }).catch(err => {
+        this.$message(
+          {
+            message: err,
+            type: 'error'
+          }
+        )
+      })
+    },
+    onFabricUpgrade() {
+      fabricUpgrade(buildFabricUpgradeRequest(this.form)).then(response => {
+        if (response.errorCode !== 0) {
+          this.$alert('执行Hyperledger Fabric合约升级失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          })
+          this.policyFile = []
+          this.$refs.deployForm.resetFields()
+        } else {
+          this.$message({
+            message: '执行Hyperledger Fabric合约升级成功！',
+            type: 'success',
+            center: true
+          })
+          this.policyFile = []
+          this.$refs.deployForm.resetFields()
+          this.submitResponse = JSON.stringify(response, null, 4)
+        }
+      }).catch(err => {
+        this.$message(
+          {
+            message: err,
+            type: 'error'
+          }
+        )
+      })
+    },
+
+    mergeSolidityFile(targetFile) {
+      if (this.$refs.uploadContract.uploadFiles.length === 0) {
+        return
+      }
+      var lines = this.zipContractFilesMap[targetFile].split('\n')
+      for (const line of lines) {
+        if (line.indexOf('pragma experimental ABIEncoderV2;') !== -1) {
+          if (!this.dependenciesLine.includes('pragma experimental ABIEncoderV2;')) {
+            this.dependenciesLine.push('pragma experimental ABIEncoderV2;')
+            this.sourceContractLine.push(line)
+          }
+        } else if (/^\s*import\s+["'](.+)["']\s*;\s*$/.test(line)) {
+          this.dependenciesLine.push(line)
+          const matchObj = /^\s*import\s+["'](.+)["']\s*;\s*$/.exec(line)
+          console.log('line: ', matchObj[1].substring(2))
+          if (!this.dependenciesLine.includes(matchObj[1])) {
+            this.dependenciesLine.push(matchObj[1])
+            this.mergeSolidityFile(matchObj[1])
+          }
+        } else {
+          this.sourceContractLine.push(line)
+        }
+      }
     },
     beforeRemove(file) {
       return this.$confirm(`确定移除 ${file.name}？`, '确认信息', {
@@ -465,8 +537,14 @@ export default {
           type: 'success',
           message: '删除成功!'
         })
-        this.fileList = []
+        this.zipContractFilesMap = {}
+        this.solidityFiles = []
+        this.form.chosenSolidity = null
         this.form.sourceContent = null
+        this.form.compressedContent = null
+        this.form.policy = null
+        this.sourceContractLine = []
+        this.dependenciesLine = []
         return true
       })
     },
@@ -474,35 +552,103 @@ export default {
       if (fileList.length === 2) {
         fileList.shift()
       }
-      this.$refs.upload.submit()
+      this.sourceContractLine = []
+      this.dependenciesLine = []
+      this.form.sourceContent = null
+      this.form.compressedContent = null
+      this.form.chosenSolidity = null
+      this.$refs.uploadContract.submit()
     },
-    uploadHandler(params) {
+    changePolicyFile(file, fileList) {
+      if (fileList.length === 2) {
+        fileList.shift()
+      }
+      this.$refs.uploadPolicy.submit()
+    },
+    uploadContractSourceHandler(params) {
+      this.zipContractFilesMap = {}
+      this.solidityFiles = []
+      this.sourceContractLine = []
+      this.dependenciesLine = []
+      const _this = this
       params.onProgress({ percent: 20 })
       this.form.fileType = params.file.name.split('.')[1]
+      var zipFiles = []
+      var promises = []
+      jszip.loadAsync(params.file).then(function(zip) {
+        zip.forEach(function(relativePath, file) {
+          if (file.dir === false) {
+            promises.push(zip.file(file.name).async('string').then((data) => {
+              zipFiles.push({ path: file.name, data: data })
+            }))
+          }
+        })
+        Promise.all(promises).then(() => {
+          for (const zipFile of zipFiles) {
+            _this.zipContractFilesMap['./' + zipFile.path] = zipFile.data
+            if (zipFile.path.indexOf('/') === -1 &&
+                (zipFile.path.endsWith('.sol') || zipFile.path.endsWith('.abi'))) {
+              _this.solidityFiles.push({ path: zipFile.path, value: zipFile.path })
+            }
+          }
+          if (_this.solidityFiles.length === 0) {
+            MessageBox.alert('zip最外层文件中不含有Solidity或ABI文件', '错误', {
+              confirmButtonText: '确定',
+              type: 'error'
+            })
+            params.onProgress({ percent: 0 })
+            params.onError()
+            return
+          }
+          params.onProgress({ percent: 100 })
+          params.onSuccess()
+        })
+      })
+    },
+    uploadContractCompressedHandler(params) {
+      params.onProgress({ percent: 20 })
       setTimeout(() => {
-        this.readText(params)
+        this.readBaseBytes(params)
+      }, 100)
+    },
+    uploadPolicyHandler(params) {
+      params.onProgress({ percent: 20 })
+      setTimeout(() => {
+        this.readBaseBytes(params)
       }, 100)
     },
     async readText(params) {
       // UTF-8,GBK,GB2312
       const readFile = new FileReader()
+      readFile.readAsText(params.file, 'UTF-8')
       readFile.onload = (e) => {
         this.form.sourceContent = e.target.result
         params.onProgress({ percent: 100 })
         params.onSuccess()
         this.$refs.deployForm.clearValidate('sourceContent')
+        this.$refs.deployForm.clearValidate('policy')
       }
-      readFile.readAsText(params.file)
+    },
+    async readBaseBytes(params) {
+      const readFile = new FileReader()
+      readFile.readAsDataURL(params.file)
+      readFile.onload = (e) => {
+        this.form.compressedContent = e.target.result.split('base64,')[1]
+        this.form.policy = e.target.result.split('base64,')[1]
+        params.onProgress({ percent: 100 })
+        params.onSuccess()
+        this.$refs.deployForm.clearValidate('sourceContent')
+        this.$refs.deployForm.clearValidate('policy')
+      }
     },
     stubTypeChange() {
-      this.stepActive = 1
       this.fileList = []
+      this.policyFile = []
       this.$refs.deployForm.clearValidate()
       this.form.method = null
       clearForm(this.form)
     },
     methodChange() {
-      this.stepActive = 2
       this.fileList = []
       this.$refs.deployForm.clearValidate()
       clearForm(this.form)

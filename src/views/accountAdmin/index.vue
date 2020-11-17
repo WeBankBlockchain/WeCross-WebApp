@@ -60,7 +60,7 @@
         :visible.sync="chainAccountDrawer.show"
         :direction="chainAccountDrawer.direction"
         :with-header="false"
-        size="670px"
+        size="680px"
       >
         <el-card class="box-card" style="height:100%">
           <div slot="header" class="clearfix">
@@ -87,7 +87,8 @@
               <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.pubKey"></el-input>
             </el-form-item>
             <el-form-item label="私钥">
-              <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.secKey"></el-input>
+              <el-button size="mini" class="primary" @click="chainAccountDrawer.showSec = !chainAccountDrawer.showSec" >查看 <i class="el-icon-chat-line-round"></i> </el-button>
+              <el-input v-if="chainAccountDrawer.showSec && chainAccountDrawer.show" type="textarea" readonly autosize show-password resize="none" v-model=" chainAccountDrawer.info.secKey"></el-input>
             </el-form-item>
             <el-form-item label="其它">
               <span>{{ chainAccountDrawer.info.ext }}</span>
@@ -330,6 +331,7 @@ export default {
       chainAccountTable: [],
       chainAccountDrawer: {
         show: false,
+        showSec: false,
         direction: 'rtl',
         header: '',
         info: {}
@@ -365,6 +367,7 @@ export default {
       this.chainAccountDrawer.header = chainAccount.details
       this.chainAccountDrawer.info = chainAccount
       this.chainAccountDrawer.show = true
+      this.chainAccountDrawer.showSec = false
     },
     querySetDefaultAccount() {
       MessageBox.confirm('设置成功后，需重新登录', '提示', {

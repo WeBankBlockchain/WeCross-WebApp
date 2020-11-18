@@ -279,15 +279,18 @@
 
             </div>
 
-            <el-form-item label="设为默认账户"   v-if="addChainAccountDrawer.params.type && addChainAccountDrawer.params.secKey !== undefined">
+            <el-form-item label="设为默认账户"   v-if="addChainAccountDrawer.params.type">
                 <el-switch v-model="addChainAccountDrawer.params.isDefault"></el-switch>
             </el-form-item>
           </el-form>
           <div class="clearfix" >
               <el-button
-                :disabled="!addChainAccountDrawer.params.type || addChainAccountDrawer.params.secKey === undefined"
+                :disabled="  addChainAccountDrawer.params.type === undefined
+                          || addChainAccountDrawer.params.secKey === undefined || addChainAccountDrawer.params.secKey.length === 0
+                          || addChainAccountDrawer.params.pubKey === undefined || addChainAccountDrawer.params.pubKey.length === 0
+                          || addChainAccountDrawer.params.ext === undefined || addChainAccountDrawer.params.ext.length === 0"
                 @click="queryAddChainAccount()"
-                style="float: right;float: down"
+                style="float: right;"
                 type="primary"
                 >确认</el-button>
           </div>

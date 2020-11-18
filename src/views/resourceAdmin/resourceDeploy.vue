@@ -202,7 +202,6 @@ import {
 import { MessageBox } from 'element-ui'
 
 const JSZip = require('jszip')
-const jszip = new JSZip()
 
 export default {
   created() {
@@ -566,6 +565,8 @@ export default {
       this.$refs.uploadPolicy.submit()
     },
     uploadContractSourceHandler(params) {
+      const jszip = new JSZip()
+
       this.zipContractFilesMap = {}
       this.solidityFiles = []
       this.sourceContractLine = []

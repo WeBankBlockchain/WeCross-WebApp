@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-row style="margin-top: 20px">
-      <el-card v-loading="loadingList">
+      <el-card v-loading="loadingList" style="height: 80vh">
         <el-row :gutter="18">
-          <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
-          <el-button plain icon="el-icon-s-order" @click="onStartXATransaction">发起事务</el-button>
+          <el-button icon="el-icon-refresh" @click="refresh">刷新</el-button>
+          <el-button type="primary" icon="el-icon-s-order" @click="onStartXATransaction">发起事务</el-button>
         </el-row>
         <el-row :gutter="20">
           <el-table
@@ -19,37 +19,42 @@
                 <span>{{ scope.row.timestamp | formatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="username" label="账户" min-width="50px"></el-table-column>
-            <el-table-column prop="xaTransactionID" label="事务ID" min-width="80px"></el-table-column>
-            <el-table-column prop="status" label="状态" min-width="50px"></el-table-column>
+            <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px"></el-table-column>
+            <el-table-column prop="username" label="跨链账户" min-width="50px"></el-table-column>
+            <el-table-column prop="status" label="事务状态" min-width="50px"></el-table-column>
             <el-table-column label="锁定资源" min-width="60px">
               <template slot-scope="scope">
                 <li style="list-style-type: none" v-for="path in scope.row.paths">{{ path }}</li>
               </template>
             </el-table-column>
-            <el-table-column type="expand" label="步骤">
+            <el-table-column type="expand" label="执行步骤" width="80px">
               <template slot-scope="scope">
-                <el-card class="box-card" v-loading="loadingXA">
-                  <el-form inline class="table-expand">
+                  <el-form inline class="table-expand" v-loading="loadingXA">
                     <el-table
                       ref="singleTable"
                       :data="xaTransaction ? xaTransaction.xaTransactionSteps : null"
                       fit
                       highlight-current-row
+                      class="customer-table"
                     >
-                      <el-table-column label="日期" min-width="80px">
+                      <el-table-column label="执行时间" min-width="70px">
                         <template slot-scope="scope">
                           <span>{{ scope.row.timestamp | formatDate }}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="xaTransactionSeq" label="序号" min-width="80px"></el-table-column>
-                      <el-table-column prop="username" label="账户" min-width="60px"></el-table-column>
-                      <el-table-column prop="path" label="资源" min-width="80px"></el-table-column>
-                      <el-table-column prop="method" label="方法" min-width="40px"></el-table-column>
-                      <el-table-column prop="args" label="参数" min-width="50px"></el-table-column>
+                      <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="70px"></el-table-column>
+                      <el-table-column prop="username" label="跨链账户" min-width="60px"></el-table-column>
+                      <el-table-column prop="path" label="资源路径" min-width="80px"></el-table-column>
+                      <el-table-column prop="method" label="调用方法" min-width="60px"></el-table-column>
+                      <el-table-column
+                        prop="args"
+                        label="调用参数"
+                        min-width="60px"
+                        show-overflow-tooltip
+                      ></el-table-column>
                     </el-table>
                     <el-row style="margin-top: 20px">
-                      <template>
+                      <el-form>
                         <el-form-item label="提交时间：" v-if="scope.row.status === 'committed'">
                           <span>
                             {{
@@ -76,10 +81,9 @@
                             "
                           >继续执行</el-button>
                         </el-form-item>
-                      </template>
+                      </el-form>
                     </el-row>
                   </el-form>
-                </el-card>
               </template>
             </el-table-column>
           </el-table>
@@ -88,16 +92,12 @@
           <el-button
             :disabled="preClickDisable"
             size="small"
-            type="primary"
-            plain
             icon="el-icon-back"
             @click="handlePrevClick"
           >上一页</el-button>
           <el-button
             :disabled="nextClickDisable"
             size="small"
-            type="primary"
-            plain
             @click="handleNextClick"
           >
             下一页
@@ -295,5 +295,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.el-tooltip__popper {
+    max-width: 400px;
+    line-height: 180%;
+  }
 </style>

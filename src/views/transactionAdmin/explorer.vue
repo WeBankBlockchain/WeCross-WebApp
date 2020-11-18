@@ -22,20 +22,18 @@
             readonly
           ></el-input>
         </el-button-group>
-        <el-button-group>
-          <el-button
-            plain
-            icon="el-icon-notebook-2"
-            @click="handleSendTransaction"
-            style="margin-left: 10px"
-          >调用资源</el-button>
-          <el-button
-            icon="el-icon-search"
-            @click="handleSearch"
-            :disabled="currentChain === ''"
-            style="margin-left: 10px"
-          >查询交易</el-button>
-        </el-button-group>
+        <el-button
+          type="primary"
+          icon="el-icon-notebook-2"
+          @click="handleSendTransaction"
+          style="margin-left: 10px"
+        >调用资源</el-button>
+        <el-button
+          icon="el-icon-search"
+          @click="handleSearch"
+          :disabled="currentChain === ''"
+          style="margin-left: 10px"
+        >查询交易</el-button>
       </el-card>
     </el-row>
     <el-row :gutter="10" style="margin-top: 10px">

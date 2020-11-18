@@ -14,7 +14,7 @@
             <el-radio-group v-model="transaction.execMethod" size="small">
               >
               <el-radio-button label="sendTransaction">发交易</el-radio-button>
-              <el-radio-button label="call">查&emsp;询</el-radio-button>
+              <el-radio-button label="call">查状态</el-radio-button>
             </el-radio-group>
           </el-col>
         </el-form-item>

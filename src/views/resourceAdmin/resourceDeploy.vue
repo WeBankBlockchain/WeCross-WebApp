@@ -4,8 +4,8 @@
       <el-page-header @back="() => {this.$router.push({ path: 'resourceList' })}" content="资源部署页面" title="资源管理">
       </el-page-header>
       <el-divider></el-divider>
-      <el-row style="margin-top: 20px">
-        <el-col>
+      <el-row>
+        <el-col span="16">
           <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
             <el-form-item label="选择链类型：">
               <el-select v-model="form.stubType" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
@@ -165,7 +165,7 @@
               </el-form-item>
             </div>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit">执行</el-button>
+              <el-button type="primary" @click="onSubmit" v-loading.fullscreen.lock="loading">执行</el-button>
               <el-button @click="onCancel">重置表单</el-button>
             </el-form-item>
             <el-form-item>
@@ -240,6 +240,7 @@ export default {
       submitResponse: null,
       sourceContractLine: [],
       dependenciesLine: [],
+      loading: false,
       formRules: {
         chosenSolidity: [{ required: true, message: '合约文件不能为空', trigger: 'blur' }],
         path: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
@@ -313,6 +314,7 @@ export default {
     onSubmit() {
       this.$refs['deployForm'].validate((validate) => {
         if (validate) {
+          this.loading = true
           switch (this.form.method) {
             case 'deploy' :
               this.mergeSolidityFile('./' + this.form.chosenSolidity)
@@ -361,12 +363,12 @@ export default {
     },
     onBCOSDeploy() {
       bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
+        this.loading = false
         if (response.errorCode !== 0) {
           this.$alert('执行FISCO BCOS部署合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.fileList = []
           this.$refs.deployForm.resetFields()
         } else {
           this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
@@ -377,10 +379,10 @@ export default {
           }).then(_ => {
             this.$refs.deployForm.resetFields()
             this.$router.push('resourceList')
-            // this.submitResponse = JSON.stringify(response, null, 4)
           }).catch(_ => {})
         }
       }).catch(err => {
+        this.loading = false
         this.$message(
           {
             message: err,
@@ -391,24 +393,26 @@ export default {
     },
     onBCOSRegister() {
       bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
+        this.loading = false
         if (response.errorCode !== 0) {
           this.$alert('执行FISCO BCOS注册合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.fileList = []
           this.$refs.deployForm.resetFields()
         } else {
-          this.$message({
-            message: '执行FISCO BCOS注册合约成功！',
+          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
+            confirmButtonText: '前往资源列表',
+            cancelButtonText: '继续部署',
             type: 'success',
             center: true
-          })
-          this.fileList = []
-          this.$refs.deployForm.resetFields()
-          this.submitResponse = JSON.stringify(response, null, 4)
+          }).then(_ => {
+            this.$refs.deployForm.resetFields()
+            this.$router.push('resourceList')
+          }).catch(_ => {})
         }
       }).catch(err => {
+        this.loading = false
         this.$message(
           {
             message: err,
@@ -419,24 +423,26 @@ export default {
     },
     onFabricInstall() {
       fabricInstall(buildFabricInstallRequest(this.form)).then(response => {
+        this.loading = false
         if (response.errorCode !== 0) {
           this.$alert('执行Hyperledger Fabric合约安装失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.fileList = []
           this.$refs.deployForm.resetFields()
         } else {
-          this.$message({
-            message: '执行Hyperledger Fabric合约安装成功！',
+          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
+            confirmButtonText: '前往资源列表',
+            cancelButtonText: '继续部署',
             type: 'success',
             center: true
-          })
-          this.fileList = []
-          this.$refs.deployForm.resetFields()
-          this.submitResponse = JSON.stringify(response, null, 4)
+          }).then(_ => {
+            this.$refs.deployForm.resetFields()
+            this.$router.push('resourceList')
+          }).catch(_ => {})
         }
       }).catch(err => {
+        this.loading = false
         this.$message(
           {
             message: err,
@@ -447,24 +453,26 @@ export default {
     },
     onFabricInstantiate() {
       fabricInstantiate(buildFabricInstantiateRequest(this.form)).then(response => {
+        this.loading = false
         if (response.errorCode !== 0) {
           this.$alert('执行Hyperledger Fabric合约实例化失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.policyFile = []
           this.$refs.deployForm.resetFields()
         } else {
-          this.$message({
-            message: '执行Hyperledger Fabric合约实例化成功！',
+          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
+            confirmButtonText: '前往资源列表',
+            cancelButtonText: '继续部署',
             type: 'success',
             center: true
-          })
-          this.policyFile = []
-          this.$refs.deployForm.resetFields()
-          this.submitResponse = JSON.stringify(response, null, 4)
+          }).then(_ => {
+            this.$refs.deployForm.resetFields()
+            this.$router.push('resourceList')
+          }).catch(_ => {})
         }
       }).catch(err => {
+        this.loading = false
         this.$message(
           {
             message: err,
@@ -475,6 +483,7 @@ export default {
     },
     onFabricUpgrade() {
       fabricUpgrade(buildFabricUpgradeRequest(this.form)).then(response => {
+        this.loading = false
         if (response.errorCode !== 0) {
           this.$alert('执行Hyperledger Fabric合约升级失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
@@ -483,16 +492,18 @@ export default {
           this.policyFile = []
           this.$refs.deployForm.resetFields()
         } else {
-          this.$message({
-            message: '执行Hyperledger Fabric合约升级成功！',
+          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
+            confirmButtonText: '前往资源列表',
+            cancelButtonText: '继续部署',
             type: 'success',
             center: true
-          })
-          this.policyFile = []
-          this.$refs.deployForm.resetFields()
-          this.submitResponse = JSON.stringify(response, null, 4)
+          }).then(_ => {
+            this.$refs.deployForm.resetFields()
+            this.$router.push('resourceList')
+          }).catch(_ => {})
         }
       }).catch(err => {
+        this.loading = false
         this.$message(
           {
             message: err,

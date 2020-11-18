@@ -77,7 +77,7 @@
               </el-col>
             </el-row>
           </div>
-          <el-col :span="12">
+          <el-col :span="10">
             <transaction-form
                 :transaction="transactionForm"
                 :submit-response="submitResponse"
@@ -88,7 +88,7 @@
                   slot="path"
                   v-model="transactionForm.path"
                   placeholder="请输入跨链资源路径"
-                  style="width: 75%"
+                  style="width: 100%"
                   filterable
                   default-first-option
               >
@@ -101,7 +101,7 @@
               </el-select>
             </transaction-form>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12" :offset="2">
             <el-row>
               <div v-if="this.$store.getters.transactionID !== null" style="font-size: 15px">
                 {{ "当前事务ID：" + this.$store.getters.transactionID }}

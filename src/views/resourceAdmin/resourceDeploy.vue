@@ -57,7 +57,6 @@
                 <el-input v-model="form.path" placeholder="Path"></el-input>
               </el-form-item>
               <el-row type="flex">
-                <el-col :span="12">
                   <el-form-item label="上传文件：">
                     <el-upload
                         class="upload-demo"
@@ -70,11 +69,9 @@
                         :http-request="uploadContractSourceHandler"
                         :auto-upload="false">
                       <div slot="tip" class="el-upload__tip">上传合约文件打包的zip文件</div>
-                      <el-button slot="trigger" size="mini">选取文件</el-button>
+                      <el-button slot="trigger">选取文件</el-button>
                     </el-upload>
                   </el-form-item>
-                </el-col>
-                <el-col :span="12">
                   <el-form-item label="合约入口文件：" prop="chosenSolidity">
                     <el-select v-model="form.chosenSolidity" placeholder="选择编译的合约文件">
                       <el-option
@@ -84,7 +81,6 @@
                           :value="item.value"></el-option>
                     </el-select>
                   </el-form-item>
-                </el-col>
               </el-row>
               <el-form-item
                   label="合约类名："
@@ -300,6 +296,13 @@ export default {
       }
     }
   },
+  watch: {
+    solidityFiles(value) {
+      if (value.length > 0) {
+        this.form.chosenSolidity = value[0].value
+      }
+    }
+  },
   methods: {
     mergeSourceContractLineToString() {
       this.form.sourceContent = ''
@@ -308,10 +311,6 @@ export default {
       }
     },
     onSubmit() {
-      this.mergeSolidityFile('./' + this.form.chosenSolidity)
-      this.mergeSourceContractLineToString()
-      console.log(this.sourceContractLine)
-      console.log(this.form.sourceContent)
       this.$refs['deployForm'].validate((validate) => {
         if (validate) {
           switch (this.form.method) {
@@ -370,14 +369,16 @@ export default {
           this.fileList = []
           this.$refs.deployForm.resetFields()
         } else {
-          this.$message({
-            message: '执行FISCO BCOS部署合约成功！',
+          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
+            confirmButtonText: '前往资源列表',
+            cancelButtonText: '继续部署',
             type: 'success',
             center: true
-          })
-          this.fileList = []
-          this.$refs.deployForm.resetFields()
-          this.submitResponse = JSON.stringify(response, null, 4)
+          }).then(_ => {
+            this.$refs.deployForm.resetFields()
+            this.$router.push('resourceList')
+            // this.submitResponse = JSON.stringify(response, null, 4)
+          }).catch(_ => {})
         }
       }).catch(err => {
         this.$message(
@@ -515,7 +516,6 @@ export default {
         } else if (/^\s*import\s+["'](.+)["']\s*;\s*$/.test(line)) {
           this.dependenciesLine.push(line)
           const matchObj = /^\s*import\s+["'](.+)["']\s*;\s*$/.exec(line)
-          console.log('line: ', matchObj[1].substring(2))
           if (!this.dependenciesLine.includes(matchObj[1])) {
             this.dependenciesLine.push(matchObj[1])
             this.mergeSolidityFile(matchObj[1])

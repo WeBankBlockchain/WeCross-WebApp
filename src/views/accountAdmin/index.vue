@@ -1,13 +1,13 @@
 <template>
   <transition name="el-fade-in-linear">
-    <div v-show="show" class="transition-box">
+    <div v-show="show" class="app-container">
       <el-card class="box-card">
         <el-form label-position="left" size="small" label-width="80px">
           <el-form-item label="跨链账户">
             <el-tag v-bind:type="ua.admin ? 'warning': 'success'" ><span>{{ ua.username }}</span></el-tag>
             <el-button style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
           </el-form-item>
-          <el-form-item label="UA公钥">
+          <el-form-item label="公钥">
             <el-input type="textarea" readonly autosize resize="none" v-model="ua.pubKey"></el-input>
           </el-form-item>
         </el-form>
@@ -19,13 +19,18 @@
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           @row-click="showChainAccount"
         >
+          <el-table-column label="" width="30px">
+            <template slot-scope="">
+            </template>
+          </el-table-column>
           <el-table-column prop="type" label="链账户类型" width="180">
+            <template slot-scope="scope">
+              <el-tag type="info">{{ scope.row.type }}</el-tag>
+            </template>
           </el-table-column>
           <el-table-column prop="keyID" label="KeyID" width="180">
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="light" content="点击查看详情" placement="top">
               <div>{{ scope.row.keyID }}</div>
-              </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column prop="details" label="摘要" @click="showChainAccount(scope.row)">
@@ -41,6 +46,7 @@
               <el-button
                 v-if="scope.row.isDefault"
                 style="float: right"
+                size="small"
               >
                 默认账户
               </el-button>
@@ -49,6 +55,7 @@
                 @click.stop="querySetDefaultAccountByColum(scope.row)"
                 type="primary"
                 style="float: right"
+                size="small"
               >
                 设为默认
               </el-button>
@@ -78,11 +85,11 @@
               <span>{{ chainAccountDrawer.info.keyID }}</span>
             </el-form-item>
             <el-form-item label="链账户类型">
-              <span>{{ chainAccountDrawer.info.type }}</span>
+              <el-tag type="info">{{ chainAccountDrawer.info.type }}</el-tag>
             </el-form-item>
             <el-form-item label="Identity">
-              <el-tooltip class="item" effect="dark" content="BCOS：address" placement="top-start">
-                <div slot="content">BCOS：address<br> Fabric: 公钥证书 </div>
+              <el-tooltip class="item" effect="light" placement="bottom-start">
+                <div slot="content">含义：<br>FISCO BCOS：address<br> Fabric: 公钥证书 </div>
                 <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.identity"></el-input>
               </el-tooltip>
             </el-form-item>
@@ -116,9 +123,9 @@
                 placeholder="请选择"
                 @change="addChainAccountDrawer.params.pubKey = undefined; addChainAccountDrawer.params.secKey = undefined; addChainAccountDrawer.params.ext = undefined; addChainAccountDrawer.params.isDefault = false "
               >
-                <el-option label="FISCO BCOS 2.0" value="BCOS2.0"></el-option>
-                <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0"></el-option>
-                <el-option label="HyperLedger Fabric 1.4" value="Fabric1.4"></el-option>
+                <el-option label="FISCO BCOS 2.0+" value="BCOS2.0"></el-option>
+                <el-option label="FISCO BCOS 2.0+ 国密" value="GM_BCOS2.0"></el-option>
+                <el-option label="HyperLedger Fabric 1.4+" value="Fabric1.4"></el-option>
               </el-select>
             </el-form-item>
 
@@ -280,7 +287,7 @@
               <el-button
                 :disabled="!addChainAccountDrawer.params.type || addChainAccountDrawer.params.secKey === undefined"
                 @click="queryAddChainAccount()"
-                style="float: right"
+                style="float: right;float: down"
                 type="primary"
                 >确认</el-button>
           </div>

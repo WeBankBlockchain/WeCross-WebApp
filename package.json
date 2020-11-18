@@ -61,8 +61,8 @@
     "vue-template-compiler": "^2.6.11"
   },
   "engines": {
-    "node": ">=8.9",
-    "npm": ">= 3.0.0"
+    "node": ">=8.10",
+    "npm": ">= 6.14.0"
   },
   "husky": {
     "hooks": {

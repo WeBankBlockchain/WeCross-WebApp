@@ -26,7 +26,7 @@
               icon="el-icon-view"
               @click="onCall(scope.row.path)"
               style="padding: 8px"
-            >查 询</el-button>
+            >查状态</el-button>
           </el-button-group>
         </template>
       </el-table-column>

@@ -22,7 +22,7 @@ style="float: right;"
           </el-pagination>
         </el-row>
         <el-row>
-          <el-table ref="singleTable" :data="chains" element-loading-text="加载中..." fit>
+          <el-table ref="singleTable" :data="chains" fit>
             <el-table-column type="expand">
               <!--
               <template slot-scope="item">

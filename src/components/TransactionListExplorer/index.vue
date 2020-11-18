@@ -4,7 +4,6 @@
       <el-table
         ref="singleTable"
         :data="transactionList"
-        element-loading-text="加载中..."
         stripe
         fit
         highlight-current-row
@@ -14,16 +13,16 @@
         <el-table-column label="交易哈希" min-width="100" align="center">
           <template slot-scope="item">{{ item.row.txHash }}</template>
         </el-table-column>
-        <el-table-column label="跨链账户UA" min-width="100" align="center">
+        <el-table-column label="跨链账户" min-width="100" align="center">
           <template slot-scope="item">{{ item.row.username }}</template>
         </el-table-column>
-        <el-table-column label="块高" min-width="15" align="center">
+        <el-table-column label="区块高度" min-width="15" align="center">
           <template slot-scope="item">{{ item.row.blockNumber }}</template>
         </el-table-column>
         <el-table-column label="资源路径" min-width="40" align="center">
           <template slot-scope="item">{{ item.row.path }}</template>
         </el-table-column>
-        <el-table-column label="方法" min-width="30" align="center">
+        <el-table-column label="调用方法" min-width="30" align="center">
           <template slot-scope="item">{{ item.row.method }}</template>
         </el-table-column>
         <el-table-column label="交易回执" min-width="50" align="center">
@@ -65,8 +64,6 @@
       <el-button
         :disabled="preClickDisable"
         size="small"
-        type="primary"
-        plain
         icon="el-icon-back"
         @click="handlePrevClick"
         >上一页</el-button
@@ -74,8 +71,6 @@
       <el-button
         :disabled="nextClickDisable"
         size="small"
-        type="primary"
-        plain
         icon="el-icon-right"
         @click="handleNextClick"
         >下一页</el-button

@@ -16,7 +16,7 @@
           <el-input v-model="path" placeholder="Path" :disabled="true">
             <el-button slot="append" class="pan-btn light-blue-btn" @click="handleSendTransaction">
               发交易
-              <el-button slot="append" class="pan-btn light-blue-btn" @click="handleCall">查 询</el-button>
+              <el-button slot="append" class="pan-btn light-blue-btn" @click="handleCall">查状态</el-button>
             </el-button>
           </el-input>
         </el-card>

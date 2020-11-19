@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-table ref="singleTable" :data="resources" highlight-current-row v-bind:style="{ height: height + 'vh', 'overflow-y': 'auto'}">
+    <el-table
+        :data="resources"
+        highlight-current-row
+        style=" height: calc(100% - 80px); overflow-y:auto">
       <el-table-column label="资源路径" min-width="80px">
         <template slot-scope="scope">{{ scope.row.path }}</template>
       </el-table-column>
@@ -36,24 +39,27 @@
       :page-size="pageSize"
       layout="prev, pager, next"
       :total="total"
-      style="text-align: center; margin-top: 10px"
+      style="text-align: center; margin-top: 10px; min-height: 40px"
       :current-page="page"
       @prev-click="prevPage"
       @next-click="nextPage"
       @current-change="setPage"
     ></el-pagination>
 
-    <el-dialog :title="transactionData.execMethod" :visible.sync="callDialogOpen" :destroy-on-close="true" width="45%">
-      <el-form v-loading="loading">
-        <TransactionForm
-          :transaction="transactionData"
-          :submit-response="submitResponse"
-          @clearClick="onClearTransaction"
-          @submitClick="onSubmit"
-        >
-          <el-input slot="path" v-model="transactionData.path" readonly></el-input>
-        </TransactionForm>
-      </el-form>
+    <el-dialog :title="'调用资源'" :visible.sync="callDialogOpen" :destroy-on-close="true" width="45%">
+      <el-row>
+        <el-col :span="18" :offset="2">
+          <el-form v-loading="loading">
+            <TransactionForm
+                :transaction="transactionData"
+                :submit-response="submitResponse"
+                @clearClick="onClearTransaction"
+                @submitClick="onSubmit">
+              <el-input slot="path" v-model="transactionData.path" readonly></el-input>
+            </TransactionForm>
+          </el-form>
+        </el-col>
+      </el-row>
     </el-dialog>
   </div>
 </template>

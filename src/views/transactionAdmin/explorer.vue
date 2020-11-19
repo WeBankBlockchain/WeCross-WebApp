@@ -6,7 +6,8 @@
           <div slot="header" style="height: 2em">
             <span>导航</span>
             <el-button-group style="float: right">
-              <el-button icon="el-icon-d-arrow-left" @click="onBack" v-bind:disabled="history.index === 0">后退</el-button>
+              <el-button icon="el-icon-d-arrow-left" @click="onBack" v-bind:disabled="history.index === 0">后退
+              </el-button>
               <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">
                 前进
                 <i class="el-icon-d-arrow-right"></i>
@@ -23,17 +24,17 @@
           <div slot="header" style="height: 2em">
             <span>交易列表</span>
             <div style="float: right">
-              <el-button-group>
                 <el-input style="width: 30em" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly></el-input>
-              </el-button-group>
-              <el-button-group>
-                <el-button plain icon="el-icon-notebook-2" @click="handleSendTransaction" style="margin-left: 10px">调用资源</el-button>
-              </el-button-group>
+                <el-button plain icon="el-icon-notebook-2" @click="handleSendTransaction" style="margin-left: 10px" type="primary">
+                  调用资源
+                </el-button>
             </div>
           </div>
-          <div>
-            <TransactionListExplorer ref="transactionList" :height="63" :chain="currentChain" :pageSize="10"></TransactionListExplorer>
-          </div>
+          <TransactionListExplorer
+              ref="transactionList"
+              :chain="currentChain"
+              :pageSize="10"
+              style="height: calc(80vh - 70px)"></TransactionListExplorer>
         </el-card>
       </el-col>
     </el-row>
@@ -70,7 +71,8 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     onZoneClick(path) {
       if (this.currentZone !== path) {

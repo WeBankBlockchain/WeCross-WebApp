@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row :gutter="20" style="margin-top: 10px">
+    <el-row :gutter="10">
       <el-table
         ref="singleTable"
         :data="transactionList"
@@ -9,12 +9,12 @@
         fit
         highlight-current-row
         @current-change="handleCurrentRowChange"
-        style="width: 100%"
+        v-bind:style="{ height: height + 'vh', 'overflow-y': 'auto'}"
       >
         <el-table-column label="交易哈希" min-width="100" align="center">
           <template slot-scope="item">{{ item.row.txHash }}</template>
         </el-table-column>
-        <el-table-column label="跨链账户UA" min-width="100" align="center">
+        <el-table-column label="跨链账户UA" min-width="50" align="center">
           <template slot-scope="item">{{ item.row.username }}</template>
         </el-table-column>
         <el-table-column label="块高" min-width="15" align="center">
@@ -26,7 +26,7 @@
         <el-table-column label="方法" min-width="30" align="center">
           <template slot-scope="item">{{ item.row.method }}</template>
         </el-table-column>
-        <el-table-column label="交易回执" min-width="50" align="center">
+        <el-table-column label="交易回执" min-width="30" align="center">
           <template slot-scope="item">
             <el-tooltip
               class="item"
@@ -61,21 +61,15 @@
       </el-drawer>
     </el-row>
     <!--pagination-->
-    <el-row :gutter="20" style="margin-top: 20px; text-align: center">
+    <el-row :gutter="20" style='margin-top: 10px; text-align: center'>
       <el-button
         :disabled="preClickDisable"
-        size="small"
-        type="primary"
-        plain
         icon="el-icon-back"
         @click="handlePrevClick"
         >上一页</el-button
       >
       <el-button
         :disabled="nextClickDisable"
-        size="small"
-        type="primary"
-        plain
         icon="el-icon-right"
         @click="handleNextClick"
         >下一页</el-button
@@ -94,6 +88,12 @@ export default {
   name: 'TransactionList',
   components: {
     VueJsonPretty
+  },
+  props: ['height', 'chain'],
+  watch: {
+    chain: function(val) {
+      this.handleSearch(val)
+    }
   },
   data() {
     return {

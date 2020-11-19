@@ -1,56 +1,39 @@
 <template>
   <div class="app-container">
-    <el-row>
-      <el-card>
-        <el-button-group>
-          <el-button
-            icon="el-icon-d-arrow-left"
-            @click="onBack"
-            v-bind:disabled="history.index === 0"
-          >后退</el-button>
-          <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">
-            前进
-            <i class="el-icon-d-arrow-right"></i>
-          </el-button>
-        </el-button-group>
-        <el-button-group style="margin-left: 10px; width:40%">
-          <el-input
-            size="large"
-            placeholder="当前路径"
-            prefix-icon="el-icon-folder"
-            v-model="currentChain"
-            readonly
-          ></el-input>
-        </el-button-group>
-        <el-button-group>
-          <el-button
-            plain
-            icon="el-icon-notebook-2"
-            @click="handleSendTransaction"
-            style="margin-left: 10px"
-          >调用资源</el-button>
-          <el-button
-            icon="el-icon-search"
-            @click="handleSearch"
-            :disabled="currentChain === ''"
-            style="margin-left: 10px"
-          >查询交易</el-button>
-        </el-button-group>
-      </el-card>
-    </el-row>
-    <el-row :gutter="10" style="margin-top: 10px">
-      <el-col :span="4">
-        <el-card header="资源选择">
-          <ChainExplorer
-            :chain="currentChain"
-            @zone-click="onZoneClick"
-            @chain-click="onChainClick"
-          ></ChainExplorer>
+    <el-row :gutter="10">
+      <el-col span="5">
+        <el-card style="height: 80vh">
+          <div slot="header" style="height: 2em">
+            <span>导航</span>
+            <el-button-group style="float: right">
+              <el-button icon="el-icon-d-arrow-left" @click="onBack" v-bind:disabled="history.index === 0">后退</el-button>
+              <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">
+                前进
+                <i class="el-icon-d-arrow-right"></i>
+              </el-button>
+            </el-button-group>
+          </div>
+          <div style="height: 79vh; overflow: auto">
+            <ChainExplorer :chain="currentChain" @zone-click="onZoneClick" @chain-click="onChainClick"></ChainExplorer>
+          </div>
         </el-card>
       </el-col>
-      <el-col :span="20">
-        <el-card header="交易列表">
-          <TransactionListExplorer ref="transactionList" :chain="currentChain" :pageSize="10"></TransactionListExplorer>
+      <el-col span="19">
+        <el-card style="height: 80vh">
+          <div slot="header" style="height: 2em">
+            <span>交易列表</span>
+            <div style="float: right">
+              <el-button-group>
+                <el-input style="width: 30em" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly></el-input>
+              </el-button-group>
+              <el-button-group>
+                <el-button plain icon="el-icon-notebook-2" @click="handleSendTransaction" style="margin-left: 10px">调用资源</el-button>
+              </el-button-group>
+            </div>
+          </div>
+          <div>
+            <TransactionListExplorer ref="transactionList" :height="63" :chain="currentChain" :pageSize="10"></TransactionListExplorer>
+          </div>
         </el-card>
       </el-col>
     </el-row>
@@ -68,12 +51,12 @@ export default {
     TransactionListExplorer
   },
   /*
-      beforeRouteLeave(to, from, next) {
-        cached = this.$data
+        beforeRouteLeave(to, from, next) {
+          cached = this.$data
 
-        next()
-      },
-      */
+          next()
+        },
+        */
   props: {},
   data() {
     return {
@@ -87,7 +70,7 @@ export default {
       }
     }
   },
-  mounted() { },
+  mounted() {},
   methods: {
     onZoneClick(path) {
       if (this.currentZone !== path) {

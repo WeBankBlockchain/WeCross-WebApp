@@ -36,7 +36,7 @@
               </el-button-group>
             </div>
           </div>
-          <ResourceExplorer :chain='currentChain' pageSize=10 style="height: calc(80vh - 70px)"></ResourceExplorer>
+          <ResourceExplorer :chain='currentChain' :pageSize=10 style="height: calc(80vh - 70px)"></ResourceExplorer>
         </el-card>
       </el-col>
     </el-row>

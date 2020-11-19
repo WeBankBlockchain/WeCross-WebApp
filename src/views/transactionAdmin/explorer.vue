@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10">
-      <el-col span="5">
+      <el-col :span="5">
         <el-card style="height: 80vh">
           <div slot="header" style="height: 2em">
             <span>导航</span>
@@ -19,7 +19,7 @@
           </div>
         </el-card>
       </el-col>
-      <el-col span="19">
+      <el-col :span="19">
         <el-card style="height: 80vh">
           <div slot="header" style="height: 2em">
             <span>交易列表</span>

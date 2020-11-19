@@ -1,32 +1,17 @@
 <template>
   <div class="app-container">
-    <el-row style="margin-top:20px;">
-      <el-card>
+    <el-row>
+      <el-card style="height: 90vh">
         <el-row>
           <el-button-group>
             <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
             <el-button plain icon="el-icon-plus" @click="addRouter">添加跨链路由</el-button>
           </el-button-group>
-
-          <el-button-group style="margin-left: 10px">
-            <el-button plain icon="el-icon-circle-plus" @click="onDeployRouter">跨链路由部署向导</el-button>
-          </el-button-group>
-          <el-pagination
-              background
-              :page-size="pageSize"
-              :pager-count= "9"
-              layout="prev, pager, next"
-              :total="total"
-              style="float: right;"
-              :current-page="currentPage"
-              @prev-click="prevPage"
-              @next-click="nextPage"
-              @current-change="setPage">
-          </el-pagination>
+            <el-button plain icon="el-icon-circle-plus" style="margin-left: 10px" @click="onDeployRouter">跨链路由部署向导</el-button>
         </el-row>
         <el-row>
-          <el-table ref="singleTable" :data="routers" tooltip-effect="light" fit>
-            <el-table-column label="跨链路由别名" min-width="40px" :show-overflow-tooltip="true">:show-overflow-tooltip="true"
+          <el-table ref="singleTable" :data="routers" fit tooltip-effect="light" height="calc( 90vh - 120px)">
+            <el-table-column label="跨链路由别名" min-width="40px" show-overflow-tooltip>
               <template slot-scope="item">
                 {{ getAlias(item.row.nodeID) !== null ? getAlias(item.row.nodeID) : '未设置' }}
               </template>
@@ -62,14 +47,14 @@
             </el-table-column>
           </el-table>
         </el-row>
-        <el-row>
+        <el-row style="margin-top: 10px;">
           <el-pagination
+              style="text-align: center;"
               background
               :page-size="pageSize"
               :pager-count= 9
               layout="prev, pager, next"
               :total="total"
-              style="float: right;"
               :current-page="currentPage"
               @prev-click="prevPage"
               @next-click="nextPage"

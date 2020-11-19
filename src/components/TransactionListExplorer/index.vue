@@ -8,8 +8,7 @@
         highlight-current-row
         tooltip-effect="light"
         @current-change="handleCurrentRowChange"
-        style=" height: calc(100% - 75px); overflow-y:auto">
-      >
+        height="calc(100% - 75px)">
         <el-table-column label="交易哈希" min-width="60px" show-overflow-tooltip>
           <template slot-scope="item">{{ item.row.txHash }}</template>
         </el-table-column>

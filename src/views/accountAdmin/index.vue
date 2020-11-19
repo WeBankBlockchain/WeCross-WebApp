@@ -119,19 +119,24 @@
           <el-form label-position="top" size="small"  ref="form" :model="addChainAccountDrawer" >
             <el-form-item label="链账户类型">
               <el-select
+                style="width:200px"
                 v-model="addChainAccountDrawer.params.type"
                 placeholder="请选择"
                 @change="addChainAccountDrawer.params.pubKey = undefined; addChainAccountDrawer.params.secKey = undefined; addChainAccountDrawer.params.ext = undefined; addChainAccountDrawer.params.isDefault = false "
               >
-                <el-option label="FISCO BCOS 2.0+" value="BCOS2.0"></el-option>
-                <el-option label="FISCO BCOS 2.0+ 国密" value="GM_BCOS2.0"></el-option>
-                <el-option label="HyperLedger Fabric 1.4+" value="Fabric1.4"></el-option>
+                <el-option label="FISCO BCOS 2.0" value="BCOS2.0"></el-option>
+                <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0"></el-option>
+                <el-option label="HyperLedger Fabric 1.4" value="Fabric1.4"></el-option>
               </el-select>
             </el-form-item>
 
             <div v-if="addChainAccountDrawer.params.type == 'BCOS2.0'">
-              <el-form-item label="私钥" >
+              <el-form-item>
+                <label>
+                  <span>私钥</span>
+                </label>
                 <el-upload
+                    style="float:right"
                     class="upload-demo"
                     action=""
                     accept=".pem"
@@ -153,6 +158,7 @@
                   :rows="2"
                   placeholder="请输入"
                   autosize
+                  style="margin-top:10px"
                   v-model="addChainAccountDrawer.params.secKey">
                 </el-input>
               </el-form-item>
@@ -181,28 +187,33 @@
 
             <div  v-if="addChainAccountDrawer.params.type == 'GM_BCOS2.0'">
 
-              <el-form-item label="私钥" >
-                  <el-upload
-                    class="upload-demo"
-                    action=""
-                    accept=".pem"
-                    :show-file-list="false"
-                    :file-list="pubKeyFileList"
-                    :http-request="uploadSM2PemSecKeyHandler"
-                    :auto-upload="true">
-                    <el-button-group slot="trigger">
-                      <el-button  type="primary">上传</el-button>
-                      <el-button
-                      size="small"
-                      @click.stop="generateSM2KeyPairPem()"
-                      type="primary">生成</el-button>
-                    </el-button-group>
-                  </el-upload>
+              <el-form-item >
+                <label>
+                  <span>私钥</span>
+                </label>
+                <el-upload
+                  style="float:right"
+                  class="upload-demo"
+                  action=""
+                  accept=".pem"
+                  :show-file-list="false"
+                  :file-list="pubKeyFileList"
+                  :http-request="uploadSM2PemSecKeyHandler"
+                  :auto-upload="true">
+                  <el-button-group slot="trigger">
+                    <el-button  type="primary">上传</el-button>
+                    <el-button
+                    size="small"
+                    @click.stop="generateSM2KeyPairPem()"
+                    type="primary">生成</el-button>
+                  </el-button-group>
+                </el-upload>
                 <el-input
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
                   autosize
+                  style="margin-top:10px"
                   v-model="addChainAccountDrawer.params.secKey">
                 </el-input>
               </el-form-item>
@@ -229,8 +240,12 @@
             </div>
 
             <div v-if="addChainAccountDrawer.params.type == 'Fabric1.4'">
-              <el-form-item label="私钥"  v-if="addChainAccountDrawer.params.type">
+              <el-form-item v-if="addChainAccountDrawer.params.type">
+                <label>
+                  <span>私钥</span>
+                </label>
                 <el-upload
+                  style="float:right"
                   class="upload-demo"
                   action=""
                   accept=".pem"
@@ -245,12 +260,17 @@
                   :rows="2"
                   placeholder="请输入"
                   autosize
+                  style="margin-top:10px"
                   v-model="addChainAccountDrawer.params.secKey">
                 </el-input>
               </el-form-item>
 
-              <el-form-item label="公钥" v-if="addChainAccountDrawer.params.type">
+              <el-form-item v-if="addChainAccountDrawer.params.type">
+                <label>
+                  <span>公钥</span>
+                </label>
                 <el-upload
+                  style="float:right"
                   class="upload-demo"
                   action=""
                   accept=".pem"
@@ -265,6 +285,7 @@
                   :rows="2"
                   placeholder="请输入"
                   autosize
+                  style="margin-top:10px"
                   v-model="addChainAccountDrawer.params.pubKey">
                 </el-input>
               </el-form-item>
@@ -283,7 +304,7 @@
                 <el-switch v-model="addChainAccountDrawer.params.isDefault"></el-switch>
             </el-form-item>
           </el-form>
-          <div class="clearfix" >
+          <div class="clearfix" style="vertical-align: bottom;">
               <el-button
                 :disabled="  addChainAccountDrawer.params.type === undefined
                           || addChainAccountDrawer.params.secKey === undefined || addChainAccountDrawer.params.secKey.length === 0
@@ -301,7 +322,6 @@
 </template>
 <script>
 import { MessageBox } from 'element-ui'
-import store from '@/store'
 import { listAccount } from '@/api/ua.js'
 import { setDefaultAccount } from '@/api/ua.js'
 import { addChainAccount } from '@/api/ua.js'
@@ -383,7 +403,7 @@ export default {
       this.chainAccountDrawer.showSec = false
     },
     querySetDefaultAccount() {
-      MessageBox.confirm('设置成功后，需重新登录', '提示', {
+      MessageBox.confirm('设为默认账户？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
@@ -416,7 +436,7 @@ export default {
       this.querySetDefaultAccount()
     },
     queryAddChainAccount() {
-      MessageBox.confirm('设置成功后，需重新登录', '提示', {
+      MessageBox.confirm('添加链账户？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
@@ -453,12 +473,8 @@ export default {
         })
       } else {
         this.$message({
-          message: '设置成功，需重新登录',
+          message: '设置成功',
           type: 'success'
-        })
-
-        store.dispatch('user/resetToken').then(() => {
-          location.reload()
         })
       }
     },

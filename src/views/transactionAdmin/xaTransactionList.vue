@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-row style="margin-top: 20px">
+    <el-row>
       <el-card v-loading="loadingList" style="height: 80vh">
         <el-row :gutter="18">
           <el-button icon="el-icon-refresh" @click="refresh">刷新</el-button>
@@ -224,7 +224,7 @@ export default {
     },
     onExecXATransaction(xaTID, xaPaths) {
       this.$store.commit('transaction/SET_TRANSACTION', { transactionID: xaTID, paths: xaPaths })
-      this.$router.push({ path: 'xaTransaction' })
+      this.$router.push({ path: 'xaTransaction', query: { isExec: 'true' }})
     },
     onExpandChange(row, expandedRows) {
       this.fetchXATransaction(row.xaTransactionID, row.paths)

@@ -1,10 +1,11 @@
 import { commitXATransaction, startXATransaction, rollbackXATransaction } from '@/api/transaction'
 import { MessageBox } from 'element-ui'
+import { getXATX, removeXATX, setXATX } from '@/utils/transaction'
 
 const getDefaultState = () => {
   return {
-    transactionID: null,
-    paths: []
+    transactionID: getXATX() ? getXATX().transactionID : null,
+    paths: getXATX() ? getXATX().paths : []
   }
 }
 const state = getDefaultState()
@@ -31,6 +32,7 @@ const actions = {
           reject()
         } else {
           commit('SET_TRANSACTION', { transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths })
+          setXATX({ transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths })
           resolve()
         }
       }).catch(error => {
@@ -53,6 +55,7 @@ const actions = {
           reject()
         } else {
           commit('RESET_STATE')
+          removeXATX()
           resolve()
         }
       }).catch(error => {
@@ -75,6 +78,7 @@ const actions = {
           reject()
         } else {
           commit('RESET_STATE')
+          removeXATX()
           resolve()
         }
       }).catch(error => {

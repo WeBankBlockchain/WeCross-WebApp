@@ -351,7 +351,7 @@ export default {
     }
   },
   created() {
-    this.loadXATransaction()
+    this.loadXATransaction(this.$route.query.isExec)
   },
   watch: {
     stepActive(value) {
@@ -369,8 +369,6 @@ export default {
       return parseTime(date)
     }
   },
-  mounted() {
-  },
   methods: {
     stepBtnClick() {
       switch (this.stepForwardBtnText) {
@@ -382,9 +380,31 @@ export default {
           break
       }
     },
-    loadXATransaction() {
+    loadXATransaction(isExec) {
       const xaID = this.$store.getters.transactionID
-      if (xaID !== null) {
+      if (xaID !== null && typeof (isExec) === 'undefined') {
+        const h = this.$createElement
+        this.$msgbox({
+          title: '提示',
+          message: h('p', null, [
+            h('h3', { style: 'font-weight: bold; margin-left:10px' }, '目前有事务正在执行中，是否恢复：'),
+            h('li', { style: 'font-weight: bold; margin-left:10px' }, '事务ID：' + xaID),
+            h('li', { style: 'font-weight: bold; margin-left:10px' }, '资源路径：'),
+            h('ol', { script: '' }, this.$store.getters.XAPaths.join(',  \n'))
+          ]),
+          closeOnClickModal: false,
+          closeOnPressEscape: false,
+          showCancelButton: true,
+          confirmButtonText: '恢复事务',
+          cancelButtonText: '重开事务'
+        }).then(_ => {
+          this.transactionForm.transactionID = this.$store.getters.transactionID
+          this.transactionForm.path = this.$store.getters.XAPaths
+          this.stepActive = 1
+        }).catch(_ => {
+          this.$store.commit('transaction/RESET_STATE')
+        })
+      } else if (xaID !== null && typeof (isExec) !== 'undefined') {
         this.transactionForm.transactionID = this.$store.getters.transactionID
         this.transactionForm.path = this.$store.getters.XAPaths
         this.stepActive = 1

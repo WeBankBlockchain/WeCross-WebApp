@@ -1,71 +1,73 @@
 <template>
   <div class="wl-finder" :style="{ width, height }">
     <!-- finder left -->
-    <div class="finder-left">
-      <h3 class="finder-title">
-        <span>待选链列表</span>
-      </h3>
-      <!-- finder left panel -->
-      <div class="finder-main">
-        <el-input placeholder="输入关键字进行过滤" v-model="filterFrom" size="small" class="filter-tree"></el-input>
-        <el-tree
-          ref="from-tree"
-          lazy
-          node-key="key"
-          :load="leftLoadNode"
-          :props="defaultProps"
-          highlight-current
-          :filter-node-method="filterNodeFrom"
-          @node-click="onChainClick"
-        ></el-tree>
-      </div>
-    </div>
-    <div class="finder-left-table">
+    <div class="finder-base">
       <h3 class="finder-title">
         <span>待选资源列表</span>
       </h3>
-      <el-table
-        stripe
-        tooltip-effect="dark"
-        ref="finderTable"
-        :data="tableShowData"
-        height="80%"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column fixed width="42px" type="selection"></el-table-column>
-        <el-table-column label="可选资源路径" show-overflow-tooltip>
-          <template slot-scope="scope">{{ scope.row.path }}</template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        small
-        :pager-count="5"
-        :page-size="pageObject.pageSize"
-        layout="prev, pager, next, jumper"
-        :total="pageObject.totalPageNumber"
-        style="text-align: center; margin-top: 5px"
-        :current-page.sync="pageObject.currentPage"
-        @current-change="setPage"
-        @prev-click="prevPage"
-        @next-click="nextPage"
-      ></el-pagination>
+      <div class="finder-left">
+
+        <!-- finder left panel -->
+        <div class="finder-main">
+          <el-input placeholder="输入关键字进行过滤" v-model="filterFrom" size="small" class="filter-tree"></el-input>
+          <el-tree
+              ref="from-tree"
+              lazy
+              node-key="key"
+              :load="leftLoadNode"
+              :props="defaultProps"
+              highlight-current
+              :filter-node-method="filterNodeFrom"
+              @node-click="onChainClick"
+          ></el-tree>
+        </div>
+      </div>
+      <div class="finder-left-table">
+        <div class="finder-main">
+        <el-table
+            stripe
+            tooltip-effect="dark"
+            ref="finderTable"
+            :data="tableShowData"
+            style="height: calc(100% - 34px)"
+            @selection-change="handleSelectionChange"
+        >
+          <el-table-column fixed width="42px" type="selection"></el-table-column>
+          <el-table-column label="可选资源路径" show-overflow-tooltip>
+            <template slot-scope="scope">{{ scope.row.path }}</template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+            small
+            :pager-count="5"
+            :page-size="pageObject.pageSize"
+            layout="prev, pager, next"
+            :total="pageObject.totalPageNumber"
+            style="text-align: center; margin-top: 10px; height: 20px"
+            :current-page.sync="pageObject.currentPage"
+            @current-change="setPage"
+            @prev-click="prevPage"
+            @next-click="nextPage"
+        ></el-pagination>
+        </div>
+      </div>
     </div>
     <!-- finder button -->
     <div class="finder-center">
       <template>
         <p class="finder-center-item">
-          <el-button type="primary" @click="addToAims" :disabled="from_disabled">
+          <el-button @click="addToAims" :disabled="from_disabled">
             {{ "添加" }}
             <i class="el-icon-arrow-right"></i>
           </el-button>
         </p>
         <p class="finder-center-item">
           <el-button
-            type="primary"
-            @click="removeToSource"
-            :disabled="to_disabled"
-            icon="el-icon-arrow-left"
-          >{{ "移除" }}</el-button>
+              @click="removeToSource"
+              :disabled="to_disabled"
+              icon="el-icon-arrow-left"
+          >{{ "移除" }}
+          </el-button>
         </p>
       </template>
     </div>
@@ -73,9 +75,9 @@
     <div class="finder-right">
       <h3 class="finder-title">
         <el-checkbox
-          :indeterminate="to_is_indeterminate"
-          v-model="to_check_all"
-          @change="toAllBoxChange"
+            :indeterminate="to_is_indeterminate"
+            v-model="to_check_all"
+            @change="toAllBoxChange"
         ></el-checkbox>
         <span>已选资源列表</span>
       </h3>
@@ -84,10 +86,10 @@
         <el-input placeholder="输入关键字进行过滤" v-model="filterTo" size="small" class="filter-tree"></el-input>
         <el-checkbox-group v-model="to_check_keys" class="el-finder-panel__list">
           <el-checkbox
-            class="el-finder-panel__item"
-            :label="item.path"
-            :key="item.path"
-            v-for="item in toDataFilter"
+              class="el-transfer-panel__item"
+              :label="item.path"
+              :key="item.path"
+              v-for="item in toDataFilter"
           ></el-checkbox>
         </el-checkbox-group>
       </div>
@@ -124,7 +126,7 @@ export default {
     },
     height: {
       type: String,
-      default: '400px'
+      default: '450px'
     },
     resourceData: {
       type: Array,
@@ -426,30 +428,33 @@ a {
     display: inline-block !important;
   }
 
+  .finder-base {
+    border: 1px solid #ebeef5;
+    margin-left: 5%;
+    width: 50%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    vertical-align: middle;
+  }
+
   .finder-left {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 41px;
+    left: 5%;
   }
 
   .finder-left-table {
     position: absolute;
-    top: 0;
-    left: 31%;
+    top: 41px;
+    left: 30%;
   }
 
   .finder-right {
     position: absolute;
     top: 0;
     right: 0;
-  }
-
-  .finder-right-item {
-    height: calc((100% - 41px) / 2);
-  }
-
-  .finder-right-small {
-    height: 41px;
+    margin-right: 5%;
   }
 
   .finder-right-only {
@@ -458,26 +463,20 @@ a {
 
   .finder-main {
     padding: 10px;
-    height: calc(100% - 41px);
+    height: calc(100% - 40px);
     box-sizing: border-box;
     overflow: auto;
   }
 
   .finder-left {
-    border: 1px solid #ebeef5;
-    width: 30%;
+    width: 25%;
     height: 100%;
-    box-sizing: border-box;
-    border-radius: 5px;
     vertical-align: middle;
   }
 
   .finder-left-table {
-    border: 1px solid #ebeef5;
-    width: 30%;
+    width: 25%;
     height: 100%;
-    box-sizing: border-box;
-    border-radius: 5px;
     vertical-align: middle;
   }
 
@@ -493,8 +492,8 @@ a {
   .finder-center {
     position: absolute;
     top: 50%;
-    left: 58%;
-    width: 20%;
+    left: 50%;
+    width: 25%;
     transform: translateY(-50%);
     text-align: center;
   }

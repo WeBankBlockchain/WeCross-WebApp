@@ -1,7 +1,9 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <router-view :key="key" />
+      <keep-alive exclude="XATransaction,XATransactionList">
+        <router-view :key="key" />
+      </keep-alive>
     </transition>
   </section>
 </template>
@@ -38,6 +40,3 @@ export default {
   }
 }
 </style>
-<keep-alive :include="cachedViews">
-  <router-view></router-view>
-</keep-alive>

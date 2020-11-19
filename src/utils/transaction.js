@@ -1,3 +1,5 @@
+const xaTransactionKey = 'xaTX'
+
 export function uuid(len, radix) {
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
   const uuid = []
@@ -23,3 +25,16 @@ export function uuid(len, radix) {
   }
   return uuid.join('')
 }
+
+export function getXATX() {
+  return localStorage.getItem(xaTransactionKey)
+}
+
+export function setXATX(xaTX) {
+  return localStorage.setItem(xaTransactionKey, xaTX)
+}
+
+export function removeXATX() {
+  return localStorage.removeItem(xaTransactionKey)
+}
+

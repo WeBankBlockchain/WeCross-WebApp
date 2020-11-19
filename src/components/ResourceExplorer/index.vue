@@ -43,7 +43,7 @@
       @current-change="setPage"
     ></el-pagination>
 
-    <el-dialog :visible.sync="callDialogOpen" width="45%">
+    <el-dialog :title="transactionData.execMethod" :visible.sync="callDialogOpen" :destroy-on-close="true" width="45%">
       <el-form v-loading="loading">
         <TransactionForm
           :transaction="transactionData"
@@ -51,7 +51,7 @@
           @clearClick="onClearTransaction"
           @submitClick="onSubmit"
         >
-          <el-input slot="path" v-model="transactionData.path" readonly style="width: 75%;"></el-input>
+          <el-input slot="path" v-model="transactionData.path" readonly></el-input>
         </TransactionForm>
       </el-form>
     </el-dialog>

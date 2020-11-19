@@ -10,9 +10,8 @@
         class="dynamicForm"
       >
         <el-form-item label="调用方式:" prop="path">
-          <el-col :offset="5">
+          <el-col>
             <el-radio-group v-model="transaction.execMethod" size="small">
-              >
               <el-radio-button label="sendTransaction">发交易</el-radio-button>
               <el-radio-button label="call">查状态</el-radio-button>
             </el-radio-group>
@@ -38,27 +37,26 @@
               },
             ]"
           >
-            <el-input v-model="arg.value" :placeholder="'请输入调用参数'+index"></el-input>
-            <el-button
-              @click.prevent="removeArg(arg)"
-              size="small"
-              style="padding: 3px 0"
-              type="text"
-            >删除</el-button>
+            <el-input v-model="arg.value" :placeholder="'请输入调用参数'+index">
+              <el-button
+                  slot="append"
+                  @click.prevent="removeArg(arg)"
+              >删除参数
+              </el-button>
+            </el-input>
           </el-form-item>
         </div>
-        <el-form-item>
-          <el-col :offset="3">
-            <el-button
+        <div style="text-align: center; margin-bottom: 20px">
+          <el-button
               type="primary"
               @click="onSubmit"
               size="small"
               v-loading.fullscreen.lock="loading"
-            >执行调用</el-button>
-            <el-button @click="clearForm" size="small">重置表单</el-button>
-            <el-button @click="addArg" size="small">添加参数</el-button>
-          </el-col>
-        </el-form-item>
+          >执行调用
+          </el-button>
+          <el-button @click="clearForm" size="small">重置表单</el-button>
+          <el-button @click="addArg" size="small">添加参数</el-button>
+        </div>
         <el-form-item label="调用结果:" v-if="submitResponse !== null">
           <el-input
             autosize
@@ -189,7 +187,7 @@ body {
 .dynamicForm {
   .el-input {
     margin-right: 10px;
-    width: 75%;
+    width: 100%;
   }
 }
 </style>

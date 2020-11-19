@@ -25,7 +25,7 @@
           </el-pagination>
         </el-row>
         <el-row>
-          <el-table ref="singleTable" :data="routers" element-loading-text="加载中..." fit>
+          <el-table ref="singleTable" :data="routers" fit>
             <el-table-column label="跨链路由别名" min-width="40px" :show-overflow-tooltip="true">:show-overflow-tooltip="true"
               <template slot-scope="item">
                 {{ getAlias(item.row.nodeID) !== null ? getAlias(item.row.nodeID) : '未设置' }}

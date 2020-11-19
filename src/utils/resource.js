@@ -41,7 +41,7 @@ export function buildFabricInstallRequest(formData) {
         formData.version,
         formData.org,
         formData.lang,
-        formData.sourceContent
+        formData.compressedContent
       ]
     }
   }
@@ -59,7 +59,7 @@ export function buildFabricInstantiateRequest(formData) {
         formData.org,
         formData.lang,
         formData.sourceContent,
-        formData.policy,
+        formData.policy === 'default' ? null : formData.policy,
         formData.args
       ]
     }
@@ -78,7 +78,7 @@ export function buildFabricUpgradeRequest(formData) {
         formData.org,
         formData.lang,
         formData.sourceContent,
-        formData.policy,
+        formData.policy === 'default' ? null : formData.policy,
         formData.args
       ]
     }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table ref="singleTable" :data="transactions" element-loading-text="加载中..." fit highlight-current-row>
+    <el-table ref="singleTable" :data="transactions" fit highlight-current-row>
       <el-table-column fixed prop="txHash" label="交易哈希">
       </el-table-column>
       <el-table-column prop="blockNumber" label="块高">

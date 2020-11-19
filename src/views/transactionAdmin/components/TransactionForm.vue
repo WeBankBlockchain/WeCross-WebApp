@@ -11,7 +11,7 @@
       >
         <el-form-item label="调用方式:" prop="path">
           <el-col>
-            <el-radio-group v-model="transaction.execMethod" size="small">
+            <el-radio-group v-model="transaction.execMethod" size="small" @change="onMethodChange">
               <el-radio-button label="sendTransaction">发交易</el-radio-button>
               <el-radio-button label="call">查状态</el-radio-button>
             </el-radio-group>
@@ -38,22 +38,17 @@
             ]"
           >
             <el-input v-model="arg.value" :placeholder="'请输入调用参数'+index">
-              <el-button
-                  slot="append"
-                  @click.prevent="removeArg(arg)"
-              >删除参数
-              </el-button>
+              <el-button slot="append" @click.prevent="removeArg(arg)">删除参数</el-button>
             </el-input>
           </el-form-item>
         </div>
         <div style="text-align: center; margin-bottom: 20px">
           <el-button
-              type="primary"
-              @click="onSubmit"
-              size="small"
-              v-loading.fullscreen.lock="loading"
-          >执行调用
-          </el-button>
+            type="primary"
+            @click="onSubmit"
+            size="small"
+            v-loading.fullscreen.lock="loading"
+          >执行调用</el-button>
           <el-button @click="clearForm" size="small">重置表单</el-button>
           <el-button @click="addArg" size="small">添加参数</el-button>
         </div>
@@ -131,6 +126,10 @@ export default {
     }
   },
   methods: {
+    onMethodChange() {
+      console.log('method:', this.transaction.execMethod)
+      this.$forceUpdate()
+    },
     addArg() {
       this.transaction.args.push({
         value: '',

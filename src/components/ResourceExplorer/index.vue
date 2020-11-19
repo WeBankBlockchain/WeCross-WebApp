@@ -3,6 +3,7 @@
     <el-table
         :data="resources"
         highlight-current-row
+        tooltip-effect="light"
         style=" height: calc(100% - 80px); overflow-y:auto">
       <el-table-column label="资源路径" min-width="80px">
         <template slot-scope="scope">{{ scope.row.path }}</template>

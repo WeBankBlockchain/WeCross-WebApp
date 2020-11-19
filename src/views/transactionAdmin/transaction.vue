@@ -11,7 +11,7 @@
         >
           <template slot="path">
             <el-input v-model="transactionData.path" placeholder="请输入资源路径" style="width: 100%">
-              <el-button slot="append" icon="el-icon-search" @click="startSelectPath = true"></el-button>
+              <el-button slot="append" icon="el-icon-search" @click="startSelectPath = true">浏览</el-button>
             </el-input>
             <el-dialog :visible.sync="startSelectPath">
               <div class="wl-finder">

@@ -14,58 +14,57 @@
               <el-button slot="append" icon="el-icon-search" @click="startSelectPath = true"></el-button>
             </el-input>
             <el-dialog :visible.sync="startSelectPath">
-              <el-row type="flex" justify="center" class="wl-finder" :style="{ width, height }">
-                <el-col>
-                  <div class="finder-chain">
-                    <h3 class="finder-title">
-                      <span>待选链列表</span>
-                    </h3>
-                    <el-tree
-                      ref="from-tree"
-                      lazy
-                      node-key="key"
-                      :load="onLoadNode"
-                      :props="chainProps"
-                      highlight-current
-                      @node-click="onNodeClick"
-                    ></el-tree>
-                  </div>
-                </el-col>
-                <el-col>
-                  <div class="finder-path">
-                    <h3 class="finder-title">
-                      <span>待选资源列表</span>
-                    </h3>
-                    <el-table
-                      :show-header="false"
-                      stripe
-                      tooltip-effect="dark"
-                      ref="finderTable"
-                      :data="paths"
-                      height="80%"
-                      :highlight-current-row="true"
-                      @row-click="onSelectRow"
-                      @selection-change="onSelectChange"
-                    >
-                      <el-table-column fixed width="42px" type="selection"></el-table-column>
-                      <el-table-column show-overflow-tooltip>
-                        <template slot-scope="scope">{{ scope.row.path }}</template>
-                      </el-table-column>
-                    </el-table>
-                    <el-pagination
-                      small
-                      :pager-count="5"
-                      :page-size="pageObject.pageSize"
-                      layout="prev, pager, next, jumper"
-                      :total="pageObject.totalPageNumber"
-                      style="text-align: center; margin-top: 5px"
-                      :current-page.sync="pageObject.currentPage"
-                      @current-change="updatePageAndFetchPaths"
-                    ></el-pagination>
-                  </div>
-                </el-col>
-              </el-row>
-              <span slot="footer" class="dialog-footer">
+              <div class="wl-finder">
+                <el-row class="finder-title">
+                  <span style="margin-left: 10px">待选资源列表</span>
+                </el-row>
+                <el-row :style="{height}">
+                  <el-col>
+                    <div class="finder-chain">
+                      <el-tree
+                        ref="from-tree"
+                        lazy
+                        node-key="key"
+                        :load="onLoadNode"
+                        :props="chainProps"
+                        highlight-current
+                        @node-click="onNodeClick"
+                      ></el-tree>
+                    </div>
+                  </el-col>
+                  <el-col>
+                    <div class="finder-path">
+                      <el-table
+                        :show-header="false"
+                        stripe
+                        tooltip-effect="dark"
+                        ref="finderTable"
+                        :data="paths"
+                        height="80%"
+                        :highlight-current-row="true"
+                        @row-click="onSelectRow"
+                        @selection-change="onSelectChange"
+                      >
+                        <el-table-column fixed width="42px" type="selection"></el-table-column>
+                        <el-table-column show-overflow-tooltip>
+                          <template slot-scope="scope">{{ scope.row.path }}</template>
+                        </el-table-column>
+                      </el-table>
+                      <el-pagination
+                        small
+                        :pager-count="5"
+                        :page-size="pageObject.pageSize"
+                        layout="prev, pager, next, jumper"
+                        :total="pageObject.totalPageNumber"
+                        style="text-align: center; margin-top: 30px"
+                        :current-page.sync="pageObject.currentPage"
+                        @current-change="updatePageAndFetchPaths"
+                      ></el-pagination>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
+              <span slot="footer" class="dialog-footer" style="margin-right: 80px">
                 <el-button type="primary" @click="startSelectPath = false">确 定</el-button>
               </span>
             </el-dialog>
@@ -334,45 +333,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-body {
-  line-height: 1.666;
-  color: #666;
-  font-size: 14px;
-}
-
-body,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-ul,
-ol,
-li,
-p,
-dl,
-dt,
-dd,
-table,
-th,
-td {
-  margin: 0;
-  padding: 0;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-th,
-strong {
-  font-size: 100%;
-  font-weight: normal;
-}
-
 .wl-finder {
   position: relative;
   overflow: hidden;
@@ -383,44 +343,42 @@ strong {
   }
 
   .finder-title {
-    border-bottom: 1px solid #ebeef5;
-    padding: 0 15px;
-    height: 40px;
-    line-height: 40px;
+    margin-left: 10%;
+    border: 1px solid #ebeef5;
+    width: 81%;
     color: #333;
     font-size: 16px;
+    box-sizing: border-box;
     background-color: #f5f7fa;
+    vertical-align: middle;
+  }
+
+  .el-tree {
+    min-width: 100%;
+    display: inline-block !important;
   }
 
   .finder-chain {
     position: absolute;
     top: 0;
     left: 0;
+    margin-left: 10%;
+    border: 1px solid #ebeef5;
+    width: 34.1%;
+    height: 100%;
+    box-sizing: border-box;
+    vertical-align: middle;
   }
 
   .finder-path {
     position: absolute;
     top: 0;
     left: 31%;
-  }
-
-  .finder-chain {
-    margin-left: 10%;
-    border: 1px solid #ebeef5;
-    width: 34%;
-    height: 100%;
-    box-sizing: border-box;
-    border-radius: 5px;
-    vertical-align: middle;
-  }
-
-  .finder-path {
     margin-left: 13%;
     border: 1px solid #ebeef5;
     width: 47%;
     height: 100%;
     box-sizing: border-box;
-    border-radius: 5px;
     vertical-align: middle;
   }
 }

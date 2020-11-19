@@ -12,7 +12,7 @@
       <el-table-column prop="properties" label="更多属性">
       </el-table-column>
     </el-table>
-    <el-button-group style="float: right;">
+    <el-button-group>
       <el-button plain icon="el-icon-edit" @click="prevPage">上一页</el-button>
       <el-button plain icon="el-icon-minus" @click="nextPage">下一页</el-button>
     </el-button-group>

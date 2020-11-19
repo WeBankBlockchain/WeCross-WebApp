@@ -1,13 +1,13 @@
 <template>
   <el-tree
-      :props="props"
-      :load="loadData"
-      @node-click='onChainClick'
-      @check-change='onChainSelect'
-      node-key="key"
-      ref="tree"
-      highlight-current
-      lazy>
+:props="props"
+:load="loadData"
+@node-click='onChainClick'
+@check-change='onChainSelect'
+node-key="key"
+ref="tree"
+    highlight-current
+lazy>
   </el-tree>
 </template>
 
@@ -18,7 +18,9 @@ import {
 import {
   listZones
 } from '@/api/conn'
-import { uniqueObjectArray } from '@/utils'
+import {
+  uniqueObjectArray
+} from '@/utils'
 
 export default {
   name: 'ChainExplorer',

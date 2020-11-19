@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table ref="singleTable" :data="resources" highlight-current-row>
+    <el-table ref="singleTable" :data="resources" highlight-current-row v-bind:style="{ height: height + 'vh', 'overflow-y': 'auto'}">
       <el-table-column label="资源路径" min-width="80px">
         <template slot-scope="scope">{{ scope.row.path }}</template>
       </el-table-column>
@@ -67,7 +67,7 @@ import { call, sendTransaction } from '@/api/transaction'
 
 export default {
   name: 'ResourceExplorer',
-  props: ['chain', 'pageSize'],
+  props: ['chain', 'pageSize', 'height'],
   components: {
     TransactionForm: () => import('@/views/transactionAdmin/components/TransactionForm')
   },

@@ -1,31 +1,35 @@
 <template>
   <div class="app-container">
-    <el-row>
-      <el-card>
-        <el-button-group>
-          <el-button icon="el-icon-d-arrow-left" @click="onBack" v-bind:disabled="history.index === 0">后退</el-button>
-          <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">前进
-            <i class="el-icon-d-arrow-right"></i>
-          </el-button>
-        </el-button-group>
-        <el-button-group style="margin-left: 10px; width:40%">
-          <el-input size="large" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly>
-          </el-input>
-        </el-button-group>
-        <el-button-group>
-          <el-button icon="el-icon-upload" @click="onDeploy" :disabled="currentChain === ''" style="margin-left: 10px">部署资源</el-button>
-        </el-button-group>
-      </el-card>
-    </el-row>
-    <el-row :gutter="10" style="margin-top: 10px">
-      <el-col :span="4">
-        <el-card header="资源选择">
+    <el-row :gutter="10">
+      <el-col :span="5">
+        <el-card style="height: 80vh">
+          <div slot="header" style="height: 2em">
+            <span>导航</span>
+            <el-button-group style="float: right">
+              <el-button icon="el-icon-d-arrow-left" @click="onBack" v-bind:disabled="history.index === 0">后退</el-button>
+              <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">前进
+                <i class="el-icon-d-arrow-right"></i>
+              </el-button>
+            </el-button-group>
+          </div>
           <ChainExplorer :chain='currentChain' @zone-click='onZoneClick' @chain-click='onChainClick'></ChainExplorer>
         </el-card>
       </el-col>
-      <el-col :span="20">
-        <el-card header="资源列表">
-          <ResourceExplorer :chain='currentChain' :pageSize=10></ResourceExplorer>
+      <el-col :span="19">
+        <el-card style="height: 80vh">
+          <div slot="header" style="height: 2em">
+            <span>资源列表</span>
+            <div style="float: right">
+              <el-button-group style="margin-left: 10px">
+                <el-input  style="width: 30em" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly>
+                </el-input>
+              </el-button-group>
+              <el-button-group>
+                <el-button icon="el-icon-upload" @click="onDeploy" :disabled="currentChain === ''" style="margin-left: 10px">部署资源</el-button>
+              </el-button-group>
+            </div>
+          </div>
+          <ResourceExplorer :chain='currentChain' pageSize=10 :height='63'></ResourceExplorer>
         </el-card>
       </el-col>
     </el-row>
@@ -43,12 +47,12 @@ export default {
     ResourceExplorer
   },
   /*
-      beforeRouteLeave(to, from, next) {
-        cached = this.$data
+        beforeRouteLeave(to, from, next) {
+          cached = this.$data
 
-        next()
-      },
-      */
+          next()
+        },
+        */
   props: {},
   data() {
     return {

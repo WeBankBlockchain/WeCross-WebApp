@@ -26,7 +26,7 @@ import {
 
 export default {
   name: 'TransactionExplorer',
-  props: ['chain', 'pageSize', 'height'],
+  props: ['chain', 'pageSize'],
   data: function() {
     return {
       page: 1,

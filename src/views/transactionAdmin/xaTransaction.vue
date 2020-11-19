@@ -227,11 +227,17 @@
             <el-col style="text-align: center">
               <el-button-group>
                 <el-button @click="stepActive = 1"> 返回上一步</el-button>
-                <el-button type="primary" icon="el-icon-check" @click="commitTransaction">提交事务</el-button>
+                <el-button
+                    type="primary"
+                    icon="el-icon-check"
+                    @click="commitTransaction"
+                    v-loading.fullscreen.lock="loading">
+                  提交事务</el-button>
                 <el-button
                     type="primary"
                     icon="el-icon-refresh-left"
                     @click="rollbackTransaction"
+                    v-loading.fullscreen.lock="loading"
                 >回滚事务
                 </el-button>
               </el-button-group>

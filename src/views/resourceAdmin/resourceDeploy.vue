@@ -5,16 +5,16 @@
       </el-page-header>
       <el-divider></el-divider>
       <el-row>
-        <el-col span="16">
+        <el-col :span="16" :offset="4">
           <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
             <el-form-item label="选择链类型：">
               <el-select v-model="form.stubType" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
                 <el-option-group label="FISCO BCOS">
-                  <el-option label="FISCO BCOS 2.0+" value="BCOS2.0"/>
-                  <el-option label="FISCO BCOS 2.0+ 国密版" value="GM_BCOS2.0"/>
+                  <el-option label="FISCO BCOS 2.0" value="BCOS2.0"/>
+                  <el-option label="FISCO BCOS 2.0 国密版" value="GM_BCOS2.0"/>
                 </el-option-group>
                 <el-option-group label="Hyperledger Fabric">
-                  <el-option label="Hyperledger Fabric 1.4+" value="Fabric1.4"/>
+                  <el-option label="Hyperledger Fabric 1.4" value="Fabric1.4"/>
                 </el-option-group>
               </el-select>
             </el-form-item>

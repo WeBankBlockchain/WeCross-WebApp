@@ -1,7 +1,7 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <keep-alive exclude="XATransaction">
+      <keep-alive exclude="XATransaction,XATransactionList">
         <router-view :key="key" />
       </keep-alive>
     </transition>

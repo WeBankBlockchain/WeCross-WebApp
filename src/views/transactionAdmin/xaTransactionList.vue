@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-row>
-      <el-card v-loading="loadingList" style="height: 80vh">
-        <el-row :gutter="18">
+      <el-card v-loading="loadingList" style="height: 90vh">
+        <el-row :gutter="18" style="height: 50px">
           <el-button icon="el-icon-refresh" @click="refresh">刷新</el-button>
           <el-button type="primary" icon="el-icon-s-order" @click="onStartXATransaction">发起事务</el-button>
         </el-row>
@@ -12,7 +12,7 @@
             :data="xaList"
             fit
             @expand-change="onExpandChange"
-            style="width: 100%"
+            style="width: 100%; height: calc(90vh - 130px); overflow-y:auto"
           >
             <el-table-column label="开始时间" min-width="60px">
               <template slot-scope="scope">
@@ -35,6 +35,7 @@
                       :data="xaTransaction ? xaTransaction.xaTransactionSteps : null"
                       fit
                       highlight-current-row
+                      tooltip-effect="light"
                       class="customer-table"
                     >
                       <el-table-column label="执行时间" min-width="70px">
@@ -51,21 +52,22 @@
                         label="调用参数"
                         min-width="60px"
                         show-overflow-tooltip
-                      ></el-table-column>
+                      >
+                      </el-table-column>
                     </el-table>
                     <el-row style="margin-top: 20px">
                       <el-form>
                         <el-form-item label="提交时间：" v-if="scope.row.status === 'committed'">
                           <span>
                             {{
-                            xaTransaction.commitTimestamp | formatDate
+                            xaTransaction ? ( xaTransaction.commitTimestamp ) : null | formatDate
                             }}
                           </span>
                         </el-form-item>
                         <el-form-item label="回滚时间：" v-if="scope.row.status === 'rolledback'">
                           <span>
                             {{
-                            xaTransaction.rollbackTimestamp | formatDate
+                              xaTransaction ? ( xaTransaction.rollbackTimestamp ) : null | formatDate
                             }}
                           </span>
                         </el-form-item>
@@ -88,7 +90,7 @@
             </el-table-column>
           </el-table>
         </el-row>
-        <el-row :gutter="20" style="margin-top: 20px; text-align: center">
+        <el-row :gutter="20" style="margin-top: 10px; text-align: center ; height: 40px">
           <el-button
             :disabled="preClickDisable"
             size="small"

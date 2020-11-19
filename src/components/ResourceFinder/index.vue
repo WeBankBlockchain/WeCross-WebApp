@@ -29,7 +29,7 @@
             tooltip-effect="dark"
             ref="finderTable"
             :data="tableShowData"
-            height="85%"
+            style="height: calc(100% - 34px)"
             @selection-change="handleSelectionChange"
         >
           <el-table-column fixed width="42px" type="selection"></el-table-column>
@@ -43,7 +43,7 @@
             :page-size="pageObject.pageSize"
             layout="prev, pager, next"
             :total="pageObject.totalPageNumber"
-            style="text-align: center; margin-top: 5px"
+            style="text-align: center; margin-top: 10px; height: 20px"
             :current-page.sync="pageObject.currentPage"
             @current-change="setPage"
             @prev-click="prevPage"
@@ -463,7 +463,7 @@ a {
 
   .finder-main {
     padding: 10px;
-    height: calc(100% - 5px);
+    height: calc(100% - 40px);
     box-sizing: border-box;
     overflow: auto;
   }

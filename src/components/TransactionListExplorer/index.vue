@@ -1,35 +1,35 @@
 <template>
   <div>
-    <el-row :gutter="10">
       <el-table
         ref="singleTable"
         :data="transactionList"
         stripe
         fit
         highlight-current-row
+        tooltip-effect="light"
         @current-change="handleCurrentRowChange"
-        v-bind:style="{ height: height + 'vh', 'overflow-y': 'auto'}"
+        style=" height: calc(100% - 75px); overflow-y:auto">
       >
-        <el-table-column label="交易哈希" min-width="100" align="center">
+        <el-table-column label="交易哈希" min-width="60px" show-overflow-tooltip>
           <template slot-scope="item">{{ item.row.txHash }}</template>
         </el-table-column>
-        <el-table-column label="跨链账户" min-width="100" align="center">
+        <el-table-column label="跨链账户" min-width="50px">
           <template slot-scope="item">{{ item.row.username }}</template>
         </el-table-column>
-        <el-table-column label="区块高度" min-width="15" align="center">
+        <el-table-column label="区块高度" min-width="50px">
           <template slot-scope="item">{{ item.row.blockNumber }}</template>
         </el-table-column>
-        <el-table-column label="资源路径" min-width="40" align="center">
+        <el-table-column label="资源路径" min-width="50px" >
           <template slot-scope="item">{{ item.row.path }}</template>
         </el-table-column>
-        <el-table-column label="调用方法" min-width="30" align="center">
+        <el-table-column label="调用方法" min-width="50px" >
           <template slot-scope="item">{{ item.row.method }}</template>
         </el-table-column>
-        <el-table-column label="交易回执" min-width="30" align="center">
+        <el-table-column label="交易回执" min-width="30px" >
           <template slot-scope="item">
             <el-tooltip
               class="item"
-              effect="dark"
+              effect="light"
               content="点击查看交易回执详情"
               placement="top"
             >
@@ -58,7 +58,6 @@
         ></vue-json-pretty>
         <!-- <el-input autosize type="textarea" v-model="txReceipt"> </el-input> -->
       </el-drawer>
-    </el-row>
     <!--pagination-->
     <el-row :gutter="20" style='margin-top: 10px; text-align: center'>
       <el-button

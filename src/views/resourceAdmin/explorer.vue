@@ -1,13 +1,20 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10">
-      <el-col :span="5">
-        <el-card style="height: 80vh">
+      <el-col :span="6">
+        <el-card style="height: 80vh;">
           <div slot="header" style="height: 2em">
             <span>导航</span>
-            <el-button-group style="float: right">
-              <el-button icon="el-icon-d-arrow-left" @click="onBack" v-bind:disabled="history.index === 0">后退</el-button>
-              <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">前进
+            <el-button-group style="float: right;">
+              <el-button
+                  icon="el-icon-d-arrow-left"
+                  @click="onBack"
+                  v-bind:disabled="history.index === 0"
+                  size="mini">后退</el-button>
+              <el-button
+                  @click="onForward"
+                  v-bind:disabled="history.index + 1 >= history.list.length"
+                  size="mini">前进
                 <i class="el-icon-d-arrow-right"></i>
               </el-button>
             </el-button-group>
@@ -15,7 +22,7 @@
           <ChainExplorer :chain='currentChain' @zone-click='onZoneClick' @chain-click='onChainClick'></ChainExplorer>
         </el-card>
       </el-col>
-      <el-col :span="19">
+      <el-col :span="18">
         <el-card style="height: 80vh">
           <div slot="header" style="height: 2em">
             <span>资源列表</span>
@@ -29,7 +36,7 @@
               </el-button-group>
             </div>
           </div>
-          <ResourceExplorer :chain='currentChain' pageSize=10 :height='63'></ResourceExplorer>
+          <ResourceExplorer :chain='currentChain' pageSize=10 style="height: calc(80vh - 70px)"></ResourceExplorer>
         </el-card>
       </el-col>
     </el-row>

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-table ref="singleTable" :data="resources" highlight-current-row v-bind:style="{ height: height + 'vh', 'overflow-y': 'auto'}">
+    <el-table
+        :data="resources"
+        highlight-current-row
+        style=" height: calc(100% - 80px); overflow-y:auto">
       <el-table-column label="资源路径" min-width="80px">
         <template slot-scope="scope">{{ scope.row.path }}</template>
       </el-table-column>
@@ -36,7 +39,7 @@
       :page-size="pageSize"
       layout="prev, pager, next"
       :total="total"
-      style="text-align: center; margin-top: 10px"
+      style="text-align: center; margin-top: 10px; min-height: 40px"
       :current-page="page"
       @prev-click="prevPage"
       @next-click="nextPage"

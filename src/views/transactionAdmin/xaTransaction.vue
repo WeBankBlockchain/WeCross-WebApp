@@ -109,37 +109,17 @@
               </div>
             </el-row>
             <el-row>
-              <el-table stripe fit style="width: 100%;" height="45vh" :data="transactionStep">
-                <el-table-column label="序号" min-width="80px">
-                  <template slot-scope="scope">{{ scope.row.xaTransactionSeq }}</template>
-                </el-table-column>
-                <el-table-column prop="username" label="账户" min-width="60px" align="center"></el-table-column>
-                <el-table-column prop="path" label="资源" min-width="90px" align="center"></el-table-column>
-                <el-table-column prop="method" label="方法" min-width="60px" align="center"></el-table-column>
-                <el-table-column label="详情" type="expand" width="60px">
+              <el-table stripe fit style="width: 100%;" height="45vh" :data="transactionStep" tooltip-effect="light">
+                <el-table-column prop="timestamp" label="执行时间" min-width="75px" show-overflow-tooltip>
                   <template slot-scope="props">
-                    <el-form inline class="table-expand">
-                      <el-form-item label="日期: ">
-                        <span>{{ props.row.timestamp | formatDate }}</span>
-                      </el-form-item>
-                      <el-form-item label="序号: ">
-                        <span>{{ props.row.xaTransactionSeq }}</span>
-                      </el-form-item>
-                      <el-form-item label="账户: ">
-                        <span>{{ props.row.username }}</span>
-                      </el-form-item>
-                      <el-form-item label="资源: ">
-                        <span>{{ props.row.path }}</span>
-                      </el-form-item>
-                      <el-form-item label="方法: ">
-                        <span>{{ props.row.method }}</span>
-                      </el-form-item>
-                      <el-form-item label="参数: ">
-                        <span>{{ props.row.args }}</span>
-                      </el-form-item>
-                    </el-form>
+                    <span>{{ props.row.timestamp | formatDate }}</span>
                   </template>
                 </el-table-column>
+                <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="username" label="跨链账户" min-width="60px"></el-table-column>
+                <el-table-column prop="path" label="资源路径" min-width="50px"></el-table-column>
+                <el-table-column prop="method" label="调用方法" min-width="50px"></el-table-column>
+                <el-table-column prop="args" label="调用参数" min-width="80px" show-overflow-tooltip></el-table-column>
               </el-table>
             </el-row>
           </el-col>
@@ -150,7 +130,7 @@
     <!--  step3  -->
     <el-collapse-transition>
       <el-row style="margin-top: 10px" v-if="stepActive === 2">
-        <el-card style="height: 70vh">
+        <el-card style="height: 70vh" header="事务详情">
           <el-row>
             <el-col>
               <el-table
@@ -160,8 +140,7 @@
                   :expand-row-keys="[transactionForm.transactionID]"
                   fit
                   stripe
-                  height="60vh"
-                  style="width: 100%"
+                  style="width: 100%; height: calc(70vh - 140px); overflow-y:auto"
               >
                 <el-table-column prop="username" label="用户名" min-width="30"></el-table-column>
                 <el-table-column prop="xaTransactionID" label="事务ID" min-width="80"></el-table-column>
@@ -195,29 +174,18 @@
                 </el-table-column>
                 <el-table-column type="expand" width="80" label="事务步骤">
                   <template slot-scope="props">
-                    <div v-for="step in props.row.xaTransactionSteps">
-                      <el-form inline class="table-expand">
-                        <el-form-item label="步骤序号：">
-                          <span>{{ step.xaTransactionSeq }}</span>
-                        </el-form-item>
-                        <el-form-item label="交易账户：">
-                          <span>{{ step.username }}</span>
-                        </el-form-item>
-                        <el-form-item label="资源路径：">
-                          <span>{{ step.path }}</span>
-                        </el-form-item>
-                        <el-form-item label="交易时间：">
-                          <span>{{ step.timestamp | formatDate }}</span>
-                        </el-form-item>
-                        <el-form-item label="调用方法：">
-                          <span>{{ step.method }}</span>
-                        </el-form-item>
-                        <el-form-item label="调用参数：">
-                          <span>{{ step.args }}</span>
-                        </el-form-item>
-                      </el-form>
-                      <el-divider></el-divider>
-                    </div>
+                    <el-table stripe fit style="width: 100%;" :data="props.row.xaTransactionSteps" tooltip-effect="light">
+                      <el-table-column prop="timestamp" label="执行时间" min-width="75px" show-overflow-tooltip>
+                        <template slot-scope="props">
+                          <span>{{ props.row.timestamp | formatDate }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="username" label="跨链账户" min-width="60px"></el-table-column>
+                      <el-table-column prop="path" label="资源路径" min-width="50px"></el-table-column>
+                      <el-table-column prop="method" label="调用方法" min-width="50px"></el-table-column>
+                      <el-table-column prop="args" label="调用参数" min-width="80px" show-overflow-tooltip></el-table-column>
+                    </el-table>
                   </template>
                 </el-table-column>
               </el-table>
@@ -232,7 +200,8 @@
                     icon="el-icon-check"
                     @click="commitTransaction"
                     v-loading.fullscreen.lock="loading">
-                  提交事务</el-button>
+                  提交事务
+                </el-button>
                 <el-button
                     type="primary"
                     icon="el-icon-refresh-left"

@@ -46,17 +46,20 @@
       @current-change="setPage"
     ></el-pagination>
 
-    <el-dialog :title="transactionData.execMethod" :visible.sync="callDialogOpen" :destroy-on-close="true" width="45%">
-      <el-form v-loading="loading">
-        <TransactionForm
-          :transaction="transactionData"
-          :submit-response="submitResponse"
-          @clearClick="onClearTransaction"
-          @submitClick="onSubmit"
-        >
-          <el-input slot="path" v-model="transactionData.path" readonly></el-input>
-        </TransactionForm>
-      </el-form>
+    <el-dialog :title="'调用资源'" :visible.sync="callDialogOpen" :destroy-on-close="true" width="45%">
+      <el-row>
+        <el-col :span="18" :offset="2">
+          <el-form v-loading="loading">
+            <TransactionForm
+                :transaction="transactionData"
+                :submit-response="submitResponse"
+                @clearClick="onClearTransaction"
+                @submitClick="onSubmit">
+              <el-input slot="path" v-model="transactionData.path" readonly></el-input>
+            </TransactionForm>
+          </el-form>
+        </el-col>
+      </el-row>
     </el-dialog>
   </div>
 </template>

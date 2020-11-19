@@ -73,7 +73,7 @@
               </el-col>
               <el-col :span="13" style="text-align: left">
                 <el-divider direction="vertical"></el-divider>
-                <span style="margin-left: 10px">事务交易列表</span>
+                <span style="margin-left: 10px">事务步骤列表</span>
               </el-col>
             </el-row>
           </div>
@@ -110,16 +110,16 @@
             </el-row>
             <el-row>
               <el-table stripe fit style="width: 100%;" height="45vh" :data="transactionStep" tooltip-effect="light">
-                <el-table-column prop="timestamp" label="执行时间" min-width="75px" show-overflow-tooltip>
+                <el-table-column prop="timestamp" label="执行时间" min-width="60px" show-overflow-tooltip>
                   <template slot-scope="props">
                     <span>{{ props.row.timestamp | formatDate }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="60px" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="username" label="跨链账户" min-width="60px"></el-table-column>
-                <el-table-column prop="path" label="资源路径" min-width="50px"></el-table-column>
+                <el-table-column prop="path" label="资源路径" min-width="80px"></el-table-column>
                 <el-table-column prop="method" label="调用方法" min-width="50px"></el-table-column>
-                <el-table-column prop="args" label="调用参数" min-width="80px" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="args" label="调用参数" min-width="50px" show-overflow-tooltip></el-table-column>
               </el-table>
             </el-row>
           </el-col>
@@ -142,29 +142,15 @@
                   stripe
                   style="width: 100%; height: calc(70vh - 140px); overflow-y:auto"
               >
-                <el-table-column prop="username" label="用户名" min-width="30"></el-table-column>
-                <el-table-column prop="xaTransactionID" label="事务ID" min-width="80"></el-table-column>
-                <el-table-column prop="status" min-width="50" label="事务状态"></el-table-column>
-                <el-table-column prop="startTimestamp" min-width="50" label="事务开始时间"></el-table-column>
-                <el-table-column
-                    v-if="
-                    this.transactionDetail.length > 0 &&
-                    this.transactionDetail[0].commitTimestamp > 0
-                  "
-                    prop="commitTimestamp"
-                    min-width="50"
-                    label="事务提交时间"
-                ></el-table-column>
-                <el-table-column
-                    v-if="
-                    this.transactionDetail.length > 0 &&
-                    this.transactionDetail[0].rollbackTimestamp > 0
-                  "
-                    prop="rollbackTimestamp"
-                    min-width="50"
-                    label="事务回滚时间"
-                ></el-table-column>
-                <el-table-column min-width="80" label="事务资源">
+                <el-table-column min-width="60px" label="开始时间">
+                  <template slot-scope="scope">
+                    <span>{{ scope.row.startTimestamp | formatDate }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px"></el-table-column>
+                <el-table-column prop="username" label="跨链账户" min-width="50px"></el-table-column>
+                <el-table-column prop="status" min-width="50px" label="事务状态"></el-table-column>
+                <el-table-column min-width="80px" label="锁定资源">
                   <template slot-scope="scope">
                     <div v-for="path in scope.row.paths">
                       {{ path }}
@@ -172,7 +158,7 @@
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column type="expand" width="80" label="事务步骤">
+                <el-table-column type="expand" width="80px" label="事务步骤">
                   <template slot-scope="props">
                     <el-table stripe fit style="width: 100%;" :data="props.row.xaTransactionSteps" tooltip-effect="light">
                       <el-table-column prop="timestamp" label="执行时间" min-width="75px" show-overflow-tooltip>
@@ -362,16 +348,16 @@ export default {
         this.$msgbox({
           title: '提示',
           message: h('p', null, [
-            h('h3', { style: 'font-weight: bold; margin-left:10px' }, '目前有事务正在执行中，是否恢复：'),
-            h('li', { style: 'font-weight: bold; margin-left:10px' }, '事务ID：' + xaID),
-            h('li', { style: 'font-weight: bold; margin-left:10px' }, '资源路径：'),
+            h('h3', { style: 'font-weight: bold; margin-left:10px' }, '目前有事务正在执行中，是否恢复？'),
+            h('li', { style: 'font-weight: bold; margin-left:10px' }, '事务ID: ' + xaID),
+            h('li', { style: 'font-weight: bold; margin-left:10px' }, '锁定资源: '),
             h('ol', { script: '' }, this.$store.getters.XAPaths.join(',  \n'))
           ]),
           closeOnClickModal: false,
           closeOnPressEscape: false,
           showCancelButton: true,
           confirmButtonText: '恢复事务',
-          cancelButtonText: '重开事务'
+          cancelButtonText: '新建事务'
         }).then(_ => {
           this.transactionForm.transactionID = this.$store.getters.transactionID
           this.transactionForm.path = this.$store.getters.XAPaths

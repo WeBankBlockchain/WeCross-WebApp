@@ -322,7 +322,6 @@
 </template>
 <script>
 import { MessageBox } from 'element-ui'
-import store from '@/store'
 import { listAccount } from '@/api/ua.js'
 import { setDefaultAccount } from '@/api/ua.js'
 import { addChainAccount } from '@/api/ua.js'
@@ -404,7 +403,7 @@ export default {
       this.chainAccountDrawer.showSec = false
     },
     querySetDefaultAccount() {
-      MessageBox.confirm('设置成功后，需重新登录', '提示', {
+      MessageBox.confirm('设为默认账户？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
@@ -437,7 +436,7 @@ export default {
       this.querySetDefaultAccount()
     },
     queryAddChainAccount() {
-      MessageBox.confirm('设置成功后，需重新登录', '提示', {
+      MessageBox.confirm('添加链账户？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
@@ -474,12 +473,8 @@ export default {
         })
       } else {
         this.$message({
-          message: '设置成功，需重新登录',
+          message: '设置成功',
           type: 'success'
-        })
-
-        store.dispatch('user/resetToken').then(() => {
-          location.reload()
         })
       }
     },

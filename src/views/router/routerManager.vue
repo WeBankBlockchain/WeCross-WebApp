@@ -16,26 +16,23 @@
                 {{ getAlias(item.row.nodeID) !== null ? getAlias(item.row.nodeID) : '未设置' }}
               </template>
             </el-table-column>
-            <el-table-column label="跨链路由标识" :show-overflow-tooltip="true">
+            <el-table-column label="跨链路由标识" :show-overflow-tooltip="true" min-width="60px">
               <template slot-scope="item">
                 {{ item.row.nodeID }}
               </template>
             </el-table-column>
-            <el-table-column label="IP端口" min-width="50px">
+            <el-table-column label="IP端口" min-width="60px">
               <template slot-scope="item">
                 {{ item.row.address }}
               </template>
             </el-table-column>
-            <el-table-column label="已接入区块链" width="110px">
+            <el-table-column label="已接入区块链" min-width="100px">
               <template slot-scope="item">
-                <li style="list-style-type:none" v-for="chainItem in item.row.chainInfos">
+                <li style="list-style-type:none; margin: 5px" v-for="chainItem in item.row.chainInfos">
                   {{ chainItem.name }}
                   <el-tag type="info">{{ chainItem.stubType }}</el-tag>
                 </li>
               </template>
-            </el-table-column>
-            <el-table-column label="运行状态" min-width="30px">
-              正常
             </el-table-column>
             <el-table-column label="操作" width="230px">
               <template slot-scope="item">

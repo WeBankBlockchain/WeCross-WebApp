@@ -1,12 +1,12 @@
 import { login, logout } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setUsername, removeUsername, getUsername } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import { Message } from 'element-ui'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
-    name: '',
+    name: getUsername(),
     avatar: 'https://wecross.readthedocs.io/zh_CN/latest/_static/images/menu_logo_wecross.svg'
   }
 }
@@ -38,6 +38,7 @@ const actions = {
           commit('SET_TOKEN', response.data.credential)
           commit('SET_NAME', username)
           setToken(response.data.credential)
+          setUsername(username)
           resolve()
         }
       }).catch(error => {
@@ -50,6 +51,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout().then(() => {
         removeToken() // must remove  token  first
+        removeUsername()
         resetRouter()
         commit('RESET_STATE')
         resolve()
@@ -63,6 +65,7 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
+      removeUsername()
       commit('RESET_STATE')
       resolve()
     })

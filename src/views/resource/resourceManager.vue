@@ -3,9 +3,11 @@
     <el-row :gutter="10">
       <el-col :span="6">
         <el-card style="height: 80vh;">
-          <div slot="header" style="height: 2em">
+          <div slot="header">
             <span>导航</span>
-            <el-button-group style="float: right;">
+          </div>
+          <el-row>
+            <el-button-group>
               <el-button
                   icon="el-icon-d-arrow-left"
                   @click="onBack"
@@ -18,22 +20,20 @@
                 <i class="el-icon-d-arrow-right"></i>
               </el-button>
             </el-button-group>
-          </div>
+          </el-row>
+          <el-row style="margin-top: 10px; height: calc(70vh - 30px); overflow-y:auto; padding: 10px;">
           <ChainExplorer :chain='currentChain' @zone-click='onZoneClick' @chain-click='onChainClick'></ChainExplorer>
+          </el-row>
         </el-card>
       </el-col>
       <el-col :span="18">
         <el-card style="height: 80vh">
-          <div slot="header" style="height: 2em">
+          <div slot="header">
             <span>资源列表</span>
-            <div style="float: right">
-              <el-button-group style="margin-left: 10px">
-                <el-input  style="width: 30em" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly>
+            <div style="float: right; margin-top: -7px">
+                <el-input  style="width: 30vh" placeholder="当前路径" prefix-icon="el-icon-folder" size="small" v-model="currentChain" readonly>
                 </el-input>
-              </el-button-group>
-              <el-button-group>
-                <el-button icon="el-icon-upload" @click="onDeploy" :disabled="currentChain === ''" style="margin-left: 10px">部署资源</el-button>
-              </el-button-group>
+              <el-button slot="append" icon="el-icon-upload" @click="onDeploy" type="primary" size="small" :disabled="currentChain === ''" style="margin-left: 10px">部署资源</el-button>
             </div>
           </div>
           <ResourceExplorer :chain='currentChain' :pageSize=10 style="height: calc(80vh - 70px)"></ResourceExplorer>

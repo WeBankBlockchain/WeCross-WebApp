@@ -11,10 +11,10 @@ export function clearForm(formData) {
 export function buildBCOSDeployRequest(formData) {
   return {
     version: 1,
-    path: formData.path,
+    path: formData.prependPath + formData.appendPath,
     data: {
       command: formData.method,
-      args: [formData.path.split('.')[2], formData.sourceContent, formData.className, formData.version]
+      args: [formData.appendPath, formData.sourceContent, formData.className, formData.version]
     }
   }
 }
@@ -22,10 +22,10 @@ export function buildBCOSDeployRequest(formData) {
 export function buildBCOSRegisterRequest(formData) {
   return {
     version: 1,
-    path: formData.path,
+    path: formData.prependPath + formData.appendPath,
     data: {
       command: formData.method,
-      args: [formData.path.split('.')[2], formData.fileType, formData.sourceContent, '0x' + formData.address, formData.className, formData.version]
+      args: [formData.appendPath, formData.fileType, formData.sourceContent, '0x' + formData.address, formData.className, formData.version]
     }
   }
 }
@@ -33,11 +33,11 @@ export function buildBCOSRegisterRequest(formData) {
 export function buildFabricInstallRequest(formData) {
   return {
     version: 1,
-    path: formData.path,
+    path: formData.prependPath + formData.appendPath,
     data: {
       command: formData.method,
       args: [
-        formData.path.split('.')[2],
+        formData.appendPath,
         formData.version,
         formData.org,
         formData.lang,
@@ -50,11 +50,11 @@ export function buildFabricInstallRequest(formData) {
 export function buildFabricInstantiateRequest(formData) {
   return {
     version: 1,
-    path: formData.path,
+    path: formData.prependPath + formData.appendPath,
     data: {
       command: formData.method,
       args: [
-        formData.path.split('.')[2],
+        formData.appendPath,
         formData.version,
         formData.org,
         formData.lang,
@@ -69,11 +69,11 @@ export function buildFabricInstantiateRequest(formData) {
 export function buildFabricUpgradeRequest(formData) {
   return {
     version: 1,
-    path: formData.path,
+    path: formData.prependPath + formData.appendPath,
     data: {
       command: formData.method,
       args: [
-        formData.path.split('.')[2],
+        formData.appendPath,
         formData.version,
         formData.org,
         formData.lang,

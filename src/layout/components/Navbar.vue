@@ -7,9 +7,10 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-<!--                     <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
-          <a class="el-icon-user-solid"></a>
-          <i class="el-icon-caret-bottom"/>
+          <svg-icon icon-class="user-avatar" class="user-avatar"/>
+          <span style="margin: 5px 5px 5px;">{{ loginUser }}
+            <i class="el-icon-arrow-down el-icon--right"/>
+          </span>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/profile">
@@ -32,14 +33,18 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
+  data() {
+    return {
+      loginUser: this.$store.getters.name
+    }
+  },
   components: {
     Breadcrumb,
     Hamburger
   },
   computed: {
     ...mapGetters([
-      'sidebar',
-      'avatar'
+      'sidebar'
     ])
   },
   methods: {
@@ -110,13 +115,14 @@ export default {
       margin-right: 30px;
 
       .avatar-wrapper {
+        cursor: pointer;
         margin-top: 5px;
         position: relative;
 
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
+          width: 30px;
+          height: 30px;
           border-radius: 10px;
         }
 

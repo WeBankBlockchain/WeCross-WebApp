@@ -1,31 +1,39 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10">
-      <el-col :span="5">
+      <el-col :span="6">
         <el-card style="height: 80vh">
-          <div slot="header" style="height: 2em">
+          <div slot="header">
             <span>导航</span>
-            <el-button-group style="float: right">
-              <el-button icon="el-icon-d-arrow-left" @click="onBack" v-bind:disabled="history.index === 0">后退
-              </el-button>
-              <el-button @click="onForward" v-bind:disabled="history.index + 1 >= history.list.length">
-                前进
-                <i class="el-icon-d-arrow-right"></i>
-              </el-button>
-            </el-button-group>
           </div>
-          <div style="height: 79vh; overflow: auto">
+            <el-row>
+              <el-button-group>
+                <el-button
+                    icon="el-icon-d-arrow-left"
+                    @click="onBack"
+                    v-bind:disabled="history.index === 0"
+                    size="mini">后退
+                </el-button>
+                <el-button
+                    @click="onForward"
+                    v-bind:disabled="history.index + 1 >= history.list.length"
+                    size="mini">前进
+                  <i class="el-icon-d-arrow-right"></i>
+                </el-button>
+              </el-button-group>
+            </el-row>
+            <el-row style="margin-top: 10px; height: calc(70vh - 30px); overflow-y:auto;padding: 10px">
             <ChainExplorer :chain="currentChain" @zone-click="onZoneClick" @chain-click="onChainClick"></ChainExplorer>
-          </div>
+            </el-row>
         </el-card>
       </el-col>
-      <el-col :span="19">
+      <el-col :span="18">
         <el-card style="height: 80vh">
-          <div slot="header" style="height: 2em">
+          <div slot="header">
             <span>交易列表</span>
-            <div style="float: right">
-                <el-input style="width: 30em" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly></el-input>
-                <el-button icon="el-icon-notebook-2" @click="handleSendTransaction" style="margin-left: 10px" type="primary">
+            <div style="float: right; margin-top: -7px">
+                <el-input style="width: 30em" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" size="small" readonly></el-input>
+                <el-button icon="el-icon-notebook-2" @click="handleSendTransaction" style="margin-left: 10px" type="primary" size="small">
                   发交易
                 </el-button>
             </div>

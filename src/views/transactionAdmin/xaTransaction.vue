@@ -115,11 +115,15 @@
                     <span>{{ props.row.timestamp | formatDate }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="60px" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="username" label="跨链账户" min-width="60px"></el-table-column>
-                <el-table-column prop="path" label="资源路径" min-width="80px"></el-table-column>
+                <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="username" label="跨链账户" min-width="60px" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="path" label="资源路径" min-width="50px" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="method" label="调用方法" min-width="50px"></el-table-column>
-                <el-table-column prop="args" label="调用参数" min-width="50px" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="args" label="调用参数" min-width="80px" show-overflow-tooltip>
+                  <template slot-scope="props">
+                    {{ props.row.args || 'null' }}
+                  </template>
+                </el-table-column>
               </el-table>
             </el-row>
           </el-col>
@@ -140,7 +144,8 @@
                   :expand-row-keys="[transactionForm.transactionID]"
                   fit
                   stripe
-                  style="width: 100%; height: calc(70vh - 140px); overflow-y:auto"
+                  height="calc(70vh - 140px)"
+                  style="width: 100%;"
               >
                 <el-table-column min-width="60px" label="开始时间">
                   <template slot-scope="scope">
@@ -240,6 +245,8 @@
         </el-card>
       </el-row>
     </el-collapse-transition>
+
+    <!--  button  -->
     <el-card style="margin-top: 10px" v-if="stepActive < 2 ">
       <el-row :gutter="24" style="text-align: center;">
         <el-button-group>

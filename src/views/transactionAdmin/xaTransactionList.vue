@@ -11,8 +11,9 @@
             ref="singleTable"
             :data="xaList"
             fit
+            height="calc(90vh - 130px)"
             @expand-change="onExpandChange"
-            style="width: 100%; height: calc(90vh - 130px); overflow-y:auto"
+            style="width: 100%;"
           >
             <el-table-column label="开始时间" min-width="60px">
               <template slot-scope="scope">

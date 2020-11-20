@@ -4,8 +4,8 @@
         :data="resources"
         highlight-current-row
         tooltip-effect="light"
-        style=" height: calc(100% - 80px); overflow-y:auto">
-      <el-table-column label="资源路径" min-width="80px">
+        height="calc(100% - 80px)">
+      <el-table-column label="资源路径" min-width="80px" show-overflow-tooltip>
         <template slot-scope="scope">{{ scope.row.path }}</template>
       </el-table-column>
       <el-table-column label="资源类型" min-width="50px">

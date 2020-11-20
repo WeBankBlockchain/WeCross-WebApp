@@ -116,10 +116,11 @@
             <div slot="header" class="clearfix">
               <span> 添加链账户 </span>
             </div>
-          <el-form label-position="top" size="small"  ref="form" :model="addChainAccountDrawer" >
-            <el-form-item label="链账户类型">
+          <el-form label-position="top" size="small" :rules="addChainAccountDrawerRules" ref="addChainAccountDrawer" :model="addChainAccountDrawer.params" >
+            <el-form-item prop="type">
+              <label><div><span>链账户类型</span></div></label>
               <el-select
-                style="width:200px"
+                style="width:200px;margin-top:10px"
                 v-model="addChainAccountDrawer.params.type"
                 placeholder="请选择"
                 @change="addChainAccountDrawer.params.pubKey = undefined; addChainAccountDrawer.params.secKey = undefined; addChainAccountDrawer.params.ext = undefined; addChainAccountDrawer.params.isDefault = false "
@@ -131,39 +132,39 @@
             </el-form-item>
 
             <div v-if="addChainAccountDrawer.params.type == 'BCOS2.0'">
-              <el-form-item>
+              <el-form-item  prop="secKey">
                 <label>
                   <span>私钥</span>
                 </label>
                 <el-upload
-                    style="float:right"
-                    class="upload-demo"
-                    action=""
-                    accept=".pem"
-                    :show-file-list="false"
-                    :file-list="pubKeyFileList"
-                    :http-request="uploadECDSAPemSecKeyHandler"
-                    :auto-upload="true">
-                    <el-button-group  slot="trigger" >
-                    <el-button  type="primary">上传</el-button>
-                    <el-button
-                    @click.stop="generateECDSAKeyPairPem()"
-                    size="small"
-                    type="primary">生成</el-button>
-                    </el-button-group>
-                  </el-upload>
-
+                  style="float:right"
+                  class="upload-demo"
+                  action=""
+                  accept=".pem"
+                  :show-file-list="false"
+                  :file-list="pubKeyFileList"
+                  :http-request="uploadECDSASecPemHandler"
+                  :auto-upload="true">
+                  <el-button-group  slot="trigger" >
+                  <el-button  type="primary">上传</el-button>
+                  <el-button
+                  @click.stop="generateECDSASecPem()"
+                  size="small"
+                  type="primary">生成</el-button>
+                  </el-button-group>
+                </el-upload>
                 <el-input
+                  :change="buildECDSAData()"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
-                  autosize
                   style="margin-top:10px"
+                  autosize
                   v-model="addChainAccountDrawer.params.secKey">
                 </el-input>
               </el-form-item>
 
-              <el-form-item label="公钥" v-if="addChainAccountDrawer.params.secKey !== undefined">
+              <el-form-item label="公钥" v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'">
                 <el-input
                   readonly
                   type="textarea"
@@ -174,7 +175,7 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item label="address" v-if="addChainAccountDrawer.params.secKey !== undefined">
+              <el-form-item label="address" v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'">
                 <el-input
                   readonly
                   placeholder=""
@@ -186,8 +187,7 @@
             </div>
 
             <div  v-if="addChainAccountDrawer.params.type == 'GM_BCOS2.0'">
-
-              <el-form-item >
+              <el-form-item prop="secKey" >
                 <label>
                   <span>私钥</span>
                 </label>
@@ -198,17 +198,18 @@
                   accept=".pem"
                   :show-file-list="false"
                   :file-list="pubKeyFileList"
-                  :http-request="uploadSM2PemSecKeyHandler"
+                  :http-request="uploadSM2SecPemHandler"
                   :auto-upload="true">
                   <el-button-group slot="trigger">
                     <el-button  type="primary">上传</el-button>
                     <el-button
                     size="small"
-                    @click.stop="generateSM2KeyPairPem()"
+                    @click.stop="generateSM2SecPem()"
                     type="primary">生成</el-button>
                   </el-button-group>
                 </el-upload>
                 <el-input
+                  :change="buildSM2Data()"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
@@ -218,7 +219,7 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item label="公钥" v-if="addChainAccountDrawer.params.secKey !== undefined">
+              <el-form-item label="公钥" v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'">
                 <el-input
                   readonly
                   type="textarea"
@@ -229,7 +230,7 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item label="address" v-if="addChainAccountDrawer.params.secKey !== undefined">
+              <el-form-item label="address" v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'">
                 <el-input
                   readonly
                   placeholder=""
@@ -240,7 +241,7 @@
             </div>
 
             <div v-if="addChainAccountDrawer.params.type == 'Fabric1.4'">
-              <el-form-item v-if="addChainAccountDrawer.params.type">
+              <el-form-item v-if="addChainAccountDrawer.params.type" prop="secKey">
                 <label>
                   <span>私钥</span>
                 </label>
@@ -248,7 +249,7 @@
                   style="float:right"
                   class="upload-demo"
                   action=""
-                  accept=".pem"
+                  accept=".key,.pem"
                   :show-file-list="false"
                   :file-list="pubKeyFileList"
                   :http-request="uploadSecKeyHandler"
@@ -265,18 +266,18 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item v-if="addChainAccountDrawer.params.type">
+              <el-form-item v-if="addChainAccountDrawer.params.type" prop="pubKey">
                 <label>
-                  <span>公钥</span>
+                  <span>公钥证书</span>
                 </label>
                 <el-upload
                   style="float:right"
                   class="upload-demo"
                   action=""
-                  accept=".pem"
+                  accept=".crt"
                   :show-file-list="false"
                   :file-list="pubKeyFileList"
-                  :http-request="uploadPubKeyHandler"
+                  :http-request="uploadPubKeyCertHandler"
                   :auto-upload="true">
                   <el-button slot="trigger" type="primary">上传</el-button>
                 </el-upload>
@@ -290,8 +291,10 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item v-if="addChainAccountDrawer.params.type=='Fabric1.4'" label="MSPID">
+              <el-form-item v-if="addChainAccountDrawer.params.type=='Fabric1.4'" prop="ext">
+                <label><div><span>MSPID</span></div></label>
                 <el-input
+                  style="margin-top:10px"
                   placeholder="请输入"
                   v-model="addChainAccountDrawer.params.ext"
                   clearable>
@@ -300,17 +303,14 @@
 
             </div>
 
-            <el-form-item label="设为默认账户"   v-if="addChainAccountDrawer.params.type">
-                <el-switch v-model="addChainAccountDrawer.params.isDefault"></el-switch>
+            <el-form-item v-if="addChainAccountDrawer.params.type">
+              <label><div><span>设为默认账户</span></div></label>
+              <el-switch style="margin-top:10px" v-model="addChainAccountDrawer.params.isDefault"></el-switch>
             </el-form-item>
           </el-form>
           <div class="clearfix" style="vertical-align: bottom;">
               <el-button
-                :disabled="  addChainAccountDrawer.params.type === undefined
-                          || addChainAccountDrawer.params.secKey === undefined || addChainAccountDrawer.params.secKey.length === 0
-                          || addChainAccountDrawer.params.pubKey === undefined || addChainAccountDrawer.params.pubKey.length === 0
-                          || addChainAccountDrawer.params.ext === undefined || addChainAccountDrawer.params.ext.length === 0"
-                @click="queryAddChainAccount()"
+                @click="queryAddChainAccount('addChainAccountDrawer')"
                 style="float: right;"
                 type="primary"
                 >确认</el-button>
@@ -325,13 +325,10 @@ import { MessageBox } from 'element-ui'
 import { listAccount } from '@/api/ua.js'
 import { setDefaultAccount } from '@/api/ua.js'
 import { addChainAccount } from '@/api/ua.js'
-import { ec as EC } from 'elliptic'
-import { keccak256 } from 'js-sha3'
-import { sm2 } from 'sm-crypto'
-import { sm3Hex } from '@/utils/sm3.js'
+import { pem, ecdsa, sm2 } from '@/utils/pem.js'
 
 export default {
-  name: 'Account',
+  name: 'AccountAdmin',
   props: {},
   data() {
     return {
@@ -383,7 +380,35 @@ export default {
       fullscreenLoading: false,
       show: true,
       pubKeyFileList: [],
-      privateKeyFileList: []
+      privateKeyFileList: [],
+      addChainAccountDrawerRules: {
+        type: [{ required: true, trigger: 'change', message: '请选择' }],
+        secKey: [{ required: true, trigger: 'change', validator: (rule, value, callback) => {
+          console.log('value: ', value)
+          if (typeof (value) === 'undefined' || value.length === 0) {
+            callback(new Error('请输入'))
+          } else if (this.addChainAccountDrawer.params.type === 'BCOS2.0' && !ecdsa.isSecPem(value)) {
+            callback(new Error('格式错误'))
+          } else if (this.addChainAccountDrawer.params.type === 'GM_BCOS2.0' && !sm2.isSecPem(value)) {
+            callback(new Error('格式错误'))
+          } else if (!pem.isSecKeyFormat(value)) {
+            callback(new Error('格式错误'))
+          } else {
+            callback()
+          }
+        } }],
+        pubKey: [{ required: true, trigger: 'change', validator: (rule, value, callback) => {
+          console.log('value: ', value)
+          if (typeof (value) === 'undefined' || value.length === 0) {
+            callback(new Error('请输入'))
+          } else if (this.addChainAccountDrawer.params.type === 'Fabric1.4' && !pem.isCertFormat(value)) {
+            callback(new Error('格式错误' + this.addChainAccountDrawer.params.type))
+          } else {
+            callback()
+          }
+        } }],
+        ext: [{ required: true, trigger: 'change', message: '请输入' }]
+      }
     }
   },
   methods: {
@@ -435,28 +460,32 @@ export default {
 
       this.querySetDefaultAccount()
     },
-    queryAddChainAccount() {
-      MessageBox.confirm('添加链账户？', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        var loadingText = 'Loading'
-        const loading = this.$loading({
-          lock: true,
-          text: loadingText
-        })
+    queryAddChainAccount(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          MessageBox.confirm('添加链账户？', '提示', {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            var loadingText = 'Loading'
+            const loading = this.$loading({
+              lock: true,
+              text: loadingText
+            })
 
-        this.addChainAccountDrawer.show = false
-        addChainAccount({
-          version: '1',
-          data: this.addChainAccountDrawer.params
-        }).then((response) => {
-          this.handleResponse(response)
-          this.getUA().then(() => {
-            loading.close()
+            this.addChainAccountDrawer.show = false
+            addChainAccount({
+              version: '1',
+              data: this.addChainAccountDrawer.params
+            }).then((response) => {
+              this.handleResponse(response)
+              this.getUA().then(() => {
+                loading.close()
+              })
+            })
           })
-        })
+        }
       })
     },
     handleResponse(response) {
@@ -478,14 +507,59 @@ export default {
         })
       }
     },
-    uploadPubKeyHandler(params) {
-      console.log('uploadPubKeyHandler')
+
+    generateECDSASecPem() {
+      this.addChainAccountDrawer.params.secKey = ecdsa.generateSecPem()
+    },
+    generateSM2SecPem() {
+      this.addChainAccountDrawer.params.secKey = sm2.generateSecPem()
+    }, uploadECDSASecPemHandler(params) {
       var reader = new FileReader()
       reader.onload = (event) => {
         var key = event.target.result
-        if (!checkPubKeyFormat(key)) {
-          return
-        }
+        this.addChainAccountDrawer.params.secKey = key
+      }
+      reader.readAsText(params.file)
+    },
+    uploadSM2SecPemHandler(params) {
+      var reader = new FileReader()
+      reader.onload = (event) => {
+        var key = event.target.result
+        this.addChainAccountDrawer.params.secKey = key
+      }
+      reader.readAsText(params.file)
+    },
+    buildECDSAData() {
+      var key = this.addChainAccountDrawer.params.secKey
+      if (typeof (key) === 'undefined' || !ecdsa.isSecPem(key)) {
+        this.addChainAccountDrawer.params.pubKey = undefined
+        this.addChainAccountDrawer.params.ext = undefined
+        return
+      }
+
+      var data = ecdsa.build(key)
+
+      this.addChainAccountDrawer.params.pubKey = data.pubPem
+      this.addChainAccountDrawer.params.ext = data.address
+    },
+    buildSM2Data() {
+      var key = this.addChainAccountDrawer.params.secKey
+      if (typeof (key) === 'undefined' || !sm2.isSecPem(key)) {
+        this.addChainAccountDrawer.params.pubKey = undefined
+        this.addChainAccountDrawer.params.ext = undefined
+        return
+      }
+
+      var data = sm2.build(key)
+
+      this.addChainAccountDrawer.params.pubKey = data.pubPem
+      this.addChainAccountDrawer.params.ext = data.address
+    },
+    uploadPubKeyCertHandler(params) {
+      console.log('uploadPubKeyCertHandler')
+      var reader = new FileReader()
+      reader.onload = (event) => {
+        var key = event.target.result
 
         this.addChainAccountDrawer.params.pubKey = key
       }
@@ -495,87 +569,9 @@ export default {
       var reader = new FileReader()
       reader.onload = (event) => {
         var key = event.target.result
-        if (!checkSecKeyFormat(key)) {
-          return
-        }
         this.addChainAccountDrawer.params.secKey = key
       }
       reader.readAsText(params.file)
-    },
-    uploadECDSAPemSecKeyHandler(params) {
-      var reader = new FileReader()
-      reader.onload = (event) => {
-        var key = event.target.result
-        if (!checkSecKeyFormat(key) || !isECDSASecPem(key)) {
-          return
-        }
-        this.addChainAccountDrawer.params.secKey = key
-
-        var pubKeyHex = getPubKeyHexFromECDSASecPem(key)
-        this.addChainAccountDrawer.params.pubKey = buildECDSAPubKeyPem(pubKeyHex)
-
-        var address = ecdsaPub2Addr(pubKeyHex)
-        this.addChainAccountDrawer.params.ext = address
-      }
-      reader.readAsText(params.file)
-    },
-    uploadSM2PemSecKeyHandler(params) {
-      var reader = new FileReader()
-      reader.onload = (event) => {
-        var key = event.target.result
-        if (!checkSecKeyFormat(key) || !isSM2SecPem(key)) {
-          return
-        }
-
-        this.addChainAccountDrawer.params.secKey = key
-
-        var pubKeyHex = getPubKeyHexFromSM2SecPem(key)
-        this.addChainAccountDrawer.params.pubKey = buildSM2PubKeyPem(pubKeyHex)
-
-        var address = sm2Pub2Addr(pubKeyHex)
-        this.addChainAccountDrawer.params.ext = address
-      }
-      reader.readAsText(params.file)
-    },
-
-    generateECDSAKeyPairPem() {
-      const secp256k1 = new EC('secp256k1')
-      var keyPair = secp256k1.genKeyPair()
-
-      var pubKey = keyPair.getPublic('hex')
-      var secKey = keyPair.getPrivate('hex')
-
-      console.log(pubKey)
-      console.log(secKey)
-
-      var pubContent = buildECDSAPubKeyPem(pubKey)
-      var secContext = buildECDSASecKeyPem(pubKey, secKey)
-
-      console.log(pubContent)
-      console.log(secContext)
-
-      this.addChainAccountDrawer.params.pubKey = pubContent
-      this.addChainAccountDrawer.params.secKey = secContext
-
-      var address = ecdsaPub2Addr(pubKey)
-      this.addChainAccountDrawer.params.ext = address
-    },
-    generateSM2KeyPairPem() {
-      const keyPair = sm2.generateKeyPairHex()
-
-      console.log(keyPair)
-
-      var pubContent = buildSM2PubKeyPem(keyPair.publicKey)
-      var secContext = buildSM2SecKeyPem(keyPair.publicKey, keyPair.privateKey)
-
-      console.log(pubContent)
-      console.log(secContext)
-
-      this.addChainAccountDrawer.params.pubKey = pubContent
-      this.addChainAccountDrawer.params.secKey = secContext
-
-      var address = sm2Pub2Addr(keyPair.publicKey)
-      this.addChainAccountDrawer.params.ext = address
     }
   },
 
@@ -622,7 +618,7 @@ function buildChainAccountTable(ua) {
       var defaultChainAccount = localChainAccounts.find(
         (u) => u.type === chainAccount.type
       )
-      if (defaultChainAccount !== undefined) {
+      if (typeof (defaultChainAccount) !== 'undefined') {
         chainAccount.id = defaultChainAccount.id * 10000 + defaultChainAccount.children.length + 1
         defaultChainAccount.children.push(chainAccount)
       } else {
@@ -634,122 +630,6 @@ function buildChainAccountTable(ua) {
   }
   console.log('localChainAccounts', localChainAccounts)
   return localChainAccounts
-}
-
-const ecdsaSecPemPrefix = '308184020100301006072a8648ce3d020106052b8104000a046d306b0201010420'
-const ecdsaPubPemPrefix = '3056301006072a8648ce3d020106052b8104000a034200'
-
-const sm2SecPemPrefix = '308187020100301306072a8648ce3d020106082a811ccf5501822d046d306b0201010420'
-const sm2PubPemPrefix = '3059301306072a8648ce3d020106082a811ccf5501822d034200'
-
-function buildECDSASecKeyPem(pubKeyHex, secKeyHex) {
-  var asn1HexString = ecdsaSecPemPrefix + secKeyHex + 'a144034200' + pubKeyHex
-  var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')
-
-  return '-----BEGIN PRIVATE KEY-----\n' + base64String + '\n-----END PRIVATE KEY-----\n'
-}
-
-function buildECDSAPubKeyPem(pubKeyHex) {
-  var asn1HexString = ecdsaPubPemPrefix + pubKeyHex
-  var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')
-
-  return '-----BEGIN PUBLIC KEY-----\n' + base64String + '\n-----END PUBLIC KEY-----\n'
-}
-
-function buildSM2SecKeyPem(pubKeyHex, secKeyHex) {
-  var asn1HexString = sm2SecPemPrefix + secKeyHex + 'a144034200' + pubKeyHex
-  var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')
-
-  return '-----BEGIN PRIVATE KEY-----\n' + base64String + '\n-----END PRIVATE KEY-----\n'
-}
-
-function buildSM2PubKeyPem(pubKeyHex) {
-  var asn1HexString = sm2PubPemPrefix + pubKeyHex
-  var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')
-
-  return '-----BEGIN PUBLIC KEY-----\n' + base64String + '\n-----END PUBLIC KEY-----\n'
-}
-
-function isECDSASecPem(secKeyContent) {
-  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
-
-  var buffer = Buffer.from(base64Content, 'base64')
-  var hexString = buffer.toString('hex')
-
-  if (!hexString.includes(ecdsaSecPemPrefix)) {
-    MessageBox.alert('证书内容错误')
-    return false
-  } else {
-    return true
-  }
-}
-
-function isSM2SecPem(secKeyContent) {
-  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
-
-  var buffer = Buffer.from(base64Content, 'base64')
-  var hexString = buffer.toString('hex')
-
-  if (!hexString.includes(sm2SecPemPrefix)) {
-    MessageBox.alert('证书内容错误')
-    return false
-  } else {
-    return true
-  }
-}
-
-function sm2Pub2Addr(pubKeyHex) {
-  var pubKeyHexWithoutPrefix = pubKeyHex.substr(2, 128)
-
-  console.log('pubKeyHexWithoutPrefix: ', pubKeyHexWithoutPrefix)
-
-  var address = '0x' + sm3Hex(pubKeyHexWithoutPrefix).substr(24, 40)
-  return address
-}
-
-function ecdsaPub2Addr(pubKeyHex) {
-  var pubKeyHexWithoutPrefix = pubKeyHex.substr(2, 128) // No prefix 04
-  var address = '0x' + keccak256(Uint8Array.from(Buffer.from(pubKeyHexWithoutPrefix, 'hex'))).substr(24, 40)
-  return address
-}
-
-function getPubKeyHexFromECDSASecPem(secKeyContent) {
-  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
-
-  var buffer = Buffer.from(base64Content, 'base64')
-  var hexString = buffer.toString('hex')
-  var pubKeyHex = hexString.substr(140, 130)
-  console.log('pubCertHex: ', hexString)
-  console.log('pubKeyHex: ', pubKeyHex)
-  return pubKeyHex
-}
-
-function getPubKeyHexFromSM2SecPem(secKeyContent) {
-  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
-
-  var buffer = Buffer.from(base64Content, 'base64')
-  var hexString = buffer.toString('hex')
-  var pubKeyHex = hexString.substr(146, 130)
-  console.log('pubCertHex: ', hexString)
-  console.log('pubKeyHex: ', pubKeyHex)
-  return pubKeyHex
-}
-
-function checkPubKeyFormat(key) {
-  if (!key.includes('-----BEGIN') || key.includes('PRIVATE')) {
-    MessageBox.alert('证书格式错误')
-    return false
-  } else {
-    return true
-  }
-}
-function checkSecKeyFormat(key) {
-  if (!key.includes('-----BEGIN PRIVATE KEY-----')) {
-    MessageBox.alert('证书格式错误')
-    return false
-  } else {
-    return true
-  }
 }
 
 </script>

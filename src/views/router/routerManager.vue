@@ -78,7 +78,7 @@ import {
 } from '@/api/conn'
 
 export default {
-  name: 'RouterManage',
+  name: 'RouterManager',
   props: {},
   data() {
     return {

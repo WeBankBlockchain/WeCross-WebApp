@@ -31,7 +31,7 @@
 import { Network } from 'vue-vis-network'
 
 export default {
-  name: 'DocumentView',
+  name: 'Document',
   props: {},
   data() {
     return { nodes: [

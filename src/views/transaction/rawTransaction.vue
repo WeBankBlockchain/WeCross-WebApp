@@ -80,11 +80,11 @@
 import { call, sendTransaction } from '@/api/transaction'
 import { getResourceList } from '@/api/resource'
 import { listChains, listZones } from '@/api/conn'
-import TransactionForm from '@/views/transactionAdmin/components/TransactionForm'
+import TransactionForm from '@/views/transaction/components/TransactionForm'
 import { uniqueObjectArray } from '@/utils'
 
 export default {
-  name: 'Transaction',
+  name: 'RawTransaction',
   components: {
     TransactionForm
   },

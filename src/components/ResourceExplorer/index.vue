@@ -76,7 +76,7 @@ export default {
   name: 'ResourceExplorer',
   props: ['chain', 'pageSize', 'height'],
   components: {
-    TransactionForm: () => import('@/views/transactionAdmin/components/TransactionForm')
+    TransactionForm: () => import('@/views/transaction/components/TransactionForm')
   },
   data: function() {
     return {

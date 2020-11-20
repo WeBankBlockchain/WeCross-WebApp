@@ -331,7 +331,7 @@ import { sm2 } from 'sm-crypto'
 import { sm3Hex } from '@/utils/sm3.js'
 
 export default {
-  name: 'AccountAdmin',
+  name: 'Account',
   props: {},
   data() {
     return {

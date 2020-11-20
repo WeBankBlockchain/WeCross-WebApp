@@ -13,7 +13,9 @@
       </div>
 
       <el-tooltip placement="top">
-        <div slot="content">长度为3～16个字符，字符可以为a-zA-Z0-9_-</div>
+        <div slot="content">
+          用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-
+        </div>
         <el-form-item prop="username">
           <span class="svg-container">
             <svg-icon icon-class="user" />
@@ -32,7 +34,7 @@
 
       <el-tooltip placement="top">
         <div slot="content">
-          长度为6~18个字符，至少有一个数字，一个大写字母
+          密码长度6~18个字符，支持数字、大小写字母，至少包含一个数字和字母
         </div>
         <el-form-item prop="password">
           <span class="svg-container">
@@ -57,7 +59,7 @@
       </el-tooltip>
       <el-tooltip placement="top">
         <div slot="content">
-          长度为6~18个字符，至少有一个数字，一个大写字母
+          密码长度6~18个字符，支持数字、大小写字母，至少包含一个数字和字母
         </div>
         <el-form-item prop="checkPass">
           <span class="svg-container">
@@ -85,7 +87,6 @@
           placeholder="认证码"
           name="imageAuthCode"
           tabindex="4"
-          auto-complete="on"
         />
       </el-form-item>
       <el-form-item prop="vercode">
@@ -125,7 +126,9 @@ export default {
   data() {
     const checkUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('无效的用户名'))
+        new Error(
+          '用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-'
+        )
       } else {
         callback()
       }
@@ -134,7 +137,7 @@ export default {
       if (!validPassword(value)) {
         callback(
           new Error(
-            '请输入正确密码格式：长度为6~18个字符，至少有一个数字，一个大写字母'
+            '密码长度6~18个字符，支持数字、大小写字母，至少包含一个数字和字母'
           )
         )
       } else {

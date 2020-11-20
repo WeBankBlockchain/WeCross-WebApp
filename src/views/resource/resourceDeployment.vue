@@ -5,7 +5,7 @@
       </el-page-header>
       <el-divider></el-divider>
       <el-row>
-        <el-col :span="16" :offset="4">
+        <el-col :span="18" :offset="2">
           <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
             <el-form-item label="选择链类型：">
               <el-select v-model="form.stubType" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
@@ -53,8 +53,10 @@
             <div v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
               <el-form-item
                   label="资源路径："
-                  prop="path">
-                <el-input v-model="form.path" placeholder="Path"></el-input>
+                  prop="appendPath">
+                <el-input v-model="form.appendPath" placeholder="Path">
+                  <template slot="prepend" style="padding: 5px">{{ form.prependPath }}</template>
+                </el-input>
               </el-form-item>
               <el-row type="flex">
                   <el-form-item label="上传文件：">
@@ -68,7 +70,7 @@
                         :before-remove="beforeRemove"
                         :http-request="uploadContractSourceHandler"
                         :auto-upload="false">
-                      <div slot="tip" class="el-upload__tip">上传合约文件打包的zip文件</div>
+                      <div slot="tip" class="el-upload__tip">Tips: 上传合约文件打包的zip文件</div>
                       <el-button slot="trigger">选取文件</el-button>
                     </el-upload>
                   </el-form-item>
@@ -105,15 +107,17 @@
             <div v-else-if="form.stubType==='Fabric1.4'">
               <el-form-item
                   label="资源路径："
-                  prop="path">
-                <el-input v-model="form.path" placeholder="Path"></el-input>
+                  prop="appendPath">
+                <el-input v-model="form.appendPath" placeholder="Path">
+                  <template slot="prepend">{{ form.prependPath }}</template>
+                </el-input>
               </el-form-item>
               <el-form-item
                   label="所在组织名："
                   prop="org">
                 <el-input v-model="form.org" placeholder="Organization"></el-input>
               </el-form-item>
-              <el-form-item label="合约文件：" prop="sourceContent" v-if="this.form.method === 'install'">
+              <el-form-item label="合约文件：" prop="compressedContent" v-if="this.form.method === 'install'">
                 <el-upload
                     class="upload-demo"
                     ref="uploadContract"
@@ -124,7 +128,7 @@
                     :before-remove="beforeRemove"
                     :http-request="uploadContractCompressedHandler"
                     :auto-upload="false">
-                  <div slot="tip" class="el-upload__tip">只能上传chaincode打包的tar/gz文件</div>
+                  <div slot="tip" class="el-upload__tip">Tips: 只能上传chaincode打包的tar/gz文件</div>
                   <el-button slot="trigger" size="mini">选取文件</el-button>
                 </el-upload>
               </el-form-item>
@@ -200,12 +204,13 @@ import { MessageBox } from 'element-ui'
 const JSZip = require('jszip')
 
 export default {
+  name: 'ResourceDeploy',
   created() {
-    if (this.$route.query.path !== undefined) {
-      this.form.path = this.$route.query.path
+    if (typeof (this.$route.query.path) !== 'undefined') {
+      this.form.prependPath = this.$route.query.path + '.'
     }
 
-    if (this.$route.query.stubType !== undefined) {
+    if (typeof (this.$route.query.stubType) !== 'undefined') {
       this.form.stubType = this.$route.query.stubType
 
       if (this.form.stubType === 'Fabric1.4') {
@@ -220,7 +225,8 @@ export default {
       form: {
         stubType: null,
         method: null,
-        path: null,
+        prependPath: '',
+        appendPath: '',
         className: null,
         version: null,
         address: null,
@@ -242,11 +248,12 @@ export default {
       dependenciesLine: [],
       loading: false,
       formRules: {
+        compressedContent: [{ required: true, message: '请上传合约文件', trigger: 'blur' }],
         chosenSolidity: [{ required: true, message: '合约文件不能为空', trigger: 'blur' }],
-        path: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
+        appendPath: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
           { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40 },
           {
-            pattern: /^[A-Za-z]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
+            pattern: /^[A-Za-z0-9_-]+$/,
             required: true,
             message: '资源路径格式错误，应形如 \'path.to.resource\'',
             trigger: 'blur'
@@ -301,6 +308,8 @@ export default {
     solidityFiles(value) {
       if (value.length > 0) {
         this.form.chosenSolidity = value[0].value
+      } else {
+        this.form.chosenSolidity = null
       }
     }
   },
@@ -371,15 +380,7 @@ export default {
           })
           this.$refs.deployForm.resetFields()
         } else {
-          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
-            confirmButtonText: '前往资源列表',
-            cancelButtonText: '继续部署',
-            type: 'success',
-            center: true
-          }).then(_ => {
-            this.$refs.deployForm.resetFields()
-            this.$router.push('resourceList')
-          }).catch(_ => {})
+          this.onSubmitSuccess(response)
         }
       }).catch(err => {
         this.loading = false
@@ -401,15 +402,7 @@ export default {
           })
           this.$refs.deployForm.resetFields()
         } else {
-          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
-            confirmButtonText: '前往资源列表',
-            cancelButtonText: '继续部署',
-            type: 'success',
-            center: true
-          }).then(_ => {
-            this.$refs.deployForm.resetFields()
-            this.$router.push('resourceList')
-          }).catch(_ => {})
+          this.onSubmitSuccess(response)
         }
       }).catch(err => {
         this.loading = false
@@ -431,15 +424,7 @@ export default {
           })
           this.$refs.deployForm.resetFields()
         } else {
-          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
-            confirmButtonText: '前往资源列表',
-            cancelButtonText: '继续部署',
-            type: 'success',
-            center: true
-          }).then(_ => {
-            this.$refs.deployForm.resetFields()
-            this.$router.push('resourceList')
-          }).catch(_ => {})
+          this.onSubmitSuccess(response)
         }
       }).catch(err => {
         this.loading = false
@@ -461,15 +446,7 @@ export default {
           })
           this.$refs.deployForm.resetFields()
         } else {
-          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
-            confirmButtonText: '前往资源列表',
-            cancelButtonText: '继续部署',
-            type: 'success',
-            center: true
-          }).then(_ => {
-            this.$refs.deployForm.resetFields()
-            this.$router.push('resourceList')
-          }).catch(_ => {})
+          this.onSubmitSuccess(response)
         }
       }).catch(err => {
         this.loading = false
@@ -492,15 +469,7 @@ export default {
           this.policyFile = []
           this.$refs.deployForm.resetFields()
         } else {
-          this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
-            confirmButtonText: '前往资源列表',
-            cancelButtonText: '继续部署',
-            type: 'success',
-            center: true
-          }).then(_ => {
-            this.$refs.deployForm.resetFields()
-            this.$router.push('resourceList')
-          }).catch(_ => {})
+          this.onSubmitSuccess(response)
         }
       }).catch(err => {
         this.loading = false
@@ -512,7 +481,26 @@ export default {
         )
       })
     },
-
+    onSubmitSuccess(response) {
+      this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
+        confirmButtonText: '前往资源列表',
+        cancelButtonText: '继续部署',
+        type: 'success',
+        center: true
+      }).then(_ => {
+        this.$refs.deployForm.resetFields()
+        this.$router.push('resourceList')
+      }).catch(_ => {
+        this.fileList = []
+        this.policyFile = []
+        this.sourceContractLine = []
+        this.dependenciesLine = []
+        this.solidityFiles = []
+        this.zipContractFilesMap = {}
+        this.form.compressedContent = null
+        this.form.policy = null
+      })
+    },
     mergeSolidityFile(targetFile) {
       if (this.$refs.uploadContract.uploadFiles.length === 0) {
         return
@@ -565,7 +553,6 @@ export default {
       this.sourceContractLine = []
       this.dependenciesLine = []
       this.form.sourceContent = null
-      this.form.compressedContent = null
       this.form.chosenSolidity = null
       this.$refs.uploadContract.submit()
     },

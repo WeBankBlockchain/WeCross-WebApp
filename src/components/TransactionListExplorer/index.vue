@@ -1,52 +1,53 @@
 <template>
   <div>
-      <el-table
-        ref="singleTable"
-        :data="transactionList"
-        stripe
-        fit
-        highlight-current-row
-        tooltip-effect="light"
-        @current-change="handleCurrentRowChange"
-        height="calc(100% - 75px)">
-        <el-table-column label="交易哈希" min-width="60px" show-overflow-tooltip>
-          <template slot-scope="item">{{ item.row.txHash }}</template>
-        </el-table-column>
-        <el-table-column label="跨链账户" min-width="50px">
-          <template slot-scope="item">{{ item.row.username }}</template>
-        </el-table-column>
-        <el-table-column label="区块高度" min-width="50px">
-          <template slot-scope="item">{{ item.row.blockNumber }}</template>
-        </el-table-column>
-        <el-table-column label="资源路径" min-width="50px" >
-          <template slot-scope="item">{{ item.row.path }}</template>
-        </el-table-column>
-        <el-table-column label="调用方法" min-width="50px" >
-          <template slot-scope="item">{{ item.row.method }}</template>
-        </el-table-column>
-        <el-table-column label="交易回执" min-width="30px" >
-          <template slot-scope="item">
-            <el-tooltip
-              class="item"
-              effect="light"
-              content="点击查看交易回执详情"
-              placement="top"
+    <el-table
+      ref="singleTable"
+      :data="transactionList"
+      stripe
+      fit
+      highlight-current-row
+      tooltip-effect="light"
+      @current-change="handleCurrentRowChange"
+      height="calc(100% - 75px)"
+    >
+      <el-table-column label="交易哈希" min-width="60px" show-overflow-tooltip>
+        <template slot-scope="item">{{ item.row.txHash }}</template>
+      </el-table-column>
+      <el-table-column label="跨链账户" min-width="50px">
+        <template slot-scope="item">{{ item.row.username }}</template>
+      </el-table-column>
+      <el-table-column label="区块高度" min-width="50px">
+        <template slot-scope="item">{{ item.row.blockNumber }}</template>
+      </el-table-column>
+      <el-table-column label="资源路径" min-width="50px">
+        <template slot-scope="item">{{ item.row.path }}</template>
+      </el-table-column>
+      <el-table-column label="调用方法" min-width="50px">
+        <template slot-scope="item">{{ item.row.method }}</template>
+      </el-table-column>
+      <el-table-column label="交易回执" min-width="30px">
+        <template slot-scope="item">
+          <el-tooltip
+            class="item"
+            effect="light"
+            content="点击查看交易回执详情"
+            placement="top"
+          >
+            <el-button
+              @click="handleReceiptDetails(item.row)"
+              type="text"
+              size="small"
+              >详情</el-button
             >
-              <el-button
-                @click="handleReceiptDetails(item.row)"
-                type="text"
-                size="small"
-                >详情</el-button
-              >
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-drawer
-        title="交易回执详情"
-        :visible.sync="drawer"
-        :with-header="true"
-      >
+          </el-tooltip>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-drawer :visible.sync="drawer" :with-header="false">
+      <el-card class="box-card" style="height:100%">
+        <div slot="header" class="clearfix">
+          <span> 交易回执详情 </span>
+        </div>
         <vue-json-pretty
           :expand-depth="2"
           :deep="3"
@@ -55,10 +56,12 @@
           :data="txReceipt"
           @click="handleClick"
         ></vue-json-pretty>
-        <!-- <el-input autosize type="textarea" v-model="txReceipt"> </el-input> -->
-      </el-drawer>
+        <div></div>
+      </el-card>
+      <!-- <el-input autosize type="textarea" v-model="txReceipt"> </el-input> -->
+    </el-drawer>
     <!--pagination-->
-    <el-row :gutter="20" style='margin-top: 10px; text-align: center'>
+    <el-row :gutter="20" style="margin-top: 10px; text-align: center">
       <el-button
         :disabled="preClickDisable"
         size="small"

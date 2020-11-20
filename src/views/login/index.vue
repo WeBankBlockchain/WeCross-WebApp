@@ -72,14 +72,18 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+        callback(new Error('用户名长度3~16个字符，不支持中文'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (!validPassword(value)) {
-        callback(new Error('请输入正确的密码'))
+        callback(
+          new Error(
+            '密码长度6~18个字符，支持大小写字母、数字，至少包含一个数字和字母'
+          )
+        )
       } else {
         callback()
       }

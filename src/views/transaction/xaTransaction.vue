@@ -49,14 +49,14 @@
             </el-col>
           </el-row>
           <el-row>
-            <resource-finder
+            <resource-transfer
                 height="43vh"
                 :page-object="pageObject"
                 :resource-data="resourceData"
                 :to_data.sync="toResourceData"
                 @current-change="setPage"
                 @chain-click="onChainClick"
-            ></resource-finder>
+            ></resource-transfer>
           </el-row>
         </el-card>
       </el-row>
@@ -273,8 +273,8 @@
 </template>
 
 <script>
-import TransactionForm from '@/views/transactionAdmin/components/TransactionForm'
-import ResourceFinder from '@/components/ResourceFinder/index'
+import TransactionForm from '@/views/transaction/components/TransactionForm'
+import ResourceTransfer from '@/components/ResourceTransfer/index'
 import { getResourceList } from '@/api/resource'
 import { call, getXATransaction, sendTransaction } from '@/api/transaction'
 import { v4 as uuidV4 } from 'uuid'
@@ -285,7 +285,7 @@ export default {
   name: 'XATransaction',
   components: {
     TransactionForm,
-    ResourceFinder
+    ResourceTransfer
   },
   data() {
     return {

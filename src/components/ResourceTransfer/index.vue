@@ -1,14 +1,14 @@
 <template>
-  <div class="wl-finder" :style="{ width, height }">
-    <!-- finder left -->
-    <div class="finder-base">
-      <h3 class="finder-title">
+  <div class="wl-transfer" :style="{ width, height }">
+    <!-- transfer left -->
+    <div class="transfer-base">
+      <h3 class="transfer-title">
         <span>待选资源列表</span>
       </h3>
-      <div class="finder-left">
+      <div class="transfer-left">
 
-        <!-- finder left panel -->
-        <div class="finder-main">
+        <!-- transfer left panel -->
+        <div class="transfer-main">
           <el-input placeholder="输入关键字进行过滤" v-model="filterFrom" size="small" class="filter-tree"></el-input>
           <el-tree
               ref="from-tree"
@@ -22,8 +22,8 @@
           ></el-tree>
         </div>
       </div>
-      <div class="finder-left-table">
-        <div class="finder-main">
+      <div class="transfer-left-table">
+        <div class="transfer-main">
         <el-table
             stripe
             tooltip-effect="dark"
@@ -52,16 +52,16 @@
         </div>
       </div>
     </div>
-    <!-- finder button -->
-    <div class="finder-center">
+    <!-- transfer button -->
+    <div class="transfer-center">
       <template>
-        <p class="finder-center-item">
+        <p class="transfer-center-item">
           <el-button @click="addToAims" :disabled="from_disabled">
             {{ "添加" }}
             <i class="el-icon-arrow-right"></i>
           </el-button>
         </p>
-        <p class="finder-center-item">
+        <p class="transfer-center-item">
           <el-button
               @click="removeToSource"
               :disabled="to_disabled"
@@ -71,9 +71,9 @@
         </p>
       </template>
     </div>
-    <!-- finder right  -->
-    <div class="finder-right">
-      <h3 class="finder-title">
+    <!-- transfer right  -->
+    <div class="transfer-right">
+      <h3 class="transfer-title">
         <el-checkbox
             :indeterminate="to_is_indeterminate"
             v-model="to_check_all"
@@ -81,10 +81,10 @@
         ></el-checkbox>
         <span>已选资源列表</span>
       </h3>
-      <!-- finder right panel -->
-      <div class="finder-main">
+      <!-- transfer right panel -->
+      <div class="transfer-main">
         <el-input placeholder="输入关键字进行过滤" v-model="filterTo" size="small" class="filter-tree"></el-input>
-        <el-checkbox-group v-model="to_check_keys" class="el-finder-panel__list">
+        <el-checkbox-group v-model="to_check_keys" class="el-transfer-panel__list">
           <el-checkbox
               class="el-transfer-panel__item"
               :label="item.path"
@@ -103,7 +103,7 @@ import { listChains, listZones } from '@/api/conn'
 import { uniqueObjectArray } from '@/utils'
 
 export default {
-  name: 'ResourceFinder',
+  name: 'ResourceTransfer',
   data() {
     return {
       to_is_indeterminate: false,
@@ -419,7 +419,7 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-.wl-finder {
+.wl-transfer {
   position: relative;
   overflow: hidden;
 
@@ -428,7 +428,7 @@ a {
     display: inline-block !important;
   }
 
-  .finder-base {
+  .transfer-base {
     border: 1px solid #ebeef5;
     margin-left: 5%;
     width: 50%;
@@ -438,49 +438,49 @@ a {
     vertical-align: middle;
   }
 
-  .finder-left {
+  .transfer-left {
     position: absolute;
     top: 41px;
     left: 5%;
   }
 
-  .finder-left-table {
+  .transfer-left-table {
     position: absolute;
     top: 41px;
     left: 30%;
   }
 
-  .finder-right {
+  .transfer-right {
     position: absolute;
     top: 0;
     right: 0;
     margin-right: 5%;
   }
 
-  .finder-right-only {
+  .transfer-right-only {
     height: 100%;
   }
 
-  .finder-main {
+  .transfer-main {
     padding: 10px;
     height: calc(100% - 40px);
     box-sizing: border-box;
     overflow: auto;
   }
 
-  .finder-left {
+  .transfer-left {
     width: 25%;
     height: 100%;
     vertical-align: middle;
   }
 
-  .finder-left-table {
+  .transfer-left-table {
     width: 25%;
     height: 100%;
     vertical-align: middle;
   }
 
-  .finder-right {
+  .transfer-right {
     border: 1px solid #ebeef5;
     width: 25%;
     height: 100%;
@@ -489,7 +489,7 @@ a {
     vertical-align: middle;
   }
 
-  .finder-center {
+  .transfer-center {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -498,12 +498,12 @@ a {
     text-align: center;
   }
 
-  .finder-center-item {
+  .transfer-center-item {
     padding: 10px;
     overflow: hidden;
   }
 
-  .finder-title {
+  .transfer-title {
     border-bottom: 1px solid #ebeef5;
     padding: 0 15px;
     height: 40px;
@@ -513,7 +513,7 @@ a {
     background-color: #f5f7fa;
   }
 
-  .finder-title .el-checkbox {
+  .transfer-title .el-checkbox {
     margin-right: 10px;
   }
 

@@ -48,7 +48,7 @@ import ChainExplorer from '@/components/ChainExplorer'
 import ResourceExplorer from '@/components/ResourceExplorer'
 
 export default {
-  name: 'Explorer',
+  name: 'ResourceManager',
   components: {
     ChainExplorer,
     ResourceExplorer
@@ -104,7 +104,7 @@ export default {
     onDeploy(path, stubType) {
       console.log('deploy: ' + this.currentChain + ' ' + this.currentChainData.type)
       this.$router.push({
-        path: 'resourceDeploy',
+        path: 'resourceDeployment',
         query: {
           path: this.currentChain,
           stubType: this.currentChainData.type

@@ -25,8 +25,8 @@
             <span>交易列表</span>
             <div style="float: right">
                 <el-input style="width: 30em" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly></el-input>
-                <el-button plain icon="el-icon-notebook-2" @click="handleSendTransaction" style="margin-left: 10px" type="primary">
-                  调用资源
+                <el-button icon="el-icon-notebook-2" @click="handleSendTransaction" style="margin-left: 10px" type="primary">
+                  发交易
                 </el-button>
             </div>
           </div>
@@ -46,7 +46,7 @@ import ChainExplorer from '@/components/ChainExplorer'
 import TransactionListExplorer from '@/components/TransactionListExplorer'
 
 export default {
-  name: 'Explorer',
+  name: 'TransactionManager',
   components: {
     ChainExplorer,
     TransactionListExplorer
@@ -111,7 +111,7 @@ export default {
     },
     handleSendTransaction() {
       this.$router.push({
-        path: 'transaction'
+        path: 'rawTransaction'
       })
     }
   }

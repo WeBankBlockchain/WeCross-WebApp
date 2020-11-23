@@ -30,10 +30,10 @@
         <el-card style="height: 80vh">
           <div slot="header">
             <span>资源列表</span>
-            <div style="float: right; margin-top: -7px">
-                <el-input  style="width: 30vh" placeholder="当前路径" prefix-icon="el-icon-folder" size="small" v-model="currentChain" readonly>
+            <div style="float: right; margin-top: -10px">
+                <el-input  style="width: 30vw;" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly>
                 </el-input>
-              <el-button slot="append" icon="el-icon-upload" @click="onDeploy" type="primary" size="small" :disabled="currentChain === ''" style="margin-left: 10px">部署资源</el-button>
+              <el-button slot="append" icon="el-icon-upload" @click="onDeploy" type="primary" :disabled="currentChain === ''" style="margin-left: 10px;">部署资源</el-button>
             </div>
           </div>
           <ResourceExplorer :chain='currentChain' :pageSize=10 style="height: calc(80vh - 70px)"></ResourceExplorer>

@@ -77,6 +77,7 @@
               @click="querySetDefaultAccount()"
               style="float: right"
               type="primary"
+              size="small"
               >设为默认账户</el-button
             >
           </div>
@@ -98,7 +99,7 @@
             </el-form-item>
             <el-form-item label="私钥">
               <el-button size="mini" class="primary" @click="chainAccountDrawer.showSec = !chainAccountDrawer.showSec" >查看 <i class="el-icon-chat-line-round"></i> </el-button>
-              <el-input v-if="chainAccountDrawer.showSec && chainAccountDrawer.show" type="textarea" readonly autosize show-password resize="none" v-model=" chainAccountDrawer.info.secKey"></el-input>
+              <el-input v-if="chainAccountDrawer.showSec && chainAccountDrawer.show" type="textarea" readonly autosize show-password resize="none" v-model=" chainAccountDrawer.info.secKey" style="margin-top: 10px"></el-input>
             </el-form-item>
             <el-form-item label="其它">
               <span>{{ chainAccountDrawer.info.ext }}</span>
@@ -122,7 +123,7 @@
               <el-select
                 style="width:200px;margin-top:10px"
                 v-model="addChainAccountDrawer.params.type"
-                placeholder="请选择"
+                placeholder="请选择链账户类型"
                 @change="addChainAccountDrawer.params.pubKey = undefined; addChainAccountDrawer.params.secKey = undefined; addChainAccountDrawer.params.ext = undefined; addChainAccountDrawer.params.isDefault = false "
               >
                 <el-option label="FISCO BCOS 2.0" value="BCOS2.0"></el-option>
@@ -131,7 +132,7 @@
               </el-select>
             </el-form-item>
 
-            <div v-if="addChainAccountDrawer.params.type == 'BCOS2.0'">
+            <div v-if="addChainAccountDrawer.params.type === 'BCOS2.0'">
               <el-form-item  prop="secKey">
                 <label>
                   <span>私钥</span>
@@ -186,7 +187,7 @@
 
             </div>
 
-            <div  v-if="addChainAccountDrawer.params.type == 'GM_BCOS2.0'">
+            <div  v-if="addChainAccountDrawer.params.type === 'GM_BCOS2.0'">
               <el-form-item prop="secKey" >
                 <label>
                   <span>私钥</span>
@@ -240,7 +241,7 @@
               </el-form-item>
             </div>
 
-            <div v-if="addChainAccountDrawer.params.type == 'Fabric1.4'">
+            <div v-if="addChainAccountDrawer.params.type === 'Fabric1.4'">
               <el-form-item v-if="addChainAccountDrawer.params.type" prop="secKey">
                 <label>
                   <span>私钥</span>
@@ -291,7 +292,7 @@
                 </el-input>
               </el-form-item>
 
-              <el-form-item v-if="addChainAccountDrawer.params.type=='Fabric1.4'" prop="ext">
+              <el-form-item v-if="addChainAccountDrawer.params.type === 'Fabric1.4'" prop="ext">
                 <label><div><span>MSPID</span></div></label>
                 <el-input
                   style="margin-top:10px"
@@ -386,13 +387,13 @@ export default {
         secKey: [{ required: true, trigger: 'change', validator: (rule, value, callback) => {
           console.log('value: ', value)
           if (typeof (value) === 'undefined' || value.length === 0) {
-            callback(new Error('请输入'))
+            callback(new Error('请输入私钥'))
           } else if (this.addChainAccountDrawer.params.type === 'BCOS2.0' && !ecdsa.isSecPem(value)) {
-            callback(new Error('格式错误'))
+            callback(new Error('BCOS2.0 私钥格式错误'))
           } else if (this.addChainAccountDrawer.params.type === 'GM_BCOS2.0' && !sm2.isSecPem(value)) {
-            callback(new Error('格式错误'))
+            callback(new Error('BCOS2.0 国密私钥格式错误'))
           } else if (!pem.isSecKeyFormat(value)) {
-            callback(new Error('格式错误'))
+            callback(new Error('Fabric 私钥格式错误'))
           } else {
             callback()
           }
@@ -400,7 +401,7 @@ export default {
         pubKey: [{ required: true, trigger: 'change', validator: (rule, value, callback) => {
           console.log('value: ', value)
           if (typeof (value) === 'undefined' || value.length === 0) {
-            callback(new Error('请输入'))
+            callback(new Error('请输入公钥'))
           } else if (this.addChainAccountDrawer.params.type === 'Fabric1.4' && !pem.isCertFormat(value)) {
             callback(new Error('格式错误' + this.addChainAccountDrawer.params.type))
           } else {

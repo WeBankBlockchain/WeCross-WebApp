@@ -31,9 +31,9 @@
         <el-card style="height: 80vh">
           <div slot="header">
             <span>交易列表</span>
-            <div style="float: right; margin-top: -7px">
-                <el-input style="width: 30em" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" size="small" readonly></el-input>
-                <el-button icon="el-icon-notebook-2" @click="handleSendTransaction" style="margin-left: 10px" type="primary" size="small">
+            <div style="float: right; margin-top: -10px">
+                <el-input style="width: 30vw" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly></el-input>
+                <el-button icon="el-icon-notebook-2" @click="handleSendTransaction" style="margin-left: 10px" type="primary">
                   发交易
                 </el-button>
             </div>

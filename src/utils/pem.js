@@ -86,12 +86,7 @@ export const ecdsa = {
     var buffer = Buffer.from(base64Content, 'base64')
     var hexString = buffer.toString('hex')
 
-    if (!hexString.includes(ecdsaSecPemPrefix)) {
-      // MessageBox.alert('证书内容错误')
-      return false
-    } else {
-      return true
-    }
+    return hexString.includes(ecdsaSecPemPrefix)
   },
   build(secPem) {
     var pubKeyHex = getPubKeyHexFromECDSASecPem(secPem)

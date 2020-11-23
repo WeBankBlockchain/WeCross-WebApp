@@ -24,3 +24,11 @@ export function addChainAccount(data) {
   })
 }
 
+export function removeChainAccount(data) {
+  return request({
+    url: '/auth/removeChainAccount',
+    method: 'post',
+    data: data
+  })
+}
+

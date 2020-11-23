@@ -13,9 +13,9 @@
           </span>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile">
+          <router-link to="/account/index">
             <el-dropdown-item>
-              个人信息
+              账号信息
             </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">

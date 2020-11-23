@@ -360,15 +360,13 @@ export default {
         message: '已重置表单',
         type: 'info'
       })
+      this.$refs.deployForm.resetFields()
       this.fileList = []
       this.policyFile = []
       this.sourceContractLine = []
       this.dependenciesLine = []
       this.solidityFiles = []
       this.zipContractFilesMap = {}
-      this.form.method = null
-      this.form.stubType = null
-      this.$refs.deployForm.resetFields()
     },
     onBCOSDeploy() {
       bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {

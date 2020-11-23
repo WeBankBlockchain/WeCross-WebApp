@@ -350,6 +350,7 @@ export default {
     },
     loadXATransaction(isExec) {
       const xaID = this.$store.getters.transactionID
+      console.log(this.$store.getters)
       if (xaID !== null && typeof (isExec) === 'undefined') {
         const h = this.$createElement
         this.$msgbox({
@@ -360,6 +361,7 @@ export default {
             h('li', { style: 'font-weight: bold; margin-left:10px' }, '锁定资源: '),
             h('ol', { script: '' }, this.$store.getters.XAPaths.join(',  \n'))
           ]),
+          showClose: false,
           closeOnClickModal: false,
           closeOnPressEscape: false,
           showCancelButton: true,

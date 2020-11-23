@@ -27,14 +27,14 @@ export function uuid(len, radix) {
 }
 
 export function getXATX() {
-  return localStorage.getItem(xaTransactionKey)
+  return JSON.parse(sessionStorage.getItem(xaTransactionKey))
 }
 
 export function setXATX(xaTX) {
-  return localStorage.setItem(xaTransactionKey, xaTX)
+  return sessionStorage.setItem(xaTransactionKey, xaTX)
 }
 
 export function removeXATX() {
-  return localStorage.removeItem(xaTransactionKey)
+  return sessionStorage.removeItem(xaTransactionKey)
 }
 

@@ -12,6 +12,7 @@ const state = getDefaultState()
 
 const mutations = {
   RESET_STATE: (state) => {
+    removeXATX()
     Object.assign(state, getDefaultState())
   },
   SET_TRANSACTION: (state, transaction) => {
@@ -32,7 +33,7 @@ const actions = {
           reject()
         } else {
           commit('SET_TRANSACTION', { transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths })
-          setXATX({ transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths })
+          setXATX(JSON.stringify({ transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths }))
           resolve()
         }
       }).catch(error => {

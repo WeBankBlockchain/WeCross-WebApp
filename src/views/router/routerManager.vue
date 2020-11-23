@@ -7,9 +7,9 @@
             <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
             <el-button plain icon="el-icon-plus" @click="addRouter">添加跨链路由</el-button>
           </el-button-group>
-            <el-button plain icon="el-icon-circle-plus" style="margin-left: 10px" @click="onDeployRouter">跨链路由部署向导</el-button>
+            <!--<el-button plain icon="el-icon-circle-plus" style="margin-left: 10px" @click="onDeployRouter">跨链路由部署向导</el-button>-->
         </el-row>
-        <el-row>
+        <el-row style="margin-top: 10px">
           <el-table ref="singleTable" :data="routers" fit tooltip-effect="light" height="calc( 90vh - 120px)">
             <el-table-column label="跨链路由别名" min-width="40px" show-overflow-tooltip>
               <template slot-scope="item">
@@ -34,11 +34,11 @@
                 </li>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="230px">
+            <el-table-column label="操作" width="180px">
               <template slot-scope="item">
                 <el-button-group>
                   <el-button plain icon="el-icon-edit" @click="setAlias(item.row.nodeID)">设置别名</el-button>
-                  <el-button plain icon="el-icon-minus" @click="deleteRouter(item.row.address)">移除</el-button>
+                  <!--<el-button plain icon="el-icon-minus" @click="deleteRouter(item.row.address)">移除</el-button>-->
                 </el-button-group>
               </template>
             </el-table-column>

@@ -152,12 +152,7 @@ export const sm2 = {
     var buffer = Buffer.from(base64Content, 'base64')
     var hexString = buffer.toString('hex')
 
-    if (!hexString.includes(sm2SecPemPrefix)) {
-      // MessageBox.alert('证书内容错误')
-      return false
-    } else {
-      return true
-    }
+    return hexString.includes(sm2SecPemPrefix)
   },
   build(secPem) {
     var pubKeyHex = getPubKeyHexFromSM2SecPem(secPem)

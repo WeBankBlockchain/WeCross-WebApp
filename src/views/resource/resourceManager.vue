@@ -9,20 +9,22 @@
           <el-row>
             <el-button-group>
               <el-button
-                  icon="el-icon-d-arrow-left"
-                  @click="onBack"
-                  v-bind:disabled="history.index === 0"
-                  size="mini">后退</el-button>
+                icon="el-icon-d-arrow-left"
+                :disabled="history.index === 0"
+                size="mini"
+                @click="onBack"
+              >后退</el-button>
               <el-button
-                  @click="onForward"
-                  v-bind:disabled="history.index + 1 >= history.list.length"
-                  size="mini">前进
-                <i class="el-icon-d-arrow-right"></i>
+                :disabled="history.index + 1 >= history.list.length"
+                size="mini"
+                @click="onForward"
+              >前进
+                <i class="el-icon-d-arrow-right" />
               </el-button>
             </el-button-group>
           </el-row>
           <el-row style="margin-top: 10px; height: calc(70vh - 30px); overflow-y:auto; padding: 10px;">
-          <ChainExplorer :chain='currentChain' @zone-click='onZoneClick' @chain-click='onChainClick'></ChainExplorer>
+            <ChainExplorer :chain="currentChain" @zone-click="onZoneClick" @chain-click="onChainClick" />
           </el-row>
         </el-card>
       </el-col>
@@ -31,12 +33,11 @@
           <div slot="header">
             <span>资源列表</span>
             <div style="float: right; margin-top: -10px">
-                <el-input  style="width: 30vw;" placeholder="当前路径" prefix-icon="el-icon-folder" v-model="currentChain" readonly>
-                </el-input>
-              <el-button slot="append" icon="el-icon-upload" @click="onDeploy" type="primary" :disabled="currentChain === ''" style="margin-left: 10px;">部署资源</el-button>
+              <el-input v-model="currentChain" style="width: 30vw;" placeholder="当前路径" prefix-icon="el-icon-folder" readonly />
+              <el-button slot="append" icon="el-icon-upload" type="primary" :disabled="currentChain === ''" style="margin-left: 10px;" @click="onDeploy">部署资源</el-button>
             </div>
           </div>
-          <ResourceExplorer :chain='currentChain' :pageSize=10 style="height: calc(80vh - 70px)"></ResourceExplorer>
+          <ResourceExplorer :chain="currentChain" :page-size="10" style="height: calc(80vh - 70px)" />
         </el-card>
       </el-col>
     </el-row>
@@ -101,7 +102,7 @@ export default {
         this.currentChain = this.history.list[this.history.index]
       }
     },
-    onDeploy(path, stubType) {
+    onDeploy() {
       console.log('deploy: ' + this.currentChain + ' ' + this.currentChainData.type)
       this.$router.push({
         path: 'resourceDeployment',

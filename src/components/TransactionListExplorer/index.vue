@@ -7,8 +7,8 @@
       fit
       highlight-current-row
       tooltip-effect="light"
-      @current-change="handleCurrentRowChange"
       height="calc(100% - 75px)"
+      @current-change="handleCurrentRowChange"
     >
       <el-table-column label="交易哈希" min-width="60px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.txHash }}</template>
@@ -28,23 +28,21 @@
       <el-table-column label="交易回执" min-width="30px">
         <template slot-scope="item">
           <el-tooltip
-            class="item"
             effect="light"
             content="点击查看交易回执详情"
             placement="top"
           >
             <el-button
-              @click="handleReceiptDetails(item.row)"
               type="text"
               size="small"
-              >详情</el-button
-            >
+              @click="handleReceiptDetails(item.row)"
+            >详情</el-button>
           </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
     <el-drawer :visible.sync="drawer" :with-header="false">
-      <el-card class="box-card" style="height:100%">
+      <el-card style="height:100%">
         <div slot="header" class="clearfix">
           <span> 交易回执详情 </span>
         </div>
@@ -55,10 +53,9 @@
           copyable
           :data="txReceipt"
           @click="handleClick"
-        ></vue-json-pretty>
-        <div></div>
+        />
+        <div />
       </el-card>
-      <!-- <el-input autosize type="textarea" v-model="txReceipt"> </el-input> -->
     </el-drawer>
     <!--pagination-->
     <el-row :gutter="20" style="margin-top: 10px; text-align: center">
@@ -67,15 +64,13 @@
         size="small"
         icon="el-icon-back"
         @click="handlePrevClick"
-        >上一页</el-button
-      >
+      >上一页</el-button>
       <el-button
         :disabled="nextClickDisable"
         size="small"
         icon="el-icon-right"
         @click="handleNextClick"
-        >下一页</el-button
-      >
+      >下一页</el-button>
     </el-row>
   </div>
 </template>
@@ -91,12 +86,11 @@ export default {
   components: {
     VueJsonPretty
   },
-  props: ['height', 'chain'],
-  watch: {
-    chain: function(val) {
-      this.handleSearch(val)
-    }
-  },
+  props: {
+    chain: {
+      type: String,
+      default: () => { return null }
+    }},
   data() {
     return {
       chainValue: null,
@@ -109,6 +103,11 @@ export default {
       nextClickDisable: false,
       drawer: false,
       txReceipt: ''
+    }
+  },
+  watch: {
+    chain: function(val) {
+      this.handleSearch(val)
     }
   },
   created() {
@@ -183,24 +182,12 @@ export default {
           this.historyData.length
       )
 
-      // 下一页
-      if (
-        this.nextBlockNumber <= 0 &&
-        this.currentStep >= this.historyData.length
-      ) {
-        this.nextClickDisable = true
-      } else {
-        this.nextClickDisable = false
-      }
-
-      // 上一页
-      if (this.currentStep > 1) {
-        this.preClickDisable = false
-      } else {
-        this.preClickDisable = true
-      }
+      // next page
+      this.nextClickDisable = this.nextBlockNumber <= 0 && this.currentStep >= this.historyData.length
+      // per page
+      this.preClickDisable = this.currentStep <= 1
     },
-    doSearchOperation(callback) {
+    doSearchOperation() {
       if (this.chainValue === null) {
         this.$message({
           type: 'warning',
@@ -209,7 +196,7 @@ export default {
         return
       }
 
-      var params = {
+      const params = {
         path: this.chainValue,
         blockNumber: this.nextBlockNumber,
         offset: this.nextOffset,
@@ -224,7 +211,7 @@ export default {
             JSON.stringify(resp)
         )
 
-        if (typeof resp.errorCode === undefined || resp.errorCode !== 0) {
+        if (typeof (resp.errorCode) === 'undefined' || resp.errorCode !== 0) {
           this.$message({
             type: 'error',
             message: '查询交易列表失败, 详情: ' + JSON.stringify(resp)
@@ -243,40 +230,35 @@ export default {
         const fetchAllTx = async function(chainValue, txHashes) {
           var txs = []
 
-          for (var idx in txHashes) {
-            // console.log(" [fetchAllTx] tx hash=", txHashes[idx].txHash);
-            if (txHashes[idx].txHash === null || txHashes[idx].txHash === '') {
+          for (const tx of txHashes) {
+            if (tx.txHash === null || tx.txHash === '') {
               throw new Error(
-                '交易哈希不存在，详情: ' + JSON.stringify(txHashes[idx])
+                '交易哈希不存在，详情: ' + JSON.stringify(tx)
               )
             }
 
-            var params = {
+            const paramsInGetTX = {
               path: chainValue,
-              txHash: txHashes[idx].txHash
+              txHash: tx.txHash
             }
-
-            // console.log(" [fetchAllTx] params => " + JSON.stringify(params));
-            const resp = await getTransaction(params)
-            // console.log(" single tx: " + JSON.stringify(resp));
-
-            if (typeof resp.errorCode === undefined || resp.errorCode !== 0) {
+            const response = await getTransaction(paramsInGetTX)
+            if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
               throw new Error(
                 '查询交易失败，交易哈希: ' +
-                  txHashes[idx].txhash +
+                  tx.txhash +
                   '，详情: ' +
-                  JSON.stringify(resp)
+                  JSON.stringify(response)
               )
             }
 
             txs[txs.length] = {
-              txHash: resp.data.txHash,
-              username: resp.data.username,
-              blockNumber: resp.data.blockNumber,
-              path: resp.data.path,
-              method: resp.data.method,
-              params: { args: resp.data.args, result: resp.data.result },
-              properties: resp.data
+              txHash: response.data.txHash,
+              username: response.data.username,
+              blockNumber: response.data.blockNumber,
+              path: response.data.path,
+              method: response.data.method,
+              params: { args: response.data.args, result: response.data.result },
+              properties: response.data
             }
           }
 

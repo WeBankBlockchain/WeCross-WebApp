@@ -91,12 +91,13 @@
       </el-form-item>
       <el-form-item prop="vercode">
         <div style="width: 100%;height: 10%">
-          <span class="codeUrlImg">
+          <span>
             <img
               style="width: 100%;height: 10%"
               :src="imageAuthCode.imageAuthCodeBase64URL"
+              alt=""
               @click="handleFetchAuthTokenCode"
-            />
+            >
           </span>
         </div>
       </el-form-item>
@@ -105,8 +106,7 @@
         type="primary"
         style="width:100%;margin-bottom:30px;"
         @click="handleRegister('registerForm')"
-        >注册</el-button
-      >
+      >注册</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">已有账号？</span>
@@ -126,9 +126,9 @@ export default {
   data() {
     const checkUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        new Error(
+        callback(new Error(
           '用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-'
-        )
+        ))
       } else {
         callback()
       }
@@ -204,8 +204,7 @@ export default {
               message: JSON.stringify(resp)
             })
           } else {
-            var data = resp.data
-            var imageAuthCodeInfo = data.imageAuthCodeInfo
+            const imageAuthCodeInfo = resp.data.imageAuthCodeInfo
             this.imageAuthCode.imageToken = imageAuthCodeInfo.imageToken
             this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${imageAuthCodeInfo.imageBase64}`
           }

@@ -3,9 +3,9 @@
     <el-row type="flex" justify="center" style="margin-top: 20px">
       <el-col :span="12">
         <transaction-form
+          v-loading="loading"
           :transaction="transactionData"
           :submit-response="submitResponse"
-          v-loading="loading"
           @clearClick="clearTransaction"
           @submitClick="onSubmit"
         >
@@ -29,23 +29,23 @@
                         :props="chainProps"
                         highlight-current
                         @node-click="onNodeClick"
-                      ></el-tree>
+                      />
                     </div>
                   </el-col>
                   <el-col>
                     <div class="finder-path">
                       <el-table
+                        ref="finderTable"
                         :show-header="false"
                         stripe
                         tooltip-effect="dark"
-                        ref="finderTable"
                         :data="paths"
                         height="80%"
                         :highlight-current-row="true"
                         @row-click="onSelectRow"
                         @selection-change="onSelectChange"
                       >
-                        <el-table-column fixed width="42px" type="selection"></el-table-column>
+                        <el-table-column fixed width="42px" type="selection" />
                         <el-table-column show-overflow-tooltip>
                           <template slot-scope="scope">{{ scope.row.path }}</template>
                         </el-table-column>
@@ -59,12 +59,12 @@
                         style="text-align: center; margin-top: 30px"
                         :current-page.sync="pageObject.currentPage"
                         @current-change="updatePageAndFetchPaths"
-                      ></el-pagination>
+                      />
                     </div>
                   </el-col>
                 </el-row>
               </div>
-              <span slot="footer" class="dialog-footer" style="margin-right: 80px">
+              <span slot="footer" style="margin-right: 80px">
                 <el-button type="primary" @click="startSelectPath = false">确 定</el-button>
               </span>
             </el-dialog>
@@ -124,7 +124,7 @@ export default {
         execMethod: 'sendTransaction',
         isXATransaction: false
       },
-      selectlist: null,
+      selectList: null,
       loading: false,
       submitResponse: null
     }
@@ -193,7 +193,7 @@ export default {
       this.pageObject.currentPage = value
       this.fetchPaths()
     },
-    onNodeClick(data, node, self) {
+    onNodeClick(data) {
       if (data.type === 'zone') {
         this.paths = []
       } else if (data.type === 'chain') {
@@ -313,7 +313,7 @@ export default {
       if (response.errorCode !== 0 || response.data.errorCode !== 0) {
         this.submitResponse = null
 
-        var code, message
+        let code, message
         if (response.errorCode !== 0) {
           code = response.errorCode
           message = response.message

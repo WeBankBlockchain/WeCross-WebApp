@@ -1,18 +1,18 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar"/>
+    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
-    <breadcrumb class="breadcrumb-container"/>
+    <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <svg-icon icon-class="user-avatar" class="user-avatar"/>
+          <svg-icon icon-class="user-avatar" class="user-avatar" />
           <span style="margin: 5px 5px 5px;">{{ loginUser }}
-            <i class="el-icon-arrow-down el-icon--right"/>
+            <i class="el-icon-arrow-down el-icon--right" />
           </span>
         </div>
-        <el-dropdown-menu slot="dropdown" class="user-dropdown">
+        <el-dropdown-menu slot="dropdown">
           <router-link to="/profile">
             <el-dropdown-item>
               个人信息
@@ -33,14 +33,14 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
+  components: {
+    Breadcrumb,
+    Hamburger
+  },
   data() {
     return {
       loginUser: this.$store.getters.name
     }
-  },
-  components: {
-    Breadcrumb,
-    Hamburger
   },
   computed: {
     ...mapGetters([

@@ -18,10 +18,10 @@
           </el-col>
         </el-form-item>
         <el-form-item label="资源路径:" prop="path">
-          <slot name="path"></slot>
+          <slot name="path" />
         </el-form-item>
         <el-form-item label="调用函数:" prop="method">
-          <el-input v-model="transaction.method" placeholder="请输入调用函数"></el-input>
+          <el-input v-model="transaction.method" placeholder="请输入调用函数" />
         </el-form-item>
         <div v-for="(arg, index) in transaction.args" :key="arg.key">
           <el-form-item
@@ -44,22 +44,22 @@
         </div>
         <el-form-item style="margin-bottom: 20px">
           <el-button
+            v-loading.fullscreen.lock="loading"
             type="primary"
             @click="onSubmit"
-            v-loading.fullscreen.lock="loading"
           >执行调用</el-button>
           <el-button @click="clearForm">重置表单</el-button>
           <el-button @click="addArg">添加参数</el-button>
         </el-form-item>
-        <el-form-item label="调用结果:" v-if="submitResponse !== null">
+        <el-form-item v-if="submitResponse !== null" label="调用结果:">
           <el-input
+            v-if="submitResponse !== null"
+            v-model="submitResponse"
             autosize
             type="textarea"
             readonly
-            v-model="submitResponse"
-            v-if="submitResponse !== null"
             style="margin-bottom: 20px; width: 75%"
-          ></el-input>
+          />
         </el-form-item>
       </el-form>
     </el-row>
@@ -87,7 +87,10 @@ export default {
         }
       }
     },
-    submitResponse: null
+    submitResponse: {
+      type: String,
+      default: () => { return null }
+    }
   },
   data() {
     return {

@@ -61,13 +61,13 @@
                 </el-input>
               </el-form-item>
               <el-row type="flex">
-                <el-form-item label="上传文件：">
+                <el-form-item label="上传文件：" prop="zipContract">
                   <el-upload
                     ref="uploadContract"
                     action=""
                     accept=".zip"
                     :file-list="fileList"
-                    :on-change="changeFile"
+                    :on-change="changeContractFile"
                     :before-remove="beforeRemove"
                     :http-request="uploadContractSourceHandler"
                     :auto-upload="false"
@@ -127,11 +127,11 @@
               </el-form-item>
               <el-form-item v-if="form.method === 'install'" label="合约文件：" prop="compressedContent">
                 <el-upload
-                  ref="uploadContract"
+                  ref="uploadChaincode"
                   action=""
                   :file-list="fileList"
                   accept=".tar,.gz"
-                  :on-change="changeFile"
+                  :on-change="changeChaincodeFile"
                   :before-remove="beforeRemove"
                   :http-request="uploadContractCompressedHandler"
                   :auto-upload="false"
@@ -232,8 +232,7 @@ export default {
         args: null,
         chosenSolidity: null,
         sourceContent: null,
-        compressedContent: null,
-        fileType: null
+        compressedContent: null
       },
       solidityFiles: [],
       zipContractFilesMap: {},
@@ -267,7 +266,7 @@ export default {
           { required: true, message: '合约版本号不能为空', trigger: 'blur' },
           {
             required: true, message: '合约版本号格式错误', trigger: 'blur',
-            pattern: /^([0-9]+)(\.([0-9]+))+$/
+            pattern: /^([0-9]+)(\.([0-9]+)){0,5}$/
           }
         ],
         lang: [
@@ -372,6 +371,7 @@ export default {
         type: 'info'
       })
       this.$refs.deployForm.resetFields()
+      this.form.stubType = this.$route.query.stubType
       this.fileList = []
       this.policyFile = []
       this.sourceContractLine = []
@@ -555,7 +555,7 @@ export default {
         return true
       })
     },
-    changeFile(file, fileList) {
+    changeContractFile(file, fileList) {
       if (fileList.length === 2) {
         fileList.shift()
       }
@@ -565,6 +565,12 @@ export default {
       this.form.chosenSolidity = null
       this.$refs.uploadContract.submit()
     },
+    changeChaincodeFile(file, fileList) {
+      if (fileList.length === 2) {
+        fileList.shift()
+      }
+      this.$refs.uploadChaincode.submit()
+    },
     changePolicyFile(file, fileList) {
       if (fileList.length === 2) {
         fileList.shift()
@@ -573,57 +579,96 @@ export default {
     },
     uploadContractSourceHandler(params) {
       const jszip = new JSZip()
-
-      this.zipContractFilesMap = {}
-      this.solidityFiles = []
-      this.sourceContractLine = []
-      this.dependenciesLine = []
-      const _this = this
-      params.onProgress({ percent: 20 })
-      this.form.fileType = params.file.name.split('.')[1]
-      var zipFiles = []
-      var promises = []
-      jszip.loadAsync(params.file).then(function(zip) {
-        zip.forEach(function(relativePath, file) {
-          if (file.dir === false) {
-            promises.push(zip.file(file.name).async('string').then((data) => {
-              zipFiles.push({ path: file.name, data: data })
-            }))
-          }
-        })
-        Promise.all(promises).then(() => {
-          for (const zipFile of zipFiles) {
-            _this.zipContractFilesMap['./' + zipFile.path] = zipFile.data
-            if (zipFile.path.indexOf('/') === -1 &&
-                (zipFile.path.endsWith('.sol') || zipFile.path.endsWith('.abi'))) {
-              _this.solidityFiles.push({ path: zipFile.path, value: zipFile.path })
+      if (params.file !== null && params.file.type === 'application/zip') {
+        this.zipContractFilesMap = {}
+        this.solidityFiles = []
+        this.sourceContractLine = []
+        this.dependenciesLine = []
+        const _this = this
+        params.onProgress({ percent: 20 })
+        var zipFiles = []
+        var promises = []
+        jszip.loadAsync(params.file).then(function(zip) {
+          zip.forEach(function(relativePath, file) {
+            if (file.dir === false) {
+              promises.push(zip.file(file.name).async('string').then((data) => {
+                zipFiles.push({ path: file.name, data: data })
+              }))
             }
-          }
-          if (_this.solidityFiles.length === 0) {
-            MessageBox.alert('zip最外层文件中不含有Solidity或ABI文件', '错误', {
-              confirmButtonText: '确定',
-              type: 'error'
-            })
-            params.onProgress({ percent: 0 })
-            params.onError()
-            return
-          }
-          params.onProgress({ percent: 100 })
-          params.onSuccess()
+          })
+          Promise.all(promises).then(() => {
+            for (const zipFile of zipFiles) {
+              _this.zipContractFilesMap['./' + zipFile.path] = zipFile.data
+              if (zipFile.path.indexOf('/') === -1 &&
+                  (zipFile.path.endsWith('.sol') || zipFile.path.endsWith('.abi'))) {
+                _this.solidityFiles.push({ path: zipFile.path, value: zipFile.path })
+              }
+            }
+            if (_this.solidityFiles.length === 0) {
+              MessageBox.alert('zip最外层文件中不含有Solidity或ABI文件', '错误', {
+                confirmButtonText: '确定',
+                type: 'error'
+              })
+              params.onProgress({ percent: 0 })
+              params.onError()
+              return
+            }
+            params.onProgress({ percent: 100 })
+            params.onSuccess()
+            _this.$refs.deployForm.clearValidate('chosenSolidity')
+          })
+        }).catch(err => {
+          this.$confirm('读取zip文件错误：' + err.toString(), '错误', {
+            type: 'error',
+            showCancelButton: false
+          }).catch(_ => {
+          })
+          this.zipContractFilesMap = {}
+          this.solidityFiles = []
+          params.onProgress({ percent: 0 })
+          params.onError()
         })
-      })
+      } else {
+        this.$alert('请选择zip文件！', '错误', {
+          type: 'error'
+        }).catch(_ => {})
+        this.zipContractFilesMap = {}
+        this.solidityFiles = []
+        params.onProgress({ percent: 0 })
+        params.onError()
+      }
     },
     uploadContractCompressedHandler(params) {
       params.onProgress({ percent: 20 })
-      setTimeout(() => {
-        this.readBaseBytes(params)
-      }, 100)
+      if (params.file !== null && /(x-gzip|x-tar)$/.test(params.file.type)) {
+      // if(params.file.name)
+        setTimeout(() => {
+          this.readBaseBytes(params)
+        }, 100)
+        this.$refs.deployForm.clearValidate('compressedContent')
+      } else {
+        this.$alert('请选择tar/gz文件！', '错误', {
+          type: 'error'
+        }).catch(_ => {})
+        this.form.compressedContent = null
+        params.onProgress({ percent: 0 })
+        params.onError()
+      }
     },
     uploadPolicyHandler(params) {
       params.onProgress({ percent: 20 })
-      setTimeout(() => {
-        this.readBaseBytes(params)
-      }, 100)
+      if (params.file !== null && /(x-yaml)$/.test(params.file.type)) {
+        setTimeout(() => {
+          this.readBaseBytes(params)
+        }, 100)
+      } else {
+        this.$alert('请选择yaml文件！', '错误', {
+          type: 'error'
+        }).catch(_ => {})
+        this.form.policy = null
+        params.onProgress({ percent: 0 })
+        params.onError()
+      }
     },
     async readText(params) {
       // UTF-8,GBK,GB2312

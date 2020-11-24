@@ -25,7 +25,7 @@ export function buildBCOSRegisterRequest(formData) {
     path: formData.prependPath + formData.appendPath,
     data: {
       command: formData.method,
-      args: [formData.appendPath, formData.fileType, formData.sourceContent, '0x' + formData.address, formData.className, formData.version]
+      args: [formData.appendPath, formData.chosenSolidity.split('.')[1], formData.sourceContent, '0x' + formData.address, formData.className, formData.version]
     }
   }
 }

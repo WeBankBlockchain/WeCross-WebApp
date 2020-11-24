@@ -81,6 +81,7 @@
             <transaction-form
               :transaction="transactionForm"
               :submit-response="submitResponse"
+              style="height: 50vh; overflow-y:auto; overflow-x:hidden"
               @clearClick="clearTransaction"
               @submitClick="execTransaction"
             >
@@ -277,7 +278,6 @@ import TransactionForm from '@/views/transaction/components/TransactionForm'
 import ResourceTransfer from '@/components/ResourceTransfer/index'
 import { getResourceList } from '@/api/resource'
 import { call, getXATransaction, sendTransaction } from '@/api/transaction'
-import { v4 as uuidV4 } from 'uuid'
 import { Message } from 'element-ui'
 import { parseTime } from '@/utils'
 
@@ -422,6 +422,7 @@ export default {
       this.refresh()
     },
     creatUUID() {
+      const { v4: uuidV4 } = require('uuid')
       this.transactionForm.transactionID = uuidV4().replaceAll('-', '')
       this.$refs['transactionForm'].clearValidate('transactionID')
     },

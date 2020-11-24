@@ -27,15 +27,7 @@
           <el-form-item
             :label="'调用参数:'"
             :prop="'args.' + index + '.value'"
-            :rules="[
-              {
-                required: true,
-                message: '参数输入不能为空，可删除该参数置空',
-                trigger: 'blur',
-                min: 1,
-                max: 40,
-              },
-            ]"
+            :rules="[{ required: true, message: '参数输入不能为空，可删除该参数置空', trigger: 'blur'}]"
           >
             <el-input v-model="arg.value" :placeholder="'请输入调用参数'+index">
               <el-button slot="append" icon="el-icon-delete" @click.prevent="removeArg(arg)">删除</el-button>

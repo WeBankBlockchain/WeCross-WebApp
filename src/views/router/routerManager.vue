@@ -27,7 +27,7 @@
             </el-table-column>
             <el-table-column label="已接入区块链" min-width="100px">
               <template slot-scope="item">
-                <li v-for="chainItem in item.row.chainInfos" :key="chainItem" style="list-style-type:none; margin: 5px">
+                <li v-for="chainItem in item.row.chainInfos" :key="chainItem.name" style="list-style-type:none; margin: 5px">
                   {{ chainItem.name }}
                   <el-tag type="info">{{ chainItem.stubType }}</el-tag>
                 </li>

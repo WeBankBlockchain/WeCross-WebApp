@@ -6,8 +6,8 @@
       <el-row>
         <el-col :span="18" :offset="2">
           <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
-            <el-form-item label="选择链类型：">
-              <el-select v-model="form.stubType" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
+            <el-form-item label="选择链类型：" prop="stubType">
+              <el-select v-model="form.stubType" :disabled="lockDown" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
                 <el-option-group label="FISCO BCOS">
                   <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
                   <el-option label="FISCO BCOS 2.0 国密版" value="GM_BCOS2.0" />
@@ -49,17 +49,26 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item
+              v-if="form.prependPath !== null"
+              label="资源路径："
+              prop="appendPath"
+            >
+              <el-input v-model="form.appendPath" placeholder="Path">
+                <template slot="prepend" style="padding: 5px">{{ form.prependPath }}</template>
+              </el-input>
+            </el-form-item>
+
+            <el-form-item
+              v-else
+              label="资源路径："
+              prop="fullPath"
+            >
+              <el-input v-model="form.fullPath" placeholder="Path" />
+            </el-form-item>
 
             <!-- BCOS -->
             <div v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
-              <el-form-item
-                label="资源路径："
-                prop="appendPath"
-              >
-                <el-input v-model="form.appendPath" placeholder="Path">
-                  <template slot="prepend" style="padding: 5px">{{ form.prependPath }}</template>
-                </el-input>
-              </el-form-item>
               <el-row type="flex">
                 <el-form-item label="上传文件：" prop="zipContract">
                   <el-upload
@@ -111,14 +120,6 @@
             </div>
             <!-- Fabric -->
             <div v-else-if="form.stubType==='Fabric1.4'">
-              <el-form-item
-                label="资源路径："
-                prop="appendPath"
-              >
-                <el-input v-model="form.appendPath" placeholder="Path">
-                  <template slot="prepend">{{ form.prependPath }}</template>
-                </el-input>
-              </el-form-item>
               <el-form-item
                 label="所在组织名："
                 prop="org"
@@ -221,8 +222,9 @@ export default {
       form: {
         stubType: null,
         method: null,
-        prependPath: '',
-        appendPath: '',
+        prependPath: null,
+        appendPath: null,
+        fullPath: null,
         className: null,
         version: null,
         address: null,
@@ -242,13 +244,24 @@ export default {
       sourceContractLine: [],
       dependenciesLine: [],
       loading: false,
+      lockDown: false,
+      isFullPath: false,
       formRules: {
+        stubType: [{ required: true, message: '请选择链类型', trigger: 'blur' }],
         compressedContent: [{ required: true, message: '请上传合约文件', trigger: 'blur' }],
         chosenSolidity: [{ required: true, message: '合约文件不能为空', trigger: 'blur' }],
+        fullPath: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
+          { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40 },
+          {
+            pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/,
+            required: true,
+            message: '资源路径格式错误，应形如 \'path.to.resource\'',
+            trigger: 'blur'
+          }],
         appendPath: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
           { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40 },
           {
-            pattern: /^[A-Za-z0-9_-]+$/,
+            pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/,
             required: true,
             message: '资源路径格式错误，应形如 \'path.to.resource\'',
             trigger: 'blur'
@@ -259,7 +272,7 @@ export default {
           { required: true, message: '所在组织名最长不能超过12字', trigger: 'blur', min: 1, max: 12 },
           {
             required: true, message: '所在组织名不能包含特殊字符', trigger: 'blur',
-            pattern: /^[A-Za-z0-9-_]+$/
+            pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/
           }
         ],
         version: [
@@ -291,7 +304,7 @@ export default {
           { required: true, message: '合约类名不能为空', trigger: 'blur' },
           {
             required: true, message: '合约类名不能包含特殊字符', trigger: 'blur',
-            pattern: /^[A-Za-z0-9-_]+$/
+            pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/
           },
           { required: true, message: '合约类名长度不能超过100', trigger: 'blur', min: 1, max: 100 }
         ],
@@ -309,18 +322,20 @@ export default {
     }
   },
   created() {
-    if (typeof (this.$route.query.path) !== 'undefined') {
+    if (typeof (this.$route.query.path) !== 'undefined' && this.$route.query.path !== null) {
       this.form.prependPath = this.$route.query.path + '.'
     }
 
-    if (typeof (this.$route.query.stubType) !== 'undefined') {
+    if (typeof (this.$route.query.stubType) !== 'undefined' && this.$route.query.stubType !== null) {
       this.form.stubType = this.$route.query.stubType
-
       if (this.form.stubType === 'Fabric1.4') {
         this.form.method = 'install'
       } else {
         this.form.method = 'deploy'
       }
+      this.lockDown = true
+    } else {
+      this.isFullPath = true
     }
   },
   methods: {
@@ -336,11 +351,15 @@ export default {
           this.loading = true
           switch (this.form.method) {
             case 'deploy' :
+              this.sourceContractLine = []
+              this.dependenciesLine = []
               this.mergeSolidityFile('./' + this.form.chosenSolidity)
               this.mergeSourceContractLineToString()
               this.onBCOSDeploy()
               break
             case 'register':
+              this.sourceContractLine = []
+              this.dependenciesLine = []
               this.mergeSolidityFile('./' + this.form.chosenSolidity)
               this.mergeSourceContractLineToString()
               this.onBCOSRegister()
@@ -475,7 +494,6 @@ export default {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.policyFile = []
           this.$refs.deployForm.resetFields()
         } else {
           this.onSubmitSuccess(response)

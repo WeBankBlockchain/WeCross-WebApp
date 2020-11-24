@@ -1,14 +1,14 @@
 <template>
   <el-tree
-:props="props"
-:load="loadData"
-@node-click='onChainClick'
-@check-change='onChainSelect'
-node-key="key"
-ref="tree"
+    ref="tree"
+    :props="props"
+    :load="loadData"
+    node-key="key"
     highlight-current
-lazy>
-  </el-tree>
+    lazy
+    @node-click="onChainClick"
+    @check-change="onChainSelect"
+  />
 </template>
 
 <script>
@@ -24,7 +24,12 @@ import {
 
 export default {
   name: 'ChainExplorer',
-  props: ['chain'],
+  props: {
+    chain: {
+      type: String,
+      default: () => { return null }
+    }
+  },
   data: function() {
     return {
       props: {
@@ -48,15 +53,14 @@ export default {
           size: 0
         }).then(response => {
           if (response.errorCode === 0) {
-            var zones = []
-            for (var index in response.data.data) {
-              var zone = response.data.data[index]
+            let zones = []
+            for (const zoneData of response.data.data) {
               zones.push({
-                name: zone,
+                name: zoneData,
                 children: [],
                 hasChildren: false,
                 type: 'zone',
-                key: zone
+                key: zoneData
               })
             }
             zones = uniqueObjectArray(zones)
@@ -86,9 +90,7 @@ export default {
         }).then(response => {
           if (response.errorCode === 0) {
             var chains = []
-            for (var index in response.data.data) {
-              var chain = response.data.data[index]
-
+            for (const chain of response.data.data) {
               chains.push({
                 name: chain.chain,
                 children: [],
@@ -98,7 +100,6 @@ export default {
                 data: chain
               })
             }
-
             return resolve(chains)
           } else {
             this.$message({
@@ -114,18 +115,18 @@ export default {
         })
       }
     },
-    onChainClick(data, node, self) {
+    onChainClick(data) {
       if (data.type === 'zone') {
         this.$emit('zone-click', data.key)
       } else if (data.type === 'chain') {
         this.$emit('chain-click', data.key, data.data)
       }
     },
-    onChainSelect(data, isChecked, isChildrenChecked) {
+    onChainSelect() {
       var selectedItems = this.$refs.tree.getCheckedNodes(false, true)
 
       var paths = []
-      for (var selectedItem in selectedItems) {
+      for (var selectedItem of selectedItems) {
         paths.push(selectedItem.data.key)
       }
 

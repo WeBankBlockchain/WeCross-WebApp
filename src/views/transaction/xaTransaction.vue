@@ -3,44 +3,44 @@
     <el-card header="事务步骤">
       <el-row :gutter="24">
         <el-steps :active="stepActive" align-center finish-status="finish">
-          <el-step title="步骤1" description="选择所需资源，开启一段事务"></el-step>
-          <el-step title="步骤2" description="在本次事务中执行事务交易"></el-step>
-          <el-step title="步骤3" deszhecription="结束事务，选择回滚/提交事务"></el-step>
+          <el-step title="步骤1" description="选择所需资源，开启一段事务" />
+          <el-step title="步骤2" description="在本次事务中执行事务交易" />
+          <el-step title="步骤3" deszhecription="结束事务，选择回滚/提交事务" />
         </el-steps>
       </el-row>
     </el-card>
 
     <!--  step1  -->
     <el-collapse-transition>
-      <el-row style="margin-top: 15px;" v-if="stepActive === 0">
+      <el-row v-if="stepActive === 0" style="margin-top: 15px;">
         <el-card header="开启事务">
           <el-row>
             <el-col :md="{ span: 14, offset: 5 }">
               <el-form
-                  ref="transactionForm"
-                  label-width="auto"
-                  label-position="right"
-                  :model="transactionForm"
+                ref="transactionForm"
+                label-width="auto"
+                label-position="right"
+                :model="transactionForm"
               >
                 <el-form-item
-                    label="事务ID："
-                    :rules="[
-                        {required: true, message: '事务ID不能为空', trigger: 'blur'},
-                        { pattern: /^[0-9a-fA-F]+$/, required: true, message: '请检查事务ID格式：16进制', trigger: 'blur'}
-                        ]"
-                    prop="transactionID"
+                  label="事务ID："
+                  :rules="[
+                    {required: true, message: '事务ID不能为空', trigger: 'blur'},
+                    { pattern: /^[0-9a-fA-F]+$/, required: true, message: '请检查事务ID格式：16进制', trigger: 'blur'}
+                  ]"
+                  prop="transactionID"
                 >
                   <el-input
-                      v-model="transactionForm.transactionID"
-                      placeholder="请输入事务ID"
-                      style="width: 100%;"
+                    v-model="transactionForm.transactionID"
+                    placeholder="请输入事务ID"
+                    style="width: 100%;"
                   >
                     <el-button
-                        slot="append"
-                        icon="el-icon-circle-plus"
-                        style="padding: 5px"
-                        type="primary"
-                        @click="creatUUID"
+                      slot="append"
+                      icon="el-icon-circle-plus"
+                      style="padding: 5px"
+                      type="primary"
+                      @click="creatUUID"
                     >生成事务ID
                     </el-button>
                   </el-input>
@@ -50,13 +50,13 @@
           </el-row>
           <el-row>
             <resource-transfer
-                height="43vh"
-                :page-object="pageObject"
-                :resource-data="resourceData"
-                :to_data.sync="toResourceData"
-                @current-change="setPage"
-                @chain-click="onChainClick"
-            ></resource-transfer>
+              height="43vh"
+              :page-object="pageObject"
+              :resource-data="resourceData"
+              :to-data.sync="toResourceData"
+              @current-change="setPage"
+              @chain-click="onChainClick"
+            />
           </el-row>
         </el-card>
       </el-row>
@@ -64,7 +64,7 @@
 
     <!--  step2  -->
     <el-collapse-transition>
-      <el-row style="margin-top: 10px; " v-if="stepActive === 1">
+      <el-row v-if="stepActive === 1" style="margin-top: 10px; ">
         <el-card style="height: 60vh">
           <div slot="header">
             <el-row>
@@ -72,32 +72,32 @@
                 <span>执行事务</span>
               </el-col>
               <el-col :span="13" style="text-align: left">
-                <el-divider direction="vertical"></el-divider>
+                <el-divider direction="vertical" />
                 <span style="margin-left: 10px">事务步骤列表</span>
               </el-col>
             </el-row>
           </div>
           <el-col :span="10">
             <transaction-form
-                :transaction="transactionForm"
-                :submit-response="submitResponse"
-                @clearClick="clearTransaction"
-                @submitClick="execTransaction"
+              :transaction="transactionForm"
+              :submit-response="submitResponse"
+              @clearClick="clearTransaction"
+              @submitClick="execTransaction"
             >
               <el-select
-                  slot="path"
-                  v-model="transactionForm.path"
-                  placeholder="请输入跨链资源路径"
-                  style="width: 100%"
-                  filterable
-                  default-first-option
+                slot="path"
+                v-model="transactionForm.path"
+                placeholder="请输入跨链资源路径"
+                style="width: 100%"
+                filterable
+                default-first-option
               >
                 <el-option
-                    v-for="path in this.$store.getters.XAPaths"
-                    :key="path"
-                    :value="path"
-                    :label="path"
-                ></el-option>
+                  v-for="path in this.$store.getters.XAPaths"
+                  :key="path"
+                  :value="path"
+                  :label="path"
+                />
               </el-select>
             </transaction-form>
           </el-col>
@@ -105,7 +105,7 @@
             <el-row>
               <div v-if="this.$store.getters.transactionID !== null" style="font-size: 15px">
                 {{ "当前事务ID：" + this.$store.getters.transactionID }}
-                <el-divider></el-divider>
+                <el-divider />
               </div>
             </el-row>
             <el-row>
@@ -115,10 +115,10 @@
                     <span>{{ props.row.timestamp | formatDate }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="username" label="跨链账户" min-width="60px" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="path" label="资源路径" min-width="50px" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="method" label="调用方法" min-width="50px"></el-table-column>
+                <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip />
+                <el-table-column prop="username" label="跨链账户" min-width="60px" show-overflow-tooltip />
+                <el-table-column prop="path" label="资源路径" min-width="50px" show-overflow-tooltip />
+                <el-table-column prop="method" label="调用方法" min-width="50px" />
                 <el-table-column prop="args" label="调用参数" min-width="80px" show-overflow-tooltip>
                   <template slot-scope="props">
                     {{ props.row.args || 'null' }}
@@ -133,33 +133,32 @@
 
     <!--  step3  -->
     <el-collapse-transition>
-      <el-row style="margin-top: 10px" v-if="stepActive === 2">
+      <el-row v-if="stepActive === 2" style="margin-top: 10px">
         <el-card style="height: 70vh" header="事务详情">
           <el-row>
             <el-col>
               <el-table
-                  ref="transactionDetailTable"
-                  :data="transactionDetail"
-                  :row-key="(row) => {return row.xaTransactionID}"
-                  :expand-row-keys="[transactionForm.transactionID]"
-                  fit
-                  stripe
-                  height="calc(70vh - 140px)"
-                  style="width: 100%;"
+                ref="transactionDetailTable"
+                :data="transactionDetail"
+                :row-key="(row) => {return row.xaTransactionID}"
+                :expand-row-keys="[transactionForm.transactionID]"
+                fit
+                stripe
+                height="calc(70vh - 140px)"
+                style="width: 100%;"
               >
                 <el-table-column min-width="60px" label="开始时间">
                   <template slot-scope="scope">
                     <span>{{ scope.row.startTimestamp | formatDate }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px"></el-table-column>
-                <el-table-column prop="username" label="跨链账户" min-width="50px"></el-table-column>
-                <el-table-column prop="status" min-width="50px" label="事务状态"></el-table-column>
+                <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" />
+                <el-table-column prop="username" label="跨链账户" min-width="50px" />
+                <el-table-column prop="status" min-width="50px" label="事务状态" />
                 <el-table-column min-width="80px" label="锁定资源">
                   <template slot-scope="scope">
-                    <div v-for="path in scope.row.paths">
-                      {{ path }}
-                      <br/>
+                    <div v-for="path in scope.row.paths" :key="path">
+                      {{ path }}<br>
                     </div>
                   </template>
                 </el-table-column>
@@ -167,15 +166,15 @@
                   <template slot-scope="props">
                     <el-table stripe fit style="width: 100%;" :data="props.row.xaTransactionSteps" tooltip-effect="light">
                       <el-table-column prop="timestamp" label="执行时间" min-width="75px" show-overflow-tooltip>
-                        <template slot-scope="props">
-                          <span>{{ props.row.timestamp | formatDate }}</span>
+                        <template slot-scope="step">
+                          <span>{{ step.row.timestamp | formatDate }}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="username" label="跨链账户" min-width="60px"></el-table-column>
-                      <el-table-column prop="path" label="资源路径" min-width="50px"></el-table-column>
-                      <el-table-column prop="method" label="调用方法" min-width="50px"></el-table-column>
-                      <el-table-column prop="args" label="调用参数" min-width="80px" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip />
+                      <el-table-column prop="username" label="跨链账户" min-width="60px" />
+                      <el-table-column prop="path" label="资源路径" min-width="50px" />
+                      <el-table-column prop="method" label="调用方法" min-width="50px" />
+                      <el-table-column prop="args" label="调用参数" min-width="80px" show-overflow-tooltip />
                     </el-table>
                   </template>
                 </el-table-column>
@@ -187,17 +186,18 @@
               <el-button-group>
                 <el-button @click="stepActive = 1"> 返回上一步</el-button>
                 <el-button
-                    type="primary"
-                    icon="el-icon-check"
-                    @click="commitTransaction"
-                    v-loading.fullscreen.lock="loading">
+                  v-loading.fullscreen.lock="loading"
+                  type="primary"
+                  icon="el-icon-check"
+                  @click="commitTransaction"
+                >
                   提交事务
                 </el-button>
                 <el-button
-                    type="primary"
-                    icon="el-icon-refresh-left"
-                    @click="rollbackTransaction"
-                    v-loading.fullscreen.lock="loading"
+                  v-loading.fullscreen.lock="loading"
+                  type="primary"
+                  icon="el-icon-refresh-left"
+                  @click="rollbackTransaction"
                 >回滚事务
                 </el-button>
               </el-button-group>
@@ -209,15 +209,15 @@
 
     <!--  done  -->
     <el-collapse-transition>
-      <el-row style="margin-top: 10px" v-if="stepActive === 3">
+      <el-row v-if="stepActive === 3" style="margin-top: 10px">
         <el-card>
           <el-row :gutter="24">
             <el-col :span="2" :offset="11">
               <el-image
-                  style="width: 100%; height: 100%"
-                  :src="require('@/assets/check-pass.svg')"
-                  fit="fill"
-              ></el-image>
+                style="width: 100%; height: 100%"
+                :src="require('@/assets/check-pass.svg')"
+                fit="fill"
+              />
             </el-col>
           </el-row>
           <el-row>
@@ -229,14 +229,14 @@
             <el-col style="text-align: center; margin-top: 20px">
               <el-button-group>
                 <el-button
-                    type="primary"
-                    icon="el-icon-circle-plus-outline"
-                    @click="reloadTransaction"
+                  type="primary"
+                  icon="el-icon-circle-plus-outline"
+                  @click="reloadTransaction"
                 >再开启一段事务
                 </el-button>
                 <el-button
-                    icon="el-icon-search"
-                    @click="() => {this.$router.push({ path: 'xaTransactionList' })}"
+                  icon="el-icon-search"
+                  @click="() => {this.$router.push({ path: 'xaTransactionList' })}"
                 >查看事务列表
                 </el-button>
               </el-button-group>
@@ -247,24 +247,24 @@
     </el-collapse-transition>
 
     <!--  button  -->
-    <el-card style="margin-top: 10px" v-if="stepActive < 2 ">
+    <el-card v-if="stepActive < 2 " style="margin-top: 10px">
       <el-row :gutter="24" style="text-align: center;">
         <el-button-group>
           <el-button
-              type="primary"
-              icon="el-icon-arrow-left"
-              :disabled="this.stepActive!==2"
-              @click="() => (this.stepActive = 1)"
+            type="primary"
+            icon="el-icon-arrow-left"
+            :disabled="stepActive!==2"
+            @click="_ => (stepActive = 1)"
           >{{ stepBackBtnText }}
           </el-button>
           <el-button
-              type="primary"
-              :disabled="this.stepActive === 2 || this.stepActive === 3"
-              @click="stepBtnClick"
-              v-loading.fullscreen.lock="loading"
+            v-loading.fullscreen.lock="loading"
+            type="primary"
+            :disabled="stepActive === 2 || stepActive === 3"
+            @click="stepBtnClick"
           >
             {{ stepForwardBtnText }}
-            <i class="el-icon-arrow-right el-icon--right"></i>
+            <i class="el-icon-arrow-right el-icon--right" />
           </el-button>
         </el-button-group>
       </el-row>
@@ -286,6 +286,13 @@ export default {
   components: {
     TransactionForm,
     ResourceTransfer
+  },
+  filters: {
+    formatDate(time) {
+      time = time * 1000
+      const date = new Date(time)
+      return parseTime(date)
+    }
   },
   data() {
     return {
@@ -318,9 +325,6 @@ export default {
       submitResponse: null
     }
   },
-  created() {
-    this.loadXATransaction(this.$route.query.isExec)
-  },
   watch: {
     stepActive(value) {
       if (value === 1) {
@@ -330,12 +334,8 @@ export default {
       }
     }
   },
-  filters: {
-    formatDate(time) {
-      time = time * 1000
-      const date = new Date(time)
-      return parseTime(date)
-    }
+  created() {
+    this.loadXATransaction(this.$route.query.isExec)
   },
   methods: {
     stepBtnClick() {
@@ -350,6 +350,7 @@ export default {
     },
     loadXATransaction(isExec) {
       const xaID = this.$store.getters.transactionID
+      console.log(this.$store.getters)
       if (xaID !== null && typeof (isExec) === 'undefined') {
         const h = this.$createElement
         this.$msgbox({
@@ -360,6 +361,7 @@ export default {
             h('li', { style: 'font-weight: bold; margin-left:10px' }, '锁定资源: '),
             h('ol', { script: '' }, this.$store.getters.XAPaths.join(',  \n'))
           ]),
+          showClose: false,
           closeOnClickModal: false,
           closeOnPressEscape: false,
           showCancelButton: true,
@@ -414,7 +416,7 @@ export default {
       this.pageObject.currentPage = value
       this.refresh()
     },
-    onChainClick(path, data) {
+    onChainClick(path) {
       this.currentChain = path
       this.resourceData = []
       this.refresh()
@@ -444,7 +446,7 @@ export default {
         }
         if (validate) {
           this.loading = true
-          var chosenData = []
+          const chosenData = []
           for (const data of this.toResourceData) {
             chosenData.push(data.path)
           }
@@ -507,7 +509,7 @@ export default {
       if (response.errorCode !== 0 || response.data.errorCode !== 0) {
         this.submitResponse = null
 
-        var code, message
+        let code, message
         if (response.errorCode !== 0) {
           code = response.errorCode
           message = response.message

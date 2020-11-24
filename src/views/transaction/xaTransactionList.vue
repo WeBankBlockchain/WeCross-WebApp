@@ -12,81 +12,79 @@
             :data="xaList"
             fit
             height="calc(90vh - 130px)"
-            @expand-change="onExpandChange"
             style="width: 100%;"
+            @expand-change="onExpandChange"
           >
             <el-table-column label="开始时间" min-width="60px">
               <template slot-scope="scope">
                 <span>{{ scope.row.timestamp | formatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px"></el-table-column>
-            <el-table-column prop="username" label="跨链账户" min-width="50px"></el-table-column>
-            <el-table-column prop="status" label="事务状态" min-width="50px"></el-table-column>
+            <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" />
+            <el-table-column prop="username" label="跨链账户" min-width="50px" />
+            <el-table-column prop="status" label="事务状态" min-width="50px" />
             <el-table-column label="锁定资源" min-width="60px">
               <template slot-scope="scope">
-                <li style="list-style-type: none" v-for="path in scope.row.paths">{{ path }}</li>
+                <li v-for="path in scope.row.paths" :key="path" style="list-style-type: none">{{ path }}</li>
               </template>
             </el-table-column>
             <el-table-column type="expand" label="执行步骤" width="80px">
               <template slot-scope="scope">
-                  <el-form inline class="table-expand" v-loading="loadingXA">
-                    <el-table
-                      ref="singleTable"
-                      :data="xaTransaction ? xaTransaction.xaTransactionSteps : null"
-                      fit
-                      highlight-current-row
-                      tooltip-effect="light"
-                      class="customer-table"
-                    >
-                      <el-table-column label="执行时间" min-width="70px">
-                        <template slot-scope="scope">
-                          <span>{{ scope.row.timestamp | formatDate }}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="70px"></el-table-column>
-                      <el-table-column prop="username" label="跨链账户" min-width="60px"></el-table-column>
-                      <el-table-column prop="path" label="资源路径" min-width="80px"></el-table-column>
-                      <el-table-column prop="method" label="调用方法" min-width="60px"></el-table-column>
-                      <el-table-column
-                        prop="args"
-                        label="调用参数"
-                        min-width="60px"
-                        show-overflow-tooltip
-                      >
-                      </el-table-column>
-                    </el-table>
-                    <el-row style="margin-top: 20px">
-                      <el-form>
-                        <el-form-item label="提交时间：" v-if="scope.row.status === 'committed'">
-                          <span>
-                            {{
+                <el-form v-loading="loadingXA" inline class="table-expand">
+                  <el-table
+                    ref="singleTable"
+                    :data="xaTransaction ? xaTransaction.xaTransactionSteps : null"
+                    fit
+                    highlight-current-row
+                    tooltip-effect="light"
+                  >
+                    <el-table-column label="执行时间" min-width="70px">
+                      <template slot-scope="step">
+                        <span>{{ step.row.timestamp | formatDate }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="70px" />
+                    <el-table-column prop="username" label="跨链账户" min-width="60px" />
+                    <el-table-column prop="path" label="资源路径" min-width="80px" />
+                    <el-table-column prop="method" label="调用方法" min-width="60px" />
+                    <el-table-column
+                      prop="args"
+                      label="调用参数"
+                      min-width="60px"
+                      show-overflow-tooltip
+                    />
+                  </el-table>
+                  <el-row style="margin-top: 20px">
+                    <el-form>
+                      <el-form-item v-if="scope.row.status === 'committed'" label="提交时间：">
+                        <span>
+                          {{
                             xaTransaction ? ( xaTransaction.commitTimestamp ) : null | formatDate
-                            }}
-                          </span>
-                        </el-form-item>
-                        <el-form-item label="回滚时间：" v-if="scope.row.status === 'rolledback'">
-                          <span>
-                            {{
-                              xaTransaction ? ( xaTransaction.rollbackTimestamp ) : null | formatDate
-                            }}
-                          </span>
-                        </el-form-item>
-                        <el-form-item>
-                          <el-button
-                            type="primary"
-                            v-if="scope.row.status === 'processing'"
-                            @click="
-                              onExecXATransaction(
-                                xaTransaction.xaTransactionID,
-                                xaTransaction.paths
-                              )
-                            "
-                          >继续执行</el-button>
-                        </el-form-item>
-                      </el-form>
-                    </el-row>
-                  </el-form>
+                          }}
+                        </span>
+                      </el-form-item>
+                      <el-form-item v-if="scope.row.status === 'rolledback'" label="回滚时间：">
+                        <span>
+                          {{
+                            xaTransaction ? ( xaTransaction.rollbackTimestamp ) : null | formatDate
+                          }}
+                        </span>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button
+                          v-if="scope.row.status === 'processing'"
+                          type="primary"
+                          @click="
+                            onExecXATransaction(
+                              xaTransaction.xaTransactionID,
+                              xaTransaction.paths
+                            )
+                          "
+                        >继续执行</el-button>
+                      </el-form-item>
+                    </el-form>
+                  </el-row>
+                </el-form>
               </template>
             </el-table-column>
           </el-table>
@@ -104,7 +102,7 @@
             @click="handleNextClick"
           >
             下一页
-            <i class="el-icon-right"></i>
+            <i class="el-icon-right" />
           </el-button>
         </el-row>
       </el-card>
@@ -114,12 +112,11 @@
 
 <script>
 
-import { parseTime } from '@/utils/index'
+import { parseTime } from '@/utils'
 import { getXATransaction, listXATransactions } from '@/api/transaction'
 
 export default {
   name: 'XATransactionList',
-  props: {},
 
   filters: {
     formatDate(time) {
@@ -128,6 +125,7 @@ export default {
       return parseTime(date)
     }
   },
+  props: {},
   data() {
     return {
       loadingList: false,
@@ -204,7 +202,7 @@ export default {
         this.loadingList = false
         console.log('[listXATransactions] response => ' + JSON.stringify(response))
 
-        if (typeof response.errorCode === undefined || response.errorCode !== 0) {
+        if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
           this.$message({
             type: 'error',
             message: '查询事务列表失败: ' + JSON.stringify(response)
@@ -229,7 +227,7 @@ export default {
       this.$store.commit('transaction/SET_TRANSACTION', { transactionID: xaTID, paths: xaPaths })
       this.$router.push({ path: 'xaTransaction', query: { isExec: 'true' }})
     },
-    onExpandChange(row, expandedRows) {
+    onExpandChange(row) {
       this.fetchXATransaction(row.xaTransactionID, row.paths)
     },
     fetchXATransaction(xaTransactionID, paths) {
@@ -246,7 +244,7 @@ export default {
       }).then(response => {
         console.log('[getXATransaction] response => ' + JSON.stringify(response))
         this.loadingXA = false
-        if (typeof response.errorCode === undefined || response.errorCode !== 0) {
+        if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
           this.$message({
             type: 'error',
             message: '查询事务详情失败: ' + JSON.stringify(response)
@@ -279,20 +277,10 @@ export default {
         ' offsets: ' +
         JSON.stringify(this.offsets)
       )
-
       // next page
-      if (this.isFinished) {
-        this.nextClickDisable = true
-      } else {
-        this.nextClickDisable = false
-      }
-
+      this.nextClickDisable = this.isFinished
       // prev page
-      if (this.currentPage > 1) {
-        this.preClickDisable = false
-      } else {
-        this.preClickDisable = true
-      }
+      this.preClickDisable = this.currentPage <= 1
     }
   }
 }

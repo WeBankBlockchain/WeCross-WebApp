@@ -1,14 +1,14 @@
 <template>
   <transition name="el-fade-in-linear">
     <div v-show="show" class="app-container">
-      <el-card class="box-card">
+      <el-card>
         <el-form label-position="left" size="small" label-width="80px">
           <el-form-item label="跨链账户">
-            <el-tag v-bind:type="ua.admin ? 'warning': 'success'" ><span>{{ ua.username }}</span></el-tag>
+            <el-tag :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
             <el-button style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
           </el-form-item>
           <el-form-item label="公钥">
-            <el-input type="textarea" readonly autosize resize="none" v-model="ua.pubKey"></el-input>
+            <el-input v-model="ua.pubKey" type="textarea" readonly autosize resize="none" />
           </el-form-item>
         </el-form>
         <el-table
@@ -19,10 +19,7 @@
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           @row-click="showChainAccount"
         >
-          <el-table-column label="" width="30px">
-            <template slot-scope="">
-            </template>
-          </el-table-column>
+          <el-table-column label="" width="30px" />
           <el-table-column prop="type" label="链账户类型" width="180">
             <template slot-scope="scope">
               <el-tag type="info">{{ scope.row.type }}</el-tag>
@@ -35,8 +32,8 @@
           </el-table-column>
           <el-table-column prop="details" label="摘要" @click="showChainAccount(scope.row)">
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="light" content="点击查看详情" placement="top">
-              <div>{{ scope.row.details }}</div>
+              <el-tooltip effect="light" content="点击查看详情" placement="top">
+                <div>{{ scope.row.details }}</div>
               </el-tooltip>
             </template>
 
@@ -52,10 +49,10 @@
               </el-button>
               <el-button
                 v-else
-                @click.stop="querySetDefaultAccountByColum(scope.row)"
                 type="primary"
                 style="float: right"
                 size="small"
+                @click.stop="querySetDefaultAccountByColum(scope.row)"
               >
                 设为默认
               </el-button>
@@ -69,17 +66,16 @@
         :with-header="false"
         size="680px"
       >
-        <el-card class="box-card" style="height:100%">
+        <el-card style="height:100%">
           <div slot="header" class="clearfix">
             <span> 链账户 </span>
             <el-button
               v-if="!chainAccountDrawer.info.isDefault"
-              @click="querySetDefaultAccount()"
               style="float: right"
               type="primary"
               size="small"
-              >设为默认账户</el-button
-            >
+              @click="querySetDefaultAccount()"
+            >设为默认账户</el-button>
           </div>
           <el-form label-position="top" size="small" label-width="80px">
             <el-form-item label="KeyID">
@@ -89,17 +85,18 @@
               <el-tag type="info">{{ chainAccountDrawer.info.type }}</el-tag>
             </el-form-item>
             <el-form-item label="Identity">
-              <el-tooltip class="item" effect="light" placement="bottom-start">
+              <el-tooltip effect="light" placement="bottom-start">
                 <div slot="content">含义：<br>FISCO BCOS：address<br> Fabric: 公钥证书 </div>
-                <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.identity"></el-input>
+                <el-input v-model=" chainAccountDrawer.info.identity" type="textarea" readonly autosize resize="none" />
               </el-tooltip>
             </el-form-item>
             <el-form-item label="公钥">
-              <el-input type="textarea" readonly autosize resize="none" v-model=" chainAccountDrawer.info.pubKey"></el-input>
+              <el-input v-model=" chainAccountDrawer.info.pubKey" type="textarea" readonly autosize resize="none" />
             </el-form-item>
             <el-form-item label="私钥">
-              <el-button size="mini" class="primary" @click="chainAccountDrawer.showSec = !chainAccountDrawer.showSec" >查看 <i class="el-icon-chat-line-round"></i> </el-button>
-              <el-input v-if="chainAccountDrawer.showSec && chainAccountDrawer.show" type="textarea" readonly autosize show-password resize="none" v-model=" chainAccountDrawer.info.secKey" style="margin-top: 10px"></el-input>
+              <el-button size="mini" @click="chainAccountDrawer.showSec = !chainAccountDrawer.showSec">
+                查看 <i class="el-icon-chat-line-round" /> </el-button>
+              <el-input v-if="chainAccountDrawer.showSec && chainAccountDrawer.show" v-model=" chainAccountDrawer.info.secKey" type="textarea" readonly autosize show-password resize="none" style="margin-top: 10px" />
             </el-form-item>
             <el-form-item label="其它">
               <span>{{ chainAccountDrawer.info.ext }}</span>
@@ -108,136 +105,138 @@
         </el-card>
       </el-drawer>
       <el-drawer
-          :visible.sync="addChainAccountDrawer.show"
-          :direction="addChainAccountDrawer.direction"
-          :with-header="false"
-          size="680px"
+        :visible.sync="addChainAccountDrawer.show"
+        :direction="addChainAccountDrawer.direction"
+        :with-header="false"
+        size="680px"
       >
-        <el-card class="box-card"  style="height:100%">
-            <div slot="header" class="clearfix">
-              <span> 添加链账户 </span>
-            </div>
-          <el-form label-position="top" size="small" :rules="addChainAccountDrawerRules" ref="addChainAccountDrawer" :model="addChainAccountDrawer.params" >
+        <el-card style="height:100%">
+          <div slot="header" class="clearfix">
+            <span> 添加链账户 </span>
+          </div>
+          <el-form ref="addChainAccountDrawer" label-position="top" size="small" :rules="addChainAccountDrawerRules" :model="addChainAccountDrawer.params">
             <el-form-item prop="type">
               <label><div><span>链账户类型</span></div></label>
               <el-select
-                style="width:200px;margin-top:10px"
                 v-model="addChainAccountDrawer.params.type"
+                style="width:200px;margin-top:10px"
                 placeholder="请选择链账户类型"
                 @change="addChainAccountDrawer.params.pubKey = undefined; addChainAccountDrawer.params.secKey = undefined; addChainAccountDrawer.params.ext = undefined; addChainAccountDrawer.params.isDefault = false "
               >
-                <el-option label="FISCO BCOS 2.0" value="BCOS2.0"></el-option>
-                <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0"></el-option>
-                <el-option label="HyperLedger Fabric 1.4" value="Fabric1.4"></el-option>
+                <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
+                <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0" />
+                <el-option label="HyperLedger Fabric 1.4" value="Fabric1.4" />
               </el-select>
             </el-form-item>
 
             <div v-if="addChainAccountDrawer.params.type === 'BCOS2.0'">
-              <el-form-item  prop="secKey">
+              <el-form-item prop="secKey">
                 <label>
                   <span>私钥</span>
                 </label>
                 <el-upload
                   style="float:right"
-                  class="upload-demo"
                   action=""
                   accept=".pem"
                   :show-file-list="false"
                   :file-list="pubKeyFileList"
                   :http-request="uploadECDSASecPemHandler"
-                  :auto-upload="true">
-                  <el-button-group  slot="trigger" >
-                  <el-button  type="primary">上传</el-button>
-                  <el-button
-                  @click.stop="generateECDSASecPem()"
-                  size="small"
-                  type="primary">生成</el-button>
+                  :auto-upload="true"
+                >
+                  <el-button-group slot="trigger">
+                    <el-button type="primary">上传</el-button>
+                    <el-button
+                      size="small"
+                      type="primary"
+                      @click.stop="generateECDSASecPem()"
+                    >生成</el-button>
                   </el-button-group>
                 </el-upload>
                 <el-input
+                  v-model="addChainAccountDrawer.params.secKey"
                   :change="buildECDSAData()"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
                   style="margin-top:10px"
                   autosize
-                  v-model="addChainAccountDrawer.params.secKey">
-                </el-input>
+                />
               </el-form-item>
 
-              <el-form-item label="公钥" v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'">
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" label="公钥">
                 <el-input
+                  v-model="addChainAccountDrawer.params.pubKey"
                   readonly
                   type="textarea"
                   :rows="2"
                   placeholder=""
                   autosize
-                  v-model="addChainAccountDrawer.params.pubKey">
-                </el-input>
+                />
               </el-form-item>
 
-              <el-form-item label="address" v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'">
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'" label="address">
                 <el-input
+                  v-model="addChainAccountDrawer.params.ext"
                   readonly
                   placeholder=""
-                  v-model="addChainAccountDrawer.params.ext"
-                  clearable>
-                </el-input>
+                  clearable
+                />
               </el-form-item>
 
             </div>
 
-            <div  v-if="addChainAccountDrawer.params.type === 'GM_BCOS2.0'">
-              <el-form-item prop="secKey" >
+            <div v-if="addChainAccountDrawer.params.type === 'GM_BCOS2.0'">
+              <el-form-item prop="secKey">
                 <label>
                   <span>私钥</span>
                 </label>
                 <el-upload
                   style="float:right"
-                  class="upload-demo"
                   action=""
                   accept=".pem"
                   :show-file-list="false"
                   :file-list="pubKeyFileList"
                   :http-request="uploadSM2SecPemHandler"
-                  :auto-upload="true">
+                  :auto-upload="true"
+                >
                   <el-button-group slot="trigger">
-                    <el-button  type="primary">上传</el-button>
+                    <el-button type="primary">上传</el-button>
                     <el-button
-                    size="small"
-                    @click.stop="generateSM2SecPem()"
-                    type="primary">生成</el-button>
+                      size="small"
+                      type="primary"
+                      @click.stop="generateSM2SecPem()"
+                    >生成</el-button>
                   </el-button-group>
                 </el-upload>
                 <el-input
+                  v-model="addChainAccountDrawer.params.secKey"
                   :change="buildSM2Data()"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
                   autosize
                   style="margin-top:10px"
-                  v-model="addChainAccountDrawer.params.secKey">
-                </el-input>
+                />
               </el-form-item>
 
-              <el-form-item label="公钥" v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'">
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" label="公钥">
                 <el-input
+                  v-model="addChainAccountDrawer.params.pubKey"
                   readonly
                   type="textarea"
                   :rows="2"
                   placeholder=""
                   autosize
-                  v-model="addChainAccountDrawer.params.pubKey">
-                </el-input>
+                />
               </el-form-item>
 
-              <el-form-item label="address" v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'">
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'" label="address">
                 <el-input
+                  v-model="addChainAccountDrawer.params.ext"
                   readonly
                   placeholder=""
-                  v-model="addChainAccountDrawer.params.ext"
-                  clearable>
-                </el-input>
+                  clearable
+                />
               </el-form-item>
             </div>
 
@@ -248,23 +247,23 @@
                 </label>
                 <el-upload
                   style="float:right"
-                  class="upload-demo"
                   action=""
                   accept=".key,.pem"
                   :show-file-list="false"
                   :file-list="pubKeyFileList"
                   :http-request="uploadSecKeyHandler"
-                  :auto-upload="true">
+                  :auto-upload="true"
+                >
                   <el-button slot="trigger" type="primary">上传</el-button>
                 </el-upload>
                 <el-input
+                  v-model="addChainAccountDrawer.params.secKey"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
                   autosize
                   style="margin-top:10px"
-                  v-model="addChainAccountDrawer.params.secKey">
-                </el-input>
+                />
               </el-form-item>
 
               <el-form-item v-if="addChainAccountDrawer.params.type" prop="pubKey">
@@ -273,48 +272,48 @@
                 </label>
                 <el-upload
                   style="float:right"
-                  class="upload-demo"
                   action=""
                   accept=".crt"
                   :show-file-list="false"
                   :file-list="pubKeyFileList"
                   :http-request="uploadPubKeyCertHandler"
-                  :auto-upload="true">
+                  :auto-upload="true"
+                >
                   <el-button slot="trigger" type="primary">上传</el-button>
                 </el-upload>
                 <el-input
+                  v-model="addChainAccountDrawer.params.pubKey"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
                   autosize
                   style="margin-top:10px"
-                  v-model="addChainAccountDrawer.params.pubKey">
-                </el-input>
+                />
               </el-form-item>
 
               <el-form-item v-if="addChainAccountDrawer.params.type === 'Fabric1.4'" prop="ext">
                 <label><div><span>MSPID</span></div></label>
                 <el-input
+                  v-model="addChainAccountDrawer.params.ext"
                   style="margin-top:10px"
                   placeholder="请输入"
-                  v-model="addChainAccountDrawer.params.ext"
-                  clearable>
-                </el-input>
+                  clearable
+                />
               </el-form-item>
 
             </div>
 
             <el-form-item v-if="addChainAccountDrawer.params.type">
               <label><div><span>设为默认账户</span></div></label>
-              <el-switch style="margin-top:10px" v-model="addChainAccountDrawer.params.isDefault"></el-switch>
+              <el-switch v-model="addChainAccountDrawer.params.isDefault" style="margin-top:10px" />
             </el-form-item>
           </el-form>
           <div class="clearfix" style="vertical-align: bottom;">
-              <el-button
-                @click="queryAddChainAccount('addChainAccountDrawer')"
-                style="float: right;"
-                type="primary"
-                >确认</el-button>
+            <el-button
+              style="float: right;"
+              type="primary"
+              @click="queryAddChainAccount('addChainAccountDrawer')"
+            >确认</el-button>
           </div>
         </el-card>
       </el-drawer>
@@ -323,10 +322,8 @@
 </template>
 <script>
 import { MessageBox } from 'element-ui'
-import { listAccount } from '@/api/ua.js'
-import { setDefaultAccount } from '@/api/ua.js'
-import { addChainAccount } from '@/api/ua.js'
-import { pem, ecdsa, sm2 } from '@/utils/pem.js'
+import { addChainAccount, listAccount, setDefaultAccount } from '@/api/ua.js'
+import { ecdsa, pem, sm2 } from '@/utils/pem.js'
 
 export default {
   name: 'AccountAdmin',
@@ -412,6 +409,10 @@ export default {
       }
     }
   },
+
+  created() {
+    this.getUA()
+  },
   methods: {
     getUA() {
       this.show = false
@@ -434,7 +435,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        var loadingText = 'Loading'
+        const loadingText = 'Loading'
         const loading = this.$loading({
           lock: true,
           text: loadingText
@@ -469,7 +470,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            var loadingText = 'Loading'
+            const loadingText = 'Loading'
             const loading = this.$loading({
               lock: true,
               text: loadingText
@@ -515,74 +516,65 @@ export default {
     generateSM2SecPem() {
       this.addChainAccountDrawer.params.secKey = sm2.generateSecPem()
     }, uploadECDSASecPemHandler(params) {
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onload = (event) => {
-        var key = event.target.result
-        this.addChainAccountDrawer.params.secKey = key
+        this.addChainAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
     },
     uploadSM2SecPemHandler(params) {
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onload = (event) => {
-        var key = event.target.result
-        this.addChainAccountDrawer.params.secKey = key
+        this.addChainAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
     },
     buildECDSAData() {
-      var key = this.addChainAccountDrawer.params.secKey
+      const key = this.addChainAccountDrawer.params.secKey
       if (typeof (key) === 'undefined' || !ecdsa.isSecPem(key)) {
         this.addChainAccountDrawer.params.pubKey = undefined
         this.addChainAccountDrawer.params.ext = undefined
         return
       }
 
-      var data = ecdsa.build(key)
+      const data = ecdsa.build(key)
 
       this.addChainAccountDrawer.params.pubKey = data.pubPem
       this.addChainAccountDrawer.params.ext = data.address
     },
     buildSM2Data() {
-      var key = this.addChainAccountDrawer.params.secKey
+      const key = this.addChainAccountDrawer.params.secKey
       if (typeof (key) === 'undefined' || !sm2.isSecPem(key)) {
         this.addChainAccountDrawer.params.pubKey = undefined
         this.addChainAccountDrawer.params.ext = undefined
         return
       }
 
-      var data = sm2.build(key)
+      const data = sm2.build(key)
 
       this.addChainAccountDrawer.params.pubKey = data.pubPem
       this.addChainAccountDrawer.params.ext = data.address
     },
     uploadPubKeyCertHandler(params) {
       console.log('uploadPubKeyCertHandler')
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onload = (event) => {
-        var key = event.target.result
-
-        this.addChainAccountDrawer.params.pubKey = key
+        this.addChainAccountDrawer.params.pubKey = event.target.result
       }
       reader.readAsText(params.file)
     },
     uploadSecKeyHandler(params) {
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onload = (event) => {
-        var key = event.target.result
-        this.addChainAccountDrawer.params.secKey = key
+        this.addChainAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
     }
-  },
-
-  created() {
-    this.getUA()
   }
 }
 
 function buildChainDetails(chainAccount) {
-  var details = ''
+  let details = ''
   details +=
     chainAccount.type +
     '---' +
@@ -595,16 +587,17 @@ function buildChainDetails(chainAccount) {
 }
 
 function buildChainAccountTable(ua) {
-  var localChainAccounts = []
+  let chainAccount
+  const localChainAccounts = []
 
   // build table requirements
-  for (var chainAccount of ua.chainAccounts) {
+  for (chainAccount of ua.chainAccounts) {
     chainAccount.details = buildChainDetails(chainAccount)
     chainAccount.children = []
   }
 
   // add default account
-  var id = 1
+  let id = 1
   for (chainAccount of ua.chainAccounts) {
     if (chainAccount.isDefault === true) {
       chainAccount.id = id++
@@ -616,7 +609,7 @@ function buildChainAccountTable(ua) {
   // add non-default to children
   for (chainAccount of ua.chainAccounts) {
     if (chainAccount.isDefault === false) {
-      var defaultChainAccount = localChainAccounts.find(
+      const defaultChainAccount = localChainAccounts.find(
         (u) => u.type === chainAccount.type
       )
       if (typeof (defaultChainAccount) !== 'undefined') {

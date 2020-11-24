@@ -9,35 +9,35 @@
 
         <!-- transfer left panel -->
         <div class="transfer-main">
-          <el-input placeholder="输入关键字进行过滤" v-model="filterFrom" size="small" class="filter-tree"></el-input>
+          <el-input v-model="filterFrom" placeholder="输入关键字进行过滤" size="small" class="filter-tree" />
           <el-tree
-              ref="from-tree"
-              lazy
-              node-key="key"
-              :load="leftLoadNode"
-              :props="defaultProps"
-              highlight-current
-              :filter-node-method="filterNodeFrom"
-              @node-click="onChainClick"
-          ></el-tree>
+            ref="from-tree"
+            lazy
+            node-key="key"
+            :load="leftLoadNode"
+            :props="defaultProps"
+            highlight-current
+            :filter-node-method="filterNodeFrom"
+            @node-click="onChainClick"
+          />
         </div>
       </div>
       <div class="transfer-left-table">
         <div class="transfer-main">
-        <el-table
+          <el-table
+            ref="finderTable"
             stripe
             tooltip-effect="dark"
-            ref="finderTable"
             :data="tableShowData"
             style="height: calc(100% - 34px)"
             @selection-change="handleSelectionChange"
-        >
-          <el-table-column fixed width="42px" type="selection"></el-table-column>
-          <el-table-column label="可选资源路径" show-overflow-tooltip>
-            <template slot-scope="scope">{{ scope.row.path }}</template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
+          >
+            <el-table-column fixed width="42px" type="selection" />
+            <el-table-column label="可选资源路径" show-overflow-tooltip>
+              <template slot-scope="scope">{{ scope.row.path }}</template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
             small
             :pager-count="5"
             :page-size="pageObject.pageSize"
@@ -48,7 +48,7 @@
             @current-change="setPage"
             @prev-click="prevPage"
             @next-click="nextPage"
-        ></el-pagination>
+          />
         </div>
       </div>
     </div>
@@ -56,16 +56,16 @@
     <div class="transfer-center">
       <template>
         <p class="transfer-center-item">
-          <el-button @click="addToAims" :disabled="from_disabled">
+          <el-button :disabled="from_disabled" @click="addToAims">
             {{ "添加" }}
-            <i class="el-icon-arrow-right"></i>
+            <i class="el-icon-arrow-right" />
           </el-button>
         </p>
         <p class="transfer-center-item">
           <el-button
-              @click="removeToSource"
-              :disabled="to_disabled"
-              icon="el-icon-arrow-left"
+            :disabled="to_disabled"
+            icon="el-icon-arrow-left"
+            @click="removeToSource"
           >{{ "移除" }}
           </el-button>
         </p>
@@ -75,22 +75,22 @@
     <div class="transfer-right">
       <h3 class="transfer-title">
         <el-checkbox
-            :indeterminate="to_is_indeterminate"
-            v-model="to_check_all"
-            @change="toAllBoxChange"
-        ></el-checkbox>
+          v-model="to_check_all"
+          :indeterminate="to_is_indeterminate"
+          @change="toAllBoxChange"
+        />
         <span>已选资源列表</span>
       </h3>
       <!-- transfer right panel -->
       <div class="transfer-main">
-        <el-input placeholder="输入关键字进行过滤" v-model="filterTo" size="small" class="filter-tree"></el-input>
+        <el-input v-model="filterTo" placeholder="输入关键字进行过滤" size="small" class="filter-tree" />
         <el-checkbox-group v-model="to_check_keys" class="el-transfer-panel__list">
           <el-checkbox
-              class="el-transfer-panel__item"
-              :label="item.path"
-              :key="item.path"
-              v-for="item in toDataFilter"
-          ></el-checkbox>
+            v-for="item in toDataFilter"
+            :key="item.path"
+            class="el-transfer-panel__item"
+            :label="item.path"
+          />
         </el-checkbox-group>
       </div>
     </div>
@@ -104,21 +104,6 @@ import { uniqueObjectArray } from '@/utils'
 
 export default {
   name: 'ResourceTransfer',
-  data() {
-    return {
-      to_is_indeterminate: false,
-      to_check_all: false,
-      from_disabled: true,
-      to_disabled: true,
-      from_check_keys: [],
-      to_check_keys: [],
-      filterFrom: '',
-      filterTo: '',
-      tableShowData: [],
-      toShowData: this.to_data,
-      toDataFilter: []
-    }
-  },
   props: {
     width: {
       type: String,
@@ -143,7 +128,7 @@ export default {
         }
       }
     },
-    to_data: {
+    toData: {
       type: Array,
       default: () => []
     },
@@ -157,6 +142,47 @@ export default {
           isLeaf: 'hasChildren'
         }
       }
+    }
+  },
+  data() {
+    return {
+      to_is_indeterminate: false,
+      to_check_all: false,
+      from_disabled: true,
+      to_disabled: true,
+      from_check_keys: [],
+      to_check_keys: [],
+      filterFrom: '',
+      filterTo: '',
+      tableShowData: [],
+      toShowData: this.toData,
+      toDataFilter: []
+    }
+  },
+  watch: {
+    resourceData(val) {
+      this.tableShowData = val
+    },
+    from_check_keys(val) {
+      this.from_disabled = (val.length === 0)
+    },
+    to_check_keys(val) {
+      if (val.length > 0) {
+        this.to_disabled = false
+        this.to_is_indeterminate = val.length < this.toShowData.length
+        this.to_check_all = val.length === this.toShowData.length
+      } else {
+        this.to_disabled = true
+        this.to_is_indeterminate = false
+        this.to_check_all = false
+      }
+    },
+    filterFrom(val) {
+      this.$refs['from-tree'].filter(val)
+    },
+    filterTo(val) {
+      this.toDataFilter = this.toShowData
+      this.toFilter(val)
     }
   },
   created() {
@@ -183,7 +209,7 @@ export default {
       this.from_check_keys = []
 
       this.$emit('add-button')
-      this.$emit('update:to_data', this.toShowData)
+      this.$emit('update:toData', this.toShowData)
     },
     removeToSource() {
       for (const toDatum of this.to_check_keys) {
@@ -197,12 +223,12 @@ export default {
       this.toFilter(this.filterTo)
 
       this.$emit('remove-button')
-      this.$emit('update:to_data', this.toShowData)
+      this.$emit('update:toData', this.toShowData)
     },
     handleSelectionChange(val) {
       this.from_check_keys = val
     },
-    onChainClick(data, node, self) {
+    onChainClick(data) {
       if (data.type === 'zone') {
         this.$emit('zone-click', data.key)
       } else if (data.type === 'chain') {
@@ -297,32 +323,6 @@ export default {
       this.toDataFilter = this.toDataFilter.filter((item) => {
         return item.path.indexOf(value) > -1
       })
-    }
-  },
-  watch: {
-    resourceData(val) {
-      this.tableShowData = val
-    },
-    from_check_keys(val) {
-      this.from_disabled = (val.length === 0)
-    },
-    to_check_keys(val) {
-      if (val.length > 0) {
-        this.to_disabled = false
-        this.to_is_indeterminate = val.length < this.toShowData.length
-        this.to_check_all = val.length === this.toShowData.length
-      } else {
-        this.to_disabled = true
-        this.to_is_indeterminate = false
-        this.to_check_all = false
-      }
-    },
-    filterFrom(val) {
-      this.$refs['from-tree'].filter(val)
-    },
-    filterTo(val) {
-      this.toDataFilter = this.toShowData
-      this.toFilter(val)
     }
   }
 }

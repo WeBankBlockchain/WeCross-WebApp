@@ -4,9 +4,9 @@
       <el-card>
         <div style="height: 500px;">
           <el-steps direction="vertical" :active="1">
-            <el-step title="基本信息" description="配置跨链分区、监听端口信息"></el-step>
-            <el-step title="身份服务" description="配置身份服务的IP端口信息"></el-step>
-            <el-step title="下载安装包" description="下载完成的跨链路由安装包"></el-step>
+            <el-step title="基本信息" description="配置跨链分区、监听端口信息" />
+            <el-step title="身份服务" description="配置身份服务的IP端口信息" />
+            <el-step title="下载安装包" description="下载完成的跨链路由安装包" />
           </el-steps>
         </div>
       </el-card>

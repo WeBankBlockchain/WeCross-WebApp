@@ -1,48 +1,49 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-page-header @back="() => {this.$router.push({ path: 'resourceList' })}" content="资源部署页面" title="资源管理">
-      </el-page-header>
-      <el-divider></el-divider>
+      <el-page-header content="资源部署页面" title="资源管理" @back="() => {this.$router.push({ path: 'resourceList' })}" />
+      <el-divider />
       <el-row>
         <el-col :span="18" :offset="2">
           <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
             <el-form-item label="选择链类型：">
               <el-select v-model="form.stubType" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
                 <el-option-group label="FISCO BCOS">
-                  <el-option label="FISCO BCOS 2.0" value="BCOS2.0"/>
-                  <el-option label="FISCO BCOS 2.0 国密版" value="GM_BCOS2.0"/>
+                  <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
+                  <el-option label="FISCO BCOS 2.0 国密版" value="GM_BCOS2.0" />
                 </el-option-group>
                 <el-option-group label="Hyperledger Fabric">
-                  <el-option label="Hyperledger Fabric 1.4" value="Fabric1.4"/>
+                  <el-option label="Hyperledger Fabric 1.4" value="Fabric1.4" />
                 </el-option-group>
               </el-select>
             </el-form-item>
             <el-form-item label="选择操作：" prop="method">
-              <el-select v-model="form.method" placeholder="选择操作类型" @change="methodChange" key="methodSelect">
+              <el-select key="methodSelect" v-model="form.method" placeholder="选择操作类型" @change="methodChange">
                 <el-option
-                    label="部署合约"
-                    value="deploy"
-                    v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
+                  v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')"
+                  label="部署合约"
+                  value="deploy"
+                >
                   <span style="float: left">部署合约</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">Deploy</span>
                 </el-option>
                 <el-option
-                    label="注册已有合约"
-                    value="register"
-                    v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
+                  v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')"
+                  label="注册已有合约"
+                  value="register"
+                >
                   <span style="float: left">注册已有合约</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">Register</span>
                 </el-option>
-                <el-option label="安装合约" value="install" v-if="form.stubType ==='Fabric1.4'">
+                <el-option v-if="form.stubType ==='Fabric1.4'" label="安装合约" value="install">
                   <span style="float: left">安装合约</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">Install</span>
                 </el-option>
-                <el-option label="实例化合约" value="instantiate" v-if="form.stubType ==='Fabric1.4'">
+                <el-option v-if="form.stubType ==='Fabric1.4'" label="实例化合约" value="instantiate">
                   <span style="float: left">实例化合约</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">Instantiate</span>
                 </el-option>
-                <el-option label="升级合约" value="upgrade" v-if="form.stubType ==='Fabric1.4'">
+                <el-option v-if="form.stubType ==='Fabric1.4'" label="升级合约" value="upgrade">
                   <span style="float: left">升级合约</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">Upgrade</span>
                 </el-option>
@@ -52,52 +53,57 @@
             <!-- BCOS -->
             <div v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
               <el-form-item
-                  label="资源路径："
-                  prop="appendPath">
+                label="资源路径："
+                prop="appendPath"
+              >
                 <el-input v-model="form.appendPath" placeholder="Path">
                   <template slot="prepend" style="padding: 5px">{{ form.prependPath }}</template>
                 </el-input>
               </el-form-item>
               <el-row type="flex">
-                  <el-form-item label="上传文件：">
-                    <el-upload
-                        class="upload-demo"
-                        ref="uploadContract"
-                        action=""
-                        accept=".zip"
-                        :file-list="fileList"
-                        :on-change="changeFile"
-                        :before-remove="beforeRemove"
-                        :http-request="uploadContractSourceHandler"
-                        :auto-upload="false">
-                      <div slot="tip" class="el-upload__tip">Tips: 上传合约文件打包的zip文件</div>
-                      <el-button slot="trigger">选取文件</el-button>
-                    </el-upload>
-                  </el-form-item>
-                  <el-form-item label="合约入口文件：" prop="chosenSolidity">
-                    <el-select v-model="form.chosenSolidity" placeholder="选择编译的合约文件">
-                      <el-option
-                          v-for="item in solidityFiles"
-                          :key="item.path"
-                          :label="item.path"
-                          :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
+                <el-form-item label="上传文件：">
+                  <el-upload
+                    ref="uploadContract"
+                    action=""
+                    accept=".zip"
+                    :file-list="fileList"
+                    :on-change="changeFile"
+                    :before-remove="beforeRemove"
+                    :http-request="uploadContractSourceHandler"
+                    :auto-upload="false"
+                  >
+                    <div slot="tip" class="el-upload__tip">Tips: 上传合约文件打包的zip文件</div>
+                    <el-button slot="trigger">选取文件</el-button>
+                  </el-upload>
+                </el-form-item>
+                <el-form-item label="合约入口文件：" prop="chosenSolidity">
+                  <el-select v-model="form.chosenSolidity" placeholder="选择编译的合约文件">
+                    <el-option
+                      v-for="item in solidityFiles"
+                      :key="item.path"
+                      :label="item.path"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
               </el-row>
               <el-form-item
-                  label="合约类名："
-                  prop="className">
-                <el-input v-model="form.className" placeholder="Class Name"></el-input>
+                label="合约类名："
+                prop="className"
+              >
+                <el-input v-model="form.className" placeholder="Class Name" />
               </el-form-item>
               <el-form-item
-                  label="合约版本号："
-                  prop="version">
-                <el-input v-model="form.version" placeholder="Version"></el-input>
+                label="合约版本号："
+                prop="version"
+              >
+                <el-input v-model="form.version" placeholder="Version" />
               </el-form-item>
               <el-form-item
-                  label="已有合约地址："
-                  v-if="form.method ==='register'"
-                  prop="address">
+                v-if="form.method ==='register'"
+                label="已有合约地址："
+                prop="address"
+              >
                 <el-input v-model="form.address" placeholder="Address">
                   <template slot="prepend">0x</template>
                 </el-input>
@@ -106,81 +112,86 @@
             <!-- Fabric -->
             <div v-else-if="form.stubType==='Fabric1.4'">
               <el-form-item
-                  label="资源路径："
-                  prop="appendPath">
+                label="资源路径："
+                prop="appendPath"
+              >
                 <el-input v-model="form.appendPath" placeholder="Path">
                   <template slot="prepend">{{ form.prependPath }}</template>
                 </el-input>
               </el-form-item>
               <el-form-item
-                  label="所在组织名："
-                  prop="org">
-                <el-input v-model="form.org" placeholder="Organization"></el-input>
+                label="所在组织名："
+                prop="org"
+              >
+                <el-input v-model="form.org" placeholder="Organization" />
               </el-form-item>
-              <el-form-item label="合约文件：" prop="compressedContent" v-if="this.form.method === 'install'">
+              <el-form-item v-if="form.method === 'install'" label="合约文件：" prop="compressedContent">
                 <el-upload
-                    class="upload-demo"
-                    ref="uploadContract"
-                    action=""
-                    :file-list="fileList"
-                    accept=".tar,.gz"
-                    :on-change="changeFile"
-                    :before-remove="beforeRemove"
-                    :http-request="uploadContractCompressedHandler"
-                    :auto-upload="false">
+                  ref="uploadContract"
+                  action=""
+                  :file-list="fileList"
+                  accept=".tar,.gz"
+                  :on-change="changeFile"
+                  :before-remove="beforeRemove"
+                  :http-request="uploadContractCompressedHandler"
+                  :auto-upload="false"
+                >
                   <div slot="tip" class="el-upload__tip">Tips: 只能上传chaincode打包的tar/gz文件</div>
                   <el-button slot="trigger" size="mini">选取文件</el-button>
                 </el-upload>
               </el-form-item>
               <el-form-item
-                  label="合约版本号："
-                  prop="version">
-                <el-input v-model="form.version" placeholder="Version"></el-input>
+                label="合约版本号："
+                prop="version"
+              >
+                <el-input v-model="form.version" placeholder="Version" />
               </el-form-item>
               <el-form-item label="合约语言：" prop="lang">
                 <el-select v-model="form.lang" placeholder="请选择合约语言" style="width:100%">
-                  <el-option label="Golang" value="GO_LANG"/>
-                  <el-option label="Java" value="JAVA"/>
+                  <el-option label="Golang" value="GO_LANG" />
+                  <el-option label="Java" value="JAVA" />
                 </el-select>
               </el-form-item>
               <el-form-item
-                  label="背书策略："
-                  v-if="form.method==='instantiate'||form.method==='upgrade'"
-                  prop="policy">
+                v-if="form.method==='instantiate'||form.method==='upgrade'"
+                label="背书策略："
+                prop="policy"
+              >
                 <el-upload
-                    class="upload-demo"
-                    ref="uploadPolicy"
-                    action=""
-                    accept=".yaml"
-                    :file-list="policyFile"
-                    :on-change="changePolicyFile"
-                    :before-remove="beforeRemove"
-                    :http-request="uploadPolicyHandler"
-                    :auto-upload="false">
+                  ref="uploadPolicy"
+                  action=""
+                  accept=".yaml"
+                  :file-list="policyFile"
+                  :on-change="changePolicyFile"
+                  :before-remove="beforeRemove"
+                  :http-request="uploadPolicyHandler"
+                  :auto-upload="false"
+                >
                   <div slot="tip" class="el-upload__tip">只能上传policy的yaml格式文件, 默认为Default</div>
                   <el-button slot="trigger" size="mini">选取文件</el-button>
                 </el-upload>
               </el-form-item>
               <el-form-item
-                  label="其他参数："
-                  v-if="form.method==='instantiate'||form.method==='upgrade'"
-                  prop="args">
-                <el-input v-model="form.args" placeholder="Arguments"></el-input>
+                v-if="form.method==='instantiate'||form.method==='upgrade'"
+                label="其他参数："
+                prop="args"
+              >
+                <el-input v-model="form.args" placeholder="Arguments" />
               </el-form-item>
             </div>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit" v-loading.fullscreen.lock="loading">执行</el-button>
+              <el-button v-loading.fullscreen.lock="loading" type="primary" @click="onSubmit">执行</el-button>
               <el-button @click="onCancel">重置表单</el-button>
             </el-form-item>
             <el-form-item>
               <el-input
-                  autosize
-                  type="textarea"
-                  readonly
-                  v-model="submitResponse"
-                  v-if="submitResponse !== null"
-                  style="margin-bottom: 20px;width: 90%">
-              </el-input>
+                v-if="submitResponse !== null"
+                v-model="submitResponse"
+                autosize
+                type="textarea"
+                readonly
+                style="margin-bottom: 20px;width: 90%"
+              />
             </el-form-item>
           </el-form>
         </el-col>
@@ -205,21 +216,6 @@ const JSZip = require('jszip')
 
 export default {
   name: 'ResourceDeploy',
-  created() {
-    if (typeof (this.$route.query.path) !== 'undefined') {
-      this.form.prependPath = this.$route.query.path + '.'
-    }
-
-    if (typeof (this.$route.query.stubType) !== 'undefined') {
-      this.form.stubType = this.$route.query.stubType
-
-      if (this.form.stubType === 'Fabric1.4') {
-        this.form.method = 'install'
-      } else {
-        this.form.method = 'deploy'
-      }
-    }
-  },
   data() {
     return {
       form: {
@@ -313,6 +309,21 @@ export default {
       }
     }
   },
+  created() {
+    if (typeof (this.$route.query.path) !== 'undefined') {
+      this.form.prependPath = this.$route.query.path + '.'
+    }
+
+    if (typeof (this.$route.query.stubType) !== 'undefined') {
+      this.form.stubType = this.$route.query.stubType
+
+      if (this.form.stubType === 'Fabric1.4') {
+        this.form.method = 'install'
+      } else {
+        this.form.method = 'deploy'
+      }
+    }
+  },
   methods: {
     mergeSourceContractLineToString() {
       this.form.sourceContent = ''
@@ -360,15 +371,13 @@ export default {
         message: '已重置表单',
         type: 'info'
       })
+      this.$refs.deployForm.resetFields()
       this.fileList = []
       this.policyFile = []
       this.sourceContractLine = []
       this.dependenciesLine = []
       this.solidityFiles = []
       this.zipContractFilesMap = {}
-      this.form.method = null
-      this.form.stubType = null
-      this.$refs.deployForm.resetFields()
     },
     onBCOSDeploy() {
       bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
@@ -505,7 +514,7 @@ export default {
       if (this.$refs.uploadContract.uploadFiles.length === 0) {
         return
       }
-      var lines = this.zipContractFilesMap[targetFile].split('\n')
+      const lines = this.zipContractFilesMap[targetFile].split('\n')
       for (const line of lines) {
         if (line.indexOf('pragma experimental ABIEncoderV2;') !== -1) {
           if (!this.dependenciesLine.includes('pragma experimental ABIEncoderV2;')) {

@@ -12,6 +12,7 @@ const state = getDefaultState()
 
 const mutations = {
   RESET_STATE: (state) => {
+    removeXATX()
     Object.assign(state, getDefaultState())
   },
   SET_TRANSACTION: (state, transaction) => {
@@ -28,18 +29,18 @@ const actions = {
           MessageBox.alert('开启事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, '错误', {
             confirmButtonText: '确定',
             type: 'error'
-          })
+          }).then(_ => {})
           reject()
         } else {
           commit('SET_TRANSACTION', { transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths })
-          setXATX({ transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths })
+          setXATX(JSON.stringify({ transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths }))
           resolve()
         }
       }).catch(error => {
         MessageBox.alert('开启事务失败，错误：' + error, '错误', {
           confirmButtonText: '确定',
           type: 'error'
-        })
+        }).then(_ => {})
         reject(error)
       })
     })
@@ -51,7 +52,7 @@ const actions = {
           MessageBox.alert('提交事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, '错误', {
             confirmButtonText: '确定',
             type: 'error'
-          })
+          }).then(_ => {})
           reject()
         } else {
           commit('RESET_STATE')
@@ -62,7 +63,7 @@ const actions = {
         MessageBox.alert('提交事务失败，错误：' + error, '错误', {
           confirmButtonText: '确定',
           type: 'error'
-        })
+        }).then(_ => {})
         reject(error)
       })
     })
@@ -74,7 +75,7 @@ const actions = {
           MessageBox.alert('回滚事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, '错误', {
             confirmButtonText: '确定',
             type: 'error'
-          })
+          }).then(_ => {})
           reject()
         } else {
           commit('RESET_STATE')
@@ -85,7 +86,7 @@ const actions = {
         MessageBox.alert('回滚事务失败，错误：' + error, '错误', {
           confirmButtonText: '确定',
           type: 'error'
-        })
+        }).then(_ => {})
         reject(error)
       })
     })

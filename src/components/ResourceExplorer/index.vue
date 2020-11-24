@@ -1,10 +1,11 @@
 <template>
   <div>
     <el-table
-        :data="resources"
-        highlight-current-row
-        tooltip-effect="light"
-        height="calc(100% - 80px)">
+      :data="resources"
+      highlight-current-row
+      tooltip-effect="light"
+      height="calc(100% - 80px)"
+    >
       <el-table-column label="资源路径" min-width="80px" show-overflow-tooltip>
         <template slot-scope="scope">{{ scope.row.path }}</template>
       </el-table-column>
@@ -22,14 +23,14 @@
             <el-button
               plain
               icon="el-icon-edit-outline"
-              @click="onSend(scope.row.path)"
               style="padding: 8px"
+              @click="onSend(scope.row.path)"
             >发交易</el-button>
             <el-button
               plain
               icon="el-icon-view"
-              @click="onCall(scope.row.path)"
               style="padding: 8px"
+              @click="onCall(scope.row.path)"
             >查状态</el-button>
           </el-button-group>
         </template>
@@ -45,18 +46,19 @@
       @prev-click="prevPage"
       @next-click="nextPage"
       @current-change="setPage"
-    ></el-pagination>
+    />
 
     <el-dialog :title="'调用资源'" :visible.sync="callDialogOpen" :destroy-on-close="true" width="45%">
       <el-row>
         <el-col :span="18" :offset="2">
           <el-form v-loading="loading">
             <TransactionForm
-                :transaction="transactionData"
-                :submit-response="submitResponse"
-                @clearClick="onClearTransaction"
-                @submitClick="onSubmit">
-              <el-input slot="path" v-model="transactionData.path" readonly></el-input>
+              :transaction="transactionData"
+              :submit-response="submitResponse"
+              @clearClick="onClearTransaction"
+              @submitClick="onSubmit"
+            >
+              <el-input slot="path" v-model="transactionData.path" readonly />
             </TransactionForm>
           </el-form>
         </el-col>
@@ -74,10 +76,18 @@ import { call, sendTransaction } from '@/api/transaction'
 
 export default {
   name: 'ResourceExplorer',
-  props: ['chain', 'pageSize', 'height'],
   components: {
     TransactionForm: () => import('@/views/transaction/components/TransactionForm')
   },
+  props: {
+    chain: {
+      type: String,
+      default: () => { return null }
+    },
+    pageSize: {
+      type: Number,
+      default: () => { return 0 }
+    }},
   data: function() {
     return {
       total: 0,
@@ -102,7 +112,7 @@ export default {
     }
   },
   watch: {
-    chain: function(val) {
+    chain: function() {
       this.refresh()
     }
   },
@@ -124,10 +134,11 @@ export default {
       var status = this.getQueryStatus(path)
 
       getResourceList({
-        ignoreRemote: false,
         path: path,
         offset: status.page * this.pageSize,
         size: this.pageSize
+      }, {
+        ignoreRemote: false
       }).then((response) => {
         if (response.errorCode === 0) {
           this.resources = response.data.resourceDetails
@@ -172,7 +183,7 @@ export default {
       this.refresh()
     },
     getTransactionData(path) {
-      var data = this.transactionDatas[path]
+      let data = this.transactionDatas[path]
       if (data === undefined) {
         this.transactionDatas[path] = {
           path: path,
@@ -240,7 +251,7 @@ export default {
       if (response.errorCode !== 0 || response.data.errorCode !== 0) {
         this.submitResponse = null
 
-        var code, message
+        let code, message
         if (response.errorCode !== 0) {
           code = response.errorCode
           message = response.message

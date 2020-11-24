@@ -45,6 +45,7 @@
       <el-card style="height:100%">
         <div slot="header" class="clearfix">
           <span> 交易回执详情 </span>
+          <i class="el-icon-close" style="float:right;cursor:pointer" @click="drawer = false" />
         </div>
         <vue-json-pretty
           :expand-depth="2"

@@ -1,7 +1,7 @@
 <template>
   <transition name="el-fade-in-linear">
     <div v-show="show" class="app-container">
-      <el-card class="box-card">
+      <el-card>
         <el-form label-position="left" size="small" label-width="80px">
           <el-form-item label="跨链账户">
             <el-tag :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
@@ -34,7 +34,7 @@
           </el-table-column>
           <el-table-column prop="details" label="摘要" @click="showChainAccount(scope.row)">
             <template slot-scope="scope">
-              <el-tooltip class="item" effect="light" content="点击查看详情" placement="top">
+              <el-tooltip effect="light" content="点击查看详情" placement="top">
                 <div>{{ scope.row.details }}</div>
               </el-tooltip>
             </template>
@@ -68,7 +68,7 @@
         :with-header="false"
         size="680px"
       >
-        <el-card class="box-card" style="height:100%">
+        <el-card style="height:100%">
           <div slot="header" class="clearfix">
             <span> 链账户 </span>
             <i class="el-icon-close" style="float:right;cursor:pointer" @click="chainAccountDrawer.show = false" />
@@ -81,7 +81,7 @@
               <el-tag type="info">{{ chainAccountDrawer.info.type }}</el-tag>
             </el-form-item>
             <el-form-item label="Identity">
-              <el-tooltip class="item" effect="light" placement="bottom-start">
+              <el-tooltip effect="light" placement="bottom-start">
                 <div slot="content">含义：<br>FISCO BCOS：address<br> Fabric: 公钥证书 </div>
                 <el-input v-model=" chainAccountDrawer.info.identity" type="textarea" readonly autosize resize="none" />
               </el-tooltip>
@@ -90,7 +90,7 @@
               <el-input v-model=" chainAccountDrawer.info.pubKey" type="textarea" readonly autosize resize="none" />
             </el-form-item>
             <el-form-item label="私钥">
-              <el-button size="mini" class="primary" @click="chainAccountDrawer.showSec = !chainAccountDrawer.showSec">查看 <i class="el-icon-chat-line-round" /> </el-button>
+              <el-button size="mini" @click="chainAccountDrawer.showSec = !chainAccountDrawer.showSec">查看 <i class="el-icon-chat-line-round" /> </el-button>
               <el-input v-if="chainAccountDrawer.showSec && chainAccountDrawer.show" v-model=" chainAccountDrawer.info.secKey" type="textarea" readonly autosize show-password resize="none" style="margin-top: 10px" />
             </el-form-item>
             <el-form-item label="其它">
@@ -116,7 +116,7 @@
         :with-header="false"
         size="680px"
       >
-        <el-card class="box-card" style="height:100%">
+        <el-card style="height:100%">
           <div slot="header" class="clearfix">
             <span> 添加链账户 </span>
             <i class="el-icon-close" style="float:right;cursor:pointer" @click="addChainAccountDrawer.show = false" />
@@ -143,7 +143,6 @@
                 </label>
                 <el-upload
                   style="float:right"
-                  class="upload-demo"
                   action=""
                   accept=".pem"
                   :show-file-list="false"
@@ -200,7 +199,6 @@
                 </label>
                 <el-upload
                   style="float:right"
-                  class="upload-demo"
                   action=""
                   accept=".pem"
                   :show-file-list="false"
@@ -256,7 +254,6 @@
                 </label>
                 <el-upload
                   style="float:right"
-                  class="upload-demo"
                   action=""
                   accept=".key,.pem"
                   :show-file-list="false"
@@ -282,7 +279,6 @@
                 </label>
                 <el-upload
                   style="float:right"
-                  class="upload-demo"
                   action=""
                   accept=".crt"
                   :show-file-list="false"
@@ -452,7 +448,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        var loadingText = 'Loading'
+        const loadingText = 'Loading'
         const loading = this.$loading({
           lock: true,
           text: loadingText
@@ -487,7 +483,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            var loadingText = 'Loading'
+            const loadingText = 'Loading'
             const loading = this.$loading({
               lock: true,
               text: loadingText
@@ -561,7 +557,7 @@ export default {
     generateSM2SecPem() {
       this.addChainAccountDrawer.params.secKey = sm2.generateSecPem()
     }, uploadECDSASecPemHandler(params) {
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onload = (event) => {
         var key = event.target.result
         this.addChainAccountDrawer.params.secKey = key
@@ -569,53 +565,53 @@ export default {
       reader.readAsText(params.file)
     },
     uploadSM2SecPemHandler(params) {
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onload = (event) => {
-        var key = event.target.result
+        const key = event.target.result
         this.addChainAccountDrawer.params.secKey = key
       }
       reader.readAsText(params.file)
     },
     buildECDSAData() {
-      var key = this.addChainAccountDrawer.params.secKey
+      const key = this.addChainAccountDrawer.params.secKey
       if (typeof (key) === 'undefined' || !ecdsa.isSecPem(key)) {
         this.addChainAccountDrawer.params.pubKey = undefined
         this.addChainAccountDrawer.params.ext = undefined
         return
       }
 
-      var data = ecdsa.build(key)
+      const data = ecdsa.build(key)
 
       this.addChainAccountDrawer.params.pubKey = data.pubPem
       this.addChainAccountDrawer.params.ext = data.address
     },
     buildSM2Data() {
-      var key = this.addChainAccountDrawer.params.secKey
+      const key = this.addChainAccountDrawer.params.secKey
       if (typeof (key) === 'undefined' || !sm2.isSecPem(key)) {
         this.addChainAccountDrawer.params.pubKey = undefined
         this.addChainAccountDrawer.params.ext = undefined
         return
       }
 
-      var data = sm2.build(key)
+      const data = sm2.build(key)
 
       this.addChainAccountDrawer.params.pubKey = data.pubPem
       this.addChainAccountDrawer.params.ext = data.address
     },
     uploadPubKeyCertHandler(params) {
       console.log('uploadPubKeyCertHandler')
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onload = (event) => {
-        var key = event.target.result
+        const key = event.target.result
 
         this.addChainAccountDrawer.params.pubKey = key
       }
       reader.readAsText(params.file)
     },
     uploadSecKeyHandler(params) {
-      var reader = new FileReader()
+      const reader = new FileReader()
       reader.onload = (event) => {
-        var key = event.target.result
+        const key = event.target.result
         this.addChainAccountDrawer.params.secKey = key
       }
       reader.readAsText(params.file)
@@ -658,7 +654,7 @@ function buildChainAccountTable(ua) {
   // add non-default to children
   for (chainAccount of ua.chainAccounts) {
     if (chainAccount.isDefault === false) {
-      var defaultChainAccount = localChainAccounts.find(
+      const defaultChainAccount = localChainAccounts.find(
         (u) => u.type === chainAccount.type
       )
       if (typeof (defaultChainAccount) !== 'undefined') {

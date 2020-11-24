@@ -15,6 +15,7 @@ module.exports = [
             'uaID': '3059301306072a8648ce3d020106082a811ccf5501822d034200047cfc7f4488a171e4a80051cdf93e2febc3066181b17bccd81264b79e346affc1f684738aa565485a459bbc00f03bd1df3df7dac985e6a740a3ed5533d5a60874',
             'pubKey': '3059301306072a8648ce3d020106082a811ccf5501822d034200047cfc7f4488a171e4a80051cdf93e2febc3066181b17bccd81264b79e346affc1f684738aa565485a459bbc00f03bd1df3df7dac985e6a740a3ed5533d5a60874',
             'admin': true,
+            'version': 1,
             'chainAccounts': [
               {
                 'keyID': 0,
@@ -77,6 +78,23 @@ module.exports = [
   },
   {
     url: '/auth/addChainAccount',
+    type: 'post',
+    response: config => {
+      return {
+        ...Mock.mock({
+          version: 0,
+          errorCode: 0,
+          message: 'success',
+          data: {
+            errorCode: 0,
+            message: 'success'
+          }
+        })
+      }
+    }
+  },
+  {
+    url: '/auth/removeChainAccount',
     type: 'post',
     response: config => {
       return {

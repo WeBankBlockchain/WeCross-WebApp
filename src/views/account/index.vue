@@ -47,6 +47,7 @@
                 v-if="scope.row.isDefault"
                 style="float: right"
                 size="small"
+                @click.stop=""
               >
                 默认账户
               </el-button>

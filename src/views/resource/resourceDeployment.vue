@@ -1,8 +1,9 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-page-header content="资源部署页面" title="资源管理" @back="() => {this.$router.push({ path: 'resourceList' })}" />
-      <el-divider />
+      <template slot="header">
+        <el-page-header content="资源部署页面" title="资源管理" @back="() => {this.$router.push({ path: 'resourceList' })}" />
+      </template>
       <el-row>
         <el-col :span="18" :offset="2">
           <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
@@ -251,7 +252,7 @@ export default {
         compressedContent: [{ required: true, message: '请上传合约文件', trigger: 'blur' }],
         chosenSolidity: [{ required: true, message: '合约文件不能为空', trigger: 'blur' }],
         fullPath: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
-          { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40 },
+          { required: true, message: '资源路径总长度不能超过128', trigger: 'blur', max: 128 },
           {
             pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/,
             required: true,
@@ -259,7 +260,7 @@ export default {
             trigger: 'blur'
           }],
         appendPath: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
-          { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40 },
+          { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', max: 128 },
           {
             pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/,
             required: true,
@@ -269,7 +270,7 @@ export default {
         ],
         org: [
           { required: true, message: '所在组织名不能为空', trigger: 'blur' },
-          { required: true, message: '所在组织名最长不能超过12字', trigger: 'blur', min: 1, max: 12 },
+          { required: true, message: '所在组织名最长不能超过128', trigger: 'blur', max: 128 },
           {
             required: true, message: '所在组织名不能包含特殊字符', trigger: 'blur',
             pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/
@@ -286,8 +287,7 @@ export default {
           { required: true, message: '请选择合约语言', trigger: 'blur' }
         ],
         args: [
-          { required: true, message: '其他参数不能为空', trigger: 'blur' },
-          { required: true, message: '参数总长度不能超过40', trigger: 'blur', min: 1, max: 40 }
+          { required: true, message: '其他参数不能为空', trigger: 'blur' }
         ],
         address: [
           { required: true, message: '已有合约地址不能为空', trigger: 'blur' },
@@ -306,7 +306,7 @@ export default {
             required: true, message: '合约类名不能包含特殊字符', trigger: 'blur',
             pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/
           },
-          { required: true, message: '合约类名长度不能超过100', trigger: 'blur', min: 1, max: 100 }
+          { required: true, message: '合约类名长度不能超过128', trigger: 'blur', max: 128 }
         ],
         method: [{ required: true, message: '请选择操作类型', trigger: 'blur' }]
       }
@@ -406,7 +406,6 @@ export default {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.$refs.deployForm.resetFields()
         } else {
           this.onSubmitSuccess(response)
         }
@@ -428,7 +427,6 @@ export default {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.$refs.deployForm.resetFields()
         } else {
           this.onSubmitSuccess(response)
         }
@@ -450,7 +448,6 @@ export default {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.$refs.deployForm.resetFields()
         } else {
           this.onSubmitSuccess(response)
         }
@@ -472,7 +469,6 @@ export default {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.$refs.deployForm.resetFields()
         } else {
           this.onSubmitSuccess(response)
         }
@@ -494,7 +490,6 @@ export default {
             confirmButtonText: '确定',
             type: 'error'
           })
-          this.$refs.deployForm.resetFields()
         } else {
           this.onSubmitSuccess(response)
         }
@@ -524,8 +519,8 @@ export default {
         this.dependenciesLine = []
         this.solidityFiles = []
         this.zipContractFilesMap = {}
-        this.form.compressedContent = null
-        this.form.policy = null
+        this.$refs.deployForm.resetFields()
+        this.form.sourceContent = null
       })
     },
     mergeSolidityFile(targetFile) {

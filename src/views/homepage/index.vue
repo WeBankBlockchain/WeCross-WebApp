@@ -30,7 +30,7 @@
 import { Network } from 'vue-vis-network'
 
 export default {
-  name: 'Document',
+  name: 'Homepage',
   components: {
     Network
   },

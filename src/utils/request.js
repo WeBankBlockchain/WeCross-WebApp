@@ -17,6 +17,8 @@ service.interceptors.request.use(
 
     if (store.getters.token) {
       config.headers['Authorization'] = getToken()
+      config.headers['Accept'] = 'application/json'
+      config.headers['content-type'] = 'application/json;charset=UTF-8'
     }
     return config
   },

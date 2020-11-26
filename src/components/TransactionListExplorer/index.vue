@@ -10,16 +10,14 @@
       height="calc(100% - 75px)"
       @current-change="handleCurrentRowChange"
     >
-      <el-table-column
-        align="center"
-        label="交易哈希"
-        min-width="60px"
-        show-overflow-tooltip
-      >
+      <el-table-column label="交易哈希" min-width="60px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.txHash }}</template>
       </el-table-column>
-      <el-table-column label="跨链账户" min-width="50px" show-overflow-tooltip>
+      <el-table-column label="跨链账户" min-width="30px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.username }}</template>
+      </el-table-column>
+      <el-table-column label="事务ID" min-width="20px" show-overflow-tooltip>
+        <template slot-scope="item">{{ item.row.txID }}</template>
       </el-table-column>
       <el-table-column label="区块高度" min-width="20px">
         <template slot-scope="item">{{ item.row.blockNumber }}</template>
@@ -288,6 +286,7 @@ export default {
               txs[txs.length] = {
                 txHash: response.data.txHash,
                 username: response.data.username,
+                txID: response.data.xaTransactionID,
                 blockNumber: response.data.blockNumber,
                 path: response.data.path,
                 method: response.data.method,

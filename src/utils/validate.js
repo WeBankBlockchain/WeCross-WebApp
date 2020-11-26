@@ -19,7 +19,7 @@ export function validUsername(str) {
  * @returns {Boolean}
  */
 export function validPassword(str) {
-  return /^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,18}$/.test(str)
+  return /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,18}$/.test(str)
 }
 
 /**

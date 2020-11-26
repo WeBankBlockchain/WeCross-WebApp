@@ -126,9 +126,11 @@ export default {
   data() {
     const checkUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error(
-          '用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-'
-        ))
+        callback(
+          new Error(
+            '用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-'
+          )
+        )
       } else {
         callback()
       }
@@ -208,7 +210,8 @@ export default {
             this.imageAuthCode.imageToken = imageAuthCodeInfo.imageToken
             this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${imageAuthCodeInfo.imageBase64}`
           }
-        }).catch(error => {
+        })
+        .catch((error) => {
           this.$message({
             message: '网络异常：' + error,
             type: 'error',
@@ -252,9 +255,10 @@ export default {
                 message: JSON.stringify(resp)
               })
             } else if (typeof errorCode !== 'undefined' && errorCode === 0) {
+              console.log('register success, ua: ' + JSON.stringify(ua))
               this.$message({
                 type: 'success',
-                message: JSON.stringify(ua)
+                message: '注册成功!'
               })
               //
               this.handleLogin()
@@ -265,7 +269,7 @@ export default {
               })
             }
           })
-          .catch(error => {
+          .catch((error) => {
             this.$message({
               message: '网络异常：' + error,
               type: 'error',

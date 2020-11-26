@@ -37,11 +37,12 @@
         <el-form-item style="margin-bottom: 20px">
           <el-button
             v-loading.fullscreen.lock="loading"
+            size="small"
             type="primary"
             @click="onSubmit"
           >执行调用</el-button>
-          <el-button @click="clearForm">重置表单</el-button>
-          <el-button @click="addArg">添加参数</el-button>
+          <el-button size="small" @click="clearForm">重置表单</el-button>
+          <el-button size="small" @click="addArg">添加参数</el-button>
         </el-form-item>
         <el-form-item v-if="submitResponse !== null" label="调用结果:">
           <el-input

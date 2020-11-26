@@ -6,6 +6,9 @@ export function clearForm(formData) {
   formData.lang = null
   formData.policy = null
   formData.args = null
+  formData.chosenSolidity = null
+  formData.sourceContent = null
+  formData.compressedContent = null
 }
 
 export function buildBCOSDeployRequest(formData) {

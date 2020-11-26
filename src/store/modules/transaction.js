@@ -1,6 +1,6 @@
 import { commitXATransaction, startXATransaction, rollbackXATransaction } from '@/api/transaction'
 import { MessageBox } from 'element-ui'
-import { getXATX, removeXATX, setXATX } from '@/utils/transaction'
+import { getXATX, removeXATX, setXATX, buildXAError } from '@/utils/transaction'
 
 const getDefaultState = () => {
   return {
@@ -26,7 +26,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       startXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
-          MessageBox.alert('开启事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, '错误', {
+          const errMessage = buildXAError(response)
+          MessageBox.alert('开启事务失败，错误：' + errMessage, '错误', {
             confirmButtonText: '确定',
             type: 'error'
           }).then(_ => {})
@@ -48,12 +49,18 @@ const actions = {
   commitTransaction({ commit }, transaction) {
     return new Promise((resolve, reject) => {
       commitXATransaction(transaction).then(response => {
-        if (response.data.status !== 0) {
-          MessageBox.alert('提交事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, '错误', {
+        if (response.errorCode !== 0 || response.data.status !== 0) {
+          const errMessage = buildXAError(response)
+          MessageBox.alert('提交事务失败，错误：' + errMessage, '错误', {
             confirmButtonText: '确定',
             type: 'error'
-          }).then(_ => {})
-          reject()
+          }).then(_ => {
+            if (/(committed|rolledback)/.test(errMessage)) {
+              commit('RESET_STATE')
+              removeXATX()
+            }
+          })
+          reject(errMessage)
         } else {
           commit('RESET_STATE')
           removeXATX()
@@ -72,11 +79,17 @@ const actions = {
     return new Promise((resolve, reject) => {
       rollbackXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
-          MessageBox.alert('回滚事务失败，错误：' + JSON.stringify(response.data, null, 4) || response.message, '错误', {
+          const errMessage = buildXAError(response)
+          MessageBox.alert('回滚事务失败，错误：' + errMessage, '错误', {
             confirmButtonText: '确定',
             type: 'error'
-          }).then(_ => {})
-          reject()
+          }).then(_ => {
+            if (/(committed|rolledback)$/.test(errMessage)) {
+              commit('RESET_STATE')
+              removeXATX()
+            }
+          })
+          reject(errMessage)
         } else {
           commit('RESET_STATE')
           removeXATX()

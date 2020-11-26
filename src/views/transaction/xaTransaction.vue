@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card header="事务步骤">
       <template slot="header">
-        <el-page-header content="事务步骤" title="交易管理" @back="() => {this.$router.push({ path: 'xaTransactionList' })}" />
+        <el-page-header content="事务步骤" title="事务管理" @back="() => {this.$router.push({ path: 'xaTransactionList' })}" />
       </template>
       <el-row :gutter="24">
         <el-steps :active="stepActive" align-center finish-status="finish">
@@ -95,12 +95,15 @@
                 style="width: 100%"
                 filterable
                 default-first-option
+                @change="() => {
+                  transactionForm.method=null; transactionForm.args=[{value: null,key: 0}]; submitResponse = null
+                }"
               >
                 <el-option
                   v-for="path in this.$store.getters.XAPaths"
                   :key="path"
                   :value="path"
-                  :label="path"
+                  :label="limitString(path)"
                 />
               </el-select>
             </transaction-form>
@@ -114,20 +117,15 @@
             </el-row>
             <el-row>
               <el-table stripe fit style="width: 100%;" height="45vh" :data="transactionStep" tooltip-effect="light">
-                <el-table-column prop="timestamp" label="执行时间" min-width="60px" show-overflow-tooltip>
+                <el-table-column prop="timestamp" label="执行时间" min-width="70px" show-overflow-tooltip>
                   <template slot-scope="props">
                     <span>{{ props.row.timestamp | formatDate }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip />
-                <el-table-column prop="username" label="跨链账户" min-width="60px" show-overflow-tooltip />
-                <el-table-column prop="path" label="资源路径" min-width="50px" show-overflow-tooltip />
-                <el-table-column prop="method" label="调用方法" min-width="50px" />
-                <el-table-column prop="args" label="调用参数" min-width="80px" show-overflow-tooltip>
-                  <template slot-scope="props">
-                    {{ props.row.args || 'null' }}
-                  </template>
-                </el-table-column>
+                <el-table-column prop="username" label="跨链账户" min-width="70px" show-overflow-tooltip />
+                <el-table-column prop="path" label="资源路径" min-width="70px" show-overflow-tooltip />
+                <el-table-column prop="method" label="调用方法" min-width="70px" />
               </el-table>
             </el-row>
           </el-col>
@@ -149,14 +147,15 @@
                 fit
                 stripe
                 height="calc(70vh - 140px)"
+                tooltip-effect="light"
                 style="width: 100%;"
               >
-                <el-table-column min-width="60px" label="开始时间">
+                <el-table-column min-width="60px" label="开始时间" show-overflow-tooltip>
                   <template slot-scope="scope">
                     <span>{{ scope.row.startTimestamp | formatDate }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" />
+                <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" show-overflow-tooltip />
                 <el-table-column prop="username" label="跨链账户" min-width="50px" />
                 <el-table-column prop="status" min-width="50px" label="事务状态" />
                 <el-table-column min-width="80px" label="锁定资源">
@@ -176,9 +175,8 @@
                       </el-table-column>
                       <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip />
                       <el-table-column prop="username" label="跨链账户" min-width="60px" />
-                      <el-table-column prop="path" label="资源路径" min-width="50px" />
-                      <el-table-column prop="method" label="调用方法" min-width="50px" />
-                      <el-table-column prop="args" label="调用参数" min-width="80px" show-overflow-tooltip />
+                      <el-table-column prop="path" label="资源路径" min-width="70px" />
+                      <el-table-column prop="method" label="调用方法" min-width="70px" />
                     </el-table>
                   </template>
                 </el-table-column>
@@ -281,8 +279,8 @@ import TransactionForm from '@/views/transaction/components/TransactionForm'
 import ResourceTransfer from '@/components/ResourceTransfer/index'
 import { getResourceList } from '@/api/resource'
 import { call, getXATransaction, sendTransaction } from '@/api/transaction'
-import { Message } from 'element-ui'
-import { parseTime } from '@/utils'
+import { parseTime, limitString } from '@/utils'
+import { buildXAError, removeXATX } from '@/utils/transaction'
 
 export default {
   name: 'XATransaction',
@@ -341,6 +339,9 @@ export default {
     this.loadXATransaction(this.$route.query.isExec)
   },
   methods: {
+    limitString(str) {
+      return limitString(str)
+    },
     stepBtnClick() {
       switch (this.stepForwardBtnText) {
         case '开启事务':
@@ -353,7 +354,6 @@ export default {
     },
     loadXATransaction(isExec) {
       const xaID = this.$store.getters.transactionID
-      console.log(this.$store.getters)
       if (xaID !== null && typeof (isExec) === 'undefined') {
         const h = this.$createElement
         this.$msgbox({
@@ -362,7 +362,7 @@ export default {
             h('h3', { style: 'font-weight: bold; margin-left:10px' }, '目前有事务正在执行中，是否恢复？'),
             h('li', { style: 'font-weight: bold; margin-left:10px' }, '事务ID: ' + xaID),
             h('li', { style: 'font-weight: bold; margin-left:10px' }, '锁定资源: '),
-            h('ol', { script: '' }, this.$store.getters.XAPaths.join(',  \n'))
+            h('ol', null, this.$store.getters.XAPaths.map(item => limitString(item)).join(',  \n'))
           ]),
           showClose: false,
           closeOnClickModal: false,
@@ -371,10 +371,42 @@ export default {
           confirmButtonText: '恢复事务',
           cancelButtonText: '新建事务'
         }).then(_ => {
-          this.transactionForm.transactionID = this.$store.getters.transactionID
-          this.transactionForm.path = this.$store.getters.XAPaths
-          this.stepActive = 1
+          getXATransaction({
+            version: 1,
+            data: {
+              xaTransactionID: this.$store.getters.transactionID,
+              paths: this.$store.getters.XAPaths
+            }
+          }).then(response => {
+            if (response.errorCode !== 0 || response.data.xaResponse.status !== 0) {
+              this.$message.error({
+                message: '获取事务详情失败，错误：' + buildXAError(response),
+                center: true,
+                duration: 5000
+              })
+              removeXATX()
+              this.$store.commit('transaction/RESET_STATE')
+            } else {
+              if (response.data.xaTransaction.status !== 'processing') {
+                this.$msgbox('恢复事务失败，该事务已经回滚/提交！', '错误', 'error')
+                console.log('get xaTransaction error, this xaTransaction is not processing')
+                removeXATX()
+                this.$store.commit('transaction/RESET_STATE')
+              } else {
+                this.transactionForm.transactionID = this.$store.getters.transactionID
+                this.transactionForm.path = this.$store.getters.XAPaths
+                this.stepActive = 1
+              }
+            }
+          }).catch(error => {
+            this.$message({
+              message: '网络异常：' + error,
+              type: 'error',
+              duration: 5000
+            })
+          })
         }).catch(_ => {
+          removeXATX()
           this.$store.commit('transaction/RESET_STATE')
         })
       } else if (xaID !== null && typeof (isExec) !== 'undefined') {
@@ -553,10 +585,12 @@ export default {
         }).then(() => {
           this.loading = false
           this.stepActive = 3
-        }).catch(_ => {
+        }).catch(err => {
+          // transaction has been rolledback/committed
+          if (/(committed|rolledback)/.test(err.toString())) {
+            this.stepActive = 3
+          }
           this.loading = false
-          // TODO: error page
-          this.stepActive = 3
         })
       }
     },
@@ -572,10 +606,12 @@ export default {
         }).then(() => {
           this.loading = false
           this.stepActive = 3
-        }).catch(() => {
+        }).catch(err => {
+          // transaction has been rolledback/committed
+          if (/(committed|rolledback)/.test(err.toString())) {
+            this.stepActive = 3
+          }
           this.loading = false
-          // TODO: error page
-          this.stepActive = 3
         })
       }
     },
@@ -588,8 +624,8 @@ export default {
         }
       }).then(response => {
         if (response.errorCode !== 0 || response.data.xaResponse.status !== 0) {
-          Message.error({
-            message: '获取事务详情失败，错误：' + JSON.stringify(response.data.xaResponse, null, 4) || response.message,
+          this.$message.error({
+            message: '获取事务详情失败，错误：' + buildXAError(response),
             center: true,
             duration: 5000
           })

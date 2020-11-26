@@ -60,11 +60,10 @@ const actions = {
         commit('RESET_STATE')
         resolve()
       }).catch(error => {
-        Message({
-          type: 'error',
-          message: '退出失败，网络异常'
-        })
         removeToken()
+        removeUsername()
+        resetRouter()
+        commit('RESET_STATE')
         reject(error)
       })
     })

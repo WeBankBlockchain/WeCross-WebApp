@@ -54,13 +54,6 @@ export default {
     ChainExplorer,
     ResourceExplorer
   },
-  /*
-        beforeRouteLeave(to, from, next) {
-          cached = this.$data
-
-          next()
-        },
-        */
   props: {},
   data() {
     return {

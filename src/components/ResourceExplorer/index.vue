@@ -10,7 +10,7 @@
         <template slot-scope="scope">{{ scope.row.path }}</template>
       </el-table-column>
       <el-table-column label="资源类型" min-width="50px">
-        <template slot-scope="scope">{{ scope.row.stubType }}</template>
+        <template slot-scope="scope"><el-tag type="info">{{ scope.row.stubType }}</el-tag></template>
       </el-table-column>
       <el-table-column label="属性" min-width="100px" show-overflow-tooltip>
         <template slot-scope="scope">

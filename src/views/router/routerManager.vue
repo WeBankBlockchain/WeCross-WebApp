@@ -107,8 +107,19 @@ export default {
           data: {
             address: data.value
           }
-        }).then(_ => {
-          this.refresh()
+        }).then(response => {
+          if (response.errorCode === 0) {
+            this.$message({
+              type: 'success',
+              message: '添加路由 ' + data.value + ' 成功'
+            })
+            this.refresh()
+          } else {
+            this.$message({
+              type: 'error',
+              message: '添加路由 ' + data.value + ' 失败'
+            })
+          }
         })
       }).catch(() => {
 

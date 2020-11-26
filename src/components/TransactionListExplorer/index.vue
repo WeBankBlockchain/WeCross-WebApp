@@ -242,7 +242,13 @@ export default {
               path: chainValue,
               txHash: tx.txHash
             }
-            const response = await getTransaction(paramsInGetTX)
+            const response = await getTransaction(paramsInGetTX).catch(error => {
+              this.$message({
+                message: '网络异常：' + error,
+                type: 'error',
+                duration: 5000
+              })
+            })
             if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
               throw new Error(
                 '查询交易失败，交易哈希: ' +
@@ -306,6 +312,12 @@ export default {
             console.log(' An error occurred !')
             this.$message({ type: 'error', message: err.toString() })
           })
+      }).catch(error => {
+        this.$message({
+          message: '网络异常：' + error,
+          type: 'error',
+          duration: 5000
+        })
       })
     }
   }

@@ -19,9 +19,7 @@
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           @row-click="showChainAccount"
         >
-          <el-table-column label="" width="30px">
-            <template slot-scope="" />
-          </el-table-column>
+          <el-table-column label="" width="30px" />
           <el-table-column prop="type" label="链账户类型" width="180">
             <template slot-scope="scope">
               <el-tag type="info">{{ scope.row.type }}</el-tag>
@@ -427,6 +425,12 @@ export default {
         this.ua = response.data
         this.chainAccountTable = buildChainAccountTable(this.ua)
         this.show = true
+      }).catch(error => {
+        this.$message({
+          message: '网络异常：' + error,
+          type: 'error',
+          duration: 5000
+        })
       })
     },
     showChainAccount(chainAccount) {
@@ -466,6 +470,12 @@ export default {
           this.getUA().then(() => {
             loading.close()
           })
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
         })
       })
     },
@@ -498,6 +508,12 @@ export default {
               this.getUA().then(() => {
                 loading.close()
               })
+            }).catch(error => {
+              this.$message({
+                message: '网络异常：' + error,
+                type: 'error',
+                duration: 5000
+              })
             })
           })
         }
@@ -509,7 +525,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        var loadingText = 'Loading'
+        const loadingText = 'Loading'
         const loading = this.$loading({
           lock: true,
           text: loadingText
@@ -526,6 +542,12 @@ export default {
           this.handleResponse(response)
           this.getUA().then(() => {
             loading.close()
+          })
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
           })
         })
       })
@@ -559,16 +581,14 @@ export default {
     }, uploadECDSASecPemHandler(params) {
       const reader = new FileReader()
       reader.onload = (event) => {
-        var key = event.target.result
-        this.addChainAccountDrawer.params.secKey = key
+        this.addChainAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
     },
     uploadSM2SecPemHandler(params) {
       const reader = new FileReader()
       reader.onload = (event) => {
-        const key = event.target.result
-        this.addChainAccountDrawer.params.secKey = key
+        this.addChainAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
     },
@@ -602,17 +622,14 @@ export default {
       console.log('uploadPubKeyCertHandler')
       const reader = new FileReader()
       reader.onload = (event) => {
-        const key = event.target.result
-
-        this.addChainAccountDrawer.params.pubKey = key
+        this.addChainAccountDrawer.params.pubKey = event.target.result
       }
       reader.readAsText(params.file)
     },
     uploadSecKeyHandler(params) {
       const reader = new FileReader()
       reader.onload = (event) => {
-        const key = event.target.result
-        this.addChainAccountDrawer.params.secKey = key
+        this.addChainAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
     }
@@ -620,7 +637,7 @@ export default {
 }
 
 function buildChainDetails(chainAccount) {
-  var details = ''
+  let details = ''
   details +=
     chainAccount.type +
     '---' +
@@ -633,16 +650,17 @@ function buildChainDetails(chainAccount) {
 }
 
 function buildChainAccountTable(ua) {
-  var localChainAccounts = []
+  let chainAccount
+  const localChainAccounts = []
 
   // build table requirements
-  for (var chainAccount of ua.chainAccounts) {
+  for (chainAccount of ua.chainAccounts) {
     chainAccount.details = buildChainDetails(chainAccount)
     chainAccount.children = []
   }
 
   // add default account
-  var id = 1
+  let id = 1
   for (chainAccount of ua.chainAccounts) {
     if (chainAccount.isDefault === true) {
       chainAccount.id = id++

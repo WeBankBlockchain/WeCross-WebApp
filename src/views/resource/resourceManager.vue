@@ -34,7 +34,7 @@
             <span>资源列表</span>
             <div style="float: right; margin-top: -10px">
               <el-input v-model="currentChain" style="width: 30vw;" placeholder="当前路径" prefix-icon="el-icon-folder" readonly />
-              <el-button slot="append" icon="el-icon-upload" type="primary" :disabled="currentChain === ''" style="margin-left: 10px;" @click="onDeploy">部署资源</el-button>
+              <el-button slot="append" icon="el-icon-upload" type="primary" style="margin-left: 10px;" @click="onDeploy">部署资源</el-button>
             </div>
           </div>
           <ResourceExplorer :chain="currentChain" :page-size="10" style="height: calc(80vh - 70px)" />
@@ -57,10 +57,10 @@ export default {
   props: {},
   data() {
     return {
-      currentZone: '',
-      currentChain: '',
+      currentZone: null,
+      currentChain: null,
       currentChainData: {},
-      searchPath: '',
+      searchPath: null,
       history: {
         index: 0,
         list: []
@@ -100,8 +100,8 @@ export default {
       this.$router.push({
         path: 'resourceDeployment',
         query: {
-          path: this.currentChain,
-          stubType: this.currentChainData.type
+          stubType: this.currentChainData.type,
+          path: this.currentChain
         }
       })
     },

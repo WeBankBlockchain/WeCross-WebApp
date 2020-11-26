@@ -208,11 +208,11 @@ export default {
             this.imageAuthCode.imageToken = imageAuthCodeInfo.imageToken
             this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${imageAuthCodeInfo.imageBase64}`
           }
-        })
-        .catch((error) => {
+        }).catch(error => {
           this.$message({
+            message: '网络异常：' + error,
             type: 'error',
-            message: error.toString()
+            duration: 5000
           })
         })
     },
@@ -265,10 +265,11 @@ export default {
               })
             }
           })
-          .catch((error) => {
+          .catch(error => {
             this.$message({
+              message: '网络异常：' + error,
               type: 'error',
-              message: error.toString()
+              duration: 5000
             })
           })
 

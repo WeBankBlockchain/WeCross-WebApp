@@ -232,6 +232,12 @@ export default {
           }
         }).then(response => {
           this.onResponse(response)
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
         })
       } else {
         call({
@@ -243,6 +249,12 @@ export default {
           }
         }).then(response => {
           this.onResponse(response)
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
         })
       }
     },

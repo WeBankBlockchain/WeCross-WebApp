@@ -252,8 +252,9 @@ export default {
             if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
               this.$message({
                 type: 'error',
-                message: JSON.stringify(resp)
+                message: resp.message
               })
+              this.handleFetchAuthTokenCode()
             } else if (typeof errorCode !== 'undefined' && errorCode === 0) {
               console.log('register success, ua: ' + JSON.stringify(ua))
               this.$message({
@@ -267,6 +268,7 @@ export default {
                 type: 'error',
                 message: JSON.stringify(data)
               })
+              this.handleFetchAuthTokenCode()
             }
           })
           .catch((error) => {

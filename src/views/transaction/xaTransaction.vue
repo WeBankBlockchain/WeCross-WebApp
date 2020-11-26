@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
     <el-card header="事务步骤">
+      <template slot="header">
+        <el-page-header content="事务步骤" title="交易管理" @back="() => {this.$router.push({ path: 'xaTransactionList' })}" />
+      </template>
       <el-row :gutter="24">
         <el-steps :active="stepActive" align-center finish-status="finish">
           <el-step title="步骤1" description="选择所需资源，开启一段事务" />
@@ -488,6 +491,12 @@ export default {
           }
         }).then(response => {
           this.onResponse(response)
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
         })
       } else {
         call({
@@ -502,6 +511,12 @@ export default {
           }
         }).then(response => {
           this.onResponse(response)
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
         })
       }
     },
@@ -584,6 +599,12 @@ export default {
           this.transactionDetail = detail
           this.transactionStep = response.data.xaTransaction.xaTransactionSteps
         }
+      }).catch(error => {
+        this.$message({
+          message: '网络异常：' + error,
+          type: 'error',
+          duration: 5000
+        })
       })
     },
     reloadTransaction() {
@@ -595,6 +616,9 @@ export default {
 </script>
 
 <style lang="scss">
+.el-page-header__content{
+  font-size: 16px;
+}
 .table-expand {
   font-size: 0;
 }

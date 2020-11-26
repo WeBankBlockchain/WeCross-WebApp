@@ -42,6 +42,10 @@ const actions = {
           resolve()
         }
       }).catch(error => {
+        Message({
+          type: 'error',
+          message: '登录失败，网络异常'
+        })
         reject(error)
       })
     })
@@ -50,12 +54,17 @@ const actions = {
   logout({ commit }) {
     return new Promise((resolve, reject) => {
       logout().then(() => {
-        removeToken() // must remove  token  first
+        removeToken()
         removeUsername()
         resetRouter()
         commit('RESET_STATE')
         resolve()
       }).catch(error => {
+        Message({
+          type: 'error',
+          message: '退出失败，网络异常'
+        })
+        removeToken()
         reject(error)
       })
     })

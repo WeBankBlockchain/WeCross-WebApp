@@ -425,6 +425,12 @@ export default {
         this.ua = response.data
         this.chainAccountTable = buildChainAccountTable(this.ua)
         this.show = true
+      }).catch(error => {
+        this.$message({
+          message: '网络异常：' + error,
+          type: 'error',
+          duration: 5000
+        })
       })
     },
     showChainAccount(chainAccount) {
@@ -464,6 +470,12 @@ export default {
           this.getUA().then(() => {
             loading.close()
           })
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
         })
       })
     },
@@ -496,6 +508,12 @@ export default {
               this.getUA().then(() => {
                 loading.close()
               })
+            }).catch(error => {
+              this.$message({
+                message: '网络异常：' + error,
+                type: 'error',
+                duration: 5000
+              })
             })
           })
         }
@@ -524,6 +542,12 @@ export default {
           this.handleResponse(response)
           this.getUA().then(() => {
             loading.close()
+          })
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
           })
         })
       })

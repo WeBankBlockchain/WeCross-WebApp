@@ -1,77 +1,82 @@
 <template>
-  <div id="app">
-    <el-row type="flex" justify="center" style="margin-top: 20px">
-      <el-col :span="12">
-        <transaction-form
-          v-loading="loading"
-          :transaction="transactionData"
-          :submit-response="submitResponse"
-          @clearClick="clearTransaction"
-          @submitClick="onSubmit"
-        >
-          <template slot="path">
-            <el-input v-model="transactionData.path" placeholder="请输入资源路径" style="width: 100%">
-              <el-button slot="append" icon="el-icon-search" @click="startSelectPath = true">浏览</el-button>
-            </el-input>
-            <el-dialog :visible.sync="startSelectPath">
-              <div class="wl-finder">
-                <el-row class="finder-title">
-                  <span style="margin-left: 10px">待选资源列表</span>
-                </el-row>
-                <el-row :style="{height}">
-                  <el-col>
-                    <div class="finder-chain">
-                      <el-tree
-                        ref="from-tree"
-                        lazy
-                        node-key="key"
-                        :load="onLoadNode"
-                        :props="chainProps"
-                        highlight-current
-                        @node-click="onNodeClick"
-                      />
-                    </div>
-                  </el-col>
-                  <el-col>
-                    <div class="finder-path">
-                      <el-table
-                        ref="finderTable"
-                        :show-header="false"
-                        stripe
-                        tooltip-effect="dark"
-                        :data="paths"
-                        height="80%"
-                        :highlight-current-row="true"
-                        @row-click="onSelectRow"
-                        @selection-change="onSelectChange"
-                      >
-                        <el-table-column fixed width="42px" type="selection" />
-                        <el-table-column show-overflow-tooltip>
-                          <template slot-scope="scope">{{ scope.row.path }}</template>
-                        </el-table-column>
-                      </el-table>
-                      <el-pagination
-                        small
-                        :pager-count="5"
-                        :page-size="pageObject.pageSize"
-                        layout="prev, pager, next, jumper"
-                        :total="pageObject.totalPageNumber"
-                        style="text-align: center; margin-top: 30px"
-                        :current-page.sync="pageObject.currentPage"
-                        @current-change="updatePageAndFetchPaths"
-                      />
-                    </div>
-                  </el-col>
-                </el-row>
-              </div>
-              <span slot="footer" style="margin-right: 80px">
-                <el-button type="primary" @click="startSelectPath = false">确 定</el-button>
-              </span>
-            </el-dialog>
-          </template>
-        </transaction-form>
-      </el-col>
-    </el-row>
+  <div class="app-container">
+    <el-card>
+      <template slot="header">
+        <el-page-header content="交易发起页面" title="交易管理" @back="() => {this.$router.push({ path: 'transactionList' })}" />
+      </template>
+      <el-row type="flex" justify="center" style="margin-top: 20px">
+        <el-col :span="12">
+          <transaction-form
+            v-loading="loading"
+            :transaction="transactionData"
+            :submit-response="submitResponse"
+            @clearClick="clearTransaction"
+            @submitClick="onSubmit"
+          >
+            <template slot="path">
+              <el-input v-model="transactionData.path" placeholder="请输入资源路径" style="width: 100%">
+                <el-button slot="append" icon="el-icon-search" @click="startSelectPath = true">浏览</el-button>
+              </el-input>
+              <el-dialog :visible.sync="startSelectPath">
+                <div class="wl-finder">
+                  <el-row class="finder-title">
+                    <span style="margin-left: 10px">待选资源列表</span>
+                  </el-row>
+                  <el-row :style="{height}">
+                    <el-col>
+                      <div class="finder-chain">
+                        <el-tree
+                          ref="from-tree"
+                          lazy
+                          node-key="key"
+                          :load="onLoadNode"
+                          :props="chainProps"
+                          highlight-current
+                          @node-click="onNodeClick"
+                        />
+                      </div>
+                    </el-col>
+                    <el-col>
+                      <div class="finder-path">
+                        <el-table
+                          ref="finderTable"
+                          :show-header="false"
+                          stripe
+                          tooltip-effect="dark"
+                          :data="paths"
+                          height="80%"
+                          :highlight-current-row="true"
+                          @row-click="onSelectRow"
+                          @selection-change="onSelectChange"
+                        >
+                          <el-table-column fixed width="42px" type="selection" />
+                          <el-table-column show-overflow-tooltip>
+                            <template slot-scope="scope">{{ scope.row.path }}</template>
+                          </el-table-column>
+                        </el-table>
+                        <el-pagination
+                          small
+                          :pager-count="5"
+                          :page-size="pageObject.pageSize"
+                          layout="prev, pager, next, jumper"
+                          :total="pageObject.totalPageNumber"
+                          style="text-align: center; margin-top: 30px"
+                          :current-page.sync="pageObject.currentPage"
+                          @current-change="updatePageAndFetchPaths"
+                        />
+                      </div>
+                    </el-col>
+                  </el-row>
+                </div>
+                <span slot="footer" style="margin-right: 80px">
+                  <el-button type="primary" @click="startSelectPath = false">确 定</el-button>
+                </span>
+              </el-dialog>
+            </template>
+          </transaction-form>
+        </el-col>
+      </el-row>
+    </el-card>
   </div>
 </template>
 
@@ -294,6 +299,12 @@ export default {
           }
         }).then(response => {
           this.onResponse(response)
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
         })
       } else {
         call({
@@ -305,6 +316,12 @@ export default {
           }
         }).then(response => {
           this.onResponse(response)
+        }).catch(error => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
         })
       }
     },

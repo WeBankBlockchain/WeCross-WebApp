@@ -9,7 +9,7 @@
         :rules="transactionRules"
         class="dynamicForm"
       >
-        <el-form-item label="调用方式:" prop="path">
+        <el-form-item label="调用方式:">
           <el-col>
             <el-radio-group v-model="transaction.execMethod" size="small" @change="onMethodChange">
               <el-radio label="sendTransaction">发交易</el-radio>
@@ -89,16 +89,16 @@ export default {
       transactionRules: {
         path: [
           {
-            required: true, message: '资源路径不能为空', trigger: 'blur, change'
+            required: true, message: '资源路径不能为空', trigger: 'blur'
           },
           {
-            required: true, message: '资源路径总长度不能超过40', trigger: 'blur', min: 1, max: 40
+            required: true, message: '资源路径总长度不能超过128', trigger: 'blur', max: 128
           },
           {
-            pattern: /^[A-Za-z]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
+            pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/,
             required: true,
             message: '资源路径格式错误，应形如 \'path.to.resource\'',
-            trigger: 'blur'
+            trigger: 'change'
           }
         ],
         method: [
@@ -106,10 +106,10 @@ export default {
             required: true, message: '调用方法不能为空', trigger: 'blur'
           },
           {
-            required: true, message: '调用方法总长度不能超过40', trigger: 'blur', min: 1, max: 40
+            required: true, message: '调用方法总长度不能超过128', trigger: 'blur', max: 128
           },
           {
-            pattern: /^[A-Za-z0-9_]+$/,
+            pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/,
             required: true,
             message: '调用方法格式错误, 不支持特殊符号',
             trigger: 'blur'

@@ -13,6 +13,7 @@
             fit
             height="calc(90vh - 130px)"
             style="width: 100%;"
+            tooltip-effect="light"
             @expand-change="onExpandChange"
           >
             <el-table-column label="开始时间" min-width="60px">
@@ -20,10 +21,10 @@
                 <span>{{ scope.row.timestamp | formatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" />
+            <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" show-overflow-tooltip />
             <el-table-column prop="username" label="跨链账户" min-width="50px" />
-            <el-table-column prop="status" label="事务状态" min-width="50px" />
-            <el-table-column label="锁定资源" min-width="60px">
+            <el-table-column prop="status" label="事务状态" width="90px" />
+            <el-table-column label="锁定资源" min-width="70px">
               <template slot-scope="scope">
                 <li v-for="path in scope.row.paths" :key="path" style="list-style-type: none">{{ path }}</li>
               </template>
@@ -35,10 +36,11 @@
                     ref="singleTable"
                     :data="xaTransaction ? xaTransaction.xaTransactionSteps : null"
                     fit
+                    height="calc(50vh)"
                     highlight-current-row
                     tooltip-effect="light"
                   >
-                    <el-table-column label="执行时间" min-width="70px">
+                    <el-table-column label="执行时间" width="155px">
                       <template slot-scope="step">
                         <span>{{ step.row.timestamp | formatDate }}</span>
                       </template>

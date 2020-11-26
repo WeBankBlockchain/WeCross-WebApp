@@ -716,6 +716,10 @@ export default {
     },
     methodChange() {
       this.fileList = []
+      this.zipContractFilesMap = {}
+      this.solidityFiles = []
+      this.sourceContractLine = []
+      this.dependenciesLine = []
       this.$refs.deployForm.clearValidate()
       clearForm(this.form)
     }

@@ -27,9 +27,9 @@
           <el-table
             ref="finderTable"
             stripe
-            tooltip-effect="dark"
+            tooltip-effect="light"
             :data="tableShowData"
-            style="height: calc(100% - 34px)"
+            height="calc(100% - 34px)"
             @selection-change="handleSelectionChange"
           >
             <el-table-column fixed width="42px" type="selection" />
@@ -328,6 +328,12 @@ export default {
 }
 </script>
 
+<style lang="scss">
+.el-tooltip__popper {
+  max-width: 400px;
+  line-height: 180%;
+}
+</style>
 <style lang="scss" scoped>
 body {
   line-height: 1.666;

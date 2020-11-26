@@ -36,7 +36,6 @@
                     ref="singleTable"
                     :data="xaTransaction ? xaTransaction.xaTransactionSteps : null"
                     fit
-                    height="calc(50vh)"
                     highlight-current-row
                     tooltip-effect="light"
                   >
@@ -60,16 +59,12 @@
                     <el-form>
                       <el-form-item v-if="scope.row.status === 'committed'" label="提交时间：">
                         <span>
-                          {{
-                            xaTransaction ? ( xaTransaction.commitTimestamp ) : null | formatDate
-                          }}
+                          {{ xaTransaction ? ( xaTransaction.commitTimestamp ) : null | formatDate }}
                         </span>
                       </el-form-item>
                       <el-form-item v-if="scope.row.status === 'rolledback'" label="回滚时间：">
                         <span>
-                          {{
-                            xaTransaction ? ( xaTransaction.rollbackTimestamp ) : null | formatDate
-                          }}
+                          {{ xaTransaction ? ( xaTransaction.rollbackTimestamp ) : null | formatDate }}
                         </span>
                       </el-form-item>
                       <el-form-item>

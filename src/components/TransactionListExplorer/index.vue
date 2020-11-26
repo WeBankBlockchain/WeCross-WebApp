@@ -18,24 +18,19 @@
       >
         <template slot-scope="item">{{ item.row.txHash }}</template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="跨链账户"
-        min-width="50px"
-        show-overflow-tooltip
-      >
+      <el-table-column label="跨链账户" min-width="50px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.username }}</template>
       </el-table-column>
-      <el-table-column align="center" label="区块高度" min-width="20px">
+      <el-table-column label="区块高度" min-width="20px">
         <template slot-scope="item">{{ item.row.blockNumber }}</template>
       </el-table-column>
-      <el-table-column align="center" label="资源路径" min-width="50px">
+      <el-table-column label="资源路径" min-width="50px">
         <template slot-scope="item">{{ item.row.path }}</template>
       </el-table-column>
-      <el-table-column align="center" label="调用方法" min-width="50px">
+      <el-table-column label="调用方法" min-width="50px">
         <template slot-scope="item">{{ item.row.method }}</template>
       </el-table-column>
-      <el-table-column align="center" label="交易回执" min-width="20px">
+      <el-table-column label="交易回执" min-width="20px">
         <template slot-scope="item">
           <el-tooltip
             effect="light"
@@ -65,7 +60,7 @@
         <vue-json-pretty
           :expand-depth="2"
           :deep="3"
-          boxed
+          show-length
           copyable
           :data="txReceipt"
           @click="handleClick"

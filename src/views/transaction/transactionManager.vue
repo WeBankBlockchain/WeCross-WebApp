@@ -70,6 +70,13 @@ export default {
         },
         */
   props: {},
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (vm.currentChain !== '') {
+        vm.$refs.transactionList.handleSearch(vm.currentChain)
+      }
+    })
+  },
   data() {
     return {
       currentZone: '',

@@ -55,7 +55,7 @@
               label="资源路径："
               prop="appendPath"
             >
-              <el-input v-model="form.appendPath" placeholder="Path">
+              <el-input v-model.trim="form.appendPath" placeholder="Path">
                 <template slot="prepend" style="padding: 5px">{{ form.prependPath }}</template>
               </el-input>
             </el-form-item>
@@ -65,7 +65,7 @@
               label="资源路径："
               prop="fullPath"
             >
-              <el-input v-model="form.fullPath" placeholder="Path" />
+              <el-input v-model.trim="form.fullPath" placeholder="Path" />
             </el-form-item>
 
             <!-- BCOS -->
@@ -101,20 +101,20 @@
                 label="合约类名："
                 prop="className"
               >
-                <el-input v-model="form.className" placeholder="Class Name" />
+                <el-input v-model.trim="form.className" placeholder="Class Name" />
               </el-form-item>
               <el-form-item
                 label="合约版本号："
                 prop="version"
               >
-                <el-input v-model="form.version" placeholder="Version" />
+                <el-input v-model.trim="form.version" placeholder="Version" />
               </el-form-item>
               <el-form-item
                 v-if="form.method ==='register'"
                 label="已有合约地址："
                 prop="address"
               >
-                <el-input v-model="form.address" placeholder="Address">
+                <el-input v-model.trim="form.address" placeholder="Address">
                   <template slot="prepend">0x</template>
                 </el-input>
               </el-form-item>
@@ -125,7 +125,7 @@
                 label="所在组织名："
                 prop="org"
               >
-                <el-input v-model="form.org" placeholder="Organization" />
+                <el-input v-model.trim="form.org" placeholder="Organization" />
               </el-form-item>
               <el-form-item v-if="form.method === 'install'" label="合约文件：" prop="compressedContent">
                 <el-upload
@@ -146,7 +146,7 @@
                 label="合约版本号："
                 prop="version"
               >
-                <el-input v-model="form.version" placeholder="Version" />
+                <el-input v-model.trim="form.version" placeholder="Version" />
               </el-form-item>
               <el-form-item label="合约语言：" prop="lang">
                 <el-select v-model="form.lang" placeholder="请选择合约语言" style="width:100%">

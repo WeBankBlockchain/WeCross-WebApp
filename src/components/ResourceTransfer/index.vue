@@ -328,12 +328,6 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.el-tooltip__popper {
-  max-width: 400px;
-  line-height: 180%;
-}
-</style>
 <style lang="scss" scoped>
 body {
   line-height: 1.666;

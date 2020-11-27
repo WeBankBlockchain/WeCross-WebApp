@@ -21,7 +21,7 @@
           <slot name="path" />
         </el-form-item>
         <el-form-item label="调用函数:" prop="method">
-          <el-input v-model="transaction.method" placeholder="请输入调用函数" />
+          <el-input v-model.trim="transaction.method" placeholder="请输入调用函数" />
         </el-form-item>
         <div v-for="(arg, index) in transaction.args" :key="arg.key">
           <el-form-item

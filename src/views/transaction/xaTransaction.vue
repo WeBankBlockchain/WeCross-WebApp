@@ -34,7 +34,7 @@
                   prop="transactionID"
                 >
                   <el-input
-                    v-model="transactionForm.transactionID"
+                    v-model.trim="transactionForm.transactionID"
                     placeholder="请输入事务ID"
                     style="width: 100%;"
                   >
@@ -458,7 +458,7 @@ export default {
     },
     creatUUID() {
       const { v4: uuidV4 } = require('uuid')
-      this.transactionForm.transactionID = uuidV4().replaceAll('-', '')
+      this.transactionForm.transactionID = uuidV4().toString().replaceAll('-', '')
       this.$refs['transactionForm'].clearValidate('transactionID')
     },
     clearTransaction() {

@@ -161,7 +161,9 @@ export default {
   },
   watch: {
     resourceData(val) {
-      this.tableShowData = val
+      this.tableShowData = val.filter((item) => {
+        return JSON.stringify(this.toShowData).indexOf(JSON.stringify(item)) === -1
+      })
     },
     from_check_keys(val) {
       this.from_disabled = (val.length === 0)
@@ -213,7 +215,7 @@ export default {
     },
     removeToSource() {
       for (const toDatum of this.to_check_keys) {
-        if (toDatum.startsWith(this.$refs['from-tree'].getCurrentKey())) {
+        if (toDatum.startsWith(this.$refs['from-tree'].getCurrentKey() + '.')) {
           this.tableShowData.push({ path: toDatum })
         }
         this.toShowData = this.toShowData.filter((item) => item.path !== toDatum)

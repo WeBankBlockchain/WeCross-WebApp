@@ -67,7 +67,12 @@ export default {
       }
     }
   },
-  mounted() {},
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      var path = vm.currentChain
+      vm.currentChain = path
+    })
+  },
   methods: {
     onZoneClick(path) {
       if (this.currentZone !== path) {

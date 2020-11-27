@@ -592,7 +592,7 @@ export default {
     },
     uploadContractSourceHandler(params) {
       const jszip = new JSZip()
-      if (params.file !== null && params.file.type === 'application/zip') {
+      if (params.file !== null) {
         this.zipContractFilesMap = {}
         this.solidityFiles = []
         this.sourceContractLine = []

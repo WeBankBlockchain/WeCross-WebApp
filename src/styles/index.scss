@@ -186,6 +186,11 @@ aside {
   line-height: 16px;
 }
 
+.el-tooltip__popper {
+  max-width: 400px;
+  line-height: 180%;
+}
+
 .multiselect--active {
   z-index: 1000 !important;
 }

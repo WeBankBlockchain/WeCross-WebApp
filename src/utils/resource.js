@@ -17,7 +17,7 @@ export function buildBCOSDeployRequest(formData) {
     path: formData.fullPath || formData.prependPath + formData.appendPath,
     data: {
       command: formData.method,
-      args: [formData.appendPath, formData.sourceContent, formData.className, formData.version]
+      args: [formData.appendPath || formData.fullPath.split('.')[2], formData.sourceContent, formData.className, formData.version]
     }
   }
 }
@@ -28,7 +28,7 @@ export function buildBCOSRegisterRequest(formData) {
     path: formData.fullPath || formData.prependPath + formData.appendPath,
     data: {
       command: formData.method,
-      args: [formData.appendPath, formData.chosenSolidity.split('.')[1], formData.sourceContent, '0x' + formData.address, formData.className, formData.version]
+      args: [formData.appendPath || formData.fullPath.split('.')[2], formData.chosenSolidity.split('.')[1], formData.sourceContent, '0x' + formData.address, formData.className, formData.version]
     }
   }
 }
@@ -40,7 +40,7 @@ export function buildFabricInstallRequest(formData) {
     data: {
       command: formData.method,
       args: [
-        formData.appendPath,
+        formData.appendPath || formData.fullPath.split('.')[2],
         formData.version,
         formData.org,
         formData.lang,
@@ -57,7 +57,7 @@ export function buildFabricInstantiateRequest(formData) {
     data: {
       command: formData.method,
       args: [
-        formData.appendPath,
+        formData.appendPath || formData.fullPath.split('.')[2],
         formData.version,
         formData.org,
         formData.lang,
@@ -76,7 +76,7 @@ export function buildFabricUpgradeRequest(formData) {
     data: {
       command: formData.method,
       args: [
-        formData.appendPath,
+        formData.appendPath || formData.fullPath.split('.')[2],
         formData.version,
         formData.org,
         formData.lang,

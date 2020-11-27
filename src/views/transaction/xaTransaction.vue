@@ -28,13 +28,14 @@
                 <el-form-item
                   label="事务ID："
                   :rules="[
-                    {required: true, message: '事务ID不能为空', trigger: 'blur'},
-                    { pattern: /^[0-9a-fA-F]+$/, required: true, message: '请检查事务ID格式：16进制', trigger: 'blur'}
+                    { required: true, message: '事务ID不能为空', trigger: 'blur' },
+                    { pattern: /^[0-9a-fA-F]+$/, required: true, message: '请检查事务ID格式：16进制', trigger: 'blur' },
+                    { required: true, message: '事务ID长度不能超过128', trigger: 'blur', max: 128 }
                   ]"
                   prop="transactionID"
                 >
                   <el-input
-                    v-model="transactionForm.transactionID"
+                    v-model.trim="transactionForm.transactionID"
                     placeholder="请输入事务ID"
                     style="width: 100%;"
                   >
@@ -458,7 +459,7 @@ export default {
     },
     creatUUID() {
       const { v4: uuidV4 } = require('uuid')
-      this.transactionForm.transactionID = uuidV4().replaceAll('-', '')
+      this.transactionForm.transactionID = uuidV4().toString().replaceAll('-', '')
       this.$refs['transactionForm'].clearValidate('transactionID')
     },
     clearTransaction() {

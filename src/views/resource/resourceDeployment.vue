@@ -592,7 +592,7 @@ export default {
     },
     uploadContractSourceHandler(params) {
       const jszip = new JSZip()
-      if (params.file !== null) {
+      if (params.file !== null && /.(zip|ZIP)$/.test(params.file.name)) {
         this.zipContractFilesMap = {}
         this.solidityFiles = []
         this.sourceContractLine = []
@@ -653,7 +653,7 @@ export default {
     },
     uploadContractCompressedHandler(params) {
       params.onProgress({ percent: 20 })
-      if (params.file !== null && /(x-gzip|x-tar)$/.test(params.file.type)) {
+      if (params.file !== null && /(gzip|tar)$/.test(params.file.type)) {
       // if(params.file.name)
         setTimeout(() => {
           this.readBaseBytes(params)
@@ -670,7 +670,7 @@ export default {
     },
     uploadPolicyHandler(params) {
       params.onProgress({ percent: 20 })
-      if (params.file !== null && /(x-yaml)$/.test(params.file.type)) {
+      if (params.file !== null && /(yaml)$/.test(params.file.type)) {
         setTimeout(() => {
           this.readBaseBytes(params)
         }, 100)
@@ -716,6 +716,10 @@ export default {
     },
     methodChange() {
       this.fileList = []
+      this.zipContractFilesMap = {}
+      this.solidityFiles = []
+      this.sourceContractLine = []
+      this.dependenciesLine = []
       this.$refs.deployForm.clearValidate()
       clearForm(this.form)
     }

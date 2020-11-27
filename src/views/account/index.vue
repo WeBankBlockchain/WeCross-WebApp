@@ -4,7 +4,10 @@
       <el-card>
         <el-form label-position="left" size="small" label-width="80px">
           <el-form-item label="跨链账户">
-            <el-tag :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
+            <el-tooltip class="item" effect="light" placement="right">
+              <el-tag :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
+              <div slot="content">Version: {{ ua.version }}</div>
+            </el-tooltip>
             <el-button style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
           </el-form-item>
           <el-form-item label="公钥">
@@ -44,6 +47,7 @@
                 v-if="scope.row.isDefault"
                 style="float: right"
                 size="small"
+                @click.stop=""
               >
                 默认账户
               </el-button>
@@ -340,6 +344,7 @@ export default {
         pubKey: null,
         username: null,
         admin: true,
+        version: 0,
         chainAccounts: [
           {
             keyID: 0,

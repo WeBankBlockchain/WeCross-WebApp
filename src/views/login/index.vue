@@ -64,25 +64,19 @@
 </template>
 
 <script>
-import { validUsername, validPassword } from '@/utils/validate'
-
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('用户名长度3~16个字符，不支持中文'))
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (!validPassword(value)) {
-        callback(
-          new Error(
-            '密码长度6~18个字符，支持大小写字母、数字，至少包含一个数字和字母'
-          )
-        )
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入密码'))
       } else {
         callback()
       }

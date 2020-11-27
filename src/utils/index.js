@@ -138,3 +138,13 @@ export function path2Url(path) {
   const part = path.split('.')
   return '/' + part.join('/')
 }
+
+export function limitString(str) {
+  if (typeof str === 'string') {
+    if (str.length > 40) {
+      return str.substring(0, 40) + '...'
+    } else {
+      return str
+    }
+  }
+}

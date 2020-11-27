@@ -4,30 +4,30 @@ import { sm2 as SM2 } from 'sm-crypto'
 import { sm3Hex } from '@/utils/sm3.js'
 
 const CERT_PATTERN =
-        '-+BEGIN\\s+.*CERTIFICATE[^-]*-+(?:\\s|\\r|\\n)+' + // Header
+        '-----BEGIN\\s+.*CERTIFICATE[^-]*-+(?:\\s|\\r|\\n)+' + // Header
                 '([A-Za-z0-9+/=\\r\\n]+)' + // Base64 text
-                '-+END\\s+.*CERTIFICATE[^-]*-+' // Footer
+                '-----END\\s+.*CERTIFICATE[^-]*-+' // Footer
 
 const SEC_KEY_PATTERN =
-        '-+BEGIN\\s+.*PRIVATE\\s+KEY[^-]*-+(?:\\s|\\r|\\n)+' + // Header
+        '-----BEGIN\\s+.*PRIVATE\\s+KEY[^-]*-+(?:\\s|\\r|\\n)+' + // Header
                 '([A-Za-z0-9+/=\\r\\n]+)' + // Base64 text
-                '-+END\\s+.*PRIVATE\\s+KEY[^-]*-+' // Footer
+                '-----END\\s+.*PRIVATE\\s+KEY[^-]*-+' // Footer
 const PUB_KEY_PATTERN =
-        '-+BEGIN\\s+.*PUBLIC\\s+KEY[^-]*-+(?:\\s|\\r|\\n)+' + // Header
+        '-----BEGIN\\s+.*PUBLIC\\s+KEY[^-]*-+(?:\\s|\\r|\\n)+' + // Header
                 '([A-Za-z0-9+/=\\r\\n]+)' + // Base64 text
-    '-+END\\s+.*PUBLIC\\s+KEY[^-]*-+' // Footer
+    '-----END\\s+.*PUBLIC\\s+KEY[^-]*-+' // Footer
 
 export const pem = {
   isCertFormat(content) {
-    return content.search(CERT_PATTERN) !== -1
+    return content.search(CERT_PATTERN) === 0
   },
 
   isSecKeyFormat(content) {
-    return content.search(SEC_KEY_PATTERN) !== -1
+    return content.search(SEC_KEY_PATTERN) === 0
   },
 
   isPubKeyFormat(content) {
-    return content.search(PUB_KEY_PATTERN) !== -1
+    return content.search(PUB_KEY_PATTERN) === 0
   }
 }
 

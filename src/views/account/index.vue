@@ -4,10 +4,7 @@
       <el-card>
         <el-form label-position="left" size="small" label-width="80px">
           <el-form-item label="跨链账户">
-            <el-tooltip class="item" effect="light" placement="right">
-              <el-tag :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
-              <div slot="content">Version: {{ ua.version }}</div>
-            </el-tooltip>
+            <el-tag :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
             <el-button style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
           </el-form-item>
           <el-form-item label="公钥">
@@ -405,7 +402,7 @@ export default {
             callback()
           }
         } }],
-        pubKey: [{ required: true, trigger: 'change', validator: (rule, value, callback) => {
+        pubKey: [{ required: true, trigger: 'blur', validator: (rule, value, callback) => {
           console.log('value: ', value)
           if (typeof (value) === 'undefined' || value.length === 0) {
             callback(new Error('请输入公钥'))
@@ -415,7 +412,7 @@ export default {
             callback()
           }
         } }],
-        ext: [{ required: true, trigger: 'change', message: '请输入' }]
+        ext: [{ required: true, trigger: 'blur', message: '请输入' }]
       }
     }
   },
@@ -450,6 +447,8 @@ export default {
       this.addChainAccountDrawer.params.secKey = undefined
       this.addChainAccountDrawer.params.ext = undefined
       this.addChainAccountDrawer.params.isDefault = false
+
+      this.$refs['addChainAccountDrawer'].clearValidate(['secKey', 'pubKey', 'ext'])
     },
     querySetDefaultAccount() {
       MessageBox.confirm('设为默认账户？', '提示', {
@@ -476,6 +475,7 @@ export default {
             loading.close()
           })
         }).catch(error => {
+          loading.close()
           this.$message({
             message: '网络异常：' + error,
             type: 'error',
@@ -514,6 +514,7 @@ export default {
                 loading.close()
               })
             }).catch(error => {
+              loading.close()
               this.$message({
                 message: '网络异常：' + error,
                 type: 'error',

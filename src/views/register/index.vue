@@ -119,9 +119,10 @@
 <script>
 import { validUsername, validPassword } from '@/utils/validate'
 import { getPubKey } from '@/utils/auth'
-import { JSEncrypt } from 'jsencrypt'
 import { register } from '@/api/user'
 import { authCode } from '@/api/user'
+import { rsa_encode } from '@/utils/rsa'
+import { queryPub } from '@/utils/rsa'
 
 export default {
   name: 'Register',
@@ -181,6 +182,10 @@ export default {
     }
   },
   created() {
+    /**
+    query publicKey for data encrypt
+    */
+    queryPub()
     this.handleFetchAuthTokenCode()
     setInterval(this.handleFetchAuthTokenCode, 60000)
   },
@@ -235,16 +240,13 @@ export default {
         var params = {
           username: this.registerForm.username,
           password: this.registerForm.password,
-          imageAuthCode: this.registerForm.imageAuthCode,
+          authCode: this.registerForm.imageAuthCode,
           imageToken: this.imageAuthCode.imageToken
         }
 
         // rsa encode parameters
-        var jsonParams = JSON.stringify(params)
         var pub = getPubKey()
-        var encryptor = new JSEncrypt()
-        encryptor.setPublicKey(pub)
-        var encoded = encryptor.encrypt(jsonParams)
+        var encoded = rsa_encode(JSON.stringify(params), pub)
 
         console.log('register encoded: ' + encoded)
 

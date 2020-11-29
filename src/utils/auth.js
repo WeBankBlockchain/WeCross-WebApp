@@ -27,6 +27,10 @@ export function removeUsername() {
   return localStorage.removeItem(UsernameKey)
 }
 
+export function getPubKey(pub) {
+  return localStorage.getItem(PubKey)
+}
+
 export function setPubKey(pub) {
   return localStorage.setItem(PubKey, pub)
 }

@@ -119,7 +119,7 @@
 <script>
 import { validUsername, validPassword } from '@/utils/validate'
 import { register } from '@/api/user'
-import { imageAuthCode } from '@/api/user'
+import { authCode } from '@/api/user'
 
 export default {
   name: 'Register',
@@ -180,6 +180,7 @@ export default {
   },
   created() {
     this.handleFetchAuthTokenCode()
+    setInterval(this.handleFetchAuthTokenCode, 60000)
   },
   methods: {
     showPwd() {
@@ -196,9 +197,9 @@ export default {
       })
     },
     handleFetchAuthTokenCode() {
-      imageAuthCode()
+      authCode()
         .then((resp) => {
-          console.log('handleFetchAuthTokenCode => ' + JSON.stringify(resp))
+          console.log('fetch authCode => ' + JSON.stringify(resp))
 
           if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
             this.$message({
@@ -206,8 +207,8 @@ export default {
               message: JSON.stringify(resp)
             })
           } else {
-            const imageAuthCodeInfo = resp.data.imageAuthCodeInfo
-            this.imageAuthCode.imageToken = imageAuthCodeInfo.imageToken
+            const imageAuthCodeInfo = resp.data.authCode
+            this.imageAuthCode.imageToken = imageAuthCodeInfo.randomToken
             this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${imageAuthCodeInfo.imageBase64}`
           }
         })
@@ -224,7 +225,7 @@ export default {
         if (!valid) {
           this.$message({
             type: 'error',
-            message: '用户名或者密码无效，请重新输入'
+            message: '用户名或密码无效，请重新输入'
           })
           return false
         }

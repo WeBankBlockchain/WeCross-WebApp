@@ -86,5 +86,22 @@ module.exports = [
         }
       }
     }
+  },
+  // user pub
+  {
+    url: '/auth/pub',
+    type: 'get',
+    response: _ => {
+      return {
+        version: '1.0',
+        errorCode: 0,
+        message: 'success',
+        data: {
+          errorCode: 0,
+          message: 'success',
+          pub: 'MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAiJ0u2c/Xze3Jv+beltOfoaavZtatVmldwctq3ItZZ5w60whzKiNdrsFcQZqj2PszLbwiYsC4fEFKQIcaTiHCXDSQ1Km25ay8/c+NKprl/ruevGB1pXDnQNZhQqoaghfzijTX2bl6DJqCnuSV46sCKgKfyKm3PNPcsMUxYWC1283an3cviUvdSnZyXHN++T2Otw77EVm55CNuDpX5MkOOIPTMSAxzweC9n9dJf5sGbmzqK2Yx8Jp/9vUA+jqR8ljqKJ7Q6bLVW3/xuqAN542U8a3dvPY3RVAkLVxgnl7UIfQl5PcBIxd4W3NZM6da/ZGmp76MAq/hxpceoU7DmQntkP9mX9ExtzcUTNFTm+LERwR530YRx4P7QB3EAAujEklZrlhXVwNa3phXnZRJWm4nuJ3qQB0I2VIw9q247aSLWEkoXQWu9CyRWzt7hmxgspwCYwsMdkvs0t8zv5L1LK0i8qXLHQCrasHkoJQ16+aztSDFmrAhJKtC4JN+ACnR1kMXAz/r2o3Y+pCO/2eBSDllsYSwCMRcgFwGvmutSD5dLes+zFZusxTRZ6vVnnnob+fOZ0NAdEDG9QY4UZoUxMjqSqM2db9jQ67QlcuMuEsc7uQ7T5mWlNORBnEVCz/UIjvFKnw7XnvGWcT/hKTPKYbgkqOJ/KQ05DoF/W3VHU+inPMCAwEAAQ=='
+        }
+      }
+    }
   }
 ]

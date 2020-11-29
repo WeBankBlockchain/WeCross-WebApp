@@ -36,3 +36,10 @@ export function authCode(data) {
     method: 'get'
   })
 }
+
+export function authPub(data) {
+  return request({
+    url: '/auth/pub',
+    method: 'get'
+  })
+}

@@ -97,7 +97,7 @@
               :src="imageAuthCode.imageAuthCodeBase64URL"
               alt=""
               @click="handleFetchAuthTokenCode"
-            >
+            />
           </span>
         </div>
       </el-form-item>
@@ -106,7 +106,8 @@
         type="primary"
         style="width:100%;margin-bottom:30px;"
         @click="handleRegister('registerForm')"
-      >注册</el-button>
+        >注册</el-button
+      >
 
       <div class="tips">
         <span style="margin-right:20px;">已有账号？</span>
@@ -117,174 +118,174 @@
 </template>
 
 <script>
-import { validUsername, validPassword } from '@/utils/validate'
-import { register } from '@/api/user'
-import { authCode } from '@/api/user'
+import { validUsername, validPassword } from "@/utils/validate";
+import { register } from "@/api/user";
+import { authCode } from "@/api/user";
 
 export default {
-  name: 'Register',
+  name: "Register",
   data() {
     const checkUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
         callback(
           new Error(
-            '用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-'
+            "用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-"
           )
-        )
+        );
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const verifyPwd = (rule, value, callback) => {
       if (!validPassword(value)) {
         callback(
           new Error(
-            '密码长度6~18个字符，支持数字、大小写字母，至少包含一个数字和字母'
+            "密码长度6~18个字符，支持数字、大小写字母，至少包含一个数字和字母"
           )
-        )
+        );
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const confirmPwd = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请再次输入密码'))
+      if (value === "") {
+        callback(new Error("请再次输入密码"));
       } else if (value !== this.registerForm.password) {
-        callback(new Error('两次输入密码不一致!'))
+        callback(new Error("两次输入密码不一致!"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       registerForm: {
-        password: '',
-        checkPass: '',
-        username: '',
-        imageAuthCode: ''
+        password: "",
+        checkPass: "",
+        username: "",
+        imageAuthCode: "",
       },
       imageAuthCode: {
-        imageAuthCodeBase64URL: '',
-        imageToken: ''
+        imageAuthCodeBase64URL: "",
+        imageToken: "",
       },
       registerRules: {
         username: [
-          { required: true, validator: checkUsername, trigger: 'change' }
+          { required: true, validator: checkUsername, trigger: "change" },
         ],
-        password: [{ required: true, validator: verifyPwd, trigger: 'blur' }],
+        password: [{ required: true, validator: verifyPwd, trigger: "blur" }],
         checkPass: [
-          { required: true, validator: confirmPwd, trigger: 'change' }
-        ]
+          { required: true, validator: confirmPwd, trigger: "change" },
+        ],
       },
-      passwordType: 'password'
-    }
+      passwordType: "password",
+    };
   },
   created() {
-    this.handleFetchAuthTokenCode()
-    setInterval(this.handleFetchAuthTokenCode, 60000)
+    this.handleFetchAuthTokenCode();
+    setInterval(this.handleFetchAuthTokenCode, 60000);
   },
   methods: {
     showPwd() {
-      this.passwordType = this.passwordType === 'password' ? '' : 'password'
+      this.passwordType = this.passwordType === "password" ? "" : "password";
 
       this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
+        this.$refs.password.focus();
+      });
     },
 
     handleLogin() {
       this.$router.push({
-        path: '/login'
-      })
+        path: "/login",
+      });
     },
     handleFetchAuthTokenCode() {
       authCode()
         .then((resp) => {
-          console.log('fetch authCode => ' + JSON.stringify(resp))
+          console.log("handle fetch authCode => " + JSON.stringify(resp));
 
-          if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
+          if (typeof resp.errorCode !== "undefined" && resp.errorCode !== 0) {
             this.$message({
-              type: 'error',
-              message: JSON.stringify(resp)
-            })
+              type: "error",
+              message: JSON.stringify(resp),
+            });
           } else {
-            const imageAuthCodeInfo = resp.data.authCode
-            this.imageAuthCode.imageToken = imageAuthCodeInfo.randomToken
-            this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${imageAuthCodeInfo.imageBase64}`
+            const imageAuthCodeInfo = resp.data.authCode;
+            this.imageAuthCode.imageToken = imageAuthCodeInfo.randomToken;
+            this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${imageAuthCodeInfo.imageBase64}`;
           }
         })
         .catch((error) => {
           this.$message({
-            message: '网络异常：' + error,
-            type: 'error',
-            duration: 5000
-          })
-        })
+            message: "网络异常：" + error,
+            type: "error",
+            duration: 5000,
+          });
+        });
     },
     handleRegister(formName) {
       this.$refs[formName].validate((valid) => {
         if (!valid) {
           this.$message({
-            type: 'error',
-            message: '用户名或密码无效，请重新输入'
-          })
-          return false
+            type: "error",
+            message: "用户名或密码无效，请重新输入",
+          });
+          return false;
         }
 
         var params = {
           username: this.registerForm.username,
           password: this.registerForm.password,
           imageAuthCode: this.registerForm.imageAuthCode,
-          imageToken: this.imageAuthCode.imageToken
-        }
+          imageToken: this.imageAuthCode.imageToken,
+        };
 
         register(params)
           .then((resp) => {
             console.log(
-              ' params: ' +
+              " params: " +
                 JSON.stringify(params) +
-                'resp ==> ' +
+                "resp ==> " +
                 JSON.stringify(resp)
-            )
+            );
 
-            var data = resp.data
-            var errorCode = data.errorCode
-            var ua = data.universalAccount
+            var data = resp.data;
+            var errorCode = data.errorCode;
+            var ua = data.universalAccount;
 
-            if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
+            if (typeof resp.errorCode !== "undefined" && resp.errorCode !== 0) {
               this.$message({
-                type: 'error',
-                message: resp.message
-              })
-              this.handleFetchAuthTokenCode()
-            } else if (typeof errorCode !== 'undefined' && errorCode === 0) {
-              console.log('register success, ua: ' + JSON.stringify(ua))
+                type: "error",
+                message: resp.message,
+              });
+              this.handleFetchAuthTokenCode();
+            } else if (typeof errorCode !== "undefined" && errorCode === 0) {
+              console.log("register success, ua: " + JSON.stringify(ua));
               this.$message({
-                type: 'success',
-                message: '注册成功!'
-              })
+                type: "success",
+                message: "注册成功!",
+              });
               //
-              this.handleLogin()
+              this.handleLogin();
             } else {
               this.$message({
-                type: 'error',
-                message: JSON.stringify(data)
-              })
-              this.handleFetchAuthTokenCode()
+                type: "error",
+                message: JSON.stringify(data),
+              });
+              this.handleFetchAuthTokenCode();
             }
           })
           .catch((error) => {
             this.$message({
-              message: '网络异常：' + error,
-              type: 'error',
-              duration: 5000
-            })
-          })
+              message: "网络异常：" + error,
+              type: "error",
+              duration: 5000,
+            });
+          });
 
-        return true
-      })
-    }
-  }
-}
+        return true;
+      });
+    },
+  },
+};
 </script>
 
 <style lang="scss">

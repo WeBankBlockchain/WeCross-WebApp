@@ -55,14 +55,16 @@
             @click="drawer = false"
           />
         </div>
-        <vue-json-pretty
-          :expand-depth="2"
-          :deep="3"
-          show-length
-          copyable
-          :data="txReceipt"
-          @click="handleClick"
-        />
+        <div class="json_css">
+          <vue-json-pretty
+            :expand-depth="2"
+            :deep="3"
+            show-length
+            copyable
+            :data="txReceipt"
+            @click="handleClick"
+          />
+        </div>
         <div />
       </el-card>
     </el-drawer>
@@ -356,6 +358,12 @@ export default {
 
 <style lang="scss">
 .el-drawer.rtl {
-  overflow-y: auto;
+  overflow-y: scroll;
+}
+
+.json_css {
+  width: autosize;
+  height: autosize;
+  word-break: break-all;
 }
 </style>

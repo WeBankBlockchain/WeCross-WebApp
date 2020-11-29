@@ -128,9 +128,16 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          var loginParams = {
+            username: this.loginForm.username,
+            password: this.loginForm.password
+          }
+
+          console.log('loginParams: ' + JSON.stringify(loginParams))
+
           this.loading = true
           this.$store
-            .dispatch('user/login', this.loginForm)
+            .dispatch('user/login', loginParams)
             .then(() => {
               this.$router.push({ path: this.redirect || '/' })
               this.loading = false

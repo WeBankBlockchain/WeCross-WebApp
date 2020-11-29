@@ -64,8 +64,7 @@
 </template>
 
 <script>
-import { authPub } from '@/api/user'
-import { setPubKey } from '@/utils/auth'
+import { queryPub } from '@/utils/rsa'
 
 export default {
   name: 'Login',
@@ -111,7 +110,10 @@ export default {
     }
   },
   created() {
-    this.handleFetchPub()
+    /**
+    query publicKey for data encrypt
+    */
+    queryPub()
   },
   methods: {
     showPwd() {
@@ -122,24 +124,6 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.password.focus()
-      })
-    },
-    handleFetchPub() {
-      authPub().then((resp) => {
-        if (
-          typeof resp.errorCode !== 'undefined' &&
-          resp.errorCode !== null &&
-          resp.errorCode !== 0
-        ) {
-          this.$message({
-            type: 'error',
-            message: JSON.stringify(resp)
-          })
-        } else {
-          const pub = resp.data.pub
-          setPubKey(pub)
-          console.log('pub: ' + pub)
-        }
       })
     },
     handleRegister() {

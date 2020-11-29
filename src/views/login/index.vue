@@ -137,8 +137,8 @@ export default {
           })
         } else {
           const pub = resp.data.pub
-          console.log('pub: ' + pub)
           setPubKey(pub)
+          console.log('pub: ' + pub)
         }
       })
     },
@@ -155,8 +155,6 @@ export default {
             username: this.loginForm.username,
             password: this.loginForm.password
           }
-
-          console.log('loginParams: ' + JSON.stringify(loginParams))
 
           this.loading = true
           this.$store

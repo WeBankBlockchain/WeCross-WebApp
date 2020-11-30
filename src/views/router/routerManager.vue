@@ -33,7 +33,7 @@
                 </li>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="180px">
+            <el-table-column label="操作" width="140px">
               <template slot-scope="item">
                 <el-button-group>
                   <el-button plain icon="el-icon-edit" @click="setAlias(item.row.nodeID)">设置别名</el-button>

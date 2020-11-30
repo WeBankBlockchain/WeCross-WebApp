@@ -129,11 +129,6 @@ export function buildRequest(path, method, data) {
   }
 }
 
-export function isValidPath(path) {
-  const regExp = /^[A-Za-z]+\.[A-Za-z_-]+\.[A-Za-z0-9_-]+$/
-  return regExp.test(path)
-}
-
 export function path2Url(path) {
   const part = path.split('.')
   return '/' + part.join('/')

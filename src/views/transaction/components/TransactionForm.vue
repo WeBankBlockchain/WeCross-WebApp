@@ -96,7 +96,7 @@ export default {
             required: true, message: '资源路径总长度不能超过128', trigger: 'blur', max: 128
           },
           {
-            pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/,
+            pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
             required: true,
             message: '资源路径格式错误，应形如 \'path.to.resource\'',
             trigger: 'change'
@@ -110,7 +110,7 @@ export default {
             required: true, message: '调用方法总长度不能超过128', trigger: 'blur', max: 128
           },
           {
-            pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/,
+            pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
             required: true,
             message: '调用方法格式错误, 不支持特殊符号',
             trigger: 'blur'

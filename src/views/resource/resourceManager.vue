@@ -57,10 +57,10 @@ export default {
   props: {},
   data() {
     return {
-      currentZone: '',
-      currentChain: '',
+      currentZone: undefined,
+      currentChain: undefined,
       currentChainData: {},
-      searchPath: '',
+      searchPath: null,
       history: {
         index: 0,
         list: []
@@ -69,7 +69,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      if (vm.currentChain !== '') {
+      if (typeof vm.currentChain !== 'undefined' && vm.currentChain !== null) {
         vm.$refs.ResourceExplorer.refresh()
       }
     })

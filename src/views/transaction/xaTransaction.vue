@@ -111,10 +111,17 @@
           </el-col>
           <el-col :span="12" :offset="2">
             <el-row>
-              <div v-if="this.$store.getters.transactionID !== null" style="font-size: 15px">
-                {{ "当前事务ID：" + this.$store.getters.transactionID }}
-                <el-divider />
+              <div style="font-size: 14px">
+                <el-tooltip effect="light" content="复制事务ID" placement="top-start">
+                  <clipboard :input-data="this.$store.getters.transactionID" style="float:right;" />
+                </el-tooltip>
+                <el-tooltip effect="light" :content="this.$store.getters.transactionID" placement="top-start">
+                  <div>
+                    {{ "当前事务ID： " + limitString(this.$store.getters.transactionID) }}
+                  </div>
+                </el-tooltip>
               </div>
+              <el-divider />
             </el-row>
             <el-row>
               <el-table stripe fit style="width: 100%;" height="45vh" :data="transactionStep" tooltip-effect="light">
@@ -278,6 +285,7 @@
 <script>
 import TransactionForm from '@/views/transaction/components/TransactionForm'
 import ResourceTransfer from '@/components/ResourceTransfer/index'
+import Clipboard from '@/components/Clipboard/index'
 import { getResourceList } from '@/api/resource'
 import { call, getXATransaction, sendTransaction } from '@/api/transaction'
 import { parseTime, limitString } from '@/utils'
@@ -287,7 +295,8 @@ export default {
   name: 'XATransaction',
   components: {
     TransactionForm,
-    ResourceTransfer
+    ResourceTransfer,
+    Clipboard
   },
   filters: {
     formatDate(time) {
@@ -361,7 +370,8 @@ export default {
           title: '提示',
           message: h('p', null, [
             h('h3', { style: 'font-weight: bold; margin-left:10px' }, '目前有事务正在执行中，是否恢复？'),
-            h('li', { style: 'font-weight: bold; margin-left:10px' }, '事务ID: ' + xaID),
+            h('li', { style: 'font-weight: bold; margin-left:10px' }, '事务ID：'),
+            h('ol', null, limitString(xaID)),
             h('li', { style: 'font-weight: bold; margin-left:10px' }, '锁定资源: '),
             h('ol', null, this.$store.getters.XAPaths.map(item => limitString(item)).join(',  \n'))
           ]),

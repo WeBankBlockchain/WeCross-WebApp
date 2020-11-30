@@ -6,13 +6,15 @@ const resource = require('./resource')
 const conn = require('./conn')
 const ua = require('./ua')
 const transaction = require('./transaction')
+const staus = require('./status')
 
 const mocks = [
   ...user,
   ...resource,
   ...conn,
   ...ua,
-  ...transaction
+  ...transaction,
+  ...staus
 ]
 
 function mockXHR() {

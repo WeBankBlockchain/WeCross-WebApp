@@ -29,6 +29,8 @@ module.exports = [{
   response: config => {
     console.log(config.body)
     var address = config.body.data.address
+    
+    /*
     peerData.items.push({
       nodeID: '@id',
       address: address,
@@ -38,6 +40,7 @@ module.exports = [{
         stubType: 'BCOS2.0'
       }]
     })
+    */
 
     return {
       'version': '1',

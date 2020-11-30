@@ -4,12 +4,12 @@
       <el-card style="height: 90vh">
         <el-row>
           <el-button-group>
-            <el-button plain icon="el-icon-refresh" @click="refresh">刷新</el-button>
-            <el-button plain icon="el-icon-plus" @click="addRouter">添加跨链路由</el-button>
+            <el-button plain icon="el-icon-refresh" :disabled="loading" @click="refresh">刷新</el-button>
+            <el-button plain icon="el-icon-plus" :disabled="loading" @click="addRouter">添加跨链路由</el-button>
           </el-button-group>
         </el-row>
         <el-row style="margin-top: 10px">
-          <el-table ref="singleTable" :data="routers" fit tooltip-effect="light" height="calc( 90vh - 120px)">
+          <el-table ref="singleTable" v-loading="loading" :data="routers" fit tooltip-effect="light" height="calc( 90vh - 120px)">
             <el-table-column label="跨链路由别名" min-width="40px" show-overflow-tooltip>
               <template slot-scope="item">
                 {{ getAlias(item.row.nodeID) !== null ? getAlias(item.row.nodeID) : '未设置' }}
@@ -51,6 +51,7 @@
             layout="prev, pager, next"
             :total="total"
             :current-page="currentPage"
+            :disabled="loading"
             @prev-click="prevPage"
             @next-click="nextPage"
             @current-change="setPage"
@@ -73,7 +74,8 @@ export default {
       routers: [],
       pageSize: 10,
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      loading: false
     }
   },
   created() {
@@ -83,17 +85,21 @@ export default {
   },
   methods: {
     refresh() {
+      this.loading = true
       listPeers({
         offset: (this.currentPage - 1) * 10,
         size: this.pageSize
       }).then(response => {
         this.total = response.data.size
         this.routers = response.data.data
+
+        this.loading = false
       }).catch(() => {
         this.$message({
           type: 'error',
           message: '刷新失败，网络异常'
         })
+        this.loading = false
       })
     },
     addRouter() {
@@ -107,8 +113,19 @@ export default {
           data: {
             address: data.value
           }
-        }).then(_ => {
-          this.refresh()
+        }).then(response => {
+          if (response.errorCode === 0) {
+            this.$message({
+              type: 'success',
+              message: '添加路由 ' + data.value + ' 成功'
+            })
+            this.refresh()
+          } else {
+            this.$message({
+              type: 'error',
+              message: '添加路由 ' + data.value + ' 失败'
+            })
+          }
         })
       }).catch(() => {
 

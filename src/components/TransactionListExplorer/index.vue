@@ -240,7 +240,8 @@ export default {
 
             const paramsInGetTX = {
               path: chainValue,
-              txHash: tx.txHash
+              txHash: tx.txHash,
+              blockNumber: tx.blockNumber
             }
             const response = await getTransaction(paramsInGetTX).catch(error => {
               this.$message({

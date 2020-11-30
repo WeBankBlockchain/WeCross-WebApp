@@ -37,7 +37,7 @@
               <el-button slot="append" icon="el-icon-upload" type="primary" style="margin-left: 10px;" @click="onDeploy">部署资源</el-button>
             </div>
           </div>
-          <ResourceExplorer :chain="currentChain" :page-size="10" style="height: calc(80vh - 70px)" />
+          <ResourceExplorer ref="ResourceExplorer" :chain="currentChain" :page-size="10" style="height: calc(80vh - 70px)" />
         </el-card>
       </el-col>
     </el-row>
@@ -54,27 +54,26 @@ export default {
     ChainExplorer,
     ResourceExplorer
   },
-  /*
-        beforeRouteLeave(to, from, next) {
-          cached = this.$data
-
-          next()
-        },
-        */
   props: {},
   data() {
     return {
-      currentZone: null,
-      currentChain: null,
+      currentZone: '',
+      currentChain: '',
       currentChainData: {},
-      searchPath: null,
+      searchPath: '',
       history: {
         index: 0,
         list: []
       }
     }
   },
-  mounted() {},
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (vm.currentChain !== '') {
+        vm.$refs.ResourceExplorer.refresh()
+      }
+    })
+  },
   methods: {
     onZoneClick(path) {
       if (this.currentZone !== path) {

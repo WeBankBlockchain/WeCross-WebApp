@@ -62,14 +62,14 @@ export default {
     ChainExplorer,
     TransactionListExplorer
   },
-  /*
-        beforeRouteLeave(to, from, next) {
-          cached = this.$data
-
-          next()
-        },
-        */
   props: {},
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (vm.currentChain !== '') {
+        vm.$refs.transactionList.handleSearch(vm.currentChain)
+      }
+    })
+  },
   data() {
     return {
       currentZone: '',

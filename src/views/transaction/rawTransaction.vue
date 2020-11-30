@@ -7,6 +7,7 @@
       <el-row type="flex" justify="center" style="margin-top: 20px">
         <el-col :span="12">
           <transaction-form
+            ref="transactionForm"
             v-loading="loading"
             :transaction="transactionData"
             :submit-response="submitResponse"
@@ -15,7 +16,7 @@
           >
             <template slot="path">
               <el-input v-model="transactionData.path" placeholder="请输入资源路径" style="width: 100%">
-                <el-button slot="append" icon="el-icon-search" @click="startSelectPath = true">浏览</el-button>
+                <el-button slot="append" icon="el-icon-search" @click="onClickSerch">浏览</el-button>
               </el-input>
               <el-dialog :visible.sync="startSelectPath">
                 <div class="wl-finder">
@@ -44,7 +45,7 @@
                           stripe
                           tooltip-effect="dark"
                           :data="paths"
-                          height="80%"
+                          height="85%"
                           :highlight-current-row="true"
                           @row-click="onSelectRow"
                           @selection-change="onSelectChange"
@@ -60,7 +61,7 @@
                           :page-size="pageObject.pageSize"
                           layout="prev, pager, next, jumper"
                           :total="pageObject.totalPageNumber"
-                          style="text-align: center; margin-top: 30px"
+                          style="text-align: center; margin-top: 16px"
                           :current-page.sync="pageObject.currentPage"
                           @current-change="updatePageAndFetchPaths"
                         />
@@ -139,6 +140,12 @@ export default {
   mounted() {
   },
   methods: {
+    onClickSerch() {
+      this.startSelectPath = true
+      const tempPath = this.transaction.path
+      this.$refs['transactionForm'].clearForm()
+      this.transaction.path = tempPath
+    },
     onSelectRow(row) {
       this.$refs.finderTable.clearSelection()
       this.$refs.finderTable.toggleRowSelection(row, true)
@@ -146,6 +153,7 @@ export default {
       console.log('onSelectRow, current path:', this.transactionData.path)
     },
     onSelectChange(rows) {
+      this.transactionData.path = null
       if (rows.length === 1) {
         this.transactionData.path = rows[0].path
         console.log('onSelectChange, current path:', this.transactionData.path)

@@ -21,7 +21,7 @@
           <slot name="path" />
         </el-form-item>
         <el-form-item label="调用函数:" prop="method">
-          <el-input v-model.trim="transaction.method" placeholder="请输入调用函数" />
+          <el-input v-model.trim="transaction.method" placeholder="请输入调用函数" @input="onFocusMethod" />
         </el-form-item>
         <div v-for="(arg, index) in transaction.args" :key="arg.key">
           <el-form-item
@@ -121,17 +121,25 @@ export default {
     }
   },
   methods: {
+    onFocusMethod() {
+      this.submitResponse = null
+    },
     onMethodChange() {
       console.log('method:', this.transaction.execMethod)
+      const tempPath = this.transaction.path
+      this.clearForm()
+      this.transaction.path = tempPath
       this.$forceUpdate()
     },
     addArg() {
+      this.submitResponse = null
       this.transaction.args.push({
         value: '',
         key: Date.now()
       })
     },
     removeArg(item) {
+      this.submitResponse = null
       const index = this.transaction.args.indexOf(item)
       if (index !== -1) {
         this.transaction.args.splice(index, 1)

@@ -47,6 +47,27 @@
           />
         </span>
       </el-form-item>
+      <el-form-item prop="imageAuthCode">
+        <el-input
+          v-model="loginForm.authCode"
+          placeholder="认证码"
+          name="imageAuthCode"
+          tabindex="3"
+        />
+      </el-form-item>
+      <el-form-item prop="vercode">
+        <div style="width: 100%;height: 10%">
+          <span>
+            <img
+              style="width: 100%;height: 10%"
+              :src="imageAuthCode.imageAuthCodeBase64URL"
+              alt=""
+              tabindex="4"
+              @click="handleUpdateAuthCode"
+            >
+          </span>
+        </div>
+      </el-form-item>
 
       <el-button
         :loading="loading"
@@ -64,7 +85,8 @@
 </template>
 
 <script>
-import { queryPub } from '@/utils/rsa'
+import { queryPub } from '@/utils/authcode'
+import { queryAuthCode } from '@/utils/authcode'
 
 export default {
   name: 'Login',
@@ -86,7 +108,12 @@ export default {
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        authCode: ''
+      },
+      imageAuthCode: {
+        imageAuthCodeBase64URL: '',
+        randomToken: ''
       },
       loginRules: {
         username: [
@@ -114,6 +141,17 @@ export default {
     query publicKey for data encrypt
     */
     queryPub()
+
+    /**
+    update the authentication code periodically
+    */
+    var callback = (resp) => {
+      this.imageAuthCode.randomToken = resp.randomToken
+      this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+    }
+
+    queryAuthCode(callback)
+    setInterval(queryAuthCode, 60000, callback)
   },
   methods: {
     showPwd() {
@@ -131,14 +169,25 @@ export default {
         path: '/register'
       })
     },
+    handleUpdateAuthCode() {
+      var callback = (resp) => {
+        this.imageAuthCode.randomToken = resp.randomToken
+        this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+      }
 
+      queryAuthCode(callback)
+    },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           var loginParams = {
             username: this.loginForm.username,
-            password: this.loginForm.password
+            password: this.loginForm.password,
+            authCode: this.loginForm.authCode,
+            randomToken: this.imageAuthCode.randomToken
           }
+
+          console.log('login params: ' + JSON.stringify(loginParams))
 
           this.loading = true
           this.$store

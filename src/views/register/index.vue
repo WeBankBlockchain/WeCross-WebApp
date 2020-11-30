@@ -83,7 +83,7 @@
       </el-tooltip>
       <el-form-item prop="imageAuthCode">
         <el-input
-          v-model="registerForm.imageAuthCode"
+          v-model="registerForm.authCode"
           placeholder="认证码"
           name="imageAuthCode"
           tabindex="4"
@@ -96,7 +96,7 @@
               style="width: 100%;height: 10%"
               :src="imageAuthCode.imageAuthCodeBase64URL"
               alt=""
-              @click="handleFetchAuthTokenCode"
+              @click="handleUpdateAuthCode"
             >
           </span>
         </div>
@@ -118,11 +118,11 @@
 
 <script>
 import { validUsername, validPassword } from '@/utils/validate'
+import { queryAuthCode } from '@/utils/authcode'
 import { getPubKey } from '@/utils/auth'
 import { register } from '@/api/user'
-import { authCode } from '@/api/user'
 import { rsa_encode } from '@/utils/rsa'
-import { queryPub } from '@/utils/rsa'
+import { queryPub } from '@/utils/authcode'
 
 export default {
   name: 'Register',
@@ -163,11 +163,11 @@ export default {
         password: '',
         checkPass: '',
         username: '',
-        imageAuthCode: ''
+        authCode: ''
       },
       imageAuthCode: {
         imageAuthCodeBase64URL: '',
-        imageToken: ''
+        randomToken: ''
       },
       registerRules: {
         username: [
@@ -186,8 +186,17 @@ export default {
     query publicKey for data encrypt
     */
     queryPub()
-    this.handleFetchAuthTokenCode()
-    setInterval(this.handleFetchAuthTokenCode, 60000)
+
+    /**
+    update the authentication code periodically
+    */
+    var callback = (resp) => {
+      this.imageAuthCode.randomToken = resp.randomToken
+      this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+    }
+
+    queryAuthCode(callback)
+    setInterval(queryAuthCode, 60000, callback)
   },
   methods: {
     showPwd() {
@@ -203,29 +212,13 @@ export default {
         path: '/login'
       })
     },
-    handleFetchAuthTokenCode() {
-      authCode()
-        .then((resp) => {
-          console.log('handle fetch authCode => ' + JSON.stringify(resp))
+    handleUpdateAuthCode() {
+      var callback = (resp) => {
+        this.imageAuthCode.randomToken = resp.randomToken
+        this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+      }
 
-          if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
-            this.$message({
-              type: 'error',
-              message: JSON.stringify(resp)
-            })
-          } else {
-            const imageAuthCodeInfo = resp.data.authCode
-            this.imageAuthCode.imageToken = imageAuthCodeInfo.randomToken
-            this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${imageAuthCodeInfo.imageBase64}`
-          }
-        })
-        .catch((error) => {
-          this.$message({
-            message: '网络异常：' + error,
-            type: 'error',
-            duration: 5000
-          })
-        })
+      queryAuthCode(callback)
     },
     handleRegister(formName) {
       this.$refs[formName].validate((valid) => {
@@ -240,15 +233,15 @@ export default {
         var params = {
           username: this.registerForm.username,
           password: this.registerForm.password,
-          authCode: this.registerForm.imageAuthCode,
-          imageToken: this.imageAuthCode.imageToken
+          randomToken: this.imageAuthCode.randomToken,
+          authCode: this.registerForm.authCode
         }
 
         // rsa encode parameters
         var pub = getPubKey()
         var encoded = rsa_encode(JSON.stringify(params), pub)
 
-        console.log('register encoded: ' + encoded)
+        console.log('encoded register params: ' + encoded)
 
         register(encoded)
           .then((resp) => {
@@ -268,7 +261,7 @@ export default {
                 type: 'error',
                 message: resp.message
               })
-              this.handleFetchAuthTokenCode()
+              this.handleUpdateAuthCode()
             } else if (typeof errorCode !== 'undefined' && errorCode === 0) {
               console.log('register success, ua: ' + JSON.stringify(ua))
               this.$message({
@@ -282,7 +275,7 @@ export default {
                 type: 'error',
                 message: JSON.stringify(data)
               })
-              this.handleFetchAuthTokenCode()
+              this.handleUpdateAuthCode()
             }
           })
           .catch((error) => {

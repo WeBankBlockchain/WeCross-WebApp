@@ -140,7 +140,9 @@ export default {
     /**
     query publicKey for data encrypt
     */
-    queryPub()
+    queryPub(() => {
+      console.log(' [Login] queryPub successfully.')
+    })
 
     /**
     update the authentication code periodically

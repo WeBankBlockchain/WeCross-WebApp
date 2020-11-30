@@ -82,7 +82,7 @@
                     :http-request="uploadContractSourceHandler"
                     :auto-upload="false"
                   >
-                    <div slot="tip" class="el-upload__tip">Tips: 上传合约文件打包的zip文件</div>
+                    <div slot="tip" class="el-upload__tip">只能上传合约文件打包的zip文件</div>
                     <el-button slot="trigger">选取文件</el-button>
                   </el-upload>
                 </el-form-item>
@@ -122,10 +122,23 @@
             <!-- Fabric -->
             <div v-else-if="form.stubType==='Fabric1.4'">
               <el-form-item
-                label="所在组织名："
+                v-if="form.method==='install'"
+                label="所属机构名："
                 prop="org"
               >
-                <el-input v-model.trim="form.org" placeholder="Organization" />
+                <el-tooltip effect="light" content="被安装链码的endorser所属的机构" placement="top">
+                  <el-input v-model="form.org" placeholder="Organization" />
+                </el-tooltip>
+              </el-form-item>
+              <el-form-item
+                v-if="form.method !=='install'"
+                label="机构列表："
+                prop="org"
+              >
+                <el-tooltip effect="light" placement="top">
+                  <div slot="content">链码被安装的的机构列表 <br>注意：必须以JSON数组形式填入，例：["Org1"] </div>
+                  <el-input v-model="form.org" placeholder="Organizations" />
+                </el-tooltip>
               </el-form-item>
               <el-form-item v-if="form.method === 'install'" label="合约文件：" prop="compressedContent">
                 <el-upload
@@ -138,7 +151,10 @@
                   :http-request="uploadContractCompressedHandler"
                   :auto-upload="false"
                 >
-                  <div slot="tip" class="el-upload__tip">Tips: 只能上传chaincode打包的tar/gz文件</div>
+                  <div slot="tip" class="el-upload__tip">
+                    只能上传chaincode打包的tar/gz文件 <br>
+                    注意：Golang版本的链码必须将链码放在'src/chaincode/'的目录下在能正确安装
+                  </div>
                   <el-button slot="trigger" size="mini">选取文件</el-button>
                 </el-upload>
               </el-form-item>
@@ -169,7 +185,7 @@
                   :http-request="uploadPolicyHandler"
                   :auto-upload="false"
                 >
-                  <div slot="tip" class="el-upload__tip">只能上传policy的yaml格式文件, 默认为Default</div>
+                  <div slot="tip" class="el-upload__tip">只能上传policy的yaml格式文件, 不上传默认为default</div>
                   <el-button slot="trigger" size="mini">选取文件</el-button>
                 </el-upload>
               </el-form-item>
@@ -178,7 +194,10 @@
                 label="其他参数："
                 prop="args"
               >
-                <el-input v-model="form.args" placeholder="Arguments" />
+                <el-tooltip effect="light" placement="top">
+                  <div slot="content">注意：必须以JSON数组形式填入，例：["a","10"]</div>
+                  <el-input v-model="form.args" placeholder="Arguments" />
+                </el-tooltip>
               </el-form-item>
             </div>
             <el-form-item>
@@ -270,11 +289,7 @@ export default {
         ],
         org: [
           { required: true, message: '所在组织名不能为空', trigger: 'blur' },
-          { required: true, message: '所在组织名最长不能超过128', trigger: 'blur', max: 128 },
-          {
-            required: true, message: '所在组织名不能包含特殊字符', trigger: 'blur',
-            pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[a-zA-Z0-9_-]+$/
-          }
+          { required: true, message: '所在组织名最长不能超过128', trigger: 'blur', max: 128 }
         ],
         version: [
           { required: true, message: '合约版本号不能为空', trigger: 'blur' },
@@ -287,7 +302,7 @@ export default {
           { required: true, message: '请选择合约语言', trigger: 'blur' }
         ],
         args: [
-          { required: true, message: '其他参数不能为空', trigger: 'blur' }
+          { required: true, message: '其他参数不能为空，至少需要填入JSON数组：[]', trigger: 'blur' }
         ],
         address: [
           { required: true, message: '已有合约地址不能为空', trigger: 'blur' },
@@ -353,15 +368,11 @@ export default {
             case 'deploy' :
               this.sourceContractLine = []
               this.dependenciesLine = []
-              this.mergeSolidityFile('./' + this.form.chosenSolidity)
-              this.mergeSourceContractLineToString()
               this.onBCOSDeploy()
               break
             case 'register':
               this.sourceContractLine = []
               this.dependenciesLine = []
-              this.mergeSolidityFile('./' + this.form.chosenSolidity)
-              this.mergeSourceContractLineToString()
               this.onBCOSRegister()
               break
             case 'install':
@@ -401,10 +412,13 @@ export default {
     onBCOSDeploy() {
       bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
         this.loading = false
+        this.mergeSolidityFile('./' + this.form.chosenSolidity)
+        this.mergeSourceContractLineToString()
         if (response.errorCode !== 0) {
           this.$alert('执行FISCO BCOS部署合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
-            type: 'error'
+            type: 'error',
+            center: true
           })
         } else {
           this.onSubmitSuccess(response)
@@ -414,18 +428,22 @@ export default {
         this.$message(
           {
             message: err,
-            type: 'error'
+            type: 'error',
+            center: true
           }
         )
       })
     },
     onBCOSRegister() {
       bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
+        this.mergeSolidityFile('./' + this.form.chosenSolidity)
+        this.mergeSourceContractLineToString()
         this.loading = false
         if (response.errorCode !== 0) {
           this.$alert('执行FISCO BCOS注册合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
-            type: 'error'
+            type: 'error',
+            center: true
           })
         } else {
           this.onSubmitSuccess(response)
@@ -435,7 +453,8 @@ export default {
         this.$message(
           {
             message: err,
-            type: 'error'
+            type: 'error',
+            center: true
           }
         )
       })
@@ -446,17 +465,44 @@ export default {
         if (response.errorCode !== 0) {
           this.$alert('执行Hyperledger Fabric合约安装失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
-            type: 'error'
+            type: 'error',
+            center: true
           })
         } else {
-          this.onSubmitSuccess(response)
+          const h = this.$createElement
+          this.$confirm('提示', {
+            message: h('div', null, [
+              h('p', null, `已执行成功，返回信息：` + response.data),
+              h('p', { style: 'font-weight: bold;' }, '注意: 必须实例化合约/升级合约才能在资源列表显示')
+            ]),
+            title: '执行成功',
+            confirmButtonText: '实例化合约',
+            cancelButtonText: '继续安装合约',
+            type: 'success'
+          }).then(_ => {
+            this.form.compressedContent = null
+            this.form.method = 'instantiate'
+            this.form.policy = 'default'
+            this.form.org = null
+            this.$refs.deployForm.clearValidate()
+          }).catch(_ => {
+            this.fileList = []
+            this.policyFile = []
+            this.sourceContractLine = []
+            this.dependenciesLine = []
+            this.solidityFiles = []
+            this.zipContractFilesMap = {}
+            this.$refs.deployForm.resetFields()
+            this.form.sourceContent = null
+          })
         }
       }).catch(err => {
         this.loading = false
         this.$message(
           {
             message: err,
-            type: 'error'
+            type: 'error',
+            center: true
           }
         )
       })
@@ -467,7 +513,8 @@ export default {
         if (response.errorCode !== 0) {
           this.$alert('执行Hyperledger Fabric合约实例化失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
-            type: 'error'
+            type: 'error',
+            center: true
           })
         } else {
           this.onSubmitSuccess(response)
@@ -477,7 +524,8 @@ export default {
         this.$message(
           {
             message: err,
-            type: 'error'
+            type: 'error',
+            center: true
           }
         )
       })
@@ -488,7 +536,8 @@ export default {
         if (response.errorCode !== 0) {
           this.$alert('执行Hyperledger Fabric合约升级失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
             confirmButtonText: '确定',
-            type: 'error'
+            type: 'error',
+            center: true
           })
         } else {
           this.onSubmitSuccess(response)
@@ -498,7 +547,8 @@ export default {
         this.$message(
           {
             message: err,
-            type: 'error'
+            type: 'error',
+            center: true
           }
         )
       })
@@ -507,8 +557,7 @@ export default {
       this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
         confirmButtonText: '前往资源列表',
         cancelButtonText: '继续部署',
-        type: 'success',
-        center: true
+        type: 'success'
       }).then(_ => {
         this.$refs.deployForm.resetFields()
         this.$router.push('resourceList')
@@ -527,22 +576,27 @@ export default {
       if (this.$refs.uploadContract.uploadFiles.length === 0) {
         return
       }
-      const lines = this.zipContractFilesMap[targetFile].split('\n')
-      for (const line of lines) {
-        if (line.indexOf('pragma experimental ABIEncoderV2;') !== -1) {
-          if (!this.dependenciesLine.includes('pragma experimental ABIEncoderV2;')) {
-            this.dependenciesLine.push('pragma experimental ABIEncoderV2;')
+      if (typeof this.zipContractFilesMap[targetFile] === 'undefined') {
+        this.$msgbox('不能找到文件依赖：' + targetFile + ' 请确认之后再执行！', '错误', 'error').catch(_ => {})
+        throw new Error('Resolve files error')
+      } else {
+        const lines = this.zipContractFilesMap[targetFile].split('\n')
+        for (const line of lines) {
+          if (line.indexOf('pragma experimental ABIEncoderV2;') !== -1) {
+            if (!this.dependenciesLine.includes('pragma experimental ABIEncoderV2;')) {
+              this.dependenciesLine.push('pragma experimental ABIEncoderV2;')
+              this.sourceContractLine.push(line)
+            }
+          } else if (/^\s*import\s+["'](.+)["']\s*;\s*$/.test(line)) {
+            this.dependenciesLine.push(line)
+            const matchObj = /^\s*import\s+["'](.+)["']\s*;\s*$/.exec(line)
+            if (!this.dependenciesLine.includes(matchObj[1])) {
+              this.dependenciesLine.push(matchObj[1])
+              this.mergeSolidityFile(matchObj[1])
+            }
+          } else {
             this.sourceContractLine.push(line)
           }
-        } else if (/^\s*import\s+["'](.+)["']\s*;\s*$/.test(line)) {
-          this.dependenciesLine.push(line)
-          const matchObj = /^\s*import\s+["'](.+)["']\s*;\s*$/.exec(line)
-          if (!this.dependenciesLine.includes(matchObj[1])) {
-            this.dependenciesLine.push(matchObj[1])
-            this.mergeSolidityFile(matchObj[1])
-          }
-        } else {
-          this.sourceContractLine.push(line)
         }
       }
     },
@@ -562,7 +616,7 @@ export default {
         this.form.chosenSolidity = null
         this.form.sourceContent = null
         this.form.compressedContent = null
-        this.form.policy = null
+        this.form.policy = 'default'
         this.sourceContractLine = []
         this.dependenciesLine = []
         return true
@@ -592,7 +646,7 @@ export default {
     },
     uploadContractSourceHandler(params) {
       const jszip = new JSZip()
-      if (params.file !== null && /.(zip|ZIP)$/.test(params.file.name)) {
+      if (params.file !== null && (/(zip)/.test(params.file.type) || /.(zip|ZIP)$/.test(params.file.name))) {
         this.zipContractFilesMap = {}
         this.solidityFiles = []
         this.sourceContractLine = []
@@ -653,8 +707,7 @@ export default {
     },
     uploadContractCompressedHandler(params) {
       params.onProgress({ percent: 20 })
-      if (params.file !== null && /(gzip|tar)$/.test(params.file.type)) {
-      // if(params.file.name)
+      if (params.file !== null && (/(gzip|tar)$/.test(params.file.type) || /.(gz|tar)$/.test(params.file.name))) {
         setTimeout(() => {
           this.readBaseBytes(params)
         }, 100)
@@ -670,7 +723,7 @@ export default {
     },
     uploadPolicyHandler(params) {
       params.onProgress({ percent: 20 })
-      if (params.file !== null && /(yaml)$/.test(params.file.type)) {
+      if (params.file !== null && (/.(yaml|YAML)$/.test(params.file.name) || /(yaml)$/.test(params.file.type))) {
         setTimeout(() => {
           this.readBaseBytes(params)
         }, 100)
@@ -678,7 +731,7 @@ export default {
         this.$alert('请选择yaml文件！', '错误', {
           type: 'error'
         }).catch(_ => {})
-        this.form.policy = null
+        this.form.policy = 'default'
         params.onProgress({ percent: 0 })
         params.onError()
       }
@@ -716,6 +769,7 @@ export default {
     },
     methodChange() {
       this.fileList = []
+      this.policyFile = []
       this.zipContractFilesMap = {}
       this.solidityFiles = []
       this.sourceContractLine = []

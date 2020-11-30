@@ -162,7 +162,7 @@ export default {
   watch: {
     resourceData(val) {
       this.tableShowData = val.filter((item) => {
-        return JSON.stringify(this.toShowData).indexOf(JSON.stringify(item)) === -1
+        return JSON.stringify(this.toShowData).indexOf(JSON.stringify(item)) === -1 && !item.path.endsWith('.WeCrossHub')
       })
     },
     from_check_keys(val) {

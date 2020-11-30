@@ -18,8 +18,11 @@ export function queryPub(callback) {
       })
     } else {
       const pub = resp.data.pub
-      console.log('queryPub: ' + pub)
+      // console.log('queryPub: ' + pub)
       setPubKey(pub)
+      if (typeof callback !== 'undefined' && callback !== null) {
+        callback()
+      }
     }
   })
 }

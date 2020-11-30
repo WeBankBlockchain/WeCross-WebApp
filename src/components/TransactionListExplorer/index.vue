@@ -70,13 +70,15 @@
     <!--pagination-->
     <el-row :gutter="20" style="margin-top: 10px; text-align: center">
       <el-button
-        :disabled="preClickDisable"
+        :disabled="buttonState.disablePreClick"
+        :loading="buttonState.loading"
         size="small"
         icon="el-icon-back"
         @click="handlePrevClick"
       >上一页</el-button>
       <el-button
-        :disabled="nextClickDisable"
+        :disabled="buttonState.disableNextClick"
+        :loading="buttonState.loading"
         size="small"
         icon="el-icon-right"
         @click="handleNextClick"
@@ -106,14 +108,17 @@ export default {
   },
   data() {
     return {
+      buttonState: {
+        loading: false,
+        disablePreClick: true,
+        disableNextClick: false
+      },
       chainValue: null,
       transactionList: [],
       nextOffset: 0,
       nextBlockNumber: -1,
       currentStep: 0,
       historyData: [],
-      preClickDisable: true,
-      nextClickDisable: false,
       drawer: false,
       txReceipt: ''
     }
@@ -135,8 +140,8 @@ export default {
       this.nextBlockNumber = -1
       this.currentStep = 0
       this.historyData = []
-      this.preClickDisable = true
-      this.nextClickDisable = false
+      this.buttonState.disablePreClick = true
+      this.buttonState.disableNextClick = false
     },
     handleCurrentRowChange(val) {
       if (val != null) {
@@ -159,16 +164,16 @@ export default {
         this.currentStep = this.currentStep - 1
         this.transactionList = this.historyData[this.currentStep - 1]
       }
-      this.updateDisableButtonStatus()
+      this.updateButtonStatus()
     },
     handleNextClick() {
       console.log(' =>[next] click, currentStep: ' + this.currentStep)
       if (this.currentStep < this.historyData.length) {
         this.transactionList = this.historyData[this.currentStep]
         this.currentStep += 1
-        this.updateDisableButtonStatus()
+        this.updateButtonStatus()
       } else {
-        this.doSearch()
+        this.updateTransactionListForm()
       }
     },
     handleSendTransaction() {
@@ -183,9 +188,9 @@ export default {
       this.reset()
       console.log('handleRearch => ' + JSON.stringify(chainValue))
       this.chainValue = chainValue
-      this.doSearch()
+      this.updateTransactionListForm()
     },
-    updateDisableButtonStatus() {
+    updateButtonStatus() {
       console.log(
         ' update button status, nextBlk: ' +
           this.nextBlockNumber +
@@ -194,15 +199,15 @@ export default {
           ' ,historyData: ' +
           this.historyData.length
       )
-
+      this.buttonState.loading = false
       // next page
-      this.nextClickDisable =
+      this.buttonState.disableNextClick =
         this.nextBlockNumber <= 0 &&
         this.currentStep >= this.historyData.length
-      // per page
-      this.preClickDisable = this.currentStep <= 1
+      // pre page
+      this.buttonState.disablePreClick = this.currentStep <= 1
     },
-    doSearch() {
+    updateTransactionListForm() {
       if (this.chainValue === null) {
         this.$message({
           type: 'warning',
@@ -218,6 +223,7 @@ export default {
         size: 10
       }
 
+      this.buttonState.loading = true
       listTransactions(params)
         .then((resp) => {
           console.log(
@@ -327,7 +333,7 @@ export default {
                   message:
                     '查询交易列表为空，查询参数: ' + JSON.stringify(params)
                 })
-                this.updateDisableButtonStatus()
+                this.updateButtonStatus()
                 return
               }
 
@@ -346,7 +352,7 @@ export default {
                   JSON.stringify(resp.data)
               )
 
-              this.updateDisableButtonStatus()
+              this.updateButtonStatus()
             })
             .catch((err) => {
               console.log(' An error occurred !')

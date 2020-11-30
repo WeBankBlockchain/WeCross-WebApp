@@ -39,8 +39,7 @@
               type="text"
               size="small"
               @click="handleReceiptDetails(item.row)"
-              >详情</el-button
-            >
+            >详情</el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -75,15 +74,13 @@
         size="small"
         icon="el-icon-back"
         @click="handlePrevClick"
-        >上一页</el-button
-      >
+      >上一页</el-button>
       <el-button
         :disabled="nextClickDisable"
         size="small"
         icon="el-icon-right"
         @click="handleNextClick"
-        >下一页</el-button
-      >
+      >下一页</el-button>
     </el-row>
   </div>
 </template>
@@ -254,24 +251,19 @@ export default {
                 throw new Error('交易哈希不存在，详情: ' + JSON.stringify(tx))
               }
 
-            const paramsInGetTX = {
-              path: chainValue,
-              txHash: tx.txHash,
-              blockNumber: tx.blockNumber
-            }
-            const response = await getTransaction(paramsInGetTX).catch(error => {
-              this.$message({
-                message: '网络异常：' + error,
-                type: 'error',
-                duration: 5000
-              })
-            })
-            if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
-              throw new Error(
-                '查询交易失败，交易哈希: ' +
-                  tx.txhash +
-                  '，详情: ' +
-                  JSON.stringify(response)
+              const paramsInGetTX = {
+                path: chainValue,
+                txHash: tx.txHash,
+                blockNumber: tx.blockNumber
+              }
+              const response = await getTransaction(paramsInGetTX).catch(
+                (error) => {
+                  this.$message({
+                    message: '网络异常：' + error,
+                    type: 'error',
+                    duration: 5000
+                  })
+                }
               )
               if (
                 typeof response.errorCode === 'undefined' ||
@@ -284,6 +276,23 @@ export default {
                     JSON.stringify(response)
                 )
               }
+              if (
+                typeof response.errorCode === 'undefined' ||
+                response.errorCode !== 0
+              ) {
+                throw new Error(
+                  '查询交易失败，交易哈希: ' +
+                    tx.txhash +
+                    '，详情: ' +
+                    JSON.stringify(response)
+                )
+              }
+
+              /**
+              remove raw transaction and receipt info
+              */
+              delete response.data.txBytes
+              delete response.data.receiptBytes
 
               txs[txs.length] = {
                 txHash: response.data.txHash,

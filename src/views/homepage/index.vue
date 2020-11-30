@@ -11,7 +11,7 @@
           </div>
           <table>
             <tr>
-              <td style="min-width: 200px" valign="top">操作系统名称：</td>
+              <td style="min-width: 9em" valign="top">操作系统名称：</td>
               <td valign="top">{{ systemInfo.osName }}</td>
             </tr>
             <tr>
@@ -31,7 +31,7 @@
               <td valign="top">{{ systemInfo.javaVMVendor }}</td>
             </tr>
             <tr>
-              <td>JVM版本：</td>
+              <td valign="top">JVM版本：</td>
               <td>{{ systemInfo.javaVMVersion }}</td>
             </tr>
             <tr>
@@ -43,11 +43,11 @@
               <td valign="top">{{ systemInfo.providerVersion }}</td>
             </tr>
             <tr>
-              <td valign="top">密码学组件详细信息：</td>
+              <td valign="top">密码学组件详情：</td>
               <td valign="top">{{ systemInfo.providerInfo }}</td>
             </tr>
             <tr>
-              <td valign="top">已配置的椭圆曲线：</td>
+              <td valign="top">加载的椭圆曲线：</td>
               <td valign="top">{{ systemInfo.namedGroups }}</td>
             </tr>
           </table>
@@ -60,23 +60,23 @@
           </div>
           <table>
             <tr>
-              <td style="min-width: 200px" valign="top">跨链路由版本</td>
+              <td style="min-width: 6em" valign="top">跨链路由版本：</td>
               <td valign="top">{{ routerInfo.version }}</td>
             </tr>
             <tr>
-              <td valign="top">已加载的插件</td>
+              <td valign="top">已加载的插件：</td>
               <td valign="top">{{ routerInfo.supportedStubs }}</td>
             </tr>
             <tr>
-              <td valign="top">RPC接入配置</td>
+              <td valign="top">RPC接入配置：</td>
               <td valign="top">{{ routerInfo.rpcNetInfo }}</td>
             </tr>
             <tr>
-              <td valign="top">P2P接入配置</td>
+              <td valign="top">P2P接入配置：</td>
               <td valign="top">{{ routerInfo.p2pNetInfo }}</td>
             </tr>
             <tr>
-              <td valign="top">管理员账号</td>
+              <td valign="top">管理员账号：</td>
               <td valign="top">{{ routerInfo.adminAccount }}</td>
             </tr>
           </table>

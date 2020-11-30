@@ -62,13 +62,6 @@ export default {
     ChainExplorer,
     TransactionListExplorer
   },
-  /*
-        beforeRouteLeave(to, from, next) {
-          cached = this.$data
-
-          next()
-        },
-        */
   props: {},
   beforeRouteEnter(to, from, next) {
     next(vm => {

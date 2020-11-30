@@ -4,61 +4,80 @@
       <img :src="require('@/assets/wecross.svg')" width="720" alt="">
     </el-row>
     <el-row :gutter="10">
-      <el-col :span="8">
+      <el-col :span="12">
         <el-card>
           <div slot="header">
-            <span>跨链路由状态</span>
+            <span>系统信息</span>
           </div>
           <table>
             <tr>
-              <td style="min-width: 150px">当前版本：</td>
-              <td>1.0.0-20201127</td>
+              <td style="min-width: 200px" valign="top">操作系统名称：</td>
+              <td valign="top">{{ systemInfo.osName }}</td>
             </tr>
             <tr>
-              <td>内部版本：</td>
-              <td>1.0</td>
+              <td valign="top">操作系统架构：</td>
+              <td valign="top">{{ systemInfo.osArch }}</td>
             </tr>
             <tr>
-              <td>JDK版本：</td>
-              <td>openjdk 11.0.9.1 2020-11-04</td>
+              <td valign="top">操作系统版本：</td>
+              <td valign="top">{{ systemInfo.osVersion }}</td>
+            </tr>
+            <tr>
+              <td valign="top">JVM名称：</td>
+              <td valign="top">{{ systemInfo.javaVMName }}</td>
+            </tr>
+            <tr>
+              <td valign="top">JVM供应商：</td>
+              <td valign="top">{{ systemInfo.javaVMVendor }}</td>
+            </tr>
+            <tr>
+              <td>JVM版本：</td>
+              <td>{{ systemInfo.javaVMVersion }}</td>
+            </tr>
+            <tr>
+              <td valign="top">密码学组件名：</td>
+              <td valign="top">{{ systemInfo.providerName }}</td>
+            </tr>
+            <tr>
+              <td valign="top">密码学组件版本：</td>
+              <td valign="top">{{ systemInfo.providerVersion }}</td>
+            </tr>
+            <tr>
+              <td valign="top">密码学组件详细信息：</td>
+              <td valign="top">{{ systemInfo.providerInfo }}</td>
+            </tr>
+            <tr>
+              <td valign="top">已配置的椭圆曲线：</td>
+              <td valign="top">{{ systemInfo.namedGroups }}</td>
             </tr>
           </table>
         </el-card>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="12">
         <el-card>
           <div slot="header">
-            <span>已配置的链</span>
+            <span>跨链路由信息</span>
           </div>
           <table>
             <tr>
-              <td style="min-width: 150px">test-chain</td>
-              <td>
-                <el-tag type="info">BCOS2.0</el-tag>
-              </td>
+              <td style="min-width: 200px" valign="top">跨链路由版本</td>
+              <td valign="top">{{ routerInfo.version }}</td>
             </tr>
             <tr>
-              <td>test-chain-2</td>
-              <td>
-                <el-tag type="info">GM_BCOS2.0</el-tag>
-              </td>
-            </tr>
-          </table>
-        </el-card>
-      </el-col>
-      <el-col :span="8">
-        <el-card>
-          <div slot="header">
-            <span>已加载的插件</span>
-          </div>
-          <table>
-            <tr>
-              <td style="min-width: 150px">BCOS2.0</td>
-              <td>1.0.0-20201127</td>
+              <td valign="top">已加载的插件</td>
+              <td valign="top">{{ routerInfo.supportedStubs }}</td>
             </tr>
             <tr>
-              <td>GM_BCOS2.0</td>
-              <td>1.0.0-20201127</td>
+              <td valign="top">RPC接入配置</td>
+              <td valign="top">{{ routerInfo.rpcNetInfo }}</td>
+            </tr>
+            <tr>
+              <td valign="top">P2P接入配置</td>
+              <td valign="top">{{ routerInfo.p2pNetInfo }}</td>
+            </tr>
+            <tr>
+              <td valign="top">管理员账号</td>
+              <td valign="top">{{ routerInfo.adminAccount }}</td>
             </tr>
           </table>
         </el-card>
@@ -68,14 +87,38 @@
 </template>
 
 <script>
+import { systemStatus } from '@/api/status'
+import { routerStatus } from '@/api/status'
+
 export default {
   name: 'Homepage',
   components: {},
   props: {},
   data() {
-    return {}
+    return {
+      systemInfo: {},
+      routerInfo: {}
+    }
   },
-  created() {},
+  created() {
+    systemStatus().then(response => {
+      this.systemInfo = response.data
+    }).catch(_ => {
+      this.$message({
+        type: 'error',
+        message: '获取系统信息失败，网络错误'
+      })
+    })
+
+    routerStatus().then(response => {
+      this.routerInfo = response.data
+    }).catch(_ => {
+      this.$message({
+        type: 'error',
+        message: '获取插件列表失败，网络错误'
+      })
+    })
+  },
   mounted() {
 
   },

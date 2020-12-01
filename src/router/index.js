@@ -44,7 +44,7 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/account/index'),
-        meta: { title: '账户管理', icon: 'el-icon-s-promotion' }
+        meta: { title: '账户管理', icon: 'el-icon-user' }
       }
     ]
   },
@@ -77,7 +77,7 @@ export const constantRoutes = [
         name: 'resourceList',
         path: 'resourceList',
         component: () => import('@/views/resource/resourceManager'),
-        meta: { title: '资源管理', icon: 'el-icon-s-grid' }
+        meta: { title: '资源管理', icon: 'el-icon-files' }
       },
       {
         name: 'resourceDeployment',
@@ -103,7 +103,7 @@ export const constantRoutes = [
       {
         path: 'transactionList',
         component: () => import('@/views/transaction/transactionManager'),
-        meta: { title: '交易管理', icon: 'el-icon-notebook-2' }
+        meta: { title: '交易管理', icon: 'el-icon-sort' }
       }
     ]
   },
@@ -124,7 +124,7 @@ export const constantRoutes = [
         name: 'xaTransactionList',
         path: 'xaTransactionList',
         component: () => import('@/views/transaction/xaTransactionList'),
-        meta: { title: '事务管理', icon: 'el-icon-tickets' }
+        meta: { title: '事务管理', icon: 'el-icon-finished' }
       }
     ]
   },

@@ -9,7 +9,8 @@ export function handleErrorMsgBox(message, title, errorMessage, options) {
       display: 'block',
       fontSize: '16px',
       fontFamily: 'Helvetica Neue',
-      width: '100%'
+      width: '100%',
+      height: '100%'
     }},
     [
       h('i', {
@@ -35,13 +36,12 @@ export function handleErrorMsgBox(message, title, errorMessage, options) {
             color: '#606266',
             margin: '10px 0',
             padding: '8px 10px',
-            height: '120%',
-            maxHeight: '100px',
+            height: 'auto',
+            minHeight: '100px',
+            maxHeight: '150px',
             overflow: 'auto',
             width: '100%',
             resize: 'none',
-            backgroundColor: 'white',
-            fontFamily: 'Helvetica Neue',
             fontSize: '15px',
             border: '0px'
           }
@@ -87,13 +87,12 @@ export function handleSuccessMsgBox(message, title, successMessage, options) {
             color: '#606266',
             margin: '10px 0',
             padding: '8px 10px',
-            height: '120%',
-            maxHeight: '100px',
+            height: 'auto',
+            minHeight: '100px',
+            maxHeight: '150px',
             overflow: 'auto',
             width: '100%',
             resize: 'none',
-            backgroundColor: 'white',
-            fontFamily: 'Helvetica Neue',
             fontSize: '15px',
             border: '0px'
           }

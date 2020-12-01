@@ -61,6 +61,8 @@
 
 <script>
 
+import { handleErrorMsgBox } from '@/utils/messageBox'
+
 export default {
   name: 'TransactionForm',
   props: {
@@ -182,9 +184,7 @@ export default {
           code = response.data.errorCode
           message = response.data.message
         }
-        this.$alert(message, '错误码: ' + code, {
-          confirmButtonText: '确定'
-        })
+        handleErrorMsgBox('执行错误：', '错误码: ' + code, message)
       } else {
         this.submitResponse = JSON.stringify(response.data.result)
       }

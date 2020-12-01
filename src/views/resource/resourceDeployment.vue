@@ -231,7 +231,6 @@ import {
 import {
   bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade
 } from '@/api/resource'
-import { MessageBox } from 'element-ui'
 import { handleSuccessMsgBox, handleErrorMsgBox } from '@/utils/messageBox'
 
 const JSZip = require('jszip')
@@ -679,7 +678,7 @@ export default {
               }
             }
             if (_this.solidityFiles.length === 0) {
-              MessageBox.alert('zip最外层文件中不含有Solidity或ABI文件', '错误', {
+              this.$alert('zip最外层文件中不含有Solidity或ABI文件', '错误', {
                 confirmButtonText: '确定',
                 type: 'error'
               })

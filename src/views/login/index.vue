@@ -47,15 +47,15 @@
           />
         </span>
       </el-form-item>
-      <el-form-item prop="imageAuthCode">
+      <el-form-item v-if="shouldUseAuthCode" prop="authCode">
         <el-input
           v-model="loginForm.authCode"
-          placeholder="认证码"
+          placeholder="验证码"
           name="imageAuthCode"
           tabindex="3"
         />
       </el-form-item>
-      <el-form-item prop="vercode">
+      <el-form-item v-if="shouldUseAuthCode" prop="vercode">
         <div style="width: 100%;height: 10%">
           <span>
             <img
@@ -105,11 +105,26 @@ export default {
         callback()
       }
     }
+    const validateAuthCode = (rule, value, callback) => {
+      var authCodeExist = this.loginStatistics.errorCount >= 3
+      console.log('====>>' + authCodeExist)
+      if (!authCodeExist) {
+        return
+      }
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入验证码'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: '',
         password: '',
         authCode: ''
+      },
+      loginStatistics: {
+        errorCount: 0
       },
       imageAuthCode: {
         imageAuthCodeBase64URL: '',
@@ -121,11 +136,19 @@ export default {
         ],
         password: [
           { required: true, trigger: 'blur', validator: validatePassword }
+        ],
+        authCode: [
+          { required: true, trigger: 'blur', validator: validateAuthCode }
         ]
       },
       loading: false,
       passwordType: 'password',
       redirect: undefined
+    }
+  },
+  computed: {
+    shouldUseAuthCode() {
+      return this.loginStatistics.errorCount >= 3
     }
   },
   watch: {
@@ -186,7 +209,12 @@ export default {
             username: this.loginForm.username,
             password: this.loginForm.password,
             authCode: this.loginForm.authCode,
-            randomToken: this.imageAuthCode.randomToken
+            randomToken: this.imageAuthCode.randomToken,
+            callback: (resp) => {
+              this.loginStatistics.errorCount++
+              console.log(' 111 callback response => ' + JSON.stringify(resp))
+              this.handleUpdateAuthCode()
+            }
           }
 
           console.log('login params: ' + JSON.stringify(loginParams))
@@ -200,6 +228,7 @@ export default {
             })
             .catch(() => {
               this.loading = false
+              this.handleUpdateAuthCode()
             })
         } else {
           console.log('error submit!!')

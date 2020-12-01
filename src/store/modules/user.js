@@ -28,18 +28,21 @@ const mutations = {
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
-    const { username } = userInfo
+  login({ commit }, loginParams) {
+    const { username, callback } = loginParams
     return new Promise((resolve, reject) => {
       // rsa encode parameters
       var pub = getPubKey()
       // var params = { username: username.trim(), password: password }
-      var encoded = rsa_encode(JSON.stringify(userInfo), pub)
+      var encoded = rsa_encode(JSON.stringify(loginParams), pub)
 
       login(encoded).then(response => {
         if (response.data.errorCode !== 0) {
-          resolve()
           Message.error({ message: '登录失败，请检查账号密码的正确性', center: true })
+          resolve()
+          if (typeof callback === 'function' && callback !== null) {
+            callback(response.data)
+          }
         } else {
           commit('SET_TOKEN', response.data.credential)
           commit('SET_NAME', username)

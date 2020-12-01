@@ -169,7 +169,10 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" label="公钥">
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
+                <label>
+                  <span>公钥</span>
+                </label>
                 <el-input
                   v-model="addChainAccountDrawer.params.pubKey"
                   readonly
@@ -177,6 +180,7 @@
                   :rows="2"
                   placeholder=""
                   autosize
+                  style="margin-top:10px"
                 />
               </el-form-item>
 
@@ -225,7 +229,10 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" label="公钥">
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
+                <label>
+                  <span>公钥</span>
+                </label>
                 <el-input
                   v-model="addChainAccountDrawer.params.pubKey"
                   readonly
@@ -233,6 +240,7 @@
                   :rows="2"
                   placeholder=""
                   autosize
+                  style="margin-top:10px"
                 />
               </el-form-item>
 
@@ -448,7 +456,10 @@ export default {
       this.addChainAccountDrawer.params.ext = undefined
       this.addChainAccountDrawer.params.isDefault = false
 
-      this.$refs['addChainAccountDrawer'].clearValidate(['secKey', 'pubKey', 'ext'])
+      const myAddChainAccountDrawer = this.$refs['addChainAccountDrawer']
+      if (typeof (myAddChainAccountDrawer) !== 'undefined') {
+        this.$refs['addChainAccountDrawer'].clearValidate(['secKey', 'pubKey', 'ext'])
+      }
     },
     querySetDefaultAccount() {
       MessageBox.confirm('设为默认账户？', '提示', {

@@ -10,8 +10,7 @@
             ref="transactionForm"
             v-loading="loading"
             :transaction="transactionData"
-            :submit-response="submitResponse"
-            @clearClick="clearTransaction"
+            @clearClick="onClearTransaction"
             @submitClick="onSubmit"
           >
             <template slot="path">
@@ -132,7 +131,7 @@ export default {
       },
       selectList: null,
       loading: false,
-      submitResponse: null
+      selection: null
     }
   },
   created() {
@@ -141,15 +140,19 @@ export default {
   },
   methods: {
     onClickSerch() {
+      if (typeof this.selection !== 'undefined' && this.selection !== null) {
+        this.transactionData.path = this.selection.path
+      }
       this.startSelectPath = true
-      const tempPath = this.transaction.path
-      this.$refs['transactionForm'].clearForm()
-      this.transaction.path = tempPath
+      const tempPath = this.transactionData.path
+      this.$refs.transactionForm.clearForm()
+      this.transactionData.path = tempPath
     },
     onSelectRow(row) {
       this.$refs.finderTable.clearSelection()
       this.$refs.finderTable.toggleRowSelection(row, true)
       this.transactionData.path = row.path
+      this.selection = row
       console.log('onSelectRow, current path:', this.transactionData.path)
     },
     onSelectChange(rows) {
@@ -162,6 +165,7 @@ export default {
           if (index === rows.length - 1) {
             this.$refs.finderTable.toggleRowSelection(it, true)
             this.transactionData.path = it.path
+            this.selection = it
             console.log('onSelectChange, current path:', this.transactionData.path)
             return true
           } else {
@@ -282,16 +286,15 @@ export default {
         })
       }
     },
-    clearTransaction() {
+    onClearTransaction() {
+      this.transactionData.method = null
       this.transactionData.args = [{
         value: null,
         key: 0
       }]
-      this.submitResponse = null
     },
     onSubmit(transaction) {
       this.loading = true
-      this.submitResponse = null
       const args = []
       for (const arg of transaction.args) {
         args.push(arg.value)
@@ -335,23 +338,7 @@ export default {
     },
     onResponse(response) {
       this.loading = false
-      if (response.errorCode !== 0 || response.data.errorCode !== 0) {
-        this.submitResponse = null
-
-        let code, message
-        if (response.errorCode !== 0) {
-          code = response.errorCode
-          message = response.message
-        } else {
-          code = response.data.errorCode
-          message = response.data.message
-        }
-        this.$alert(message, '错误码: ' + code, {
-          confirmButtonText: '确定'
-        })
-      } else {
-        this.submitResponse = JSON.stringify(response.data.result)
-      }
+      this.$refs.transactionForm.onResponse(response)
     }
   }
 }

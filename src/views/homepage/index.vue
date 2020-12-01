@@ -1,7 +1,8 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10">
-      <img :src="require('@/assets/wecross.svg')" width="720" alt="">
+      <img :src="require('@/assets/wecross.svg')" width="720" alt=""
+           style="text-align: center; display: block;  margin-left: auto;margin-right: auto;">
     </el-row>
     <el-row :gutter="10">
       <el-col :span="12">
@@ -11,44 +12,44 @@
           </div>
           <table>
             <tr>
-              <td style="min-width: 9em" valign="top">操作系统名称：</td>
-              <td valign="top">{{ systemInfo.osName }}</td>
+              <td>操作系统名称：</td>
+              <td>{{ systemInfo.osName }}</td>
             </tr>
             <tr>
-              <td valign="top">操作系统架构：</td>
-              <td valign="top">{{ systemInfo.osArch }}</td>
+              <td>操作系统架构：</td>
+              <td>{{ systemInfo.osArch }}</td>
             </tr>
             <tr>
-              <td valign="top">操作系统版本：</td>
-              <td valign="top">{{ systemInfo.osVersion }}</td>
+              <td>操作系统版本：</td>
+              <td>{{ systemInfo.osVersion }}</td>
             </tr>
             <tr>
-              <td valign="top">JVM名称：</td>
-              <td valign="top">{{ systemInfo.javaVMName }}</td>
+              <td>JVM名称：</td>
+              <td>{{ systemInfo.javaVMName }}</td>
             </tr>
             <tr>
-              <td valign="top">JVM供应商：</td>
-              <td valign="top">{{ systemInfo.javaVMVendor }}</td>
+              <td>JVM供应商：</td>
+              <td>{{ systemInfo.javaVMVendor }}</td>
             </tr>
             <tr>
-              <td valign="top">JVM版本：</td>
+              <td>JVM版本：</td>
               <td>{{ systemInfo.javaVMVersion }}</td>
             </tr>
             <tr>
-              <td valign="top">密码学组件名：</td>
-              <td valign="top">{{ systemInfo.providerName }}</td>
+              <td>密码学组件名：</td>
+              <td>{{ systemInfo.providerName }}</td>
             </tr>
             <tr>
-              <td valign="top">密码学组件版本：</td>
-              <td valign="top">{{ systemInfo.providerVersion }}</td>
+              <td>密码学组件版本：</td>
+              <td>{{ systemInfo.providerVersion }}</td>
             </tr>
             <tr>
-              <td valign="top">密码学组件详情：</td>
-              <td valign="top">{{ systemInfo.providerInfo }}</td>
+              <td>密码学组件详细信息：</td>
+              <td>{{ systemInfo.providerInfo }}</td>
             </tr>
             <tr>
-              <td valign="top">加载的椭圆曲线：</td>
-              <td valign="top">{{ systemInfo.namedGroups }}</td>
+              <td>已配置的椭圆曲线：</td>
+              <td>{{ systemInfo.namedGroups }}</td>
             </tr>
           </table>
         </el-card>
@@ -78,6 +79,24 @@
             <tr>
               <td valign="top">管理员账号：</td>
               <td valign="top">{{ routerInfo.adminAccount }}</td>
+              <td style="min-width: 150px">跨链路由版本：</td>
+              <td>{{ routerInfo.version }}</td>
+            </tr>
+            <tr>
+              <td>已加载的插件：</td>
+              <td>{{ routerInfo.supportedStubs }}</td>
+            </tr>
+            <tr>
+              <td>RPC接入配置：</td>
+              <td>{{ routerInfo.rpcNetInfo }}</td>
+            </tr>
+            <tr>
+              <td>P2P接入配置：</td>
+              <td>{{ routerInfo.p2pNetInfo }}</td>
+            </tr>
+            <tr>
+              <td>管理员账号：</td>
+              <td>{{ routerInfo.adminAccount }}</td>
             </tr>
           </table>
         </el-card>
@@ -122,12 +141,16 @@ export default {
   mounted() {
 
   },
-  methods: {
-
-  }
+  methods: {}
 
 }
 </script>
 
 <style lang="scss" scoped>
+table {
+  td {
+    min-width: 150px;
+    vertical-align: top;
+  }
+}
 </style>

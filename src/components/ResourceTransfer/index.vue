@@ -84,7 +84,7 @@
       <!-- transfer right panel -->
       <div class="transfer-main">
         <el-input v-model="filterTo" placeholder="输入关键字进行过滤" size="small" class="filter-tree" />
-        <el-checkbox-group v-model="to_check_keys" class="el-transfer-panel__list">
+        <el-checkbox-group v-model="to_check_keys" class="transfer-right-panel">
           <el-checkbox
             v-for="item in toDataFilter"
             :key="item.path"
@@ -480,6 +480,16 @@ a {
     width: 25%;
     height: 100%;
     vertical-align: middle;
+  }
+
+  .transfer-right-panel{
+    margin:0;
+    padding:6px 0;
+    list-style:none;
+    height: calc(100% - 40px);
+    overflow:auto;
+    -webkit-box-sizing:border-box;
+    box-sizing:border-box
   }
 
   .transfer-right {

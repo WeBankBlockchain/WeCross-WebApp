@@ -88,7 +88,7 @@ export function handleSuccessMsgBox(message, title, successMessage, options) {
             margin: '10px 0',
             padding: '8px 10px',
             height: 'auto',
-            minHeight: '100px',
+            minHeight: '80px',
             maxHeight: '150px',
             overflow: 'auto',
             width: '100%',

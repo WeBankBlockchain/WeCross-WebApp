@@ -410,33 +410,60 @@ export default {
       this.zipContractFilesMap = {}
     },
     onBCOSDeploy() {
-      this.mergeSolidityFile('./' + this.form.chosenSolidity)
-      this.mergeSourceContractLineToString()
-      bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
+      try {
+        this.mergeSolidityFile('./' + this.form.chosenSolidity)
+        this.mergeSourceContractLineToString()
+      } catch (e) {
         this.loading = false
-        if (response.errorCode !== 0) {
-          handleErrorMsgBox(
-            '执行FISCO BCOS部署合约失败，错误：',
-            '错误码：' + response.errorCode,
-            (response.data === null) ? response.message : response.data.errorMessage
-          )
-        } else {
-          this.onSubmitSuccess(response)
-        }
-      }).catch(err => {
-        this.loading = false
-        this.$message(
-          {
-            message: err,
-            type: 'error',
-            center: true
+        console.log(e)
+        return
+      }
+      const h = this.$createElement
+      this.$msgbox({
+        message: h('div', null, [
+          h('p', { style: { fontSize: '16px' }}, '确认执行部署合约吗？'),
+          h('div', { style: { fontSize: '4px', marginTop: '5px' }}, '注意：若是升级FISCO BCOS合约，请勿修改/删除旧版本合约的ABI接口，否则会出现旧合约历史交易为空的情况！')
+        ]),
+        title: '注意',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '确认部署',
+        cancelButtonText: '取消部署'
+      }).then(_ => {
+        bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
+          this.loading = false
+          if (response.errorCode !== 0) {
+            handleErrorMsgBox(
+              '执行FISCO BCOS部署合约失败，错误：',
+              '错误码：' + response.errorCode,
+              (response.data === null) ? response.message : response.data.errorMessage
+            )
+          } else {
+            this.onSubmitSuccess(response)
           }
-        )
+        }).catch(err => {
+          this.loading = false
+          this.$message(
+            {
+              message: err,
+              type: 'error',
+              center: true
+            }
+          )
+        })
+      }).catch(_ => {
+        this.loading = false
       })
     },
     onBCOSRegister() {
-      this.mergeSolidityFile('./' + this.form.chosenSolidity)
-      this.mergeSourceContractLineToString()
+      try {
+        this.mergeSolidityFile('./' + this.form.chosenSolidity)
+        this.mergeSourceContractLineToString()
+      } catch (e) {
+        this.loading = false
+        console.log(e)
+        return
+      }
       bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
         this.loading = false
         if (response.errorCode !== 0) {

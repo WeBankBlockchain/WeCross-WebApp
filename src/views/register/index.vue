@@ -81,10 +81,10 @@
           </span>
         </el-form-item>
       </el-tooltip>
-      <el-form-item prop="imageAuthCode">
+      <el-form-item prop="authCode">
         <el-input
           v-model="registerForm.authCode"
-          placeholder="认证码"
+          placeholder="验证码"
           name="imageAuthCode"
           tabindex="4"
         />
@@ -139,6 +139,10 @@ export default {
       }
     }
     const verifyPwd = (rule, value, callback) => {
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入密码'))
+        return
+      }
       if (!validPassword(value)) {
         callback(
           new Error(
@@ -150,10 +154,17 @@ export default {
       }
     }
     const confirmPwd = (rule, value, callback) => {
-      if (value === '') {
+      if (typeof value === 'undefined' || value === null || value === '') {
         callback(new Error('请再次输入密码'))
       } else if (value !== this.registerForm.password) {
         callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
+    const confirmAuthCode = (rule, value, callback) => {
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入验证码'))
       } else {
         callback()
       }
@@ -176,6 +187,9 @@ export default {
         password: [{ required: true, validator: verifyPwd, trigger: 'blur' }],
         checkPass: [
           { required: true, validator: confirmPwd, trigger: 'change' }
+        ],
+        authCode: [
+          { required: true, validator: confirmAuthCode, trigger: 'change' }
         ]
       },
       passwordType: 'password'

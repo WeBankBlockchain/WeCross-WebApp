@@ -52,14 +52,14 @@
       <el-row>
         <el-col :span="18" :offset="2">
           <el-form v-loading="loading">
-            <TransactionForm
+            <transaction-form
+              ref="transactionForm"
               :transaction="transactionData"
-              :submit-response="submitResponse"
-              @clearClick="onClearTransaction"
               @submitClick="onSubmit"
+              @clearClick="onClearTransaction"
             >
               <el-input slot="path" v-model="transactionData.path" readonly />
-            </TransactionForm>
+            </transaction-form>
           </el-form>
         </el-col>
       </el-row>
@@ -95,7 +95,6 @@ export default {
       resources: [],
       queryStatus: {},
       callDialogOpen: false,
-      transactionDatas: {},
       transactionData: {
         transactionID: null,
         path: null,
@@ -107,8 +106,8 @@ export default {
         execMethod: 'sendTransaction',
         isXATransaction: false
       },
-      loading: false,
-      submitResponse: null
+      selection: null,
+      loading: false
     }
   },
   watch: {
@@ -130,6 +129,7 @@ export default {
       return status
     },
     refresh() {
+      this.selection = null
       var path = this.chain
       var status = this.getQueryStatus(path)
 
@@ -182,41 +182,30 @@ export default {
 
       this.refresh()
     },
-    getTransactionData(path) {
-      let data = this.transactionDatas[path]
-      if (data === undefined) {
-        this.transactionDatas[path] = {
-          path: path,
-          method: null,
-          args: [{
-            value: null,
-            key: 0
-          }]
-        }
-
-        data = this.transactionDatas[path]
-      }
-
-      return data
-    },
-    clearTransactionData(path) {
-      delete this.transactionDatas[path]
-    },
     onCall(path) {
-      this.transactionData = this.getTransactionData(path)
+      this.onClearTransaction()
+      this.selection = path
+      this.transactionData.path = path
       this.transactionData.execMethod = 'call'
       this.callDialogOpen = true
     },
     onSend(path) {
-      this.transactionData = this.getTransactionData(path)
+      this.onClearTransaction()
+      this.selection = path
+      this.transactionData.path = path
       this.transactionData.execMethod = 'sendTransaction'
       this.callDialogOpen = true
     },
     onClearTransaction() {
+      this.transactionData.method = null
+      this.transactionData.args = [{
+        value: null,
+        key: 0
+      }]
+      this.transactionData.path = this.selection
     },
     onSubmit(transaction) {
       this.loading = true
-      this.submitResponse = null
       const args = []
       for (const arg of transaction.args) {
         args.push(arg.value)
@@ -260,23 +249,7 @@ export default {
     },
     onResponse(response) {
       this.loading = false
-      if (response.errorCode !== 0 || response.data.errorCode !== 0) {
-        this.submitResponse = null
-
-        let code, message
-        if (response.errorCode !== 0) {
-          code = response.errorCode
-          message = response.message
-        } else {
-          code = response.data.errorCode
-          message = response.data.message
-        }
-        this.$alert(message, '错误码: ' + code, {
-          confirmButtonText: '确定'
-        })
-      } else {
-        this.submitResponse = JSON.stringify(response.data.result)
-      }
+      this.$refs.transactionForm.onResponse(response)
     }
   }
 }

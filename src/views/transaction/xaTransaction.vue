@@ -83,8 +83,8 @@
           </div>
           <el-col :span="10">
             <transaction-form
+              ref="originTransaction"
               :transaction="transactionForm"
-              :submit-response="submitResponse"
               style="height: 50vh; overflow-y:auto; overflow-x:hidden"
               @clearClick="clearTransaction"
               @submitClick="execTransaction"
@@ -96,9 +96,7 @@
                 style="width: 100%"
                 filterable
                 default-first-option
-                @change="() => {
-                  transactionForm.method=null; transactionForm.args=[{value: null,key: 0}]; submitResponse = null
-                }"
+                @change="onSelectionChange"
               >
                 <el-option
                   v-for="path in this.$store.getters.XAPaths"
@@ -332,8 +330,7 @@ export default {
         execMethod: 'sendTransaction',
         isXATransaction: true
       },
-      loading: false,
-      submitResponse: null
+      loading: false
     }
   },
   watch: {
@@ -361,6 +358,11 @@ export default {
           this.endTransaction()
           break
       }
+    },
+    onSelectionChange() {
+      const tempPath = this.transactionForm.path
+      this.$refs.originTransaction.clearForm()
+      this.transactionForm.path = tempPath
     },
     loadXATransaction(isExec) {
       const xaID = this.$store.getters.transactionID
@@ -477,7 +479,6 @@ export default {
         value: null,
         key: 0
       }]
-      this.submitResponse = null
     },
     endTransaction() {
       // turn to step3
@@ -514,7 +515,6 @@ export default {
     },
     execTransaction(transaction) {
       this.loading = true
-      this.submitResponse = null
       const args = []
       for (const arg of transaction.args) {
         args.push(arg.value)
@@ -565,24 +565,8 @@ export default {
     },
     onResponse(response) {
       this.loading = false
-      if (response.errorCode !== 0 || response.data.errorCode !== 0) {
-        this.submitResponse = null
-
-        let code, message
-        if (response.errorCode !== 0) {
-          code = response.errorCode
-          message = response.message
-        } else {
-          code = response.data.errorCode
-          message = response.data.message
-        }
-        this.$alert(message, '错误码: ' + code, {
-          confirmButtonText: '确定'
-        })
-      } else {
-        this.submitResponse = JSON.stringify(response.data.result)
-        this.getXADetail()
-      }
+      this.$refs.originTransaction.onResponse(response)
+      this.getXADetail()
     },
     commitTransaction() {
       if (this.$store.getters.transactionID !== null && this.$store.getters.paths !== []) {

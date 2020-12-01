@@ -7,15 +7,15 @@
       <el-row type="flex" justify="center" style="margin-top: 20px">
         <el-col :span="12">
           <transaction-form
+            ref="transactionForm"
             v-loading="loading"
             :transaction="transactionData"
-            :submit-response="submitResponse"
-            @clearClick="clearTransaction"
+            @clearClick="onClearTransaction"
             @submitClick="onSubmit"
           >
             <template slot="path">
               <el-input v-model="transactionData.path" placeholder="请输入资源路径" style="width: 100%">
-                <el-button slot="append" icon="el-icon-search" @click="startSelectPath = true">浏览</el-button>
+                <el-button slot="append" icon="el-icon-search" @click="onClickSerch">浏览</el-button>
               </el-input>
               <el-dialog :visible.sync="startSelectPath">
                 <div class="wl-finder">
@@ -44,7 +44,7 @@
                           stripe
                           tooltip-effect="dark"
                           :data="paths"
-                          height="80%"
+                          height="85%"
                           :highlight-current-row="true"
                           @row-click="onSelectRow"
                           @selection-change="onSelectChange"
@@ -60,7 +60,7 @@
                           :page-size="pageObject.pageSize"
                           layout="prev, pager, next, jumper"
                           :total="pageObject.totalPageNumber"
-                          style="text-align: center; margin-top: 30px"
+                          style="text-align: center; margin-top: 16px"
                           :current-page.sync="pageObject.currentPage"
                           @current-change="updatePageAndFetchPaths"
                         />
@@ -131,7 +131,7 @@ export default {
       },
       selectList: null,
       loading: false,
-      submitResponse: null
+      selection: null
     }
   },
   created() {
@@ -139,13 +139,24 @@ export default {
   mounted() {
   },
   methods: {
+    onClickSerch() {
+      if (typeof this.selection !== 'undefined' && this.selection !== null) {
+        this.transactionData.path = this.selection.path
+      }
+      this.startSelectPath = true
+      const tempPath = this.transactionData.path
+      this.$refs.transactionForm.clearForm()
+      this.transactionData.path = tempPath
+    },
     onSelectRow(row) {
       this.$refs.finderTable.clearSelection()
       this.$refs.finderTable.toggleRowSelection(row, true)
       this.transactionData.path = row.path
+      this.selection = row
       console.log('onSelectRow, current path:', this.transactionData.path)
     },
     onSelectChange(rows) {
+      this.transactionData.path = null
       if (rows.length === 1) {
         this.transactionData.path = rows[0].path
         console.log('onSelectChange, current path:', this.transactionData.path)
@@ -154,6 +165,7 @@ export default {
           if (index === rows.length - 1) {
             this.$refs.finderTable.toggleRowSelection(it, true)
             this.transactionData.path = it.path
+            this.selection = it
             console.log('onSelectChange, current path:', this.transactionData.path)
             return true
           } else {
@@ -274,16 +286,15 @@ export default {
         })
       }
     },
-    clearTransaction() {
+    onClearTransaction() {
+      this.transactionData.method = null
       this.transactionData.args = [{
         value: null,
         key: 0
       }]
-      this.submitResponse = null
     },
     onSubmit(transaction) {
       this.loading = true
-      this.submitResponse = null
       const args = []
       for (const arg of transaction.args) {
         args.push(arg.value)
@@ -327,23 +338,7 @@ export default {
     },
     onResponse(response) {
       this.loading = false
-      if (response.errorCode !== 0 || response.data.errorCode !== 0) {
-        this.submitResponse = null
-
-        let code, message
-        if (response.errorCode !== 0) {
-          code = response.errorCode
-          message = response.message
-        } else {
-          code = response.data.errorCode
-          message = response.data.message
-        }
-        this.$alert(message, '错误码: ' + code, {
-          confirmButtonText: '确定'
-        })
-      } else {
-        this.submitResponse = JSON.stringify(response.data.result)
-      }
+      this.$refs.transactionForm.onResponse(response)
     }
   }
 }

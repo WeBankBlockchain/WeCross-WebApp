@@ -14,6 +14,8 @@
             height="calc(90vh - 130px)"
             style="width: 100%;"
             tooltip-effect="light"
+            :expand-row-keys="expands"
+            :row-key="getRowKey"
             @expand-change="onExpandChange"
           >
             <el-table-column label="开始时间" min-width="60px">
@@ -21,10 +23,14 @@
                 <span>{{ scope.row.timestamp | formatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" show-overflow-tooltip />
-            <el-table-column prop="username" label="跨链账户" min-width="50px" />
-            <el-table-column prop="status" label="事务状态" width="90px" />
-            <el-table-column label="锁定资源" min-width="70px">
+            <el-table-column prop="xaTransactionID" label="事务ID" min-width="80px" show-overflow-tooltip />
+            <el-table-column prop="username" label="跨链账户" min-width="40px" />
+            <el-table-column label="事务状态" width="160px">
+              <template slot-scope="scope">
+                <el-tag :type="filterTag(scope.row.status)">{{ scope.row.status }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="锁定资源" min-width="50px">
               <template slot-scope="scope">
                 <li v-for="path in scope.row.paths" :key="path" style="list-style-type: none">{{ path }}</li>
               </template>
@@ -128,6 +134,7 @@ export default {
       loadingList: false,
       loadingXA: false,
       tableSize: 10,
+      expands: [],
       currentPage: 1,
       isFinished: false,
       offsetsCache: [{}],
@@ -183,6 +190,15 @@ export default {
       console.log('[offset0] status => offsets: ' + JSON.stringify(this.offsets))
       this.fetchXATransactionList()
     },
+    filterTag(status) {
+      if (status === 'committed') {
+        return 'success'
+      } else if (status === 'processing') {
+        return 'warning'
+      } else {
+        return 'danger'
+      }
+    },
     onStartXATransaction() {
       this.$router.push({ path: 'xaTransaction' })
     },
@@ -230,8 +246,19 @@ export default {
       this.$store.commit('transaction/SET_TRANSACTION', { transactionID: xaTID, paths: xaPaths })
       this.$router.push({ path: 'xaTransaction', query: { isExec: 'true' }})
     },
-    onExpandChange(row) {
-      this.fetchXATransaction(row.xaTransactionID, row.paths)
+    getRowKey(row) {
+      return row.xaTransactionID
+    },
+    onExpandChange(row, expandedRows) {
+      if (expandedRows.length) {
+        this.expands = []
+        if (row) {
+          this.expands.push(row.xaTransactionID)
+          this.fetchXATransaction(row.xaTransactionID, row.paths)
+        }
+      } else {
+        this.expands = []
+      }
     },
     fetchXATransaction(xaTransactionID, paths) {
       console.log('xaTransactionID ', xaTransactionID)

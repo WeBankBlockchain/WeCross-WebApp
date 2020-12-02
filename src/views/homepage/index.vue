@@ -1,8 +1,12 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10">
-      <img :src="require('@/assets/wecross.svg')" width="720" alt=""
-           style="text-align: center; display: block;  margin-left: auto;margin-right: auto;">
+      <img
+        :src="require('@/assets/wecross.svg')"
+        width="720"
+        alt=""
+        style="text-align: center; display: block;  margin-left: auto;margin-right: auto;"
+      >
     </el-row>
     <el-row :gutter="10">
       <el-col :span="12">
@@ -61,24 +65,24 @@
           </div>
           <table>
             <tr>
-              <td style="min-width: 6em" valign="top">跨链路由版本：</td>
-              <td valign="top">{{ routerInfo.version }}</td>
+              <td>跨链路由版本：</td>
+              <td>{{ routerInfo.version }}</td>
             </tr>
             <tr>
-              <td valign="top">已加载的插件：</td>
-              <td valign="top">{{ routerInfo.supportedStubs }}</td>
+              <td>已加载的插件：</td>
+              <td>{{ routerInfo.supportedStubs }}</td>
             </tr>
             <tr>
-              <td valign="top">RPC接入配置：</td>
-              <td valign="top">{{ routerInfo.rpcNetInfo }}</td>
+              <td>RPC接入配置：</td>
+              <td>{{ routerInfo.rpcNetInfo }}</td>
             </tr>
             <tr>
-              <td valign="top">P2P接入配置：</td>
-              <td valign="top">{{ routerInfo.p2pNetInfo }}</td>
+              <td>P2P接入配置：</td>
+              <td>{{ routerInfo.p2pNetInfo }}</td>
             </tr>
             <tr>
-              <td valign="top">管理员账号：</td>
-              <td valign="top">{{ routerInfo.adminAccount }}</td>
+              <td>管理员账号：</td>
+              <td>{{ routerInfo.adminAccount }}</td>
               <td style="min-width: 150px">跨链路由版本：</td>
               <td>{{ routerInfo.version }}</td>
             </tr>

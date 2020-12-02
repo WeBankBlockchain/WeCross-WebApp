@@ -45,7 +45,11 @@
       <el-card style="height:100%">
         <div slot="header" class="clearfix">
           <span> 交易回执详情 </span>
-          <i class="el-icon-close" style="float:right;cursor:pointer" @click="drawer = false" />
+          <i
+            class="el-icon-close"
+            style="float:right;cursor:pointer"
+            @click="drawer = false"
+          />
         </div>
         <vue-json-pretty
           :expand-depth="2"
@@ -90,8 +94,11 @@ export default {
   props: {
     chain: {
       type: String,
-      default: () => { return null }
-    }},
+      default: () => {
+        return null
+      }
+    }
+  },
   data() {
     return {
       chainValue: null,
@@ -184,7 +191,9 @@ export default {
       )
 
       // next page
-      this.nextClickDisable = this.nextBlockNumber <= 0 && this.currentStep >= this.historyData.length
+      this.nextClickDisable =
+        this.nextBlockNumber <= 0 &&
+        this.currentStep >= this.historyData.length
       // per page
       this.preClickDisable = this.currentStep <= 1
     },
@@ -204,122 +213,133 @@ export default {
         size: 10
       }
 
-      listTransactions(params).then((resp) => {
-        console.log(
-          ' listTransactions params => ' +
-            JSON.stringify(params) +
-            ' ,resp => ' +
-            JSON.stringify(resp)
-        )
-
-        if (typeof (resp.errorCode) === 'undefined' || resp.errorCode !== 0) {
-          this.$message({
-            type: 'error',
-            message: '查询交易列表失败, 详情: ' + JSON.stringify(resp)
-          })
-          return
-        }
-
-        if (resp.data.transactions.length === 0) {
-          this.$message({
-            type: 'error',
-            message: '查询交易列表为空，查询参数: ' + JSON.stringify(params)
-          })
-          return
-        }
-
-        const fetchAllTx = async function(chainValue, txHashes) {
-          var txs = []
-
-          for (const tx of txHashes) {
-            if (tx.txHash === null || tx.txHash === '') {
-              throw new Error(
-                '交易哈希不存在，详情: ' + JSON.stringify(tx)
-              )
-            }
-
-            const paramsInGetTX = {
-              path: chainValue,
-              txHash: tx.txHash,
-              blockNumber: tx.blockNumber
-            }
-            const response = await getTransaction(paramsInGetTX).catch(error => {
-              this.$message({
-                message: '网络异常：' + error,
-                type: 'error',
-                duration: 5000
-              })
-            })
-            if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
-              throw new Error(
-                '查询交易失败，交易哈希: ' +
-                  tx.txhash +
-                  '，详情: ' +
-                  JSON.stringify(response)
-              )
-            }
-
-            txs[txs.length] = {
-              txHash: response.data.txHash,
-              username: response.data.username,
-              blockNumber: response.data.blockNumber,
-              path: response.data.path,
-              method: response.data.method,
-              params: { args: response.data.args, result: response.data.result },
-              properties: response.data
-            }
-          }
-
+      listTransactions(params)
+        .then((resp) => {
           console.log(
-            ' listTransactions => transactions length: ' + txs.length
+            ' listTransactions params => ' +
+              JSON.stringify(params) +
+              ' ,resp => ' +
+              JSON.stringify(resp)
           )
 
-          return txs
-        }
+          if (typeof resp.errorCode === 'undefined' || resp.errorCode !== 0) {
+            this.$message({
+              type: 'error',
+              message: '查询交易列表失败, 详情: ' + JSON.stringify(resp)
+            })
+            return
+          }
 
-        fetchAllTx(this.chainValue, resp.data.transactions)
-          .then((response) => {
-            this.nextBlockNumber = resp.data.nextBlockNumber
-            this.nextOffset = resp.data.nextOffset
+          if (resp.data.transactions.length === 0) {
+            this.$message({
+              type: 'error',
+              message: '查询交易列表为空，查询参数: ' + JSON.stringify(params)
+            })
+            return
+          }
 
-            if (response.length === 0) {
-              this.$message({
-                type: 'error',
-                message:
-                  '查询交易列表为空，查询参数: ' + JSON.stringify(params)
-              })
-              this.updateDisableButtonStatus()
-              return
+          const fetchAllTx = async function(chainValue, txHashes) {
+            var txs = []
+
+            for (const tx of txHashes) {
+              if (tx.txHash === null || tx.txHash === '') {
+                throw new Error('交易哈希不存在，详情: ' + JSON.stringify(tx))
+              }
+
+              const paramsInGetTX = {
+                path: chainValue,
+                txHash: tx.txHash,
+                blockNumber: tx.blockNumber
+              }
+              const response = await getTransaction(paramsInGetTX).catch(
+                (error) => {
+                  this.$message({
+                    message: '网络异常：' + error,
+                    type: 'error',
+                    duration: 5000
+                  })
+                }
+              )
+              if (
+                typeof response.errorCode === 'undefined' ||
+                response.errorCode !== 0
+              ) {
+                throw new Error(
+                  '查询交易失败，交易哈希: ' +
+                    tx.txhash +
+                    '，详情: ' +
+                    JSON.stringify(response)
+                )
+              }
+
+              delete response.data.txBytes
+              delete response.data.receiptBytes
+
+              txs[txs.length] = {
+                txHash: response.data.txHash,
+                username: response.data.username,
+                blockNumber: response.data.blockNumber,
+                path: response.data.path,
+                method: response.data.method,
+                params: {
+                  args: response.data.args,
+                  result: response.data.result
+                },
+                properties: response.data
+              }
             }
 
-            this.transactionList = response
-            this.historyData[this.currentStep] = response
-            this.currentStep += 1
-
             console.log(
-              ' currentStep: ' +
-                this.currentStep +
-                ' ,nextBlk: ' +
-                this.nextBlockNumber +
-                ' ,nextOffset: ' +
-                this.nextOffset +
-                ' ,data: ' +
-                JSON.stringify(resp.data)
+              ' listTransactions => transactions length: ' + txs.length
             )
 
-            this.updateDisableButtonStatus()
-          })
-          .catch((err) => {
-            console.log(' An error occurred !')
-            this.$message({ type: 'error', message: err.toString() })
-          })
-      }).catch(error => {
-        this.$message({
-          message: '网络异常：' + error,
-          type: 'error',
-          duration: 5000
+            return txs
+          }
+
+          fetchAllTx(this.chainValue, resp.data.transactions)
+            .then((response) => {
+              this.nextBlockNumber = resp.data.nextBlockNumber
+              this.nextOffset = resp.data.nextOffset
+
+              if (response.length === 0) {
+                this.$message({
+                  type: 'error',
+                  message:
+                    '查询交易列表为空，查询参数: ' + JSON.stringify(params)
+                })
+                this.updateDisableButtonStatus()
+                return
+              }
+
+              this.transactionList = response
+              this.historyData[this.currentStep] = response
+              this.currentStep += 1
+
+              console.log(
+                ' currentStep: ' +
+                  this.currentStep +
+                  ' ,nextBlk: ' +
+                  this.nextBlockNumber +
+                  ' ,nextOffset: ' +
+                  this.nextOffset +
+                  ' ,data: ' +
+                  JSON.stringify(resp.data)
+              )
+
+              this.updateDisableButtonStatus()
+            })
+            .catch((err) => {
+              console.log(' An error occurred !')
+              this.$message({ type: 'error', message: err.toString() })
+            })
         })
-      })
+        .catch((error) => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
+        })
     }
   }
 }

@@ -47,7 +47,7 @@
           />
         </span>
       </el-form-item>
-      <el-form-item v-if="shouldUseAuthCode" prop="authCode">
+      <el-form-item prop="authCode">
         <el-input
           v-model="loginForm.authCode"
           placeholder="验证码"
@@ -55,7 +55,7 @@
           tabindex="3"
         />
       </el-form-item>
-      <el-form-item v-if="shouldUseAuthCode" prop="vercode">
+      <el-form-item prop="vercode">
         <div style="width: 100%;height: 10%">
           <span>
             <img
@@ -106,11 +106,6 @@ export default {
       }
     }
     const validateAuthCode = (rule, value, callback) => {
-      var authCodeExist = this.loginStatistics.errorCount >= 3
-      console.log('====>>' + authCodeExist)
-      if (!authCodeExist) {
-        return
-      }
       if (typeof value === 'undefined' || value === null || value === '') {
         callback(new Error('请输入验证码'))
       } else {
@@ -122,9 +117,6 @@ export default {
         username: '',
         password: '',
         authCode: ''
-      },
-      loginStatistics: {
-        errorCount: 0
       },
       imageAuthCode: {
         imageAuthCodeBase64URL: '',
@@ -144,11 +136,6 @@ export default {
       loading: false,
       passwordType: 'password',
       redirect: undefined
-    }
-  },
-  computed: {
-    shouldUseAuthCode() {
-      return this.loginStatistics.errorCount >= 3
     }
   },
   watch: {
@@ -211,8 +198,7 @@ export default {
             authCode: this.loginForm.authCode,
             randomToken: this.imageAuthCode.randomToken,
             callback: (resp) => {
-              this.loginStatistics.errorCount++
-              console.log(' 111 callback response => ' + JSON.stringify(resp))
+              console.log(' callback response => ' + JSON.stringify(resp))
               this.handleUpdateAuthCode()
             }
           }

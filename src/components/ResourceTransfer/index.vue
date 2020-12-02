@@ -32,8 +32,8 @@
             height="calc(100% - 34px)"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column fixed width="42px" type="selection" />
-            <el-table-column label="可选资源路径" show-overflow-tooltip>
+            <el-table-column fixed width="42px" type="selection" :selectable="(row,index)=>{return !row.path.endsWith('.WeCrossHub')}" />
+            <el-table-column label="可选资源路径" prop="path" show-overflow-tooltip>
               <template slot-scope="scope">{{ scope.row.path }}</template>
             </el-table-column>
           </el-table>
@@ -162,7 +162,7 @@ export default {
   watch: {
     resourceData(val) {
       this.tableShowData = val.filter((item) => {
-        return JSON.stringify(this.toShowData).indexOf(JSON.stringify(item)) === -1 && !item.path.endsWith('.WeCrossHub')
+        return JSON.stringify(this.toShowData).indexOf(JSON.stringify(item)) === -1
       })
     },
     from_check_keys(val) {

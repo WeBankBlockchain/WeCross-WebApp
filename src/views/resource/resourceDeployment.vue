@@ -231,7 +231,7 @@ import {
 import {
   bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade
 } from '@/api/resource'
-import { MessageBox } from 'element-ui'
+import { handleSuccessMsgBox, handleErrorMsgBox } from '@/utils/messageBox'
 
 const JSZip = require('jszip')
 
@@ -273,7 +273,7 @@ export default {
         fullPath: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
           { required: true, message: '资源路径总长度不能超过128', trigger: 'blur', max: 128 },
           {
-            pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
+            pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+\.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
             required: true,
             message: '资源路径格式错误，应形如 \'path.to.resource\'',
             trigger: 'blur'
@@ -410,41 +410,68 @@ export default {
       this.zipContractFilesMap = {}
     },
     onBCOSDeploy() {
-      bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
-        this.loading = false
+      try {
         this.mergeSolidityFile('./' + this.form.chosenSolidity)
         this.mergeSourceContractLineToString()
-        if (response.errorCode !== 0) {
-          this.$alert('执行FISCO BCOS部署合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-            confirmButtonText: '确定',
-            type: 'error',
-            center: true
-          })
-        } else {
-          this.onSubmitSuccess(response)
-        }
-      }).catch(err => {
+      } catch (e) {
         this.loading = false
-        this.$message(
-          {
-            message: err,
-            type: 'error',
-            center: true
+        console.log(e)
+        return
+      }
+      const h = this.$createElement
+      this.$msgbox({
+        message: h('div', null, [
+          h('p', { style: { fontSize: '16px' }}, '确认执行部署合约吗？'),
+          h('div', { style: { fontSize: '4px', marginTop: '5px' }}, '注意：若是升级FISCO BCOS合约，请勿修改/删除旧版本合约的ABI接口，否则会出现旧合约历史交易为空的情况！')
+        ]),
+        title: '注意',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '确认部署',
+        cancelButtonText: '取消部署'
+      }).then(_ => {
+        bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
+          this.loading = false
+          if (response.errorCode !== 0) {
+            handleErrorMsgBox(
+              '执行FISCO BCOS部署合约失败，错误：',
+              '错误码：' + response.errorCode,
+              (response.data === null) ? response.message : response.data.errorMessage
+            )
+          } else {
+            this.onSubmitSuccess(response)
           }
-        )
+        }).catch(err => {
+          this.loading = false
+          this.$message(
+            {
+              message: err,
+              type: 'error',
+              center: true
+            }
+          )
+        })
+      }).catch(_ => {
+        this.loading = false
       })
     },
     onBCOSRegister() {
-      bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
+      try {
         this.mergeSolidityFile('./' + this.form.chosenSolidity)
         this.mergeSourceContractLineToString()
+      } catch (e) {
+        this.loading = false
+        console.log(e)
+        return
+      }
+      bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
         this.loading = false
         if (response.errorCode !== 0) {
-          this.$alert('执行FISCO BCOS注册合约失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-            confirmButtonText: '确定',
-            type: 'error',
-            center: true
-          })
+          handleErrorMsgBox(
+            '执行FISCO BCOS注册合约失败，错误：',
+            '错误码：' + response.errorCode,
+            (response.data === null) ? response.message : response.data.errorMessage
+          )
         } else {
           this.onSubmitSuccess(response)
         }
@@ -463,16 +490,17 @@ export default {
       fabricInstall(buildFabricInstallRequest(this.form)).then(response => {
         this.loading = false
         if (response.errorCode !== 0) {
-          this.$alert('执行Hyperledger Fabric合约安装失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-            confirmButtonText: '确定',
-            type: 'error',
-            center: true
-          })
+          handleErrorMsgBox(
+            '执行Hyperledger Fabric合约安装失败，错误：',
+            '错误码：' + response.errorCode,
+            (response.data === null) ? response.message : response.data.errorMessage
+          )
         } else {
           const h = this.$createElement
           this.$confirm('提示', {
             message: h('div', null, [
-              h('p', null, `已执行成功，返回信息：` + response.data),
+              h('p', null, '已执行成功，返回信息：'),
+              h('p', null, response.data),
               h('p', { style: 'font-weight: bold;' }, '注意: 必须实例化合约/升级合约才能在资源列表显示')
             ]),
             title: '执行成功',
@@ -511,11 +539,11 @@ export default {
       fabricInstantiate(buildFabricInstantiateRequest(this.form)).then(response => {
         this.loading = false
         if (response.errorCode !== 0) {
-          this.$alert('执行Hyperledger Fabric合约实例化失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-            confirmButtonText: '确定',
-            type: 'error',
-            center: true
-          })
+          handleErrorMsgBox(
+            '执行Hyperledger Fabric合约实例化失败，错误：',
+            '错误码：' + response.errorCode,
+            (response.data === null) ? response.message : response.data.errorMessage
+          )
         } else {
           this.onSubmitSuccess(response)
         }
@@ -534,11 +562,11 @@ export default {
       fabricUpgrade(buildFabricUpgradeRequest(this.form)).then(response => {
         this.loading = false
         if (response.errorCode !== 0) {
-          this.$alert('执行Hyperledger Fabric合约升级失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage, '错误', {
-            confirmButtonText: '确定',
-            type: 'error',
-            center: true
-          })
+          handleErrorMsgBox(
+            '执行Hyperledger Fabric合约升级失败，错误：',
+            '错误码：' + response.errorCode,
+            (response.data === null) ? response.message : response.data.errorMessage
+          )
         } else {
           this.onSubmitSuccess(response)
         }
@@ -554,11 +582,16 @@ export default {
       })
     },
     onSubmitSuccess(response) {
-      this.$confirm(`已执行成功，返回信息：` + response.data, '执行成功', {
-        confirmButtonText: '前往资源列表',
-        cancelButtonText: '继续部署',
-        type: 'success'
-      }).then(_ => {
+      handleSuccessMsgBox(
+        '已执行成功，返回信息：',
+        '执行成功',
+        response.data,
+        {
+          showCancelButton: true,
+          confirmButtonText: '前往资源列表',
+          cancelButtonText: '继续部署'
+        }
+      ).then(_ => {
         this.$refs.deployForm.resetFields()
         this.$router.push('resourceList')
       }).catch(_ => {
@@ -672,7 +705,7 @@ export default {
               }
             }
             if (_this.solidityFiles.length === 0) {
-              MessageBox.alert('zip最外层文件中不含有Solidity或ABI文件', '错误', {
+              this.$alert('zip最外层文件中不含有Solidity或ABI文件', '错误', {
                 confirmButtonText: '确定',
                 type: 'error'
               })
@@ -685,10 +718,11 @@ export default {
             _this.$refs.deployForm.clearValidate('chosenSolidity')
           })
         }).catch(err => {
-          this.$confirm('读取zip文件错误：' + err.toString(), '错误', {
-            type: 'error',
-            showCancelButton: false
-          }).catch(_ => {
+          handleErrorMsgBox(
+            '读取zip文件错误：',
+            '错误',
+            err.toString()
+          ).catch(_ => {
           })
           this.zipContractFilesMap = {}
           this.solidityFiles = []

@@ -1,6 +1,6 @@
 import { commitXATransaction, startXATransaction, rollbackXATransaction } from '@/api/transaction'
-import { MessageBox } from 'element-ui'
 import { getXATX, removeXATX, setXATX, buildXAError } from '@/utils/transaction'
+import { handleErrorMsgBox } from '@/utils/messageBox'
 
 const getDefaultState = () => {
   return {
@@ -27,10 +27,7 @@ const actions = {
       startXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
           const errMessage = buildXAError(response)
-          MessageBox.alert('开启事务失败，错误：' + errMessage, '错误', {
-            confirmButtonText: '确定',
-            type: 'error'
-          }).then(_ => {})
+          handleErrorMsgBox('开启事务失败，错误：', '错误', errMessage).then(_ => {})
           reject()
         } else {
           commit('SET_TRANSACTION', { transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths })
@@ -38,10 +35,7 @@ const actions = {
           resolve()
         }
       }).catch(error => {
-        MessageBox.alert('开启事务失败，错误：' + error, '错误', {
-          confirmButtonText: '确定',
-          type: 'error'
-        }).then(_ => {})
+        handleErrorMsgBox('开启事务失败，错误：', '错误', error).then(_ => {})
         reject(error)
       })
     })
@@ -51,15 +45,13 @@ const actions = {
       commitXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
           const errMessage = buildXAError(response)
-          MessageBox.alert('提交事务失败，错误：' + errMessage, '错误', {
-            confirmButtonText: '确定',
-            type: 'error'
-          }).then(_ => {
-            if (/(committed|rolledback)/.test(errMessage)) {
-              commit('RESET_STATE')
-              removeXATX()
-            }
-          })
+          handleErrorMsgBox('提交事务失败，错误：', '错误', errMessage)
+            .then(_ => {
+              if (/(committed|rolledback)/.test(errMessage)) {
+                commit('RESET_STATE')
+                removeXATX()
+              }
+            })
           reject(errMessage)
         } else {
           commit('RESET_STATE')
@@ -67,10 +59,8 @@ const actions = {
           resolve()
         }
       }).catch(error => {
-        MessageBox.alert('提交事务失败，错误：' + error, '错误', {
-          confirmButtonText: '确定',
-          type: 'error'
-        }).then(_ => {})
+        handleErrorMsgBox('提交事务失败，错误：', '错误', error)
+          .then(_ => {})
         reject(error)
       })
     })
@@ -80,15 +70,13 @@ const actions = {
       rollbackXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
           const errMessage = buildXAError(response)
-          MessageBox.alert('回滚事务失败，错误：' + errMessage, '错误', {
-            confirmButtonText: '确定',
-            type: 'error'
-          }).then(_ => {
-            if (/(committed|rolledback)$/.test(errMessage)) {
-              commit('RESET_STATE')
-              removeXATX()
-            }
-          })
+          handleErrorMsgBox('回滚事务失败，错误：', '错误', errMessage)
+            .then(_ => {
+              if (/(committed|rolledback)$/.test(errMessage)) {
+                commit('RESET_STATE')
+                removeXATX()
+              }
+            })
           reject(errMessage)
         } else {
           commit('RESET_STATE')
@@ -96,10 +84,8 @@ const actions = {
           resolve()
         }
       }).catch(error => {
-        MessageBox.alert('回滚事务失败，错误：' + error, '错误', {
-          confirmButtonText: '确定',
-          type: 'error'
-        }).then(_ => {})
+        handleErrorMsgBox('回滚事务失败，错误：', '错误', error)
+          .then(_ => {})
         reject(error)
       })
     })

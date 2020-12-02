@@ -32,8 +32,8 @@
             height="calc(100% - 34px)"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column fixed width="42px" type="selection" />
-            <el-table-column label="可选资源路径" show-overflow-tooltip>
+            <el-table-column fixed width="42px" type="selection" :selectable="(row,index)=>{return !row.path.endsWith('.WeCrossHub')}" />
+            <el-table-column label="可选资源路径" prop="path" show-overflow-tooltip>
               <template slot-scope="scope">{{ scope.row.path }}</template>
             </el-table-column>
           </el-table>
@@ -84,7 +84,7 @@
       <!-- transfer right panel -->
       <div class="transfer-main">
         <el-input v-model="filterTo" placeholder="输入关键字进行过滤" size="small" class="filter-tree" />
-        <el-checkbox-group v-model="to_check_keys" class="el-transfer-panel__list">
+        <el-checkbox-group v-model="to_check_keys" class="transfer-right-panel">
           <el-checkbox
             v-for="item in toDataFilter"
             :key="item.path"
@@ -162,7 +162,7 @@ export default {
   watch: {
     resourceData(val) {
       this.tableShowData = val.filter((item) => {
-        return JSON.stringify(this.toShowData).indexOf(JSON.stringify(item)) === -1 && !item.path.endsWith('.WeCrossHub')
+        return JSON.stringify(this.toShowData).indexOf(JSON.stringify(item)) === -1
       })
     },
     from_check_keys(val) {
@@ -480,6 +480,16 @@ a {
     width: 25%;
     height: 100%;
     vertical-align: middle;
+  }
+
+  .transfer-right-panel{
+    margin:0;
+    padding:6px 0;
+    list-style:none;
+    height: calc(100% - 40px);
+    overflow:auto;
+    -webkit-box-sizing:border-box;
+    box-sizing:border-box
   }
 
   .transfer-right {

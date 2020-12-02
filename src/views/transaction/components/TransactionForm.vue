@@ -61,6 +61,8 @@
 
 <script>
 
+import { handleErrorMsgBox } from '@/utils/messageBox'
+
 export default {
   name: 'TransactionForm',
   props: {
@@ -92,7 +94,7 @@ export default {
             required: true, message: '资源路径总长度不能超过128', trigger: 'blur', max: 128
           },
           {
-            pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
+            pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+\.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
             required: true,
             message: '资源路径格式错误，应形如 \'path.to.resource\'',
             trigger: 'change'
@@ -182,9 +184,7 @@ export default {
           code = response.data.errorCode
           message = response.data.message
         }
-        this.$alert(message, '错误码: ' + code, {
-          confirmButtonText: '确定'
-        })
+        handleErrorMsgBox('执行错误：', '错误码: ' + code, message)
       } else {
         this.submitResponse = JSON.stringify(response.data.result)
       }

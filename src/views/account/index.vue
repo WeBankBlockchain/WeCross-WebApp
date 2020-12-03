@@ -561,6 +561,7 @@ export default {
             loading.close()
           })
         }).catch(error => {
+          loading.close()
           this.$message({
             message: '网络异常：' + error,
             type: 'error',

@@ -81,10 +81,10 @@
           </span>
         </el-form-item>
       </el-tooltip>
-      <el-form-item prop="imageAuthCode">
+      <el-form-item prop="authCode">
         <el-input
-          v-model="registerForm.imageAuthCode"
-          placeholder="认证码"
+          v-model="registerForm.authCode"
+          placeholder="验证码"
           name="imageAuthCode"
           tabindex="4"
         />
@@ -96,7 +96,7 @@
               style="width: 100%;height: 10%"
               :src="imageAuthCode.imageAuthCodeBase64URL"
               alt=""
-              @click="handleFetchAuthTokenCode"
+              @click="handleUpdateAuthCode"
             >
           </span>
         </div>
@@ -118,22 +118,31 @@
 
 <script>
 import { validUsername, validPassword } from '@/utils/validate'
+import { queryAuthCode } from '@/utils/authcode'
+import { getPubKey } from '@/utils/auth'
 import { register } from '@/api/user'
-import { imageAuthCode } from '@/api/user'
+import { rsa_encode } from '@/utils/rsa'
+import { queryPub } from '@/utils/authcode'
 
 export default {
   name: 'Register',
   data() {
     const checkUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error(
-          '用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-'
-        ))
+        callback(
+          new Error(
+            '用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-'
+          )
+        )
       } else {
         callback()
       }
     }
     const verifyPwd = (rule, value, callback) => {
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入密码'))
+        return
+      }
       if (!validPassword(value)) {
         callback(
           new Error(
@@ -145,10 +154,17 @@ export default {
       }
     }
     const confirmPwd = (rule, value, callback) => {
-      if (value === '') {
+      if (typeof value === 'undefined' || value === null || value === '') {
         callback(new Error('请再次输入密码'))
       } else if (value !== this.registerForm.password) {
         callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
+    const confirmAuthCode = (rule, value, callback) => {
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入验证码'))
       } else {
         callback()
       }
@@ -158,11 +174,11 @@ export default {
         password: '',
         checkPass: '',
         username: '',
-        imageAuthCode: ''
+        authCode: ''
       },
       imageAuthCode: {
         imageAuthCodeBase64URL: '',
-        imageToken: ''
+        randomToken: ''
       },
       registerRules: {
         username: [
@@ -171,13 +187,30 @@ export default {
         password: [{ required: true, validator: verifyPwd, trigger: 'blur' }],
         checkPass: [
           { required: true, validator: confirmPwd, trigger: 'change' }
+        ],
+        authCode: [
+          { required: true, validator: confirmAuthCode, trigger: 'change' }
         ]
       },
       passwordType: 'password'
     }
   },
   created() {
-    this.handleFetchAuthTokenCode()
+    /**
+    query publicKey for data encrypt
+    */
+    queryPub()
+
+    /**
+    update the authentication code periodically
+    */
+    var callback = (resp) => {
+      this.imageAuthCode.randomToken = resp.randomToken
+      this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+    }
+
+    queryAuthCode(callback)
+    setInterval(queryAuthCode, 60000, callback)
   },
   methods: {
     showPwd() {
@@ -193,35 +226,20 @@ export default {
         path: '/login'
       })
     },
-    handleFetchAuthTokenCode() {
-      imageAuthCode()
-        .then((resp) => {
-          console.log('handleFetchAuthTokenCode => ' + JSON.stringify(resp))
+    handleUpdateAuthCode() {
+      var callback = (resp) => {
+        this.imageAuthCode.randomToken = resp.randomToken
+        this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+      }
 
-          if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
-            this.$message({
-              type: 'error',
-              message: JSON.stringify(resp)
-            })
-          } else {
-            const imageAuthCodeInfo = resp.data.imageAuthCodeInfo
-            this.imageAuthCode.imageToken = imageAuthCodeInfo.imageToken
-            this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${imageAuthCodeInfo.imageBase64}`
-          }
-        }).catch(error => {
-          this.$message({
-            message: '网络异常：' + error,
-            type: 'error',
-            duration: 5000
-          })
-        })
+      queryAuthCode(callback)
     },
     handleRegister(formName) {
       this.$refs[formName].validate((valid) => {
         if (!valid) {
           this.$message({
             type: 'error',
-            message: '用户名或者密码无效，请重新输入'
+            message: '用户名或密码无效，请重新输入'
           })
           return false
         }
@@ -229,11 +247,17 @@ export default {
         var params = {
           username: this.registerForm.username,
           password: this.registerForm.password,
-          imageAuthCode: this.registerForm.imageAuthCode,
-          imageToken: this.imageAuthCode.imageToken
+          randomToken: this.imageAuthCode.randomToken,
+          authCode: this.registerForm.authCode
         }
 
-        register(params)
+        // rsa encode parameters
+        var pub = getPubKey()
+        var encoded = rsa_encode(JSON.stringify(params), pub)
+
+        console.log('encoded register params: ' + encoded)
+
+        register(encoded)
           .then((resp) => {
             console.log(
               ' params: ' +
@@ -249,12 +273,14 @@ export default {
             if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
               this.$message({
                 type: 'error',
-                message: JSON.stringify(resp)
+                message: resp.message
               })
+              this.handleUpdateAuthCode()
             } else if (typeof errorCode !== 'undefined' && errorCode === 0) {
+              console.log('register success, ua: ' + JSON.stringify(ua))
               this.$message({
                 type: 'success',
-                message: JSON.stringify(ua)
+                message: '注册成功!'
               })
               //
               this.handleLogin()
@@ -263,9 +289,10 @@ export default {
                 type: 'error',
                 message: JSON.stringify(data)
               })
+              this.handleUpdateAuthCode()
             }
           })
-          .catch(error => {
+          .catch((error) => {
             this.$message({
               message: '网络异常：' + error,
               type: 'error',

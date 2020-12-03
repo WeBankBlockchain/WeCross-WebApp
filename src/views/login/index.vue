@@ -47,6 +47,27 @@
           />
         </span>
       </el-form-item>
+      <el-form-item prop="authCode">
+        <el-input
+          v-model="loginForm.authCode"
+          placeholder="验证码"
+          name="imageAuthCode"
+          tabindex="3"
+        />
+      </el-form-item>
+      <el-form-item prop="vercode">
+        <div style="width: 100%;height: 10%">
+          <span>
+            <img
+              style="width: 100%;height: 10%"
+              :src="imageAuthCode.imageAuthCodeBase64URL"
+              alt=""
+              tabindex="4"
+              @click="handleUpdateAuthCode"
+            >
+          </span>
+        </div>
+      </el-form-item>
 
       <el-button
         :loading="loading"
@@ -64,6 +85,9 @@
 </template>
 
 <script>
+import { queryPub } from '@/utils/authcode'
+import { queryAuthCode } from '@/utils/authcode'
+
 export default {
   name: 'Login',
   data() {
@@ -81,10 +105,22 @@ export default {
         callback()
       }
     }
+    const validateAuthCode = (rule, value, callback) => {
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入验证码'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        authCode: ''
+      },
+      imageAuthCode: {
+        imageAuthCodeBase64URL: '',
+        randomToken: ''
       },
       loginRules: {
         username: [
@@ -92,6 +128,9 @@ export default {
         ],
         password: [
           { required: true, trigger: 'blur', validator: validatePassword }
+        ],
+        authCode: [
+          { required: true, trigger: 'blur', validator: validateAuthCode }
         ]
       },
       loading: false,
@@ -107,6 +146,25 @@ export default {
       immediate: true
     }
   },
+  created() {
+    /**
+    query publicKey for data encrypt
+    */
+    queryPub(() => {
+      console.log(' [Login] queryPub successfully.')
+    })
+
+    /**
+    update the authentication code periodically
+    */
+    var callback = (resp) => {
+      this.imageAuthCode.randomToken = resp.randomToken
+      this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+    }
+
+    queryAuthCode(callback)
+    setInterval(queryAuthCode, 60000, callback)
+  },
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -118,25 +176,45 @@ export default {
         this.$refs.password.focus()
       })
     },
-
     handleRegister() {
       this.$router.push({
         path: '/register'
       })
     },
+    handleUpdateAuthCode() {
+      var callback = (resp) => {
+        this.imageAuthCode.randomToken = resp.randomToken
+        this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+      }
 
+      queryAuthCode(callback)
+    },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          var loginParams = {
+            username: this.loginForm.username,
+            password: this.loginForm.password,
+            authCode: this.loginForm.authCode,
+            randomToken: this.imageAuthCode.randomToken,
+            callback: (resp) => {
+              console.log(' callback response => ' + JSON.stringify(resp))
+              this.handleUpdateAuthCode()
+            }
+          }
+
+          console.log('login params: ' + JSON.stringify(loginParams))
+
           this.loading = true
           this.$store
-            .dispatch('user/login', this.loginForm)
+            .dispatch('user/login', loginParams)
             .then(() => {
               this.$router.push({ path: this.redirect || '/' })
               this.loading = false
             })
             .catch(() => {
               this.loading = false
+              this.handleUpdateAuthCode()
             })
         } else {
           console.log('error submit!!')

@@ -1,6 +1,7 @@
 
 const TokenKey = 'wecross-token'
 const UsernameKey = 'wecross-user'
+const PubKey = 'wecross-pub'
 
 export function getToken() {
   return localStorage.getItem(TokenKey)
@@ -24,4 +25,16 @@ export function setUsername(username) {
 
 export function removeUsername() {
   return localStorage.removeItem(UsernameKey)
+}
+
+export function getPubKey(pub) {
+  return localStorage.getItem(PubKey)
+}
+
+export function setPubKey(pub) {
+  return localStorage.setItem(PubKey, pub)
+}
+
+export function removePubKey() {
+  return localStorage.removeItem(PubKey)
 }

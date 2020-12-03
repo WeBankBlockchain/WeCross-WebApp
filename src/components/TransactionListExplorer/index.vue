@@ -10,22 +10,25 @@
       height="calc(100% - 75px)"
       @current-change="handleCurrentRowChange"
     >
-      <el-table-column label="交易哈希" min-width="60px" show-overflow-tooltip>
+      <el-table-column label="交易哈希" min-width="40px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.txHash }}</template>
       </el-table-column>
-      <el-table-column label="跨链账户" min-width="50px">
+      <el-table-column label="跨链账户" min-width="30px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.username }}</template>
       </el-table-column>
-      <el-table-column label="区块高度" min-width="50px">
+      <el-table-column label="事务ID" min-width="30px" show-overflow-tooltip>
+        <template slot-scope="item">{{ item.row.txID }}</template>
+      </el-table-column>
+      <el-table-column label="区块高度" min-width="30px">
         <template slot-scope="item">{{ item.row.blockNumber }}</template>
       </el-table-column>
-      <el-table-column label="资源路径" min-width="50px">
+      <el-table-column label="资源路径" min-width="40px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.path }}</template>
       </el-table-column>
-      <el-table-column label="调用方法" min-width="50px">
+      <el-table-column label="调用方法" min-width="40px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.method }}</template>
       </el-table-column>
-      <el-table-column label="交易回执" min-width="30px">
+      <el-table-column label="回执" min-width="20px">
         <template slot-scope="item">
           <el-tooltip
             effect="light"
@@ -45,29 +48,37 @@
       <el-card style="height:100%">
         <div slot="header" class="clearfix">
           <span> 交易回执详情 </span>
-          <i class="el-icon-close" style="float:right;cursor:pointer" @click="drawer = false" />
+          <i
+            class="el-icon-close"
+            style="float:right;cursor:pointer"
+            @click="drawer = false"
+          />
         </div>
-        <vue-json-pretty
-          :expand-depth="2"
-          :deep="3"
-          boxed
-          copyable
-          :data="txReceipt"
-          @click="handleClick"
-        />
+        <div class="json_css">
+          <vue-json-pretty
+            :expand-depth="2"
+            :deep="3"
+            show-length
+            copyable
+            :data="txReceipt"
+            @click="handleClick"
+          />
+        </div>
         <div />
       </el-card>
     </el-drawer>
     <!--pagination-->
     <el-row :gutter="20" style="margin-top: 10px; text-align: center">
       <el-button
-        :disabled="preClickDisable"
+        :disabled="buttonState.disablePreClick"
+        :loading="buttonState.loading"
         size="small"
         icon="el-icon-back"
         @click="handlePrevClick"
       >上一页</el-button>
       <el-button
-        :disabled="nextClickDisable"
+        :disabled="buttonState.disableNextClick"
+        :loading="buttonState.loading"
         size="small"
         icon="el-icon-right"
         @click="handleNextClick"
@@ -90,18 +101,24 @@ export default {
   props: {
     chain: {
       type: String,
-      default: () => { return null }
-    }},
+      default: () => {
+        return null
+      }
+    }
+  },
   data() {
     return {
+      buttonState: {
+        loading: false,
+        disablePreClick: true,
+        disableNextClick: false
+      },
       chainValue: null,
       transactionList: [],
       nextOffset: 0,
       nextBlockNumber: -1,
       currentStep: 0,
       historyData: [],
-      preClickDisable: true,
-      nextClickDisable: false,
       drawer: false,
       txReceipt: ''
     }
@@ -123,8 +140,8 @@ export default {
       this.nextBlockNumber = -1
       this.currentStep = 0
       this.historyData = []
-      this.preClickDisable = true
-      this.nextClickDisable = false
+      this.buttonState.disablePreClick = true
+      this.buttonState.disableNextClick = false
     },
     handleCurrentRowChange(val) {
       if (val != null) {
@@ -147,16 +164,16 @@ export default {
         this.currentStep = this.currentStep - 1
         this.transactionList = this.historyData[this.currentStep - 1]
       }
-      this.updateDisableButtonStatus()
+      this.updateButtonStatus()
     },
     handleNextClick() {
       console.log(' =>[next] click, currentStep: ' + this.currentStep)
       if (this.currentStep < this.historyData.length) {
         this.transactionList = this.historyData[this.currentStep]
         this.currentStep += 1
-        this.updateDisableButtonStatus()
+        this.updateButtonStatus()
       } else {
-        this.doSearchOperation()
+        this.updateTransactionListForm()
       }
     },
     handleSendTransaction() {
@@ -171,9 +188,9 @@ export default {
       this.reset()
       console.log('handleRearch => ' + JSON.stringify(chainValue))
       this.chainValue = chainValue
-      this.doSearchOperation()
+      this.updateTransactionListForm()
     },
-    updateDisableButtonStatus() {
+    updateButtonStatus() {
       console.log(
         ' update button status, nextBlk: ' +
           this.nextBlockNumber +
@@ -182,13 +199,15 @@ export default {
           ' ,historyData: ' +
           this.historyData.length
       )
-
+      this.buttonState.loading = false
       // next page
-      this.nextClickDisable = this.nextBlockNumber <= 0 && this.currentStep >= this.historyData.length
-      // per page
-      this.preClickDisable = this.currentStep <= 1
+      this.buttonState.disableNextClick =
+        this.nextBlockNumber <= 0 &&
+        this.currentStep >= this.historyData.length
+      // pre page
+      this.buttonState.disablePreClick = this.currentStep <= 1
     },
-    doSearchOperation() {
+    updateTransactionListForm() {
       if (this.chainValue === null) {
         this.$message({
           type: 'warning',
@@ -204,122 +223,149 @@ export default {
         size: 10
       }
 
-      listTransactions(params).then((resp) => {
-        console.log(
-          ' listTransactions params => ' +
-            JSON.stringify(params) +
-            ' ,resp => ' +
-            JSON.stringify(resp)
-        )
-
-        if (typeof (resp.errorCode) === 'undefined' || resp.errorCode !== 0) {
-          this.$message({
-            type: 'error',
-            message: '查询交易列表失败, 详情: ' + JSON.stringify(resp)
-          })
-          return
-        }
-
-        if (resp.data.transactions.length === 0) {
-          this.$message({
-            type: 'error',
-            message: '查询交易列表为空，查询参数: ' + JSON.stringify(params)
-          })
-          return
-        }
-
-        const fetchAllTx = async function(chainValue, txHashes) {
-          var txs = []
-
-          for (const tx of txHashes) {
-            if (tx.txHash === null || tx.txHash === '') {
-              throw new Error(
-                '交易哈希不存在，详情: ' + JSON.stringify(tx)
-              )
-            }
-
-            const paramsInGetTX = {
-              path: chainValue,
-              txHash: tx.txHash,
-              blockNumber: tx.blockNumber
-            }
-            const response = await getTransaction(paramsInGetTX).catch(error => {
-              this.$message({
-                message: '网络异常：' + error,
-                type: 'error',
-                duration: 5000
-              })
-            })
-            if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
-              throw new Error(
-                '查询交易失败，交易哈希: ' +
-                  tx.txhash +
-                  '，详情: ' +
-                  JSON.stringify(response)
-              )
-            }
-
-            txs[txs.length] = {
-              txHash: response.data.txHash,
-              username: response.data.username,
-              blockNumber: response.data.blockNumber,
-              path: response.data.path,
-              method: response.data.method,
-              params: { args: response.data.args, result: response.data.result },
-              properties: response.data
-            }
-          }
-
+      this.buttonState.loading = true
+      listTransactions(params)
+        .then((resp) => {
           console.log(
-            ' listTransactions => transactions length: ' + txs.length
+            ' listTransactions params => ' +
+              JSON.stringify(params) +
+              ' ,resp => ' +
+              JSON.stringify(resp)
           )
 
-          return txs
-        }
+          if (typeof resp.errorCode === 'undefined' || resp.errorCode !== 0) {
+            this.$message({
+              type: 'error',
+              message: '查询交易列表失败, 详情: ' + JSON.stringify(resp)
+            })
+            return
+          }
 
-        fetchAllTx(this.chainValue, resp.data.transactions)
-          .then((response) => {
-            this.nextBlockNumber = resp.data.nextBlockNumber
-            this.nextOffset = resp.data.nextOffset
+          if (resp.data.transactions.length === 0) {
+            this.$message({
+              type: 'error',
+              message: '查询交易列表为空，查询参数: ' + JSON.stringify(params)
+            })
+            return
+          }
 
-            if (response.length === 0) {
-              this.$message({
-                type: 'error',
-                message:
-                  '查询交易列表为空，查询参数: ' + JSON.stringify(params)
-              })
-              this.updateDisableButtonStatus()
-              return
+          const fetchAllTx = async function(chainValue, txHashes) {
+            var txs = []
+
+            for (const tx of txHashes) {
+              if (tx.txHash === null || tx.txHash === '') {
+                throw new Error('交易哈希不存在，详情: ' + JSON.stringify(tx))
+              }
+
+              const paramsInGetTX = {
+                path: chainValue,
+                txHash: tx.txHash,
+                blockNumber: tx.blockNumber
+              }
+              const response = await getTransaction(paramsInGetTX).catch(
+                (error) => {
+                  this.$message({
+                    message: '网络异常：' + error,
+                    type: 'error',
+                    duration: 5000
+                  })
+                }
+              )
+              if (
+                typeof response.errorCode === 'undefined' ||
+                response.errorCode !== 0
+              ) {
+                throw new Error(
+                  '查询交易失败，交易哈希: ' +
+                    tx.txhash +
+                    '，详情: ' +
+                    JSON.stringify(response)
+                )
+              }
+              if (
+                typeof response.errorCode === 'undefined' ||
+                response.errorCode !== 0
+              ) {
+                throw new Error(
+                  '查询交易失败，交易哈希: ' +
+                    tx.txhash +
+                    '，详情: ' +
+                    JSON.stringify(response)
+                )
+              }
+
+              /**
+              remove raw transaction and receipt info
+              */
+              delete response.data.txBytes
+              delete response.data.receiptBytes
+
+              txs[txs.length] = {
+                txHash: response.data.txHash,
+                username: response.data.username,
+                txID: response.data.xaTransactionID,
+                blockNumber: response.data.blockNumber,
+                path: response.data.path,
+                method: response.data.method,
+                params: {
+                  args: response.data.args,
+                  result: response.data.result
+                },
+                properties: response.data
+              }
             }
 
-            this.transactionList = response
-            this.historyData[this.currentStep] = response
-            this.currentStep += 1
-
             console.log(
-              ' currentStep: ' +
-                this.currentStep +
-                ' ,nextBlk: ' +
-                this.nextBlockNumber +
-                ' ,nextOffset: ' +
-                this.nextOffset +
-                ' ,data: ' +
-                JSON.stringify(resp.data)
+              ' listTransactions => transactions length: ' + txs.length
             )
 
-            this.updateDisableButtonStatus()
-          })
-          .catch((err) => {
-            console.log(' An error occurred !')
-            this.$message({ type: 'error', message: err.toString() })
-          })
-      }).catch(error => {
-        this.$message({
-          message: '网络异常：' + error,
-          type: 'error',
-          duration: 5000
+            return txs
+          }
+
+          fetchAllTx(this.chainValue, resp.data.transactions)
+            .then((response) => {
+              this.nextBlockNumber = resp.data.nextBlockNumber
+              this.nextOffset = resp.data.nextOffset
+
+              if (response.length === 0) {
+                this.$message({
+                  type: 'error',
+                  message:
+                    '查询交易列表为空，查询参数: ' + JSON.stringify(params)
+                })
+                this.updateButtonStatus()
+                return
+              }
+
+              this.transactionList = response
+              this.historyData[this.currentStep] = response
+              this.currentStep += 1
+
+              console.log(
+                ' currentStep: ' +
+                  this.currentStep +
+                  ' ,nextBlk: ' +
+                  this.nextBlockNumber +
+                  ' ,nextOffset: ' +
+                  this.nextOffset +
+                  ' ,data: ' +
+                  JSON.stringify(resp.data)
+              )
+
+              this.updateButtonStatus()
+            })
+            .catch((err) => {
+              console.log(' An error occurred !')
+              this.$message({ type: 'error', message: err.toString() })
+            })
         })
-      })
+        .catch((error) => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
+        })
     }
   }
 }
@@ -327,6 +373,12 @@ export default {
 
 <style lang="scss">
 .el-drawer.rtl {
-  overflow-y: auto;
+  overflow-y: scroll;
+}
+
+.json_css {
+  width: autosize;
+  height: autosize;
+  word-break: break-all;
 }
 </style>

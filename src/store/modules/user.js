@@ -1,7 +1,8 @@
 import { login, logout } from '@/api/user'
-import { getToken, setToken, removeToken, setUsername, removeUsername, getUsername } from '@/utils/auth'
+import { getToken, setToken, removeToken, getPubKey, removePubKey, setUsername, removeUsername, getUsername } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import { Message } from 'element-ui'
+import { rsa_encode } from '@/utils/rsa'
 
 const getDefaultState = () => {
   return {
@@ -27,13 +28,21 @@ const mutations = {
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
+  login({ commit }, loginParams) {
+    const { username, callback } = loginParams
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      // rsa encode parameters
+      var pub = getPubKey()
+      // var params = { username: username.trim(), password: password }
+      var encoded = rsa_encode(JSON.stringify(loginParams), pub)
+
+      login(encoded).then(response => {
         if (response.data.errorCode !== 0) {
-          resolve()
           Message.error({ message: '登录失败，请检查账号密码的正确性', center: true })
+          resolve()
+          if (typeof callback === 'function' && callback !== null) {
+            callback(response.data)
+          }
         } else {
           commit('SET_TOKEN', response.data.credential)
           commit('SET_NAME', username)
@@ -54,6 +63,7 @@ const actions = {
   logout({ commit }) {
     return new Promise((resolve, reject) => {
       logout().then(() => {
+        removePubKey()
         removeToken()
         removeUsername()
         resetRouter()

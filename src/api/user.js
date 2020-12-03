@@ -30,9 +30,16 @@ export function register(data) {
   })
 }
 
-export function imageAuthCode(data) {
+export function authCode(data) {
   return request({
-    url: '/auth/imageAuthCode',
+    url: '/auth/authCode',
+    method: 'get'
+  })
+}
+
+export function authPub(data) {
+  return request({
+    url: '/auth/pub',
     method: 'get'
   })
 }

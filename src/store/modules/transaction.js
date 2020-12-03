@@ -35,7 +35,7 @@ const actions = {
           resolve()
         }
       }).catch(error => {
-        handleErrorMsgBox('开启事务失败，错误：', '错误', error).then(_ => {})
+        handleErrorMsgBox('开启事务失败，错误：', '错误', error.message).then(_ => {})
         reject(error)
       })
     })
@@ -59,7 +59,7 @@ const actions = {
           resolve()
         }
       }).catch(error => {
-        handleErrorMsgBox('提交事务失败，错误：', '错误', error)
+        handleErrorMsgBox('提交事务失败，错误：', '错误', error.message)
           .then(_ => {})
         reject(error)
       })
@@ -84,7 +84,7 @@ const actions = {
           resolve()
         }
       }).catch(error => {
-        handleErrorMsgBox('回滚事务失败，错误：', '错误', error)
+        handleErrorMsgBox('回滚事务失败，错误：', '错误', error.message)
           .then(_ => {})
         reject(error)
       })

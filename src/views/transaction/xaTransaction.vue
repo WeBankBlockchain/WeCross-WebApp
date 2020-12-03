@@ -344,6 +344,7 @@ export default {
   },
   created() {
     this.loadXATransaction(this.$route.query.isExec)
+    this.creatUUID()
   },
   methods: {
     limitString(str) {
@@ -471,8 +472,7 @@ export default {
     },
     creatUUID() {
       const { v4: uuidV4 } = require('uuid')
-      console.log(typeof uuidV4())
-      this.transactionForm.transactionID = uuidV4().toString().replaceAll('-', '')
+      this.transactionForm.transactionID = uuidV4().replace(/-/g, '')
       this.$refs['transactionForm'].clearValidate('transactionID')
     },
     clearTransaction() {

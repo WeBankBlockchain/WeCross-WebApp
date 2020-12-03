@@ -6,25 +6,7 @@
           <div slot="header">
             <span>导航</span>
           </div>
-          <el-row>
-            <el-button-group>
-              <el-button
-                icon="el-icon-d-arrow-left"
-                :disabled="history.index === 0"
-                size="mini"
-                @click="onBack"
-              >后退
-              </el-button>
-              <el-button
-                :disabled="history.index + 1 >= history.list.length"
-                size="mini"
-                @click="onForward"
-              >前进
-                <i class="el-icon-d-arrow-right" />
-              </el-button>
-            </el-button-group>
-          </el-row>
-          <el-row style="margin-top: 10px; height: calc(70vh - 30px); overflow-y:auto;padding: 10px">
+          <el-row style="height: calc(70vh - 20px); overflow-y:auto;padding: 10px">
             <ChainExplorer :chain="currentChain" @zone-click="onZoneClick" @chain-click="onChainClick" />
           </el-row>
         </el-card>
@@ -34,7 +16,11 @@
           <div slot="header">
             <span>交易列表</span>
             <div style="float: right; margin-top: -10px">
-              <el-input v-model="currentChain" style="width: 30vw" placeholder="当前路径" prefix-icon="el-icon-folder" readonly />
+              <el-input v-model="currentChain" style="width: 30vw" placeholder="当前路径" prefix-icon="el-icon-folder" readonly>
+                <template slot="prepend">
+                  <el-button icon="el-icon-refresh" size="mini" @click="handleSearch" />
+                </template>
+              </el-input>
               <el-button icon="el-icon-notebook-2" style="margin-left: 10px" type="primary" @click="handleSendTransaction">
                 发交易
               </el-button>
@@ -65,21 +51,17 @@ export default {
   props: {},
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      if (vm.currentChain !== '') {
+      if (vm.currentChain !== null) {
         vm.$refs.transactionList.handleSearch(vm.currentChain)
       }
     })
   },
   data() {
     return {
-      currentZone: '',
-      currentChain: '',
+      currentZone: null,
+      currentChain: null,
       currentChainData: {},
-      searchPath: '',
-      history: {
-        index: 0,
-        list: []
-      }
+      searchPath: null
     }
   },
   mounted() {
@@ -95,23 +77,12 @@ export default {
         this.currentChain = path
         this.currentChainData = data
         this.currentZone = path.split('.')[0]
-        this.history.list.push(path)
-        this.history.index = this.history.list.length - 1
-      }
-    },
-    onBack() {
-      if (this.history.index > 0) {
-        --this.history.index
-        this.currentChain = this.history.list[this.history.index]
-      }
-    },
-    onForward() {
-      if (this.history.index + 1 < this.history.list.length) {
-        ++this.history.index
-        this.currentChain = this.history.list[this.history.index]
       }
     },
     handleSearch() {
+      if (this.currentChain === null || this.currentChainData === null) {
+        return
+      }
       this.$refs['transactionList'].handleSearch(
         this.currentChain,
         this.currentChainData.type

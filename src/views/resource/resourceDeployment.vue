@@ -279,7 +279,6 @@ export default {
             trigger: 'blur'
           }],
         appendPath: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
-          { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', max: 128 },
           {
             pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
             required: true,

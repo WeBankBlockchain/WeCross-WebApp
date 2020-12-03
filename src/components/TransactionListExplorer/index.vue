@@ -5,7 +5,6 @@
       :data="transactionList"
       stripe
       fit
-      highlight-current-row
       tooltip-effect="light"
       height="calc(100% - 75px)"
       @current-change="handleCurrentRowChange"

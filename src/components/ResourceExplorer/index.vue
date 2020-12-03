@@ -2,7 +2,6 @@
   <div>
     <el-table
       :data="resources"
-      highlight-current-row
       tooltip-effect="light"
       height="calc(100% - 80px)"
     >

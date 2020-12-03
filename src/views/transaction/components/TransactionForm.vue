@@ -20,8 +20,8 @@
         <el-form-item label="资源路径:" prop="path">
           <slot name="path" />
         </el-form-item>
-        <el-form-item label="调用函数:" prop="method">
-          <el-input v-model.trim="transaction.method" placeholder="请输入调用函数" @input="onInputMethod" />
+        <el-form-item label="调用方法:" prop="method">
+          <el-input v-model.trim="transaction.method" placeholder="请输入调用方法" @input="onInputMethod" />
         </el-form-item>
         <div v-for="(arg, index) in transaction.args" :key="arg.key">
           <el-form-item
@@ -29,7 +29,8 @@
             :prop="'args.' + index + '.value'"
             :rules="[{ required: true, message: '参数输入不能为空，可删除该参数置空', trigger: 'blur'}]"
           >
-            <el-input v-model="arg.value" :placeholder="'请输入调用参数'+index">
+            <el-input v-model="arg.value" :placeholder="'请输入参数'+index">
+              <template slot="prepend">{{ index }}</template>
               <el-button slot="append" icon="el-icon-delete" @click.prevent="removeArg(arg)">删除</el-button>
             </el-input>
           </el-form-item>
@@ -48,10 +49,10 @@
           <el-input
             v-if="submitResponse !== null"
             v-model="submitResponse"
-            autosize
+            :autosize="{minRows: 1}"
             type="textarea"
             readonly
-            style="margin-bottom: 20px; width: 75%"
+            style="margin-bottom: 20px; width: 100%"
           />
         </el-form-item>
       </el-form>

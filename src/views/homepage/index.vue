@@ -83,24 +83,6 @@
             <tr>
               <td>管理员账号：</td>
               <td>{{ routerInfo.adminAccount }}</td>
-              <td style="min-width: 150px">跨链路由版本：</td>
-              <td>{{ routerInfo.version }}</td>
-            </tr>
-            <tr>
-              <td>已加载的插件：</td>
-              <td>{{ routerInfo.supportedStubs }}</td>
-            </tr>
-            <tr>
-              <td>RPC接入配置：</td>
-              <td>{{ routerInfo.rpcNetInfo }}</td>
-            </tr>
-            <tr>
-              <td>P2P接入配置：</td>
-              <td>{{ routerInfo.p2pNetInfo }}</td>
-            </tr>
-            <tr>
-              <td>管理员账号：</td>
-              <td>{{ routerInfo.adminAccount }}</td>
             </tr>
           </table>
         </el-card>

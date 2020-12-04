@@ -28,9 +28,9 @@
                 <el-form-item
                   label="事务ID："
                   :rules="[
-                    { required: true, message: '事务ID不能为空', trigger: 'blur' },
-                    { pattern: /^[0-9a-fA-F]+$/, required: true, message: '请检查事务ID格式：16进制', trigger: 'blur' },
-                    { required: true, message: '事务ID长度不能超过128', trigger: 'blur', max: 128 }
+                    { required: true, message: '事务ID不能为空', trigger: 'change' },
+                    { pattern: /^[0-9a-fA-F]+$/, required: true, message: '请检查事务ID格式：16进制', trigger: 'change' },
+                    { required: true, message: '事务ID长度不能超过128', trigger: 'change', max: 128 }
                   ]"
                   prop="transactionID"
                 >
@@ -344,6 +344,7 @@ export default {
   },
   created() {
     this.loadXATransaction(this.$route.query.isExec)
+    this.creatUUID()
   },
   methods: {
     limitString(str) {
@@ -375,7 +376,24 @@ export default {
             h('li', { style: 'font-weight: bold; margin-left:10px' }, '事务ID：'),
             h('ol', null, limitString(xaID)),
             h('li', { style: 'font-weight: bold; margin-left:10px' }, '锁定资源: '),
-            h('ol', null, this.$store.getters.XAPaths.map(item => limitString(item)).join(',  \n'))
+            h('textarea', {
+              attrs: {
+                readonly: true
+              },
+              style: {
+                color: '#606266',
+                margin: '5px 0',
+                padding: '8px 10px',
+                height: 'auto',
+                minHeight: '80px',
+                maxHeight: '150px',
+                overflowY: 'auto',
+                width: '100%',
+                resize: 'none',
+                fontSize: '15px',
+                border: '0px'
+              }
+            }, this.$store.getters.XAPaths.map(item => limitString(item)).join(',  \n'))
           ]),
           showClose: false,
           closeOnClickModal: false,
@@ -471,9 +489,7 @@ export default {
     },
     creatUUID() {
       const { v4: uuidV4 } = require('uuid')
-      console.log(typeof uuidV4())
-      this.transactionForm.transactionID = uuidV4().toString().replaceAll('-', '')
-      this.$refs['transactionForm'].clearValidate('transactionID')
+      this.transactionForm.transactionID = uuidV4().replace(/-/g, '')
     },
     clearTransaction() {
       this.transactionForm.args = [{

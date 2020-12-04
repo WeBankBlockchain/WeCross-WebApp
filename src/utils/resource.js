@@ -45,7 +45,7 @@ export function buildFabricInstallRequest(formData) {
       args: [
         formData.appendPath || formData.fullPath.split('.')[2],
         formData.version,
-        formData.org,
+        formData.org.trim(),
         formData.lang,
         formData.compressedContent
       ]
@@ -68,7 +68,7 @@ export function buildFabricInstantiateRequest(formData) {
         formData.org,
         formData.lang,
         formData.policy === 'default' ? '' : formData.policy,
-        formData.args
+        formData.args.trim()
       ]
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row>
-      <el-card style="height: 90vh">
+      <el-card style="height: 90vh" header="Peer路由列表">
         <el-row>
           <el-button-group>
             <el-button plain icon="el-icon-refresh" :disabled="loading" @click="refresh">刷新</el-button>

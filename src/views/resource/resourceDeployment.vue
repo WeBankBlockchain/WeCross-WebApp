@@ -271,7 +271,6 @@ export default {
         compressedContent: [{ required: true, message: '请上传合约文件', trigger: 'blur' }],
         chosenSolidity: [{ required: true, message: '合约文件不能为空', trigger: 'blur' }],
         fullPath: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
-          { required: true, message: '资源路径总长度不能超过128', trigger: 'blur', max: 128 },
           {
             pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+\.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
             required: true,
@@ -279,7 +278,6 @@ export default {
             trigger: 'blur'
           }],
         appendPath: [{ required: true, message: '资源路径不能为空', trigger: 'blur' },
-          { required: true, message: '资源路径总长度不能超过40', trigger: 'blur', max: 128 },
           {
             pattern: /^(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
             required: true,

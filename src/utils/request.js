@@ -34,11 +34,11 @@ request.interceptors.response.use(
   response => {
     if (typeof response.status === 'undefined') {
       Message({
-        message: 'response status undefined!',
+        message: 'HTTP响应状态码为空!',
         type: 'error',
         duration: 5 * 1000
       })
-      return
+      return Promise.reject(new Error('HTTP响应状态码为空!'))
     }
     const res = response.data
     const status = response.status
@@ -75,6 +75,7 @@ request.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
+      return Promise.reject(new Error(error.message || '请求超时'))
     }
     // no response status
     if (typeof error.response !== 'undefined' && typeof error.response.status !== 'undefined') {

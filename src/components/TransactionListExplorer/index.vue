@@ -2,6 +2,7 @@
   <div>
     <el-table
       ref="singleTable"
+      v-loading="buttonState.loading"
       :data="transactionList"
       stripe
       fit

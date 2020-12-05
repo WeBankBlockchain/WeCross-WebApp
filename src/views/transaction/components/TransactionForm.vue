@@ -21,7 +21,7 @@
           <slot name="path" />
         </el-form-item>
         <el-form-item label="调用方法:" prop="method">
-          <el-input v-model.trim="transaction.method" placeholder="请输入调用方法" @input="onInputMethod" />
+          <el-input v-model.trim="transaction.method" style="width: calc(100% - 63px)" placeholder="请输入调用方法" @input="onInputMethod" />
         </el-form-item>
         <div v-for="(arg, index) in transaction.args" :key="arg.key">
           <el-form-item
@@ -29,10 +29,24 @@
             :prop="'args.' + index + '.value'"
             :rules="[{ required: true, message: '参数输入不能为空，可删除该参数置空', trigger: 'blur'}]"
           >
-            <el-input v-model="arg.value" :placeholder="'请输入参数'+index">
+            <el-input v-model="arg.value" :placeholder="'请输入参数'+index" style="width: calc(100% - 63px)">
               <template slot="prepend">{{ index }}</template>
-              <el-button slot="append" icon="el-icon-delete" @click.prevent="removeArg(arg)">删除</el-button>
             </el-input>
+            <el-button-group>
+              <el-button
+                icon="el-icon-circle-plus-outline"
+                class="hoverButton"
+                type="text"
+                @click.prevent="addArg"
+              />
+              <el-button
+                v-show="transaction.args.length>1"
+                icon="el-icon-remove-outline"
+                class="hoverButton"
+                type="text"
+                @click.prevent="removeArg(arg)"
+              />
+            </el-button-group>
           </el-form-item>
         </div>
         <el-form-item style="margin-bottom: 20px">
@@ -43,7 +57,6 @@
             @click="onSubmit"
           >执行调用</el-button>
           <el-button size="small" @click="clearForm">重置表单</el-button>
-          <el-button size="small" @click="addArg">添加参数</el-button>
         </el-form-item>
         <el-form-item v-if="submitResponse !== null" label="调用结果:">
           <el-input
@@ -95,7 +108,7 @@ export default {
             pattern: /^((?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+\.){2}(?!_)(?!-)(?!.*?_$)(?!.*?-$)[\u4e00-\u9fa5\w-]+$/,
             required: true,
             message: '资源路径格式错误，应形如 \'path.to.resource\'',
-            trigger: 'change'
+            trigger: 'blur'
           }
         ],
         method: [
@@ -191,7 +204,7 @@ export default {
       this.$refs['transactionForm'].resetFields()
       this.submitResponse = null
       this.$emit('clearClick')
-      this.$forceUpdate()
+      // this.$forceUpdate()
     }
   }
 }
@@ -205,6 +218,14 @@ body {
   .el-input {
     margin-right: 10px;
     width: 100%;
+  }
+}
+.hoverButton {
+  font-size: 25px;
+  padding: 6px 0px;
+  color: #909399;
+  &:hover {
+    transform: rotate(180deg);
   }
 }
 </style>

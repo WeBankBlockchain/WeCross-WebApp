@@ -19,7 +19,8 @@ export function validUsername(str) {
  * @returns {Boolean}
  */
 export function validPassword(str) {
-  return /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,18}$/.test(str)
+  // return /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$/.test(str)
+  return /^(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()_-]{6,18}$/.test(str)
 }
 
 /**

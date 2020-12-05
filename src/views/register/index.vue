@@ -146,7 +146,7 @@ export default {
       if (!validPassword(value)) {
         callback(
           new Error(
-            '密码长度6~18个字符，支持数字、大小写字母，至少包含一个数字和字母'
+            '密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和一个字母'
           )
         )
       } else {

@@ -242,11 +242,7 @@ export default {
           }
 
           if (resp.data.transactions.length === 0) {
-            this.$message({
-              type: 'error',
-              message: '查询交易列表为空，查询参数: ' + JSON.stringify(params)
-            })
-            return
+            return []
           }
 
           const fetchAllTx = async function(chainValue, txHashes) {
@@ -329,9 +325,8 @@ export default {
 
               if (response.length === 0) {
                 this.$message({
-                  type: 'error',
-                  message:
-                    '查询交易列表为空，查询参数: ' + JSON.stringify(params)
+                  type: 'info',
+                  message: '交易列表为空，已查询至数据末尾'
                 })
                 this.updateButtonStatus()
                 return

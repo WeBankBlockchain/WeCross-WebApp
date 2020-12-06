@@ -241,12 +241,12 @@ export default {
             return
           }
 
-          if (resp.data.transactions.length === 0) {
-            return []
-          }
-
           const fetchAllTx = async function(chainValue, txHashes) {
             var txs = []
+
+            if (txHashes.length === 0) {
+              return txs
+            }
 
             for (const tx of txHashes) {
               if (tx.txHash === null || tx.txHash === '') {

@@ -57,7 +57,7 @@
               @submitClick="onSubmit"
               @clearClick="onClearTransaction"
             >
-              <el-input slot="path" v-model="transactionData.path" readonly />
+              <el-input slot="path" v-model="transactionData.path" style="width: calc(100% - 63px)" readonly />
             </transaction-form>
           </el-form>
         </el-col>

@@ -135,7 +135,7 @@ export default {
 <style lang="scss" scoped>
 table {
   td {
-    min-width: 150px;
+    min-width: 180px;
     vertical-align: top;
   }
 }

@@ -9,7 +9,7 @@
           </el-button-group>
         </el-row>
         <el-row style="margin-top: 10px">
-          <el-table ref="singleTable" v-loading="loading" :data="routers" fit tooltip-effect="light" height="calc( 90vh - 120px)">
+          <el-table ref="singleTable" v-loading="loading" :data="routers" fit tooltip-effect="light" height="calc(90vh - 180px)">
             <el-table-column label="跨链路由别名" min-width="40px" show-overflow-tooltip>
               <template slot-scope="item">
                 {{ getAlias(item.row.nodeID) !== null ? getAlias(item.row.nodeID) : '未设置' }}

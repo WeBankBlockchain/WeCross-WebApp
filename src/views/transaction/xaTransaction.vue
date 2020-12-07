@@ -8,7 +8,7 @@
         <el-steps :active="stepActive" align-center finish-status="finish">
           <el-step title="步骤1" description="选择所需资源，开启一段事务" />
           <el-step title="步骤2" description="在本次事务中执行事务交易" />
-          <el-step title="步骤3" deszhecription="结束事务，选择回滚/提交事务" />
+          <el-step title="步骤3" description="结束事务，选择回滚/提交事务" />
         </el-steps>
       </el-row>
     </el-card>
@@ -16,7 +16,13 @@
     <!--  step1  -->
     <el-collapse-transition>
       <el-row v-if="stepActive === 0" style="margin-top: 15px;">
-        <el-card header="开启事务">
+        <el-card>
+          <template slot="header">
+            <span>开启事务</span>
+            <el-tooltip effect="light" content="如何开启事务？" placement="top">
+              <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" icon="el-icon-question" @click="() => {$tours['startXAGuide'].start()}" />
+            </el-tooltip>
+          </template>
           <el-row>
             <el-col :md="{ span: 14, offset: 5 }">
               <el-form
@@ -26,6 +32,7 @@
                 :model="transactionForm"
               >
                 <el-form-item
+                  id="XAID"
                   label="事务ID："
                   :rules="[
                     { required: true, message: '事务ID不能为空', trigger: 'change' },
@@ -54,6 +61,7 @@
           </el-row>
           <el-row>
             <resource-transfer
+              id="XAPath"
               height="43vh"
               :page-object="pageObject"
               :resource-data="resourceData"
@@ -74,6 +82,9 @@
             <el-row>
               <el-col :span="11" style="text-align: left">
                 <span>执行事务</span>
+                <el-tooltip effect="light" content="如何执行事务？" placement="top">
+                  <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" icon="el-icon-question" @click="() => {$tours['execXAGuide'].start()}" />
+                </el-tooltip>
               </el-col>
               <el-col :span="13" style="text-align: left">
                 <el-divider direction="vertical" />
@@ -81,11 +92,11 @@
               </el-col>
             </el-row>
           </div>
-          <el-col :span="10">
+          <el-col id="xaForm" :span="11">
             <transaction-form
               ref="originTransaction"
               :transaction="transactionForm"
-              style="height: 50vh; overflow-y:auto; overflow-x:hidden"
+              style="height: calc(60vh - 65px); overflow-y:auto; overflow-x:hidden"
               @clearClick="clearTransaction"
               @submitClick="execTransaction"
             >
@@ -93,7 +104,7 @@
                 slot="path"
                 v-model="transactionForm.path"
                 placeholder="请输入跨链资源路径"
-                style="width: 100%"
+                style="width: calc(100% - 63px)"
                 filterable
                 default-first-option
                 @change="onSelectionChange"
@@ -107,7 +118,7 @@
               </el-select>
             </transaction-form>
           </el-col>
-          <el-col :span="12" :offset="2">
+          <el-col id="xaList" :span="12" :offset="1">
             <el-row>
               <div style="font-size: 14px">
                 <el-tooltip effect="light" content="复制事务ID" placement="top-start">
@@ -122,7 +133,7 @@
               <el-divider />
             </el-row>
             <el-row>
-              <el-table stripe fit style="width: 100%;" height="45vh" :data="transactionStep" tooltip-effect="light">
+              <el-table stripe fit style="width: 100%;" height="calc(60vh - 160px)" :data="transactionStep" tooltip-effect="light">
                 <el-table-column prop="timestamp" label="执行时间" min-width="70px" show-overflow-tooltip>
                   <template slot-scope="props">
                     <span>{{ props.row.timestamp | formatDate }}</span>
@@ -163,7 +174,7 @@
                 </el-table-column>
                 <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" show-overflow-tooltip />
                 <el-table-column prop="username" label="跨链账户" min-width="50px" />
-                <el-table-column prop="status" min-width="50px" label="事务状态" />
+                <el-table-column prop="status" min-width="50px" label="事务状r态" />
                 <el-table-column min-width="80px" label="锁定资源">
                   <template slot-scope="scope">
                     <div v-for="path in scope.row.paths" :key="path">
@@ -192,7 +203,7 @@
           <el-row style="margin-top: 10px;">
             <el-col style="text-align: center">
               <el-button-group>
-                <el-button @click="stepActive = 1"> 返回上一步</el-button>
+                <el-button icon="el-icon-back" @click="stepActive = 1">继续执行</el-button>
                 <el-button
                   v-loading.fullscreen.lock="loading"
                   type="primary"
@@ -257,7 +268,7 @@
     <!--  button  -->
     <el-card v-if="stepActive < 2 " style="margin-top: 10px">
       <el-row :gutter="24" style="text-align: center;">
-        <el-button-group>
+        <el-button-group id="btnGroup">
           <el-button
             type="primary"
             icon="el-icon-arrow-left"
@@ -277,6 +288,37 @@
         </el-button-group>
       </el-row>
     </el-card>
+
+    <v-tour
+      name="startXAGuide"
+      :steps="startXASteps"
+      :options="{
+        highlight: true,
+        enabledButtons: {
+          buttonSkip: false,
+        },
+        labels: {
+          buttonPrevious: '上一个',
+          buttonNext: '下一个',
+          buttonStop: '结束'
+        }
+      }"
+    />
+    <v-tour
+      name="execXAGuide"
+      :steps="execXASteps"
+      :options="{
+        highlight: true,
+        enabledButtons: {
+          buttonSkip: false,
+        },
+        labels: {
+          buttonPrevious: '上一个',
+          buttonNext: '下一个',
+          buttonStop: '结束'
+        }
+      }"
+    />
   </div>
 </template>
 
@@ -288,6 +330,7 @@ import { getResourceList } from '@/api/resource'
 import { call, getXATransaction, sendTransaction } from '@/api/transaction'
 import { parseTime, limitString } from '@/utils'
 import { buildXAError, removeXATX } from '@/utils/transaction'
+import { execXASteps, startXASteps } from '@/views/transaction/transactionSteps/xaTransactionStep'
 
 export default {
   name: 'XATransaction',
@@ -330,7 +373,9 @@ export default {
         execMethod: 'sendTransaction',
         isXATransaction: true
       },
-      loading: false
+      loading: false,
+      startXASteps: startXASteps,
+      execXASteps: execXASteps
     }
   },
   watch: {
@@ -374,7 +419,7 @@ export default {
           message: h('p', null, [
             h('h3', { style: 'font-weight: bold; margin-left:10px' }, '目前有事务正在执行中，是否恢复？'),
             h('li', { style: 'font-weight: bold; margin-left:10px' }, '事务ID：'),
-            h('ol', null, limitString(xaID)),
+            h('p', { style: { margin: '5px 0', padding: '8px 10px' }}, limitString(xaID)),
             h('li', { style: 'font-weight: bold; margin-left:10px' }, '锁定资源: '),
             h('textarea', {
               attrs: {
@@ -385,12 +430,13 @@ export default {
                 margin: '5px 0',
                 padding: '8px 10px',
                 height: 'auto',
-                minHeight: '80px',
+                minHeight: '60px',
                 maxHeight: '150px',
                 overflowY: 'auto',
                 width: '100%',
                 resize: 'none',
-                fontSize: '15px',
+                fontSize: '14px',
+                fontFamily: 'Helvetica Neue',
                 border: '0px'
               }
             }, this.$store.getters.XAPaths.map(item => limitString(item)).join(',  \n'))
@@ -658,12 +704,19 @@ export default {
     reloadTransaction() {
       this.stepActive = 0
       Object.assign(this.$data, this.$options.data())
+      this.creatUUID()
     }
   }
 }
 </script>
 
 <style lang="scss">
+.v-tour__target--highlighted {
+  box-shadow: 0 0 0 99999px rgba(0,0,0,.4);
+}
+.v-step__content{
+  text-align: left;
+}
 .el-page-header__content{
   font-size: 16px;
 }

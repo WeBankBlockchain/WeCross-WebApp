@@ -1,3 +1,5 @@
+import { sha3_256 } from 'js-sha3'
+
 /**
  * @param {string} path
  * @returns {Boolean}
@@ -19,7 +21,19 @@ export function validUsername(str) {
  * @returns {Boolean}
  */
 export function validPassword(str) {
-  return /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,18}$/.test(str)
+  // return /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$/.test(str)
+  return /^(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()_-]{6,18}$/.test(str)
+}
+
+/**
+ *
+ * @param {*} str
+ */
+export function confusePassword(str) {
+  var constantSalt = '1234567890~!#$%^&*()_+'
+  var passwdWithSalt = constantSalt + str
+  console.log(' ===> confuse password with constant salt')
+  return sha3_256(passwdWithSalt)
 }
 
 /**

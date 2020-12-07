@@ -87,6 +87,7 @@
 <script>
 import { queryPub } from '@/utils/authcode'
 import { queryAuthCode } from '@/utils/authcode'
+import { confusePassword } from '@/utils/validate'
 
 export default {
   name: 'Login',
@@ -194,7 +195,7 @@ export default {
         if (valid) {
           var loginParams = {
             username: this.loginForm.username,
-            password: this.loginForm.password,
+            password: confusePassword(this.loginForm.password),
             authCode: this.loginForm.authCode,
             randomToken: this.imageAuthCode.randomToken,
             callback: (resp) => {

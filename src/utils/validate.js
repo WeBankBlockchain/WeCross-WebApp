@@ -1,4 +1,4 @@
-import { sha3_256 } from 'js-sha3'
+import { sha256 } from 'js-sha256'
 
 /**
  * @param {string} path
@@ -32,8 +32,7 @@ export function validPassword(str) {
 export function confusePassword(str) {
   var constantSalt = '1234567890~!#$%^&*()_+'
   var passwdWithSalt = constantSalt + str
-  console.log(' ===> confuse password with constant salt')
-  return sha3_256(passwdWithSalt)
+  return sha256(passwdWithSalt)
 }
 
 /**

@@ -223,6 +223,14 @@ export default {
           return
         }
 
+        const xaResponse = response.data.xaResponse
+        if (typeof (xaResponse) !== 'undefined' && xaResponse.status !== 0) {
+          this.$message({
+            type: 'warning',
+            message: '警告，有错误发生: ' + JSON.stringify(xaResponse)
+          })
+        }
+
         this.isFinished = response.data.finished
         this.offsets = response.data.nextOffsets
         this.xaList = response.data.xaList
@@ -274,6 +282,7 @@ export default {
       }).then(response => {
         console.log('[getXATransaction] response => ' + JSON.stringify(response))
         this.loadingXA = false
+
         if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
           this.$message({
             type: 'error',
@@ -281,6 +290,15 @@ export default {
           })
           return
         }
+
+        const xaResponse = response.data.xaResponse
+        if (typeof (xaResponse) !== 'undefined' && xaResponse.status !== 0) {
+          this.$message({
+            type: 'warning',
+            message: '警告，有错误发生: ' + JSON.stringify(xaResponse)
+          })
+        }
+
         this.xaTransaction = response.data.xaTransaction
       }).catch(error => {
         this.$message({

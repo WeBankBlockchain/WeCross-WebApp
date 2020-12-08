@@ -14,7 +14,7 @@ export default {
   name: 'SidebarLogo',
   data() {
     return {
-      title: 'WeCross云管理平台',
+      title: 'WeCross管理平台',
       logo: require('@/assets/nav-logo.svg')
     }
   }
@@ -38,7 +38,7 @@ export default {
   line-height: 50px;
   background: #2b2f3a;
   text-align: left;
-  padding-left: 20px;
+  padding-left: 18px;
   overflow: hidden;
 
   & .sidebar-logo-link {

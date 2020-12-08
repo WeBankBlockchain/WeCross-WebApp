@@ -53,7 +53,7 @@
                 type="primary"
                 style="float: right"
                 size="small"
-                @click.stop="querySetDefaultAccountByColum(scope.row)"
+                @click.stop="querySetDefaultAccountByColumn(scope.row)"
               >
                 设为默认
               </el-button>
@@ -493,9 +493,9 @@ export default {
             duration: 5000
           })
         })
-      })
+      }).catch(_ => {})
     },
-    querySetDefaultAccountByColum(chainAccount) {
+    querySetDefaultAccountByColumn(chainAccount) {
       this.chainAccountDrawer.header = chainAccount.details
       this.chainAccountDrawer.info = chainAccount
 
@@ -534,7 +534,7 @@ export default {
             })
           })
         }
-      })
+      }).catch(_ => {})
     },
     queryRemoveChainAccount() {
       MessageBox.confirm('删除链账户？', '提示', {
@@ -568,7 +568,7 @@ export default {
             duration: 5000
           })
         })
-      })
+      }).catch(_ => {})
     },
     handleResponse(response) {
       console.log('Response' + response)

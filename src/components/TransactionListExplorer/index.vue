@@ -302,7 +302,7 @@ export default {
           if (typeof resp.errorCode === 'undefined' || resp.errorCode !== 0) {
             this.$message({
               type: 'error',
-              message: '查询交易列表失败, 详情: ' + JSON.stringify(resp)
+              message: '查询交易列表失败, 请手动刷新后再尝试, 详情: ' + JSON.stringify(resp)
             })
             return
           }

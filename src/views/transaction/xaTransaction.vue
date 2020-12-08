@@ -538,6 +538,8 @@ export default {
       this.transactionForm.transactionID = uuidV4().replace(/-/g, '')
     },
     clearTransaction() {
+      this.transactionForm.method = null
+      this.transactionForm.path = null
       this.transactionForm.args = [{
         value: null,
         key: 0

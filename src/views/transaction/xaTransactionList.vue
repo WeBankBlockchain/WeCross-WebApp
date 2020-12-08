@@ -11,6 +11,7 @@
             ref="singleTable"
             :data="xaList"
             fit
+            stripe
             height="calc(90vh - 130px)"
             style="width: 100%;"
             tooltip-effect="light"
@@ -24,10 +25,15 @@
               </template>
             </el-table-column>
             <el-table-column prop="xaTransactionID" label="事务ID" min-width="80px" show-overflow-tooltip />
-            <el-table-column prop="username" label="跨链账户" min-width="40px" />
+            <el-table-column label="跨链账户" min-width="40px">
+              <template slot-scope="scope">
+                <el-tag v-if="!nonNull(scope.row.username)" type="info" effect="plain">unknown</el-tag>
+                <span v-if="nonNull(scope.row.username)">{{ scope.row.username }}</span>
+              </template>
+            </el-table-column>
             <el-table-column label="事务状态" width="160px">
               <template slot-scope="scope">
-                <el-tag :type="filterTag(scope.row.status)">{{ scope.row.status }}</el-tag>
+                <el-tag :type="filterTag(scope.row.status)" effect="dark">{{ filterData(scope.row.status) }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="锁定资源" min-width="50px">
@@ -51,7 +57,12 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="70px" />
-                    <el-table-column prop="username" label="跨链账户" min-width="60px" />
+                    <el-table-column label="跨链账户" min-width="60px">
+                      <template slot-scope="step">
+                        <el-tag v-if="!nonNull(step.row.username)" type="info" effect="plain">unknown</el-tag>
+                        <span v-if="nonNull(step.row.username)">{{ step.row.username }}</span>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="path" label="资源路径" min-width="80px" />
                     <el-table-column prop="method" label="调用方法" min-width="60px" />
                     <el-table-column
@@ -190,13 +201,29 @@ export default {
       console.log('[offset0] status => offsets: ' + JSON.stringify(this.offsets))
       this.fetchXATransactionList()
     },
-    filterTag(status) {
-      if (status === 'committed') {
+    filterTag(tag) {
+      if (!this.nonNull(tag)) {
+        return 'info'
+      } else if (tag === 'committed') {
         return 'success'
-      } else if (status === 'processing') {
+      } else if (tag === 'processing') {
         return 'warning'
       } else {
         return 'danger'
+      }
+    },
+    filterData(data) {
+      if (this.nonNull(data)) {
+        return data
+      } else {
+        return 'unknown'
+      }
+    },
+    nonNull(data) {
+      if (typeof data === 'undefined' || data === null) {
+        return false
+      } else {
+        return true
       }
     },
     onStartXATransaction() {

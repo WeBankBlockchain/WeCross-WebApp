@@ -23,28 +23,44 @@
         <el-form-item label="调用方法:" prop="method">
           <el-input v-model.trim="transaction.method" style="width: calc(100% - 63px)" placeholder="请输入调用方法" @input="onInputMethod" />
         </el-form-item>
-        <div v-for="(arg, index) in transaction.args" :key="arg.key">
+        <div v-if="transaction.args.length > 0">
+          <div v-for="(arg, index) in transaction.args" :key="arg.key">
+            <el-form-item
+              :label="'调用参数:'"
+              :prop="'args.' + index + '.value'"
+              :rules="[{ required: true, message: '参数输入不能为空，可删除该参数置空', trigger: 'blur'}]"
+            >
+              <el-input v-model="arg.value" :placeholder="'请输入参数'+index" style="width: calc(100% - 63px)">
+                <template slot="prepend">{{ index }}</template>
+              </el-input>
+              <el-button-group>
+                <el-button
+                  icon="el-icon-circle-plus-outline"
+                  class="hoverButton"
+                  type="text"
+                  @click.prevent="addArg"
+                />
+                <el-button
+                  icon="el-icon-remove-outline"
+                  class="hoverButton"
+                  type="text"
+                  @click.prevent="removeArg(arg)"
+                />
+              </el-button-group>
+            </el-form-item>
+          </div>
+        </div>
+        <div v-else>
           <el-form-item
             :label="'调用参数:'"
-            :prop="'args.' + index + '.value'"
             :rules="[{ required: true, message: '参数输入不能为空，可删除该参数置空', trigger: 'blur'}]"
           >
-            <el-input v-model="arg.value" :placeholder="'请输入参数'+index" style="width: calc(100% - 63px)">
-              <template slot="prepend">{{ index }}</template>
-            </el-input>
             <el-button-group>
               <el-button
                 icon="el-icon-circle-plus-outline"
                 class="hoverButton"
                 type="text"
                 @click.prevent="addArg"
-              />
-              <el-button
-                v-show="transaction.args.length>1"
-                icon="el-icon-remove-outline"
-                class="hoverButton"
-                type="text"
-                @click.prevent="removeArg(arg)"
               />
             </el-button-group>
           </el-form-item>

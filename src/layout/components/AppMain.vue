@@ -1,9 +1,10 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <keep-alive exclude="XATransaction,XATransactionList,ResourceDeploy,RawTransaction">
+      <keep-alive v-if="isLogin" exclude="XATransaction,XATransactionList,ResourceDeploy,RawTransaction">
         <router-view :key="key" />
       </keep-alive>
+      <router-view v-else :key="key" />
     </transition>
   </section>
 </template>
@@ -11,9 +12,21 @@
 <script>
 export default {
   name: 'AppMain',
+  data() {
+    return {
+      isLogin: true
+    }
+  },
   computed: {
     key() {
       return this.$route.path
+    }
+  },
+  watch: {
+    $route(to, from) {
+      // if the route changes...
+      const token = localStorage.getItem('wecross-token')
+      this.isLogin = !!token
     }
   }
 }

@@ -14,19 +14,85 @@
         <template slot-scope="item">{{ item.row.txHash }}</template>
       </el-table-column>
       <el-table-column label="跨链账户" min-width="30px" show-overflow-tooltip>
-        <template slot-scope="item">{{ item.row.username }}</template>
+        <template slot-scope="item">
+          <div v-if="item.row.username === 'unknown'">
+            <el-popover trigger="hover" placement="top">
+              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag type="info" effect="plain">{{
+                  item.row.username
+                }}</el-tag>
+              </div>
+            </el-popover>
+          </div>
+          <div v-else>
+            {{ item.row.username }}
+          </div>
+        </template>
       </el-table-column>
       <el-table-column label="事务ID" min-width="30px" show-overflow-tooltip>
-        <template slot-scope="item">{{ item.row.txID }}</template>
+        <template slot-scope="item">
+          <div v-if="item.row.txID === 'unknown'">
+            <el-popover trigger="hover" placement="top">
+              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag type="info" effect="plain">{{ item.row.txID }}</el-tag>
+              </div>
+            </el-popover>
+          </div>
+          <div v-else>
+            {{ item.row.txID }}
+          </div>
+        </template>
       </el-table-column>
       <el-table-column label="区块高度" min-width="30px">
-        <template slot-scope="item">{{ item.row.blockNumber }}</template>
+        <template slot-scope="item">
+          <div v-if="item.row.blockNumber === 'unknown'">
+            <el-popover trigger="hover" placement="top">
+              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag type="info" effect="plain">{{
+                  item.row.blockNumber
+                }}</el-tag>
+              </div>
+            </el-popover>
+          </div>
+          <div v-else>
+            {{ item.row.blockNumber }}
+          </div>
+        </template>
       </el-table-column>
       <el-table-column label="资源路径" min-width="40px" show-overflow-tooltip>
-        <template slot-scope="item">{{ item.row.path }}</template>
+        <template slot-scope="item">
+          <div v-if="item.row.path === 'unknown'">
+            <el-popover trigger="hover" placement="top">
+              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag type="info" effect="plain">{{ item.row.path }}</el-tag>
+              </div>
+            </el-popover>
+          </div>
+          <div v-else>
+            {{ item.row.path }}
+          </div>
+        </template>
       </el-table-column>
       <el-table-column label="调用方法" min-width="40px" show-overflow-tooltip>
-        <template slot-scope="item">{{ item.row.method }}</template>
+        <template slot-scope="item">
+          <div v-if="item.row.method === 'unknown'">
+            <el-popover trigger="hover" placement="top">
+              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag type="info" effect="plain">{{
+                  item.row.method
+                }}</el-tag>
+              </div>
+            </el-popover>
+          </div>
+          <div v-else>
+            {{ item.row.method }}
+          </div>
+        </template>
       </el-table-column>
       <el-table-column label="回执" min-width="20px">
         <template slot-scope="item">
@@ -296,18 +362,21 @@ export default {
               delete response.data.txBytes
               delete response.data.receiptBytes
 
+              const defaultValue = (value, defaultValue) => {
+                if (typeof value === 'undefined' || value === null) {
+                  return defaultValue
+                }
+                return value
+              }
+
               txs[txs.length] = {
-                txHash: response.data.txHash,
-                username: response.data.username,
-                txID: response.data.xaTransactionID,
-                blockNumber: response.data.blockNumber,
-                path: response.data.path,
-                method: response.data.method,
-                params: {
-                  args: response.data.args,
-                  result: response.data.result
-                },
-                properties: response.data
+                txHash: defaultValue(response.data.txHash, 'unknown'),
+                username: defaultValue(response.data.username, 'unknown'),
+                txID: defaultValue(response.data.xaTransactionID, 'unknown'),
+                blockNumber: defaultValue(response.data.blockNumber, 'unknown'),
+                path: defaultValue(response.data.path, 'unknown'),
+                method: defaultValue(response.data.method, 'unknown'),
+                properties: defaultValue(response.data, 'unknown')
               }
             }
 

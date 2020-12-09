@@ -36,12 +36,14 @@ export const pem = {
 const ecdsaSecPemPrefix = '308184020100301006072a8648ce3d020106052b8104000a046d306b0201010420'
 const ecdsaPubPemPrefix = '3056301006072a8648ce3d020106052b8104000a034200'
 
+const ecdsaSecPemFingerprint = '020100301006072a8648ce3d020106052b8104000a'
+
 function getPubKeyHexFromECDSASecPem(secKeyContent) {
-  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
+  var base64Content = secKeyContent.substr(0, secKeyContent.lastIndexOf('-----END')).replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
 
   var buffer = Buffer.from(base64Content, 'base64')
   var hexString = buffer.toString('hex')
-  var pubKeyHex = hexString.substr(140, 130)
+  var pubKeyHex = hexString.substr(hexString.length - 130, 130)
   console.log('pubCertHex: ', hexString)
   console.log('pubKeyHex: ', pubKeyHex)
   return pubKeyHex
@@ -86,7 +88,7 @@ export const ecdsa = {
     var buffer = Buffer.from(base64Content, 'base64')
     var hexString = buffer.toString('hex')
 
-    return hexString.includes(ecdsaSecPemPrefix)
+    return hexString.includes(ecdsaSecPemFingerprint)
   },
   build(secPem) {
     var pubKeyHex = getPubKeyHexFromECDSASecPem(secPem)
@@ -104,12 +106,14 @@ export const ecdsa = {
 const sm2SecPemPrefix = '308187020100301306072a8648ce3d020106082a811ccf5501822d046d306b0201010420'
 const sm2PubPemPrefix = '3059301306072a8648ce3d020106082a811ccf5501822d034200'
 
+const sm2SecPemFingerprint = '020100301306072a8648ce3d020106082a811ccf5501822d04'
+
 function getPubKeyHexFromSM2SecPem(secKeyContent) {
-  var base64Content = secKeyContent.replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
+  var base64Content = secKeyContent.substr(0, secKeyContent.lastIndexOf('-----END')).replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
 
   var buffer = Buffer.from(base64Content, 'base64')
   var hexString = buffer.toString('hex')
-  var pubKeyHex = hexString.substr(146, 130)
+  var pubKeyHex = hexString.substr(hexString.length - 130, 130)
   console.log('pubCertHex: ', hexString)
   console.log('pubKeyHex: ', pubKeyHex)
   return pubKeyHex
@@ -152,7 +156,7 @@ export const sm2 = {
     var buffer = Buffer.from(base64Content, 'base64')
     var hexString = buffer.toString('hex')
 
-    return hexString.includes(sm2SecPemPrefix)
+    return hexString.includes(sm2SecPemFingerprint)
   },
   build(secPem) {
     var pubKeyHex = getPubKeyHexFromSM2SecPem(secPem)

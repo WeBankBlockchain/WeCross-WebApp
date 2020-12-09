@@ -124,6 +124,7 @@ import { register } from '@/api/user'
 import { rsa_encode } from '@/utils/rsa'
 import { queryPub } from '@/utils/authcode'
 import { confusePassword } from '@/utils/validate'
+import { ErrorCode } from '@/utils/errorcode'
 
 export default {
   name: 'Register',
@@ -285,6 +286,61 @@ export default {
               })
               //
               this.handleLogin()
+            } else if (
+              typeof errorCode !== 'undefined' &&
+              errorCode === ErrorCode.InvalidParameters
+            ) {
+              this.$message({
+                type: 'error',
+                message: '无效的参数请求'
+              })
+              this.handleUpdateAuthCode()
+            } else if (
+              typeof errorCode !== 'undefined' &&
+              errorCode === ErrorCode.UAAccountExist
+            ) {
+              this.$message({
+                type: 'error',
+                message: '账户已经存在'
+              })
+              this.handleUpdateAuthCode()
+            } else if (
+              typeof errorCode !== 'undefined' &&
+              errorCode === ErrorCode.ImageAuthTokenExpired
+            ) {
+              this.$message({
+                type: 'error',
+                message: '验证码过期'
+              })
+              this.handleUpdateAuthCode()
+            } else if (
+              typeof errorCode !== 'undefined' &&
+              (errorCode === ErrorCode.ImageAuthTokenNotExist ||
+                errorCode === ErrorCode.ImageAuthTokenNotMatch)
+            ) {
+              this.$message({
+                type: 'error',
+                message: '验证码错误'
+              })
+              this.handleUpdateAuthCode()
+            } else if (
+              typeof errorCode !== 'undefined' &&
+              errorCode === ErrorCode.CreateUAFailed
+            ) {
+              this.$message({
+                type: 'error',
+                message: '创建新账户失败'
+              })
+              this.handleUpdateAuthCode()
+            } else if (
+              typeof errorCode !== 'undefined' &&
+              errorCode === ErrorCode.UndefinedError
+            ) {
+              this.$message({
+                type: 'error',
+                message: '未定义的错误'
+              })
+              this.handleUpdateAuthCode()
             } else {
               this.$message({
                 type: 'error',

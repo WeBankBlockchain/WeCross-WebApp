@@ -47,29 +47,32 @@
           />
         </span>
       </el-form-item>
-      <el-form-item prop="authCode">
-        <el-input
-          v-model="loginForm.authCode"
-          placeholder="验证码"
-          name="imageAuthCode"
-          tabindex="3"
-        />
-      </el-form-item>
-      <el-form-item prop="vercode">
-        <div style="width: 100%;height: 10%;text-align:center;background:white">
-          <span>
-            <i v-if="imageAuthCode.imageAuthCodeBase64URL == ''" class="el-icon-loading" />
+
+      <el-row :gutter="20">
+        <el-col :span="17">
+          <el-form-item prop="authCode">
+            <el-input
+              v-model="loginForm.authCode"
+              placeholder="验证码"
+              name="imageAuthCode"
+              tabindex="3"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col style="float:right;margin-right:2px" :span="6">
+          <div style="margin-top:2px;width:116.25px;height:45px;text-align:center;background:white;float:right">
+            <i v-if="imageAuthCode.imageAuthCodeBase64URL == ''" style="margin-top:12%;" class="el-icon-loading" />
             <img
               v-else
-              style="width: 100%;height: 10%"
+              style="width:100%; height:auto;vertical-align: middle;"
               :src="imageAuthCode.imageAuthCodeBase64URL"
               alt=""
               tabindex="4"
               @click="handleUpdateAuthCode"
             >
-          </span>
-        </div>
-      </el-form-item>
+          </div>
+        </el-col>
+      </el-row>
 
       <el-button
         :loading="loading"

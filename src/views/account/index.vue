@@ -592,11 +592,15 @@ export default {
     },
 
     generateECDSASecPem() {
+      this.clearChainAccountDrawerParams()
       this.addChainAccountDrawer.params.secKey = ecdsa.generateSecPem()
     },
     generateSM2SecPem() {
+      this.clearChainAccountDrawerParams()
       this.addChainAccountDrawer.params.secKey = sm2.generateSecPem()
-    }, uploadECDSASecPemHandler(params) {
+    },
+    uploadECDSASecPemHandler(params) {
+      this.clearChainAccountDrawerParams()
       const reader = new FileReader()
       reader.onload = (event) => {
         this.addChainAccountDrawer.params.secKey = event.target.result
@@ -604,6 +608,7 @@ export default {
       reader.readAsText(params.file)
     },
     uploadSM2SecPemHandler(params) {
+      this.clearChainAccountDrawerParams()
       const reader = new FileReader()
       reader.onload = (event) => {
         this.addChainAccountDrawer.params.secKey = event.target.result

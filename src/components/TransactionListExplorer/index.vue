@@ -186,7 +186,8 @@ export default {
       currentStep: 0,
       historyData: [],
       drawer: false,
-      txReceipt: ''
+      txReceipt: '',
+      controlVersion: 0
     }
   },
   watch: {
@@ -252,9 +253,15 @@ export default {
     },
     handleSearch(chainValue) {
       this.reset()
-      console.log('handleRearch => ' + JSON.stringify(chainValue))
+      console.log(
+        '#==> chainValue: ' +
+          JSON.stringify(chainValue) +
+          ' ,controlVersion: ' +
+          this.controlVersion
+      )
+      this.controlVersion = this.controlVersion + 1
       this.chainValue = chainValue
-      this.updateTransactionListForm()
+      this.updateTransactionListForm(this.controlVersion)
     },
     updateButtonStatus() {
       console.log(
@@ -273,7 +280,7 @@ export default {
       // pre page
       this.buttonState.disablePreClick = this.currentStep <= 1
     },
-    updateTransactionListForm() {
+    updateTransactionListForm(version) {
       if (this.chainValue === null) {
         this.$message({
           type: 'warning',
@@ -299,10 +306,14 @@ export default {
               JSON.stringify(resp)
           )
 
+          console.log('#===> params version: ' + version)
+
           if (typeof resp.errorCode === 'undefined' || resp.errorCode !== 0) {
             this.$message({
               type: 'error',
-              message: '查询交易列表失败, 请手动刷新后再尝试, 详情: ' + JSON.stringify(resp)
+              message:
+                '查询交易列表失败, 请手动刷新后再尝试, 详情: ' +
+                JSON.stringify(resp)
             })
             return
           }
@@ -398,6 +409,16 @@ export default {
                   message: '交易列表为空，已查询至数据末尾'
                 })
                 this.updateButtonStatus()
+                return
+              }
+
+              if (this.controlVersion !== version) {
+                console.log(
+                  '### skip for next search is underway, version: ' +
+                    version +
+                    ' ,controlVersion: ' +
+                    this.controlVersion
+                )
                 return
               }
 

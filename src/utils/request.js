@@ -71,11 +71,11 @@ request.interceptors.response.use(
     // timeout
     if (error.message.includes('timeout')) {
       Message({
-        message: '请求超时：' + error.message,
+        message: '请求超时，请检查后台服务：' + error.message,
         type: 'error',
         duration: 5 * 1000
       })
-      return Promise.reject(new Error(error.message || '请求超时'))
+      return Promise.reject(new Error(error.message || '请求超时，请检查后台服务'))
     }
     // no response status
     if (typeof error.response !== 'undefined' && typeof error.response.status !== 'undefined') {

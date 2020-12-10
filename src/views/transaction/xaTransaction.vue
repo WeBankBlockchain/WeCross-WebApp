@@ -174,7 +174,6 @@
                 </el-table-column>
                 <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" show-overflow-tooltip />
                 <el-table-column prop="username" label="跨链账户" min-width="50px" />
-                <el-table-column prop="status" min-width="50px" label="事务状r态" />
                 <el-table-column min-width="80px" label="锁定资源">
                   <template slot-scope="scope">
                     <div v-for="path in scope.row.paths" :key="path">
@@ -329,7 +328,7 @@ import Clipboard from '@/components/Clipboard/index'
 import { getResourceList } from '@/api/resource'
 import { call, getXATransaction, sendTransaction } from '@/api/transaction'
 import { parseTime, limitString } from '@/utils'
-import { buildXAError, removeXATX } from '@/utils/transaction'
+import { buildXAResponseError, removeXATX } from '@/utils/transaction'
 import { execXASteps, startXASteps } from '@/views/transaction/transactionSteps/xaTransactionStep'
 
 export default {
@@ -455,15 +454,21 @@ export default {
               paths: this.$store.getters.XAPaths
             }
           }).then(response => {
-            if (response.errorCode !== 0 || response.data.xaResponse.status !== 0) {
+            if (response.errorCode !== 0) {
               this.$message.error({
-                message: '获取事务详情失败，错误：' + buildXAError(response),
+                message: '获取事务详情失败，错误：' + buildXAResponseError(response),
                 center: true,
                 duration: 5000
               })
-              removeXATX()
-              this.$store.commit('transaction/RESET_STATE')
             } else {
+              if (response.data.xaResponse.status !== 0) {
+                this.$message.warning({
+                  message: '警告：获取事务详情有错误：' + buildXAResponseError(response),
+                  center: true,
+                  duration: 5000
+                })
+                return
+              }
               if (response.data.xaTransaction.status !== 'processing') {
                 this.$msgbox('恢复事务失败，该事务已经回滚/提交！', '错误', 'error')
                 console.log('get xaTransaction error, this xaTransaction is not processing')
@@ -531,6 +536,7 @@ export default {
     onChainClick(path) {
       this.currentChain = path
       this.resourceData = []
+      this.pageObject.currentPage = 1
       this.refresh()
     },
     creatUUID() {
@@ -600,6 +606,7 @@ export default {
         }).then(response => {
           this.onResponse(response)
         }).catch(error => {
+          this.loading = false
           this.$message({
             message: '网络异常：' + error,
             type: 'error',
@@ -620,6 +627,7 @@ export default {
         }).then(response => {
           this.onResponse(response)
         }).catch(error => {
+          this.loading = false
           this.$message({
             message: '网络异常：' + error,
             type: 'error',
@@ -683,13 +691,21 @@ export default {
           paths: this.$store.getters.XAPaths
         }
       }).then(response => {
-        if (response.errorCode !== 0 || response.data.xaResponse.status !== 0) {
+        if (response.errorCode !== 0) {
           this.$message.error({
-            message: '获取事务详情失败，错误：' + buildXAError(response),
+            message: '获取事务详情失败，错误：' + buildXAResponseError(response),
             center: true,
             duration: 5000
           })
         } else {
+          if (response.data.xaResponse.status !== 0) {
+            this.$message.warning({
+              message: '警告：获取事务详情有错误：' + buildXAResponseError(response),
+              center: true,
+              duration: 5000
+            })
+            return
+          }
           const detail = []
           detail.push(response.data.xaTransaction)
           this.transactionDetail = detail

@@ -19,29 +19,29 @@
             :row-key="getRowKey"
             @expand-change="onExpandChange"
           >
-            <el-table-column label="开始时间" min-width="60px">
+            <el-table-column label="开始时间" min-width="11%">
               <template slot-scope="scope">
                 <span>{{ scope.row.timestamp | formatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="xaTransactionID" label="事务ID" min-width="80px" show-overflow-tooltip />
-            <el-table-column label="跨链账户" min-width="40px">
+            <el-table-column prop="xaTransactionID" label="事务ID" min-width="17%" show-overflow-tooltip />
+            <el-table-column label="跨链账户" min-width="9%">
               <template slot-scope="scope">
                 <el-tag v-if="!nonNull(scope.row.username)" type="info" effect="plain">unknown</el-tag>
                 <span v-if="nonNull(scope.row.username)">{{ scope.row.username }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="事务状态" width="160px">
-              <template slot-scope="scope">
-                <el-tag :type="filterTag(scope.row.status)" effect="dark">{{ filterData(scope.row.status) }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="锁定资源" min-width="50px">
+            <el-table-column label="锁定资源" min-width="13%">
               <template slot-scope="scope">
                 <li v-for="path in scope.row.paths" :key="path" style="list-style-type: none">{{ path }}</li>
               </template>
             </el-table-column>
-            <el-table-column type="expand" label="执行步骤" width="80px">
+            <el-table-column label="事务状态" min-width="8%">
+              <template slot-scope="scope">
+                <el-tag :type="filterTag(scope.row.status)" effect="dark">{{ filterData(scope.row.status) }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column type="expand" label="执行步骤" width="80%">
               <template slot-scope="scope">
                 <el-form v-loading="loadingXA" inline class="table-expand">
                   <el-table
@@ -51,24 +51,24 @@
                     highlight-current-row
                     tooltip-effect="light"
                   >
-                    <el-table-column label="执行时间" width="155px">
+                    <el-table-column label="执行时间" min-width="10%">
                       <template slot-scope="step">
                         <span>{{ step.row.timestamp | formatDate }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="70px" />
-                    <el-table-column label="跨链账户" min-width="60px">
+                    <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="10%" />
+                    <el-table-column label="跨链账户" min-width="8%">
                       <template slot-scope="step">
                         <el-tag v-if="!nonNull(step.row.username)" type="info" effect="plain">unknown</el-tag>
                         <span v-if="nonNull(step.row.username)">{{ step.row.username }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="path" label="资源路径" min-width="80px" />
-                    <el-table-column prop="method" label="调用方法" min-width="60px" />
+                    <el-table-column prop="path" label="资源路径" min-width="12%" />
+                    <el-table-column prop="method" label="调用方法" min-width="8%" />
                     <el-table-column
                       prop="args"
                       label="调用参数"
-                      min-width="60px"
+                      min-width="10%"
                       show-overflow-tooltip
                     />
                   </el-table>

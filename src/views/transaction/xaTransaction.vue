@@ -96,7 +96,7 @@
             <transaction-form
               ref="originTransaction"
               :transaction="transactionForm"
-              style="height: calc(60vh - 65px); overflow-y:auto; overflow-x:hidden"
+              style="height: calc(60vh - 80px); overflow-y:auto; overflow-x:hidden"
               @clearClick="clearTransaction"
               @submitClick="execTransaction"
             >

@@ -23,7 +23,6 @@
           name="username"
           type="text"
           tabindex="1"
-          auto-complete="on"
         />
       </el-form-item>
 
@@ -56,6 +55,7 @@
               placeholder="验证码"
               name="imageAuthCode"
               tabindex="3"
+              @keyup.enter.native="handleLogin"
             />
           </el-form-item>
         </el-col>

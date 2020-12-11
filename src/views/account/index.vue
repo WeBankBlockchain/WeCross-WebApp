@@ -335,7 +335,6 @@
   </transition>
 </template>
 <script>
-import { MessageBox } from 'element-ui'
 import { listAccount, addChainAccount, removeChainAccount, setDefaultAccount } from '@/api/ua.js'
 import { pem, ecdsa, sm2 } from '@/utils/pem.js'
 
@@ -462,7 +461,7 @@ export default {
       }
     },
     querySetDefaultAccount() {
-      MessageBox.confirm('设为默认账户？', '提示', {
+      this.$confirm('设为默认账户？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
@@ -493,7 +492,7 @@ export default {
             duration: 5000
           })
         })
-      }).catch(_ => {})
+      })
     },
     querySetDefaultAccountByColumn(chainAccount) {
       this.chainAccountDrawer.header = chainAccount.details
@@ -504,7 +503,7 @@ export default {
     queryAddChainAccount(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          MessageBox.confirm('添加链账户？', '提示', {
+          this.$confirm('添加链账户？', '提示', {
             confirmButtonText: '确认',
             cancelButtonText: '取消',
             type: 'warning'
@@ -534,10 +533,10 @@ export default {
             })
           })
         }
-      }).catch(_ => {})
+      })
     },
     queryRemoveChainAccount() {
-      MessageBox.confirm('删除链账户？', '提示', {
+      this.$confirm('删除链账户？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
@@ -568,7 +567,7 @@ export default {
             duration: 5000
           })
         })
-      }).catch(_ => {})
+      })
     },
     handleResponse(response) {
       console.log('Response' + response)

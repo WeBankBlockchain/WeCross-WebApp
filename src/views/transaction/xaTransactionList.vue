@@ -128,6 +128,7 @@
 
 import { parseTime } from '@/utils'
 import { getXATransaction, listXATransactions } from '@/api/transaction'
+import { buildXAResponseError } from '@/utils/transaction'
 
 export default {
   name: 'XATransactionList',
@@ -245,7 +246,7 @@ export default {
         if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
           this.$message({
             type: 'error',
-            message: '查询事务列表失败: ' + JSON.stringify(response)
+            message: '查询事务列表失败: ' + buildXAResponseError(response)
           })
           return
         }
@@ -254,7 +255,7 @@ export default {
         if (typeof (xaResponse) !== 'undefined' && xaResponse.status !== 0) {
           this.$message({
             type: 'warning',
-            message: '警告，有错误发生: ' + JSON.stringify(xaResponse)
+            message: '警告，有错误发生: ' + buildXAResponseError(response)
           })
         }
 
@@ -322,7 +323,7 @@ export default {
         if (typeof (xaResponse) !== 'undefined' && xaResponse.status !== 0) {
           this.$message({
             type: 'warning',
-            message: '警告，有错误发生: ' + JSON.stringify(xaResponse)
+            message: '警告，有错误发生: ' + buildXAResponseError(response)
           })
         }
 

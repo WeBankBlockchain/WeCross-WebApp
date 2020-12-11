@@ -214,6 +214,7 @@ export default {
       if (data.type === 'zone') {
         this.paths = []
       } else if (data.type === 'chain') {
+        this.pageObject.currentPage = 1
         this.currentChain = data.key
         this.paths = []
         this.fetchPaths()

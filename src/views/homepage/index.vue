@@ -133,7 +133,7 @@
     </el-row>
     <el-row :gutter="10" style="margin-top: 10px">
       <el-col :span="12">
-        <el-card style="min-height: 35vh;overflow-y:auto">
+        <el-card style="min-height: 45vh;overflow-y:auto">
           <div slot="header">
             <span>本地系统信息</span>
           </div>
@@ -182,7 +182,7 @@
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card style="min-height: 35vh">
+        <el-card style="height: 45vh">
           <div slot="header">
             <span>本地路由信息</span>
           </div>

@@ -12,7 +12,7 @@
         <h3 class="title">欢迎注册 WeCross</h3>
       </div>
 
-      <el-tooltip placement="top">
+      <el-tooltip placement="right">
         <div slot="content">
           用户名长度3～18个字符，支持数字、大小写字母、下划线_、连接符-
         </div>
@@ -27,12 +27,11 @@
             name="username"
             type="text"
             tabindex="1"
-            auto-complete="on"
           />
         </el-form-item>
       </el-tooltip>
 
-      <el-tooltip placement="top">
+      <el-tooltip placement="right">
         <div slot="content">
           密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
         </div>
@@ -57,7 +56,7 @@
           </span>
         </el-form-item>
       </el-tooltip>
-      <el-tooltip placement="top">
+      <el-tooltip placement="right">
         <div slot="content">
           密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
         </div>
@@ -72,7 +71,6 @@
             placeholder="确认密码"
             name="password"
             tabindex="3"
-            auto-complete="on"
           />
           <span class="show-pwd" @click="showPwd">
             <svg-icon

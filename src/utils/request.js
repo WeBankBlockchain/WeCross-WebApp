@@ -16,6 +16,9 @@ request.interceptors.request.use(
     // do something before request is sent
 
     if (store.getters.token) {
+      if (store.getters.token !== getToken()) {
+        return Promise.reject(new Error('needRefresh'))
+      }
       config.headers['Authorization'] = getToken()
       config.headers['Accept'] = 'application/json'
       config.headers['content-type'] = 'application/json;charset=UTF-8'
@@ -68,6 +71,12 @@ request.interceptors.response.use(
     }
   },
   error => {
+    // another tab login, should fresh status
+    if (axios.isCancel(error)) {
+      throw new Error('canceled')
+    } else if (error.message === 'needRefresh') {
+      throw new Error('当前页面状态已变化，请刷新页面再重试！')
+    }
     // timeout
     if (error.message.includes('timeout')) {
       Message({

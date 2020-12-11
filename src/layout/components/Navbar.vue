@@ -11,6 +11,7 @@
         </el-tooltip>
         <el-dropdown-menu slot="dropdown">
           <body :background="qrCodeShow ? undefined: require('@/assets/issue.png') " style="text-align:center;background-size:cover;background-position-y:center;width:860px;height:550px;cursor:pointer" @click="qrCodeShow=!qrCodeShow">
+            <img v-if="qrCodeShow" :src="require('@/assets/QRCode.jpg')" alt="" style="height:550px">
             <el-container v-if="!qrCodeShow">
               <el-header style="text-align: left;line-height: 90px;margin-left:18px;font-size:25px"><span> 从Issue开始, 成为跨链达人 <i class="el-icon-magic-stick" /></span></el-header>
               <el-main style="height: 440px" />
@@ -21,9 +22,6 @@
                 <el-button size="small" plain type="success" round @click.stop="openPage('https://github.com/WeBankFinTech/WeCross/issues/new?assignees=&labels=CIP&template=cip_request_cn.md&title=')"><i class="el-icon-mic" /> 指方向，提需求</el-button>
               </el-button-group></el-footer>
             </el-container>
-            <transition name="el-fade-in-linear">
-              <img v-if="qrCodeShow" :src="require('@/assets/QRCode.jpg')" alt="" style="height:550px">
-            </transition>
           </body>
         </el-dropdown-menu>
       </el-dropdown>

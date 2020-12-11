@@ -201,7 +201,6 @@ export default {
 
   methods: {
     reset() {
-      this.chainValue = null
       this.transactionList = []
       this.nextOffset = 0
       this.nextBlockNumber = -1
@@ -240,7 +239,7 @@ export default {
         this.currentStep += 1
         this.updateButtonStatus()
       } else {
-        this.updateTransactionListForm()
+        this.updateTransactionListForm(this.controlVersion, this.chainValue)
       }
     },
     handleSendTransaction() {
@@ -261,7 +260,7 @@ export default {
       )
       this.controlVersion = this.controlVersion + 1
       this.chainValue = chainValue
-      this.updateTransactionListForm(this.controlVersion)
+      this.updateTransactionListForm(this.controlVersion, chainValue)
     },
     updateButtonStatus() {
       console.log(
@@ -280,8 +279,8 @@ export default {
       // pre page
       this.buttonState.disablePreClick = this.currentStep <= 1
     },
-    updateTransactionListForm(version) {
-      if (this.chainValue === null) {
+    updateTransactionListForm(version, chainValue) {
+      if (chainValue === null) {
         this.$message({
           type: 'warning',
           message: '链类型为空，请选择链类型！'
@@ -290,7 +289,7 @@ export default {
       }
 
       const params = {
-        path: this.chainValue,
+        path: chainValue,
         blockNumber: this.nextBlockNumber,
         offset: this.nextOffset,
         size: 10
@@ -399,7 +398,7 @@ export default {
             return txs
           }
 
-          fetchAllTx(this.chainValue, resp.data.transactions)
+          fetchAllTx(chainValue, resp.data.transactions)
             .then((response) => {
               this.buttonState.loading = false
               this.nextBlockNumber = resp.data.nextBlockNumber

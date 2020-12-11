@@ -221,6 +221,7 @@ export default {
         }).then(response => {
           this.onResponse(response)
         }).catch(error => {
+          this.loading = false
           this.$message({
             message: '网络异常：' + error,
             type: 'error',
@@ -238,6 +239,7 @@ export default {
         }).then(response => {
           this.onResponse(response)
         }).catch(error => {
+          this.loading = false
           this.$message({
             message: '网络异常：' + error,
             type: 'error',

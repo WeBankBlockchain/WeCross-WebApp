@@ -181,6 +181,7 @@ export default {
         username: '',
         authCode: ''
       },
+      timer: null,
       imageAuthCode: {
         imageAuthCodeBase64URL: '',
         randomToken: ''
@@ -215,7 +216,10 @@ export default {
     }
 
     queryAuthCode(callback)
-    setInterval(queryAuthCode, 60000, callback)
+    this.timer = setInterval(queryAuthCode, 60000, callback)
+  },
+  beforeDestroy() {
+    clearInterval(this.timer)
   },
   methods: {
     showPwd() {

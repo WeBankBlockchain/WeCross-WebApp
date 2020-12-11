@@ -271,6 +271,7 @@ export default {
 
         console.log('[after listXATransactions] status => isFinished:', this.isFinished + ', offsets: ' + JSON.stringify(this.offsets) + ', offsetsCache: ' + JSON.stringify(this.offsetsCache) + ', preClickDisable:', this.preClickDisable + ', nextClickDisable:', this.nextClickDisable)
       }).catch(error => {
+        this.loadingList = false
         this.$message({
           message: '网络异常：' + error,
           type: 'error',
@@ -329,6 +330,7 @@ export default {
 
         this.xaTransaction = response.data.xaTransaction
       }).catch(error => {
+        this.loadingList = false
         this.$message({
           message: '网络异常：' + error,
           type: 'error',

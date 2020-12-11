@@ -1,7 +1,7 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <keep-alive v-if="isLogin" exclude="XATransaction,XATransactionList,ResourceDeploy,RawTransaction">
+      <keep-alive v-if="isLogin" exclude="XATransaction,XATransactionList,ResourceDeploy,RawTransaction,Login,Register">
         <router-view :key="key" />
       </keep-alive>
       <router-view v-else :key="key" />

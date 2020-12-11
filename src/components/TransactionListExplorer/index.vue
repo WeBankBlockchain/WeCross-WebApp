@@ -315,6 +315,7 @@ export default {
                 '查询交易列表失败, 请手动刷新后再尝试, 详情: ' +
                 JSON.stringify(resp)
             })
+            this.buttonState.loading = false
             return
           }
 
@@ -400,6 +401,7 @@ export default {
 
           fetchAllTx(this.chainValue, resp.data.transactions)
             .then((response) => {
+              this.buttonState.loading = false
               this.nextBlockNumber = resp.data.nextBlockNumber
               this.nextOffset = resp.data.nextOffset
 
@@ -441,10 +443,12 @@ export default {
             })
             .catch((err) => {
               console.log(' An error occurred !')
+              this.buttonState.loading = false
               this.$message({ type: 'error', message: err.toString() })
             })
         })
         .catch((error) => {
+          this.buttonState.loading = false
           this.$message({
             message: '网络异常：' + error,
             type: 'error',

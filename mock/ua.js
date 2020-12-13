@@ -4,7 +4,7 @@ module.exports = [
   {
     url: '/auth/listAccount',
     type: 'post',
-    response: config => {
+    response: _ => {
       return {
         ...Mock.mock({
           version: 0,
@@ -62,7 +62,7 @@ module.exports = [
   {
     url: '/auth/setDefaultAccount',
     type: 'post',
-    response: config => {
+    response: _ => {
       return {
         ...Mock.mock({
           version: 0,
@@ -79,7 +79,7 @@ module.exports = [
   {
     url: '/auth/addChainAccount',
     type: 'post',
-    response: config => {
+    response: _ => {
       return {
         ...Mock.mock({
           version: 0,
@@ -96,7 +96,7 @@ module.exports = [
   {
     url: '/auth/removeChainAccount',
     type: 'post',
-    response: config => {
+    response: _ => {
       return {
         ...Mock.mock({
           version: 0,

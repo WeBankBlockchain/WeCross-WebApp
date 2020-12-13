@@ -33,9 +33,6 @@ export function buildBCOSRegisterRequest(formData) {
   }
 }
 
-/*
-{"version":"1","data":{"command":"install","args":["sacc","2.3","Org2","GO_LANG","H4sQg+=.."]}}
- */
 export function buildFabricInstallRequest(formData) {
   return {
     version: 1,
@@ -53,9 +50,6 @@ export function buildFabricInstallRequest(formData) {
   }
 }
 
-/*
-{"version":"1","data":{"command":"instantiate","args":["sacc","2.3","[\"Org1\",\"Org2\"]","GO_LANG","","[\"a\",\"10\"]"]}}
- */
 export function buildFabricInstantiateRequest(formData) {
   return {
     version: 1,
@@ -74,9 +68,6 @@ export function buildFabricInstantiateRequest(formData) {
   }
 }
 
-/*
- {"version":"1","data":{"command":"upgrade","args":["sacc","2.0","[\"Org1\",\"Org2\"]","GO_LANG","","[\"a\",\"10\"]"]}}
- */
 export function buildFabricUpgradeRequest(formData) {
   return {
     version: 1,

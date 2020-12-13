@@ -87,9 +87,6 @@ export default {
         this.currentChain,
         this.currentChainData.type
       )
-      console.log(
-        'research: ' + this.currentChain + ' ' + this.currentChainData.type
-      )
     },
     handleSendTransaction() {
       this.$router.push({

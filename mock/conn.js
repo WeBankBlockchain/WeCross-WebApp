@@ -2,7 +2,7 @@ const Mock = require('mockjs')
 module.exports = [{
   url: '/conn/listPeers',
   type: 'get',
-  response: param => {
+  response: _ => {
     return {
       ...Mock.mock({
         version: '1',
@@ -14,7 +14,7 @@ module.exports = [{
             nodeID: '@id',
             address: '@integer(1,255).@integer(1,255).@integer(1,255).@integer(1,255):@integer(1, 65535)',
             seq: 1,
-            'chainInfos|2': [{
+            chainInfos: [{
               name: '@id',
               stubType: '@pick([\'Fabirc1.4\', \'BCOS2.0\', \'GM_BCOS2.0\'])'
             }]
@@ -27,13 +27,10 @@ module.exports = [{
   url: '/conn/addPeer',
   type: 'post',
   response: config => {
-    console.log(config.body)
-    var address = config.body.data.address
-    
     /*
     peerData.items.push({
       nodeID: '@id',
-      address: address,
+      address: config.body.data.address,
       seq: 1,
       chainInfos: [{
         name: 'bcos',
@@ -55,16 +52,13 @@ module.exports = [{
 }, {
   url: '/conn/removePeer',
   type: 'post',
-  response: config => {
-    console.log(config.body)
-    for (var i in peerData.items) {
-      console.log(i + ' ' + peerData.items[i].address + ' ' + config.body.data.address)
-      if (peerData.items[i].address === config.body.data.address) {
-        console.log('success deleted: ' + i)
-        peerData.items.splice(i, 1)
-        break
-      }
-    }
+  response: _ => {
+    // for (var i in peerData.items) {
+    //   if (peerData.items[i].address === config.body.data.address) {
+    //     peerData.items.splice(i, 1)
+    //     break
+    //   }
+    // }
     return {
       'version': '1',
       'errorCode': 0,
@@ -106,7 +100,7 @@ module.exports = [{
 }, {
   url: '/conn/listZones',
   type: 'get',
-  response: param => {
+  response: _ => {
     return {
       'version': '1',
       'errorCode': 0,

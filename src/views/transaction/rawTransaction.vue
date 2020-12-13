@@ -153,20 +153,17 @@ export default {
       this.$refs.finderTable.toggleRowSelection(row, true)
       this.transactionData.path = row.path
       this.selection = row
-      console.log('onSelectRow, current path:', this.transactionData.path)
     },
     onSelectChange(rows) {
       this.transactionData.path = null
       if (rows.length === 1) {
         this.transactionData.path = rows[0].path
-        console.log('onSelectChange, current path:', this.transactionData.path)
       } else {
         rows.filter((it, index) => {
           if (index === rows.length - 1) {
             this.$refs.finderTable.toggleRowSelection(it, true)
             this.transactionData.path = it.path
             this.selection = it
-            console.log('onSelectChange, current path:', this.transactionData.path)
             return true
           } else {
             this.$refs.finderTable.toggleRowSelection(it, false)
@@ -176,22 +173,18 @@ export default {
       }
     },
     fetchPaths() {
-      console.log('fetchPaths, path:', this.currentChain, 'pageObject:', this.pageObject)
       this.paths = []
       getResourceList({
         path: this.currentChain,
         offset: (this.pageObject.currentPage - 1) * this.pageObject.pageSize,
         size: this.pageObject.pageSize
-      }, {
-        ignoreRemote: false
-      }).then((response) => {
+      }, null).then((response) => {
         if (response.errorCode === 0) {
           const resourceList = response.data.resourceDetails
           for (const resource of resourceList) {
             this.paths.push({ path: resource.path })
           }
           this.pageObject.totalPageNumber = response.data.total
-          console.log('fetchPaths: ', this.paths, 'page: ', this.pageObject)
         } else {
           this.$message({
             type: 'error',
@@ -226,7 +219,6 @@ export default {
           offset: 0,
           size: 0
         }).then(response => {
-          console.log('listZones: ', response)
           if (response.errorCode === 0) {
             let zones = []
             for (const zone of response.data.data) {
@@ -300,7 +292,6 @@ export default {
       for (const arg of transaction.args) {
         args.push(arg.value)
       }
-      console.log('execMethod: ' + transaction.execMethod)
       if (transaction.execMethod === 'sendTransaction') {
         sendTransaction({
           version: '1',

@@ -396,7 +396,6 @@ export default {
       addChainAccountDrawerRules: {
         type: [{ required: true, trigger: 'change', message: '请选择' }],
         secKey: [{ required: true, trigger: 'blur', validator: (rule, value, callback) => {
-          console.log('value: ', value)
           if (typeof (value) === 'undefined' || value.length === 0) {
             callback(new Error('请输入私钥'))
           } else if (this.addChainAccountDrawer.params.type === 'BCOS2.0' && !ecdsa.isSecPem(value)) {
@@ -410,7 +409,6 @@ export default {
           }
         } }],
         pubKey: [{ required: true, trigger: 'blur', validator: (rule, value, callback) => {
-          console.log('value: ', value)
           if (typeof (value) === 'undefined' || value.length === 0) {
             callback(new Error('请输入公钥'))
           } else if (this.addChainAccountDrawer.params.type === 'Fabric1.4' && !pem.isCertFormat(value)) {
@@ -443,7 +441,6 @@ export default {
       })
     },
     showChainAccount(chainAccount) {
-      console.log(chainAccount)
       this.chainAccountDrawer.header = chainAccount.details
       this.chainAccountDrawer.info = chainAccount
       this.chainAccountDrawer.show = true
@@ -570,7 +567,6 @@ export default {
       })
     },
     handleResponse(response) {
-      console.log('Response' + response)
       if (response.errorCode !== 0) {
         this.$message({
           message: '设置失败：' + response.message,
@@ -641,7 +637,6 @@ export default {
       this.addChainAccountDrawer.params.ext = data.address
     },
     uploadPubKeyCertHandler(params) {
-      console.log('uploadPubKeyCertHandler')
       const reader = new FileReader()
       reader.onload = (event) => {
         this.addChainAccountDrawer.params.pubKey = event.target.result
@@ -707,7 +702,6 @@ function buildChainAccountTable(ua) {
       }
     }
   }
-  console.log('localChainAccounts', localChainAccounts)
   return localChainAccounts
 }
 

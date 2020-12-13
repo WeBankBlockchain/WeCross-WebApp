@@ -1,7 +1,7 @@
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
- * @param {string} cFormat
+ * @param {string|null} cFormat
  * @returns {string | null}
  */
 export function parseTime(time, cFormat) {
@@ -105,8 +105,7 @@ export function param2Obj(url) {
     const index = v.indexOf('=')
     if (index !== -1) {
       const name = v.substring(0, index)
-      const val = v.substring(index + 1, v.length)
-      obj[name] = val
+      obj[name] = v.substring(index + 1, v.length)
     }
   })
   return obj

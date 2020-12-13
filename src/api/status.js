@@ -1,13 +1,20 @@
 import request from '@/utils/request'
 
-export function systemStatus(params) {
+/**
+ * get the status of system
+ * @return {Promise} an axios promise object of response
+ */
+export function systemStatus() {
   return request({
     url: '/sys/systemStatus',
-    method: 'get',
-    params
+    method: 'get'
   })
 }
 
+/**
+ * list supported stub types in wecross
+ * @return {Promise} an axios promise object of response
+ */
 export function supportedStubs(params) {
   return request({
     url: '/sys/supportedStubs',
@@ -16,10 +23,13 @@ export function supportedStubs(params) {
   })
 }
 
-export function routerStatus(params) {
+/**
+ * get wecross router status
+ * @return {Promise} an axios promise object of response
+ */
+export function routerStatus() {
   return request({
     url: '/sys/routerStatus',
-    method: 'get',
-    params
+    method: 'get'
   })
 }

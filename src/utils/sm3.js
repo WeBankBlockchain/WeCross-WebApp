@@ -1,5 +1,8 @@
 /**
- * 左补0到指定长度
+ * left zero padding to exact number
+ * @param {string} input - to padding
+ * @param {number} num
+ * @return {string|*}
  */
 function leftPad(input, num) {
   if (input.length >= num) return input
@@ -8,8 +11,10 @@ function leftPad(input, num) {
 }
 
 /**
-   * 二进制转化为十六进制
-   */
+ * binary to hexadecimal
+ * @param {string} binary
+ * @return {string}
+ */
 function binary2hex(binary) {
   const binaryLength = 8
   let hex = ''
@@ -20,8 +25,10 @@ function binary2hex(binary) {
 }
 
 /**
-   * 十六进制转化为二进制
-   */
+ * hexadecimal to binary
+ * @param {String} hex
+ * @return {string}
+ */
 function hex2binary(hex) {
   const hexLength = 2
   let binary = ''
@@ -32,9 +39,10 @@ function hex2binary(hex) {
 }
 
 /**
-   * 普通字符串转化为二进制
-   */
-
+ * string to binary
+ * @param {string} str
+ * @return {string}
+ */
 function str2binary(str) {
   let binary = ''
   for (let i = 0, len = str.length; i < len; i++) {
@@ -45,15 +53,22 @@ function str2binary(str) {
 }
 
 /**
-   * 循环左移
-   */
+ * left shift
+ * @param {string} str
+ * @param {number} n
+ * @return {string}
+ */
 function rol(str, n) {
   return str.substring(n % str.length) + str.substr(0, n % str.length)
 }
 
 /**
-   * 二进制运算
-   */
+ * binary calculation
+ * @param {string} x
+ * @param {string} y
+ * @param {function} method
+ * @return {string}
+ */
 function binaryCal(x, y, method) {
   const a = x || ''
   const b = y || ''
@@ -68,29 +83,41 @@ function binaryCal(x, y, method) {
 }
 
 /**
-   * 二进制异或运算
-   */
+ * xor
+ * @param {string} x
+ * @param {string} y
+ * @return {string}
+ */
 function xor(x, y) {
   return binaryCal(x, y, (a, b) => [(a === b ? '0' : '1')])
 }
 
 /**
-   * 二进制与运算
-   */
+ * binary and
+ * @param {string} x
+ * @param {string} y
+ * @return {string}
+ */
 function and(x, y) {
   return binaryCal(x, y, (a, b) => [(a === '1' && b === '1' ? '1' : '0')])
 }
 
 /**
-   * 二进制或运算
-   */
+ * binary or
+ * @param {string} x
+ * @param {string} y
+ * @return {string}
+ */
 function or(x, y) {
   return binaryCal(x, y, (a, b) => [(a === '1' || b === '1' ? '1' : '0')]) // a === '0' && b === '0' ? '0' : '1'
 }
 
 /**
-   * 二进制与运算
-   */
+ * binary add
+ * @param {string} x
+ * @param {string} y
+ * @return {string}
+ */
 function add(x, y) {
   const result = binaryCal(x, y, (a, b, prevResult) => {
     const carry = prevResult ? prevResult[1] : '0' || '0'
@@ -106,26 +133,42 @@ function add(x, y) {
 }
 
 /**
-   * 二进制非运算
-   */
+ * binary not
+ * @param {string} x
+ * @param {string} y
+ * @return {string}
+ */
 function not(x) {
   return binaryCal(x, undefined, a => [a === '1' ? '0' : '1'])
 }
 
+/**
+ * binary multi-cal
+ * @param {function} method
+ * @return {function(...[*]): *}
+ */
 function calMulti(method) {
   return (...arr) => arr.reduce((prev, curr) => method(prev, curr))
 }
 
 /**
-   * 压缩函数中的置换函数 P1(X) = X xor (X <<< 9) xor (X <<< 17)
-   */
+ * The displacement function in compression function
+ * P1(X) = X xor (X <<< 9) xor (X <<< 17)
+ * @param X
+ * @return {*}
+ * @constructor
+ */
 function P0(X) {
   return calMulti(xor)(X, rol(X, 9), rol(X, 17))
 }
 
 /**
-   * 消息扩展中的置换函数 P1(X) = X xor (X <<< 15) xor (X <<< 23)
-   */
+ * The displacement function in message extension
+ * P1(X) = X xor (X <<< 15) xor (X <<< 23)
+ * @param X
+ * @return {*}
+ * @constructor
+ */
 function P1(X) {
   return calMulti(xor)(X, rol(X, 15), rol(X, 23))
 }
@@ -143,8 +186,12 @@ function T(j) {
 }
 
 /**
-   * 压缩函数
-   */
+ * compression function
+ * @param V
+ * @param Bi
+ * @return {string}
+ * @constructor
+ */
 function CF(V, Bi) {
   // 消息扩展
   const wordLength = 32

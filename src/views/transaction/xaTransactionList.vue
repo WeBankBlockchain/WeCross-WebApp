@@ -137,7 +137,7 @@ export default {
     formatDate(time) {
       time = time * 1000
       const date = new Date(time)
-      return parseTime(date)
+      return parseTime(date, null)
     }
   },
   props: {},
@@ -199,7 +199,6 @@ export default {
     },
     refresh() {
       this.resetAllData()
-      console.log('[offset0] status => offsets: ' + JSON.stringify(this.offsets))
       this.fetchXATransactionList()
     },
     filterTag(tag) {
@@ -221,11 +220,7 @@ export default {
       }
     },
     nonNull(data) {
-      if (typeof data === 'undefined' || data === null) {
-        return false
-      } else {
-        return true
-      }
+      return (typeof data !== 'undefined' && data !== null)
     },
     onStartXATransaction() {
       this.$router.push({ path: 'xaTransaction' })
@@ -241,7 +236,6 @@ export default {
         }
       }).then(response => {
         this.loadingList = false
-        console.log('[listXATransactions] response => ' + JSON.stringify(response))
 
         if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
           this.$message({
@@ -268,8 +262,6 @@ export default {
 
         // update disable button
         this.updateDisableButtonStatus()
-
-        console.log('[after listXATransactions] status => isFinished:', this.isFinished + ', offsets: ' + JSON.stringify(this.offsets) + ', offsetsCache: ' + JSON.stringify(this.offsetsCache) + ', preClickDisable:', this.preClickDisable + ', nextClickDisable:', this.nextClickDisable)
       }).catch(error => {
         this.loadingList = false
         this.$message({
@@ -298,7 +290,6 @@ export default {
       }
     },
     fetchXATransaction(xaTransactionID, paths) {
-      console.log('xaTransactionID ', xaTransactionID)
       console.log('paths ', paths)
       this.loadingXA = true
       this.xaTransaction = null
@@ -309,7 +300,6 @@ export default {
           paths: paths
         }
       }).then(response => {
-        console.log('[getXATransaction] response => ' + JSON.stringify(response))
         this.loadingXA = false
 
         if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
@@ -352,15 +342,8 @@ export default {
     },
     updateCurrentOffsets() {
       this.offsets = this.offsetsCache[this.currentPage - 1]
-      console.log('current page: ' + this.currentPage + ' offsets: ' + JSON.stringify(this.offsets))
     },
     updateDisableButtonStatus() {
-      console.log(
-        ' update button status, current page: ' +
-        this.currentPage +
-        ' offsets: ' +
-        JSON.stringify(this.offsets)
-      )
       // next page
       this.nextClickDisable = this.isFinished
       // prev page

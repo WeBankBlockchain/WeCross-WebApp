@@ -272,7 +272,7 @@ export default {
     refreshChainsInfo() {
       this.chainsInfoLoading = true
       this.chainsInfo = []
-      listZones().then(response => {
+      listZones(null).then(response => {
         for (const zone of response.data.data) {
           listChains({ zone: zone }).then(res => {
             for (const chain of res.data.data) {
@@ -301,7 +301,7 @@ export default {
       })
     },
     getRouterNumber() {
-      listPeers().then(response => {
+      listPeers(null).then(response => {
         this.routerNumber = response.data.data.length
       }).catch(_ => {
         this.$message({

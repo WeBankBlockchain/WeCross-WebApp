@@ -1,5 +1,10 @@
 import request from '@/utils/request'
 
+/**
+ * login
+ * @param {string} data - encoded login params
+ * @return {Promise<Response>} an axios promise object of response
+ */
 export function login(data) {
   return request({
     url: '/auth/login',
@@ -11,6 +16,10 @@ export function login(data) {
   })
 }
 
+/**
+ * logout
+ * @return {Promise<Response>} an axios promise object of response
+ */
 export function logout() {
   return request({
     url: '/auth/logout',
@@ -19,6 +28,11 @@ export function logout() {
   })
 }
 
+/**
+ * register
+ * @param {string} data - encoded register params
+ * @return {Promise<Response>} an axios promise object of response
+ */
 export function register(data) {
   return request({
     url: '/auth/register',
@@ -30,14 +44,22 @@ export function register(data) {
   })
 }
 
-export function authCode(data) {
+/**
+ * get a auth code for login/register
+ * @return {Promise<Response>} an axios promise object of response
+ */
+export function authCode() {
   return request({
     url: '/auth/authCode',
     method: 'get'
   })
 }
 
-export function authPub(data) {
+/**
+ * get a pubKey for login/register
+ * @return {Promise<Response>} an axios promise object of response
+ */
+export function authPub() {
   return request({
     url: '/auth/pub',
     method: 'get'

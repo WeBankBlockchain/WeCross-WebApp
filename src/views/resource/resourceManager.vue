@@ -71,7 +71,6 @@ export default {
       }
     },
     onDeploy() {
-      console.log('deploy: ' + this.currentChain + ' ' + this.currentChainData.type)
       this.$router.push({
         path: 'resourceDeployment',
         query: {

@@ -1,6 +1,14 @@
 import { MessageBox } from 'element-ui'
 import Vue from 'vue'
 
+/**
+ * handle a long error message output
+ * @param {string} message - set to msgBox's main body
+ * @param {string} title - set to msgBox's title
+ * @param {string} errorMessage - set to textarea, a long output
+ * @param {Object|null} options - other msgBox options
+ * @return {Promise}
+ */
 export function handleErrorMsgBox(message, title, errorMessage, options) {
   const vm = new Vue()
   const h = vm.$createElement
@@ -53,6 +61,14 @@ export function handleErrorMsgBox(message, title, errorMessage, options) {
   })
 }
 
+/**
+ * handle a long success message output
+ * @param {string} message - set to msgBox's main body
+ * @param {string} title - set to msgBox's title
+ * @param {string} successMessage - set to textarea, a long output
+ * @param {Object|null} options - other msgBox options
+ * @return {Promise}
+ */
 export function handleSuccessMsgBox(message, title, successMessage, options) {
   const vm = new Vue()
   const h = vm.$createElement

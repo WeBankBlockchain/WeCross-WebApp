@@ -151,7 +151,6 @@ export default {
       this.submitResponse = null
     },
     onExecMethodChange() {
-      console.log('method:', this.transaction.execMethod)
       const tempPath = this.transaction.path
       this.clearForm()
       this.transaction.path = tempPath
@@ -211,7 +210,7 @@ export default {
           code = response.data.errorCode
           message = response.data.message
         }
-        handleErrorMsgBox('执行错误：', '错误码: ' + code, message)
+        handleErrorMsgBox('执行错误：', '错误码: ' + code, message, null)
       } else {
         this.submitResponse = JSON.stringify(response.data.result)
       }

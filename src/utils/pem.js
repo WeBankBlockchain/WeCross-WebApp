@@ -44,8 +44,6 @@ function getPubKeyHexFromECDSASecPem(secKeyContent) {
   var buffer = Buffer.from(base64Content, 'base64')
   var hexString = buffer.toString('hex')
   var pubKeyHex = hexString.substr(hexString.length - 130, 130)
-  console.log('pubCertHex: ', hexString)
-  console.log('pubKeyHex: ', pubKeyHex)
   return pubKeyHex
 }
 
@@ -69,9 +67,6 @@ export const ecdsa = {
 
     var pubKey = keyPair.getPublic('hex')
     var secKey = keyPair.getPrivate('hex')
-
-    console.log(pubKey)
-    console.log(secKey)
 
     var asn1HexString = ecdsaSecPemPrefix + secKey + 'a144034200' + pubKey
     var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')
@@ -114,8 +109,6 @@ function getPubKeyHexFromSM2SecPem(secKeyContent) {
   var buffer = Buffer.from(base64Content, 'base64')
   var hexString = buffer.toString('hex')
   var pubKeyHex = hexString.substr(hexString.length - 130, 130)
-  console.log('pubCertHex: ', hexString)
-  console.log('pubKeyHex: ', pubKeyHex)
   return pubKeyHex
 }
 
@@ -129,8 +122,6 @@ function buildSM2PubKeyPem(pubKeyHex) {
 function sm2Pub2Addr(pubKeyHex) {
   var pubKeyHexWithoutPrefix = pubKeyHex.substr(2, 128)
 
-  console.log('pubKeyHexWithoutPrefix: ', pubKeyHexWithoutPrefix)
-
   var address = '0x' + sm3Hex(pubKeyHexWithoutPrefix).substr(24, 40)
   return address
 }
@@ -138,8 +129,6 @@ function sm2Pub2Addr(pubKeyHex) {
 export const sm2 = {
   generateSecPem() {
     const keyPair = SM2.generateKeyPairHex()
-
-    console.log(keyPair)
 
     var asn1HexString = sm2SecPemPrefix + keyPair.privateKey + 'a144034200' + keyPair.publicKey
     var base64String = Buffer.from(asn1HexString, 'hex').toString('base64')

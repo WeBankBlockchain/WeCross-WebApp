@@ -18,7 +18,6 @@ export function queryPub(callback) {
       })
     } else {
       const pub = resp.data.pub
-      // console.log('queryPub: ' + pub)
       setPubKey(pub)
       if (typeof callback !== 'undefined' && callback !== null) {
         callback()
@@ -33,14 +32,11 @@ export function queryPub(callback) {
 export function queryAuthCode(callback) {
   authCode().then((resp) => {
     if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
-      console.log('query auth code error => ' + JSON.stringify(resp))
       this.$message({
         type: 'error',
         message: JSON.stringify(resp)
       })
     } else {
-      // console.log('query auth code result: ' + JSON.stringify(resp.data.authCode))
-      console.log('query auth code random: ' + resp.data.authCode.randomToken)
       callback(resp.data.authCode)
     }
   })

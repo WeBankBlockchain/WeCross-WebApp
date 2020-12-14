@@ -1,4 +1,3 @@
-const Mock = require('mockjs')
 module.exports = [{
   url: '/sys/systemStatus',
   type: 'get',

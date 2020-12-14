@@ -1,6 +1,11 @@
 import request from '@/utils/request'
 import { path2Url } from '@/utils'
 
+/**
+ * start a XA transaction
+ * @param {xaRequest} data - body data to request
+ * @return {Promise<xaResponse>} an axios promise object of response
+ */
 export function startXATransaction(data) {
   return request({
     url: '/xa/startXATransaction',
@@ -8,6 +13,12 @@ export function startXATransaction(data) {
     data: data
   })
 }
+
+/**
+ * commit a XA transaction
+ * @param {xaRequest} data - body data to request
+ * @return {Promise<xaResponse>} an axios promise object of response
+ */
 export function commitXATransaction(data) {
   return request({
     url: '/xa/commitXATransaction',
@@ -16,6 +27,11 @@ export function commitXATransaction(data) {
   })
 }
 
+/**
+ * rollback a XA transaction
+ * @param {xaRequest} data - body data to request
+ * @return {Promise<xaResponse>} an axios promise object of response
+ */
 export function rollbackXATransaction(data) {
   return request({
     url: '/xa/rollbackXATransaction',
@@ -24,6 +40,11 @@ export function rollbackXATransaction(data) {
   })
 }
 
+/**
+ * get a XA transaction's info
+ * @param {xaRequest|*} data - body data to request
+ * @return {Promise<xaListResponse>} an axios promise object of response
+ */
 export function getXATransaction(data) {
   return request({
     url: '/xa/getXATransaction',
@@ -32,6 +53,14 @@ export function getXATransaction(data) {
   })
 }
 
+/**
+ * get a XA transaction's info
+ * @param {Object} data - body data to request
+ * @param {string} data.version
+ * @param {number} data.data.size
+ * @param {Map|*} data.data.offsets - path => number
+ * @return {Promise<xaListResponse>} an axios promise object of response
+ */
 export function listXATransactions(data) {
   return request({
     url: '/xa/listXATransactions',
@@ -40,6 +69,11 @@ export function listXATransactions(data) {
   })
 }
 
+/**
+ * call a contract status
+ * @param {CallRequest} data
+ * @return {Promise<Response>} an axios promise object of response
+ */
 export function call(data) {
   return request({
     url: 'resource' + path2Url(data.path) + '/call',
@@ -48,6 +82,11 @@ export function call(data) {
   })
 }
 
+/**
+ * send a contract transaction
+ * @param {CallRequest} data
+ * @return {Promise<Response>} an axios promise object of response
+ */
 export function sendTransaction(data) {
   return request({
     url: 'resource' + path2Url(data.path) + '/sendTransaction',
@@ -56,6 +95,15 @@ export function sendTransaction(data) {
   })
 }
 
+/**
+ * list transactions of path
+ * @param {Object} params
+ * @param {string} params.path
+ * @param {number} params.blockNumber
+ * @param {number} params.offset
+ * @param {number} params.size
+ * @return {Promise<Response>} an axios promise object of response
+ */
 export function listTransactions(params) {
   return request({
     url: '/trans/listTransactions',
@@ -64,6 +112,13 @@ export function listTransactions(params) {
   })
 }
 
+/**
+ * get a exact transaction's info by hash
+ * @param {Object} params
+ * @param {string} params.path
+ * @param {string} params.txHash
+ * @return {Promise<Response>} an axios promise object of response
+ */
 export function getTransaction(params) {
   return request({
     url: '/trans/getTransaction',

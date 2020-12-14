@@ -1,5 +1,15 @@
 const xaTransactionKey = 'xaTX'
 
+/**
+ * @typedef {Object} xaTransaction
+ * @property {string} transactionID
+ * @property {Array<string>} paths
+ */
+
+/**
+ * get XA transaction in sessionStorage
+ * @return {xaTransaction|null}
+ */
 export function getXATX() {
   return JSON.parse(sessionStorage.getItem(xaTransactionKey))
 }

@@ -413,7 +413,6 @@ export default {
         this.mergeSourceContractLineToString()
       } catch (e) {
         this.loading = false
-        console.log(e)
         return
       }
       const h = this.$createElement
@@ -434,7 +433,8 @@ export default {
             handleErrorMsgBox(
               '执行FISCO BCOS部署合约失败，错误：',
               '错误码：' + response.errorCode,
-              (response.data === null) ? response.message : response.data.errorMessage
+              (response.data === null) ? response.message : response.data.errorMessage,
+              null
             )
           } else {
             this.onSubmitSuccess(response)
@@ -459,7 +459,6 @@ export default {
         this.mergeSourceContractLineToString()
       } catch (e) {
         this.loading = false
-        console.log(e)
         return
       }
       bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
@@ -468,7 +467,8 @@ export default {
           handleErrorMsgBox(
             '执行FISCO BCOS注册合约失败，错误：',
             '错误码：' + response.errorCode,
-            (response.data === null) ? response.message : response.data.errorMessage
+            (response.data === null) ? response.message : response.data.errorMessage,
+            null
           )
         } else {
           this.onSubmitSuccess(response)
@@ -491,7 +491,8 @@ export default {
           handleErrorMsgBox(
             '执行Hyperledger Fabric合约安装失败，错误：',
             '错误码：' + response.errorCode,
-            (response.data === null) ? response.message : response.data.errorMessage
+            (response.data === null) ? response.message : response.data.errorMessage,
+            null
           )
         } else {
           const h = this.$createElement
@@ -540,7 +541,8 @@ export default {
           handleErrorMsgBox(
             '执行Hyperledger Fabric合约实例化失败，错误：',
             '错误码：' + response.errorCode,
-            (response.data === null) ? response.message : response.data.errorMessage
+            (response.data === null) ? response.message : response.data.errorMessage,
+            null
           )
         } else {
           this.onSubmitSuccess(response)
@@ -563,7 +565,8 @@ export default {
           handleErrorMsgBox(
             '执行Hyperledger Fabric合约升级失败，错误：',
             '错误码：' + response.errorCode,
-            (response.data === null) ? response.message : response.data.errorMessage
+            (response.data === null) ? response.message : response.data.errorMessage,
+            null
           )
         } else {
           this.onSubmitSuccess(response)
@@ -684,8 +687,8 @@ export default {
         this.dependenciesLine = []
         const _this = this
         params.onProgress({ percent: 20 })
-        var zipFiles = []
-        var promises = []
+        const zipFiles = []
+        const promises = []
         jszip.loadAsync(params.file).then(function(zip) {
           zip.forEach(function(relativePath, file) {
             if (file.dir === false) {
@@ -719,7 +722,8 @@ export default {
           handleErrorMsgBox(
             '读取zip文件错误：',
             '错误',
-            err.toString()
+            err.toString(),
+            null
           ).catch(_ => {
           })
           this.zipContractFilesMap = {}
@@ -766,18 +770,6 @@ export default {
         this.form.policy = 'default'
         params.onProgress({ percent: 0 })
         params.onError()
-      }
-    },
-    async readText(params) {
-      // UTF-8,GBK,GB2312
-      const readFile = new FileReader()
-      readFile.readAsText(params.file, 'UTF-8')
-      readFile.onload = (e) => {
-        this.form.sourceContent = e.target.result
-        params.onProgress({ percent: 100 })
-        params.onSuccess()
-        this.$refs.deployForm.clearValidate('sourceContent')
-        this.$refs.deployForm.clearValidate('policy')
       }
     },
     async readBaseBytes(params) {

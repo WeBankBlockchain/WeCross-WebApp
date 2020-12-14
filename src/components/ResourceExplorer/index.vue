@@ -136,9 +136,7 @@ export default {
         path: path,
         offset: status.page * this.pageSize,
         size: this.pageSize
-      }, {
-        ignoreRemote: false
-      }).then((response) => {
+      }, null).then((response) => {
         if (response.errorCode === 0) {
           this.resources = response.data.resourceDetails
           this.total = response.data.total
@@ -203,19 +201,18 @@ export default {
       }]
       this.transactionData.path = this.selection
     },
-    onSubmit(transaction) {
+    onSubmit() {
       this.loading = true
       const args = []
-      for (const arg of transaction.args) {
+      for (const arg of this.transactionData.args) {
         args.push(arg.value)
       }
-      console.log('execMethod: ' + transaction.execMethod)
-      if (transaction.execMethod === 'sendTransaction') {
+      if (this.transactionData.execMethod === 'sendTransaction') {
         sendTransaction({
           version: '1',
-          path: transaction.path,
+          path: this.transactionData.path,
           data: {
-            method: transaction.method,
+            method: this.transactionData.method,
             args: args
           }
         }).then(response => {
@@ -231,9 +228,9 @@ export default {
       } else {
         call({
           version: '1',
-          path: transaction.path,
+          path: this.transactionData.path,
           data: {
-            method: transaction.method,
+            method: this.transactionData.method,
             args: args
           }
         }).then(response => {

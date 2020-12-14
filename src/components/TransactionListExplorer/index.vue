@@ -8,7 +8,6 @@
       fit
       tooltip-effect="light"
       height="calc(100% - 75px)"
-      @current-change="handleCurrentRowChange"
     >
       <el-table-column label="交易哈希" min-width="40px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.txHash }}</template>
@@ -18,7 +17,7 @@
           <div v-if="item.row.username === 'unknown'">
             <el-popover trigger="hover" placement="top">
               <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
-              <div slot="reference" class="name-wrapper">
+              <div slot="reference">
                 <el-tag type="info" effect="plain">{{
                   item.row.username
                 }}</el-tag>
@@ -35,7 +34,7 @@
           <div v-if="item.row.txID === 'unknown'">
             <el-popover trigger="hover" placement="top">
               <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
-              <div slot="reference" class="name-wrapper">
+              <div slot="reference">
                 <el-tag type="info" effect="plain">{{ item.row.txID }}</el-tag>
               </div>
             </el-popover>
@@ -50,7 +49,7 @@
           <div v-if="item.row.blockNumber === 'unknown'">
             <el-popover trigger="hover" placement="top">
               <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
-              <div slot="reference" class="name-wrapper">
+              <div slot="reference">
                 <el-tag type="info" effect="plain">{{
                   item.row.blockNumber
                 }}</el-tag>
@@ -67,7 +66,7 @@
           <div v-if="item.row.path === 'unknown'">
             <el-popover trigger="hover" placement="top">
               <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
-              <div slot="reference" class="name-wrapper">
+              <div slot="reference">
                 <el-tag type="info" effect="plain">{{ item.row.path }}</el-tag>
               </div>
             </el-popover>
@@ -82,7 +81,7 @@
           <div v-if="item.row.method === 'unknown'">
             <el-popover trigger="hover" placement="top">
               <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
-              <div slot="reference" class="name-wrapper">
+              <div slot="reference">
                 <el-tag type="info" effect="plain">{{
                   item.row.method
                 }}</el-tag>
@@ -209,18 +208,11 @@ export default {
       this.buttonState.disablePreClick = true
       this.buttonState.disableNextClick = false
     },
-    handleCurrentRowChange(val) {
-      if (val != null) {
-        console.log('val: ' + val)
-      }
-    },
     handleReceiptDetails(val) {
       this.drawer = true
       this.txReceipt = val
-      console.log('handleReceipt val: ' + JSON.stringify(val))
     },
     handlePrevClick() {
-      console.log(' <=[pre] click, currentStep: ' + this.currentStep)
       if (this.currentStep <= 0) {
         this.$message({
           type: 'warning',
@@ -233,7 +225,6 @@ export default {
       this.updateButtonStatus()
     },
     handleNextClick() {
-      console.log(' =>[next] click, currentStep: ' + this.currentStep)
       if (this.currentStep < this.historyData.length) {
         this.transactionList = this.historyData[this.currentStep]
         this.currentStep += 1
@@ -248,29 +239,14 @@ export default {
       })
     },
     handleClick(row) {
-      console.log('properties => ' + JSON.stringify(row))
     },
     handleSearch(chainValue) {
       this.reset()
-      console.log(
-        '#==> chainValue: ' +
-          JSON.stringify(chainValue) +
-          ' ,controlVersion: ' +
-          this.controlVersion
-      )
       this.controlVersion = this.controlVersion + 1
       this.chainValue = chainValue
       this.updateTransactionListForm(this.controlVersion, chainValue)
     },
     updateButtonStatus() {
-      console.log(
-        ' update button status, nextBlk: ' +
-          this.nextBlockNumber +
-          ' currentStep: ' +
-          this.currentStep +
-          ' ,historyData: ' +
-          this.historyData.length
-      )
       this.buttonState.loading = false
       // next page
       this.buttonState.disableNextClick =
@@ -298,15 +274,6 @@ export default {
       this.buttonState.loading = true
       listTransactions(params)
         .then((resp) => {
-          console.log(
-            ' listTransactions params => ' +
-              JSON.stringify(params) +
-              ' ,resp => ' +
-              JSON.stringify(resp)
-          )
-
-          console.log('#===> params version: ' + version)
-
           if (typeof resp.errorCode === 'undefined' || resp.errorCode !== 0) {
             this.$message({
               type: 'error',
@@ -391,10 +358,6 @@ export default {
               }
             }
 
-            console.log(
-              ' listTransactions => transactions length: ' + txs.length
-            )
-
             return txs
           }
 
@@ -414,12 +377,6 @@ export default {
               }
 
               if (this.controlVersion !== version) {
-                console.log(
-                  '### skip for next search is underway, version: ' +
-                    version +
-                    ' ,controlVersion: ' +
-                    this.controlVersion
-                )
                 return
               }
 
@@ -427,21 +384,9 @@ export default {
               this.historyData[this.currentStep] = response
               this.currentStep += 1
 
-              console.log(
-                ' currentStep: ' +
-                  this.currentStep +
-                  ' ,nextBlk: ' +
-                  this.nextBlockNumber +
-                  ' ,nextOffset: ' +
-                  this.nextOffset +
-                  ' ,data: ' +
-                  JSON.stringify(resp.data)
-              )
-
               this.updateButtonStatus()
             })
             .catch((err) => {
-              console.log(' An error occurred !')
               this.buttonState.loading = false
               this.$message({ type: 'error', message: err.toString() })
             })

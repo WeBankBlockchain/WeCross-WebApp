@@ -342,7 +342,7 @@ export default {
     formatDate(time) {
       time = time * 1000
       const date = new Date(time)
-      return parseTime(date)
+      return parseTime(date, null)
     }
   },
   data() {
@@ -504,9 +504,7 @@ export default {
         path: path,
         offset: (this.pageObject.currentPage - 1) * this.pageObject.pageSize,
         size: this.pageObject.pageSize
-      }, {
-        ignoreRemote: false
-      }).then((response) => {
+      }, null).then((response) => {
         if (response.errorCode === 0) {
           const resourceList = response.data.resourceDetails
           for (const resource of resourceList) {
@@ -590,7 +588,6 @@ export default {
       for (const arg of transaction.args) {
         args.push(arg.value)
       }
-      console.log('execMethod: ' + transaction.execMethod)
       if (transaction.execMethod === 'sendTransaction') {
         sendTransaction({
           version: '1',

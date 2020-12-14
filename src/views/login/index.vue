@@ -60,8 +60,8 @@
           </el-form-item>
         </el-col>
         <el-col style="float:right;margin-right:2px" :span="6">
-          <div style="margin-top:2px;width:116.25px;height:45px;text-align:center;background:white;float:right">
-            <i v-if="imageAuthCode.imageAuthCodeBase64URL == ''" style="margin-top:12%;" class="el-icon-loading" />
+          <div style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right">
+            <i v-if="imageAuthCode.imageAuthCodeBase64URL === ''" style="margin-top:12%;" class="el-icon-loading" />
             <img
               v-else
               style="width:100%; height:auto;vertical-align: middle;"
@@ -162,9 +162,9 @@ export default {
     })
 
     /**
-    update the authentication code periodically
-    */
-    var callback = (resp) => {
+     update the authentication code periodically
+     */
+    const callback = (resp) => {
       this.imageAuthCode.randomToken = resp.randomToken
       this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
     }
@@ -192,7 +192,7 @@ export default {
       })
     },
     handleUpdateAuthCode() {
-      var callback = (resp) => {
+      const callback = (resp) => {
         this.imageAuthCode.randomToken = resp.randomToken
         this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
       }
@@ -213,8 +213,6 @@ export default {
             }
           }
 
-          console.log('login params: ' + JSON.stringify(loginParams))
-
           this.loading = true
           this.$store
             .dispatch('user/login', loginParams)
@@ -227,7 +225,6 @@ export default {
               this.handleUpdateAuthCode()
             })
         } else {
-          console.log('error submit!!')
           return false
         }
       })

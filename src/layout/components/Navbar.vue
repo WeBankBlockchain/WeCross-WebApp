@@ -16,10 +16,10 @@
               <el-header style="text-align: left;line-height: 90px;margin-left:18px;font-size:25px"><span> 从Issue开始, 成为跨链达人 <i class="el-icon-magic-stick" /></span></el-header>
               <el-main style="height: 440px" />
               <el-footer style="text-align: right;margin-right:36px;padding:0px"><el-button-group>
-                <el-button size="small" plain type="primary" round @click.stop="openPage('https://github.com/WeBankFinTech/WeCross/issues/new?assignees=&labels=question')"><i class="el-icon-chat-round" /> 不清楚，问问题 </el-button>
-                <el-button size="small" plain type="danger" @click.stop="openPage('https://github.com/WeBankFinTech/WeCross/issues/new?assignees=&labels=&template=bug_report_cn.md&title=')"><i class="el-icon-aim" /> 用不爽，怒提Bug </el-button>
-                <el-button size="small" plain type="warning" @click.stop="openPage('https://github.com/WeBankFinTech/WeCross/issues?q=is%3Aissue+is%3Aopen+Task')"><i class="el-icon-trophy" /> 领任务，拿奖品</el-button>
-                <el-button size="small" plain type="success" round @click.stop="openPage('https://github.com/WeBankFinTech/WeCross/issues/new?assignees=&labels=CIP&template=cip_request_cn.md&title=')"><i class="el-icon-mic" /> 指方向，提需求</el-button>
+                <el-button size="small" plain type="primary" round @click.stop="openPage('https://github.com/WeBankBlockchain/WeCross/issues/new?assignees=&labels=question')"><i class="el-icon-chat-round" /> 不清楚，问问题 </el-button>
+                <el-button size="small" plain type="danger" @click.stop="openPage('https://github.com/WeBankBlockchain/WeCross/issues/new?assignees=&labels=&template=bug_report_cn.md&title=')"><i class="el-icon-aim" /> 用不爽，怒提Bug </el-button>
+                <el-button size="small" plain type="warning" @click.stop="openPage('https://github.com/WeBankBlockchain/WeCross/issues?q=is%3Aissue+is%3Aopen+Task')"><i class="el-icon-trophy" /> 领任务，拿奖品</el-button>
+                <el-button size="small" plain type="success" round @click.stop="openPage('https://github.com/WeBankBlockchain/WeCross/issues/new?assignees=&labels=CIP&template=cip_request_cn.md&title=')"><i class="el-icon-mic" /> 指方向，提需求</el-button>
               </el-button-group></el-footer>
             </el-container>
           </body>

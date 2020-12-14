@@ -16,15 +16,15 @@
     </div>
     <h2>WeCross GitHub</h2>
     <ul>
-      <li><a href="https://github.com/WeBankFinTech/WeCross" target="_blank">WeCross</a></li>
-      <li><a href="https://github.com/WeBankFinTech/WeCross-Java-SDK" target="_blank">WeCross-Java-SDK</a></li>
-      <li><a href="https://github.com/WeBankFinTech/WeCross-Console" target="_blank">WeCross-Console</a></li>
-      <li><a href="https://github.com/WeBankFinTech/WeCross-WebApp" target="_blank">WeCross-WebApp</a></li>
+      <li><a href="https://github.com/WeBankBlockchain/WeCross" target="_blank">WeCross</a></li>
+      <li><a href="https://github.com/WeBankBlockchain/WeCross-Java-SDK" target="_blank">WeCross-Java-SDK</a></li>
+      <li><a href="https://github.com/WeBankBlockchain/WeCross-Console" target="_blank">WeCross-Console</a></li>
+      <li><a href="https://github.com/WeBankBlockchain/WeCross-WebApp" target="_blank">WeCross-WebApp</a></li>
     </ul>
     <ul>
-      <li><a href="https://github.com/WeBankFinTech/WeCross-Fabric1-Stub" target="_blank">WeCross-Fabric1-Stub</a></li>
-      <li><a href="https://github.com/WeBankFinTech/WeCross-BCOS2-Stub" target="_blank">WeCross-BCOS2-Stub</a></li>
-      <li><a href="https://github.com/WeBankFinTech/WeCross-Account-Manager" target="_blank">WeCross-Account-Manager</a></li>
+      <li><a href="https://github.com/WeBankBlockchain/WeCross-Fabric1-Stub" target="_blank">WeCross-Fabric1-Stub</a></li>
+      <li><a href="https://github.com/WeBankBlockchain/WeCross-BCOS2-Stub" target="_blank">WeCross-BCOS2-Stub</a></li>
+      <li><a href="https://github.com/WeBankBlockchain/WeCross-Account-Manager" target="_blank">WeCross-Account-Manager</a></li>
     </ul>
   </div>
 </template>

@@ -15,7 +15,7 @@
 
 ### Issue
 
-可直接去[issues page](https://github.com/WeBankFinTech/WeCross-WebApp/issues)提issue。
+可直接去[issues page](https://github.com/WeBankBlockchain/WeCross-WebApp/issues)提issue。
 
 ### 修复bug
 

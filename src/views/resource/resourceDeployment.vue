@@ -419,7 +419,7 @@ export default {
       this.$msgbox({
         message: h('div', null, [
           h('p', { style: { fontSize: '16px' }}, '确认执行部署合约吗？'),
-          h('div', { style: { fontSize: '4px', marginTop: '5px' }}, '注意：若是升级FISCO BCOS合约，请勿修改/删除旧版本合约的ABI接口，否则会出现旧合约历史交易为空的情况！')
+          h('div', { style: { fontSize: '14px', marginTop: '5px' }}, '注意：若是升级FISCO BCOS合约，请勿修改/删除旧版本合约的ABI接口，否则会出现旧合约历史交易为空的情况！')
         ]),
         title: '注意',
         type: 'warning',
@@ -706,7 +706,7 @@ export default {
               }
             }
             if (_this.solidityFiles.length === 0) {
-              this.$alert('zip最外层文件中不含有Solidity或ABI文件', '错误', {
+              _this.$alert('zip最外层文件中不含有Solidity或ABI文件', '错误', {
                 confirmButtonText: '确定',
                 type: 'error'
               })

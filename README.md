@@ -13,7 +13,7 @@ WeCross WebApp是[WeCross](https://github.com/WeBankBlockchain/WeCross)可视化
 
 ## 部署与使用
 
-WeCross跨链管理平台的部署和使用可参考[使用文档]()。
+WeCross跨链管理平台的部署和使用可参考[使用文档](https://wecross.readthedocs.io/zh_CN/latest/docs/manual/webApp.html)。
 
 ## 源码编译
 

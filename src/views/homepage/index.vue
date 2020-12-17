@@ -273,10 +273,11 @@ export default {
       this.chainsInfoLoading = true
       this.chainsInfo = []
       listZones(null).then(response => {
+        const chainsInfo = []
         for (const zone of response.data.data) {
           listChains({ zone: zone }).then(res => {
             for (const chain of res.data.data) {
-              this.chainsInfo.push({
+              chainsInfo.push({
                 path: chain.zone + '.' + chain.chain,
                 type: chain.type,
                 number: chain.blockNumber
@@ -292,6 +293,7 @@ export default {
           })
         }
         this.chainsInfoLoading = false
+        this.chainsInfo = chainsInfo
       }).catch(_ => {
         this.$message({
           type: 'error',

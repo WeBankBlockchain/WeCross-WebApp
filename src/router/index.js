@@ -14,7 +14,7 @@ export const constantRoutes = [
   },
   {
     path: '/register',
-    component: () => import('@/views/register/register'),
+    component: () => import('@/views/register/index'),
     name: 'Register',
     hidden: true
   },
@@ -36,109 +36,95 @@ export const constantRoutes = [
     }]
   },
   {
-    path: '/profile',
+    path: '/account',
     component: Layout,
-    redirect: '/profile/index',
-    hidden: true,
+    name: 'Account',
+    redirect: '/account/index',
     children: [
       {
         path: 'index',
-        component: () => import('@/views/profile/index'),
-        name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true }
+        component: () => import('@/views/account/index'),
+        meta: { title: '账户管理', icon: 'el-icon-user' }
       }
     ]
   },
   {
-    path: '/accountAdmin',
+    path: '/router',
     component: Layout,
-    name: 'AccountAdmin',
-    redirect: '/accountAdmin/index',
+    name: 'router',
+    redirect: '/router/routerManager',
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/accountAdmin/index'),
-        meta: { title: '账户管理', icon: 'el-icon-s-promotion' }
-      }
-    ]
-  },
-  {
-    path: '/routerAdmin',
-    component: Layout,
-    name: 'routerAdmin',
-    redirect: '/routerAdmin/routerManage',
-    children: [
-      {
-        name: 'routerManage',
-        path: 'routerManage',
-        component: () => import('@/views/routerAdmin/routerManage'),
+        name: 'routerManager',
+        path: 'routerManager',
+        component: () => import('@/views/router/routerManager'),
         meta: { title: '路由管理', icon: 'el-icon-connection' }
       },
       {
         path: 'routerGuide',
         hidden: true,
-        component: () => import('@/views/routerAdmin/routerGuide'),
+        component: () => import('@/views/router/routerGuide'),
         meta: { title: '路由部署', icon: 'el-icon-upload' }
       }
     ]
   },
   {
-    path: '/resourceAdmin',
+    path: '/resource',
     component: Layout,
-    redirect: '/resourceAdmin/resourceList',
+    redirect: '/resource/resourceList',
     children: [
       {
         name: 'resourceList',
         path: 'resourceList',
-        component: () => import('@/views/resourceAdmin/explorer'),
-        meta: { title: '资源管理', icon: 'el-icon-s-grid' }
+        component: () => import('@/views/resource/resourceManager'),
+        meta: { title: '资源管理', icon: 'el-icon-files' }
       },
       {
-        name: 'resourceDeploy',
-        path: 'resourceDeploy',
+        name: 'resourceDeployment',
+        path: 'resourceDeployment',
         hidden: true,
-        component: () => import('@/views/resourceAdmin/resourceDeploy'),
+        component: () => import('@/views/resource/resourceDeployment'),
         meta: { title: '资源部署', icon: 'el-icon-upload' }
       }
     ]
   },
   {
-    path: '/transactionAdmin',
+    path: '/transaction',
     component: Layout,
-    name: 'TransactionAdmin',
-    redirect: 'transactionAdmin/transactionList',
+    name: 'Transaction',
+    redirect: 'transaction/transactionList',
     children: [
       {
-        path: 'transaction',
+        path: 'rawTransaction',
         hidden: true,
-        component: () => import('@/views/transactionAdmin/transaction'),
+        component: () => import('@/views/transaction/rawTransaction'),
         meta: { title: '交易发起', icon: 'el-icon-s-opportunity' }
       },
       {
         path: 'transactionList',
-        component: () => import('@/views/transactionAdmin/explorer'),
-        meta: { title: '交易管理', icon: 'el-icon-notebook-2' }
+        component: () => import('@/views/transaction/transactionManager'),
+        meta: { title: '交易管理', icon: 'el-icon-sort' }
       }
     ]
   },
   {
-    path: '/xaTransactionAdmin',
+    path: '/xaTransaction',
     component: Layout,
-    name: 'XATransactionAdmin',
-    redirect: 'transactionAdmin/xaTransactionList',
+    name: 'XATransaction',
+    redirect: 'transaction/xaTransactionList',
     children: [
       {
         name: 'xaTransaction',
         path: 'xaTransaction',
         hidden: true,
-        component: () => import('@/views/transactionAdmin/xaTransaction'),
+        component: () => import('@/views/transaction/xaTransaction'),
         meta: { title: '事务交易', icon: 'el-icon-s-order' }
       },
       {
         name: 'xaTransactionList',
         path: 'xaTransactionList',
-        component: () => import('@/views/transactionAdmin/xaTransactionList'),
-        meta: { title: '事务管理', icon: 'el-icon-tickets' }
+        component: () => import('@/views/transaction/xaTransactionList'),
+        meta: { title: '事务管理', icon: 'el-icon-finished' }
       }
     ]
   },
@@ -150,7 +136,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/documentView/index'),
+        component: () => import('@/views/document/index'),
         meta: { title: '参考文档', icon: 'el-icon-document' }
       }
     ]

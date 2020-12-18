@@ -19,11 +19,10 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="用户名"
           name="username"
           type="text"
           tabindex="1"
-          auto-complete="on"
         />
       </el-form-item>
 
@@ -36,10 +35,9 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="密码"
           name="password"
           tabindex="2"
-          auto-complete="on"
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
@@ -49,13 +47,39 @@
         </span>
       </el-form-item>
 
+      <el-row :gutter="20">
+        <el-col :span="17">
+          <el-form-item prop="authCode">
+            <el-input
+              v-model="loginForm.authCode"
+              placeholder="验证码"
+              name="imageAuthCode"
+              tabindex="3"
+              @keyup.enter.native="handleLogin"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col style="float:right;margin-right:2px" :span="6">
+          <div style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right">
+            <i v-if="imageAuthCode.imageAuthCodeBase64URL === ''" style="margin-top:12%;" class="el-icon-loading" />
+            <img
+              v-else
+              style="width:100%; height:auto;vertical-align: middle;"
+              :src="imageAuthCode.imageAuthCodeBase64URL"
+              alt=""
+              tabindex="4"
+              @click="handleUpdateAuthCode"
+            >
+          </div>
+        </el-col>
+      </el-row>
+
       <el-button
         :loading="loading"
         type="primary"
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleLogin"
-        >登录</el-button
-      >
+      >登录</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">还没有账号？</span>
@@ -66,21 +90,30 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { queryPub } from '@/utils/authcode'
+import { queryAuthCode } from '@/utils/authcode'
+import { confusePassword } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        callback()
+      }
+    }
+    const validateAuthCode = (rule, value, callback) => {
+      if (typeof value === 'undefined' || value === null || value === '') {
+        callback(new Error('请输入验证码'))
       } else {
         callback()
       }
@@ -88,7 +121,13 @@ export default {
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        authCode: ''
+      },
+      timer: null,
+      imageAuthCode: {
+        imageAuthCodeBase64URL: '',
+        randomToken: ''
       },
       loginRules: {
         username: [
@@ -96,6 +135,9 @@ export default {
         ],
         password: [
           { required: true, trigger: 'blur', validator: validatePassword }
+        ],
+        authCode: [
+          { required: true, trigger: 'blur', validator: validateAuthCode }
         ]
       },
       loading: false,
@@ -111,6 +153,28 @@ export default {
       immediate: true
     }
   },
+  created() {
+    /**
+    query publicKey for data encrypt
+    */
+    queryPub(() => {
+      console.log(' [Login] queryPub successfully.')
+    })
+
+    /**
+     update the authentication code periodically
+     */
+    const callback = (resp) => {
+      this.imageAuthCode.randomToken = resp.randomToken
+      this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+    }
+
+    queryAuthCode(callback)
+    this.timer = setInterval(queryAuthCode, 60000, callback)
+  },
+  beforeDestroy() {
+    clearInterval(this.timer)
+  },
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -122,28 +186,45 @@ export default {
         this.$refs.password.focus()
       })
     },
-
     handleRegister() {
       this.$router.push({
         path: '/register'
       })
     },
+    handleUpdateAuthCode() {
+      const callback = (resp) => {
+        this.imageAuthCode.randomToken = resp.randomToken
+        this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+      }
 
+      queryAuthCode(callback)
+    },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          var loginParams = {
+            username: this.loginForm.username,
+            password: confusePassword(this.loginForm.password),
+            authCode: this.loginForm.authCode,
+            randomToken: this.imageAuthCode.randomToken,
+            callback: (resp) => {
+              console.log(' callback response => ' + JSON.stringify(resp))
+              this.handleUpdateAuthCode()
+            }
+          }
+
           this.loading = true
           this.$store
-            .dispatch('user/login', this.loginForm)
+            .dispatch('user/login', loginParams)
             .then(() => {
               this.$router.push({ path: this.redirect || '/' })
               this.loading = false
             })
             .catch(() => {
               this.loading = false
+              this.handleUpdateAuthCode()
             })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -153,7 +234,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;

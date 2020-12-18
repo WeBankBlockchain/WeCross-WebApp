@@ -1,7 +1,7 @@
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
- * @param {string} cFormat
+ * @param {string|null} cFormat
  * @returns {string | null}
  */
 export function parseTime(time, cFormat) {
@@ -105,8 +105,7 @@ export function param2Obj(url) {
     const index = v.indexOf('=')
     if (index !== -1) {
       const name = v.substring(0, index)
-      const val = v.substring(index + 1, v.length)
-      obj[name] = val
+      obj[name] = v.substring(index + 1, v.length)
     }
   })
   return obj
@@ -129,12 +128,17 @@ export function buildRequest(path, method, data) {
   }
 }
 
-export function isValidPath(path) {
-  const regExp = /^[A-Za-z]+\.[A-Za-z_-]+\.[A-Za-z0-9_-]+$/
-  return regExp.test(path)
-}
-
 export function path2Url(path) {
   const part = path.split('.')
   return '/' + part.join('/')
+}
+
+export function limitString(str) {
+  if (typeof str === 'string') {
+    if (str.length > 40) {
+      return str.substring(0, 40) + '...'
+    } else {
+      return str
+    }
+  }
 }

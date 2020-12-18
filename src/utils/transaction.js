@@ -1,25 +1,51 @@
-export function uuid(len, radix) {
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
-  const uuid = []
-  let i
-  radix = radix || chars.length
-  if (len) {
-    // Compact form
-    for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix]
-  } else {
-    // rfc4122, version 4 form
-    let r
-    // rfc4122 requires these characters
-    uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-'
-    uuid[14] = '4'
-    // Fill in random data.  At i==19 set the high bits of clock sequence as
-    // per rfc4122, sec. 4.1.5
-    for (i = 0; i < 36; i++) {
-      if (!uuid[i]) {
-        r = 0 | Math.random() * 16
-        uuid[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r]
-      }
+const xaTransactionKey = 'xaTX'
+
+/**
+ * @typedef {Object} xaTransaction
+ * @property {string} transactionID
+ * @property {Array<string>} paths
+ */
+
+/**
+ * get XA transaction in sessionStorage
+ * @return {xaTransaction|null}
+ */
+export function getXATX() {
+  return JSON.parse(sessionStorage.getItem(xaTransactionKey))
+}
+
+export function setXATX(xaTX) {
+  return sessionStorage.setItem(xaTransactionKey, xaTX)
+}
+
+export function removeXATX() {
+  return sessionStorage.removeItem(xaTransactionKey)
+}
+
+export function buildXAResponseError(response) {
+  if (typeof response.data !== 'undefined' && response.data !== null &&
+      typeof response.data.xaResponse.chainErrorMessages !== 'undefined' &&
+      response.data.xaResponse.chainErrorMessages !== []) {
+    let str = ''
+    for (const chainErrorMessage of response.data.xaResponse.chainErrorMessages) {
+      str += chainErrorMessage.path + ': ' + chainErrorMessage.message + '\n'
     }
+    return str
+  } else {
+    return response.message
   }
-  return uuid.join('')
+}
+
+export function buildXAError(response) {
+  if (typeof response.data !== 'undefined' && response.data !== null &&
+      typeof response.data.chainErrorMessages !== 'undefined' &&
+      response.data.chainErrorMessages !== []) {
+    let str = ''
+    for (const chainErrorMessage of response.data.chainErrorMessages) {
+      str += chainErrorMessage.path + ': ' + chainErrorMessage.message + '\n'
+    }
+    return str
+  } else {
+    return response.message
+  }
 }

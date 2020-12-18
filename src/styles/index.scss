@@ -3,7 +3,6 @@
 @import './transition.scss';
 @import './element-ui.scss';
 @import './sidebar.scss';
-@import './btn.scss';
 
 body {
   height: 100%;
@@ -184,6 +183,11 @@ aside {
 //refine vue-multiselect plugin
 .multiselect {
   line-height: 16px;
+}
+
+.el-tooltip__popper {
+  max-width: 400px;
+  line-height: 180%;
 }
 
 .multiselect--active {

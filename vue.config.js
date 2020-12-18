@@ -30,7 +30,7 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    host: 'localhost',
+    host: '0.0.0.0',
     open: true,
     overlay: {
       warnings: false,
@@ -83,8 +83,8 @@ module.exports = {
 
     config
       .when(process.env.NODE_ENV !== 'development',
-        config => {
-          config
+        subConfig => {
+          subConfig
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
@@ -92,7 +92,7 @@ module.exports = {
               inline: /runtime\..*\.js$/
             }])
             .end()
-          config
+          subConfig
             .optimization.splitChunks({
               chunks: 'all',
               cacheGroups: {
@@ -117,7 +117,7 @@ module.exports = {
               }
             })
           // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
-          config.optimization.runtimeChunk('single')
+          subConfig.optimization.runtimeChunk('single')
         }
       )
   }

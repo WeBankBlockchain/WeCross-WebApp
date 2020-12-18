@@ -4,19 +4,24 @@ import store from '@/store'
 import { getToken } from '@/utils/auth'
 
 // create an axios instance
-const service = axios.create({
+const request = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout: 30000 // request timeout
 })
 
 // request interceptor
-service.interceptors.request.use(
+request.interceptors.request.use(
   config => {
     // do something before request is sent
 
     if (store.getters.token) {
+      if (store.getters.token !== getToken()) {
+        return Promise.reject(new Error('needRefresh'))
+      }
       config.headers['Authorization'] = getToken()
+      config.headers['Accept'] = 'application/json'
+      config.headers['content-type'] = 'application/json;charset=UTF-8'
     }
     return config
   },
@@ -28,13 +33,21 @@ service.interceptors.request.use(
 )
 
 // response interceptor
-service.interceptors.response.use(
+request.interceptors.response.use(
   response => {
+    if (typeof response.status === 'undefined') {
+      Message({
+        message: 'HTTP响应状态码为空!',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error('HTTP响应状态码为空!'))
+    }
     const res = response.data
     const status = response.status
     if (status !== 200) {
       Message({
-        message: res.message || 'Error',
+        message: res.message || 'Error: status is' + status,
         type: 'error',
         duration: 5 * 1000
       })
@@ -58,46 +71,64 @@ service.interceptors.response.use(
     }
   },
   error => {
-    const status = error.response.status
-    switch (status) {
-      case 401 :
-        MessageBox.confirm('您的登录态已超时，请重新登录', '超时提醒', {
-          confirmButtonText: '重登录',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-        break
-      case 400:
-        Message.error({
-          message: '参数异常'
-        })
-        break
-      case 404:
-        Message.error({
-          message: '请求URL错误：' + error.message,
-          center: true,
-          duration: 5 * 1000
-        })
-        break
-      case 500:
-        Message.error({
-          message: '服务器异常'
-        })
-        break
-      default:
-        Message({
-          message: error.message,
-          type: 'error',
-          duration: 5 * 1000
-        })
+    // another tab login, should fresh status
+    if (axios.isCancel(error)) {
+      throw new Error('canceled')
+    } else if (error.message === 'needRefresh') {
+      throw new Error('当前页面状态已变化，请刷新页面再重试！')
     }
-    console.log('err: ' + error) // for debug
-    return Promise.reject(error)
+    // timeout
+    if (error.message.includes('timeout')) {
+      Message({
+        message: '请求超时，请检查后台服务：' + error.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error(error.message || '请求超时，请检查后台服务'))
+    }
+    // no response status
+    if (typeof error.response !== 'undefined' && typeof error.response.status !== 'undefined') {
+      const status = error.response.status
+      switch (status) {
+        case 401 :
+          MessageBox.confirm('您的登录态已超时，请重新登录', '超时提醒', {
+            confirmButtonText: '重登录',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            store.dispatch('user/resetToken').then(() => {
+              location.reload()
+            })
+          })
+          break
+        case 400:
+          Message.error({
+            message: '参数异常'
+          })
+          break
+        case 404:
+          Message.error({
+            message: '请求URL错误：' + error.message,
+            center: true,
+            duration: 5 * 1000
+          })
+          break
+        case 500:
+          Message.error({
+            message: '服务器异常'
+          })
+          break
+        default:
+          Message({
+            message: error.message,
+            type: 'error',
+            duration: 5 * 1000
+          })
+      }
+      console.log('err: ' + error) // for debug
+      return Promise.reject(error)
+    }
   }
 )
 
-export default service
+export default request

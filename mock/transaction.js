@@ -86,25 +86,16 @@ module.exports = [
               commitTimestamp: '2384923894',
               rollbackTimestamp: '0',
               paths: config.body.data.paths,
-              xaTransactionSteps: [
+              'xaTransactionSteps|100': [
                 {
                   'username': '@word(3,5)',
-                  'xaTransactionSeq': 1,
+                  'xaTransactionSeq|+1': 1,
                   'path': 'a.b.1',
                   'hash': '0x12',
                   'method': 'set',
                   'args': 'hello',
                   'timestamp': '121289384'
-                }, {
-                  'username': '@word(3,5)',
-                  'xaTransactionSeq': 2,
-                  'path': 'a.b.2',
-                  'hash': '0x123',
-                  'method': 'set',
-                  'args': 'hello world',
-                  'timestamp': '1212893845'
                 }
-
               ]
             }
           }

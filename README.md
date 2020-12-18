@@ -1,66 +1,54 @@
+![](docs/images/menu_logo_wecross.png)
+
 # WeCross-WebApp
 
-## Project Structure
+[![Latest release](https://img.shields.io/github/release/WeBankBlockchain/WeCross-WebApp.svg)](https://github.com/WeBankBlockchain/WeCross-WebApp/releases/latest) [![License](https://img.shields.io/github/license/WeBankBlockchain/WeCross-WebApp)](https://www.apache.org/licenses/LICENSE-2.0) [![Language](https://img.shields.io/badge/Language-Vue-blue.svg)](https://vuejs.org/index.html)
+
+WeCross WebApp是[WeCross](https://github.com/WeBankBlockchain/WeCross)可视化跨链管理平台。
+
+## 关键特性
+
+- 跨链路由、跨链账户、跨链资源、跨链交易以及跨链事务的可视化管理
+- 跨链网络信息以及跨链路由系统信息的获取和展示
+
+## 部署与使用
+
+WeCross跨链管理平台的部署和使用可参考[使用文档](https://wecross.readthedocs.io/zh_CN/latest/docs/manual/webApp.html)。
+
+## 源码编译
+
+**环境要求**:
+
+  - [node.js](https://nodejs.org/en/) 8.10及以上
+
+**编译命令**:
 
 ```shell
-.
-├── README.md
-├── babel.config.js
-├── build               # 构建脚本
-├── mock                # 调试用mock服务器
-├── node_modules        # 包
-├── package-lock.json   # npm包指定版本配置
-├── package.json        # npm配置
-├── plop-templates      # plop构建文件模板
-├── plopfile.js         # plop构建脚本
-├── public
-├── src                 # 源代码
-└── vue.config.js       # vue+webpack 配置文件
-```
-
-```shell
-$ tree ./src -L 1
-./src
-├── App.vue         # vue主入口
-├── api             # 根据服务端API发送请求
-├── assets
-├── components      # 主要组件目录
-├── icons           # 图标组件
-├── layout          # 整体布局
-├── main.js         # 主入口
-├── permission.js   # 权限管理
-├── router          # 布局路由
-├── settings.js     # 全局配置
-├── store           # vueX状态目录
-├── styles          # scss目录
-├── utils           # 工具包
-└── views           # 主要视图
-```
-
-## Project setup
-
-```shell
+# 初始化
 npm install
-```
 
-### Compiles and hot-reloads for development
-
-```shell
+# 编译及热重载
 npm run dev
-```
 
-### Compiles and minifies for production
-
-```shell
+# 编译并最小化生产
 npm run build:prod
-```
 
-### Lints and fixes files
-
-```shell
+# 使用lint修复代码
 npm run lint
 ```
 
-### Customize configuration
+## 贡献说明
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+欢迎参与WeCross社区的维护和建设：
+
+- 提交代码(Pull requests)，可参考[代码贡献流程](CONTRIBUTING.md)以及[wiki指南](https://github.com/WeBankBlockchain/WeCross/wiki/%E8%B4%A1%E7%8C%AE%E4%BB%A3%E7%A0%81)
+- [提问和提交BUG](https://github.com/WeBankBlockchain/WeCross-WebApp/issues/new)
+
+希望在您的参与下，WeCross会越来越好！
+
+## 社区
+联系我们：wecross@webank.com
+
+## License
+
+WeCross WebApp的开源协议为Apache License 2.0，详情参考[LICENSE](./LICENSE)。

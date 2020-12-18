@@ -1,3 +1,5 @@
+import { sha256 } from 'js-sha256'
+
 /**
  * @param {string} path
  * @returns {Boolean}
@@ -11,7 +13,7 @@ export function isExternal(path) {
  * @returns {Boolean}
  */
 export function validUsername(str) {
-  return /^[a-zA-Z0-9_-]{3,16}$/.test(str)
+  return /^[a-zA-Z0-9_-]{3,18}$/.test(str)
 }
 
 /**
@@ -19,7 +21,18 @@ export function validUsername(str) {
  * @returns {Boolean}
  */
 export function validPassword(str) {
-  return /^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,18}$/.test(str)
+  // return /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$/.test(str)
+  return /^(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()_-]{6,18}$/.test(str)
+}
+
+/**
+ *
+ * @param {*} str
+ */
+export function confusePassword(str) {
+  var constantSalt = '1234567890~!#$%^&*()_+'
+  var passwdWithSalt = constantSalt + str
+  return sha256(passwdWithSalt)
 }
 
 /**
@@ -63,10 +76,7 @@ export function validAlphabets(str) {
  * @returns {Boolean}
  */
 export function isString(str) {
-  if (typeof str === 'string' || str instanceof String) {
-    return true
-  }
-  return false
+  return typeof str === 'string' || str instanceof String
 }
 
 /**

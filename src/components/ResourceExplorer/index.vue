@@ -1,51 +1,67 @@
 <template>
   <div>
-    <el-table ref="singleTable" :data="resources" v-loading="loading">
-      <el-table-column label="资源路径" min-width="100px">
-        <template slot-scope="scope">
-          {{ scope.row.path }}
-        </template>
+    <el-table
+      :data="resources"
+      tooltip-effect="light"
+      height="calc(100% - 80px)"
+    >
+      <el-table-column label="资源路径" min-width="80px" show-overflow-tooltip>
+        <template slot-scope="scope">{{ scope.row.path }}</template>
       </el-table-column>
-      <el-table-column label="资源类型" width="110px">
-        <template slot-scope="scope">
-          {{ scope.row.stubType }}
-        </template>
+      <el-table-column label="资源类型" min-width="50px">
+        <template slot-scope="scope"><el-tag type="info">{{ scope.row.stubType }}</el-tag></template>
       </el-table-column>
       <el-table-column label="属性" min-width="100px" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{ JSON.stringify(scope.row.properties)  }}</span>
+          <span>{{ JSON.stringify(scope.row.properties) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="190px">
+      <el-table-column label="操作" style="min-width: 70px">
         <template slot-scope="scope">
           <el-button-group style="padding: 5px">
-            <el-button plain icon="el-icon-view" @click="onCall(scope.row.path)" style="padding: 8px">调用</el-button>
-            <el-button plain icon="el-icon-edit-outline" @click="onSend(scope.row.path)" style="padding: 8px">发送交易
-            </el-button>
+            <el-button
+              plain
+              icon="el-icon-edit-outline"
+              style="padding: 8px"
+              @click="onSend(scope.row.path)"
+            >发交易</el-button>
+            <el-button
+              plain
+              icon="el-icon-view"
+              style="padding: 8px"
+              @click="onCall(scope.row.path)"
+            >查状态</el-button>
           </el-button-group>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-        background
-        :page-size='pageSize'
-        layout="prev, pager, next"
-        :total="total"
-        style="text-align: center; margin-top: 10px"
-        :current-page="page"
-        @prev-click="prevPage"
-        @next-click="nextPage"
-        @current-change="setPage">
-    </el-pagination>
+      background
+      :page-size="pageSize"
+      layout="prev, pager, next"
+      :total="total"
+      style="text-align: center; margin-top: 10px; min-height: 40px"
+      :current-page="page"
+      @prev-click="prevPage"
+      @next-click="nextPage"
+      @current-change="setPage"
+    />
 
-    <el-dialog :title="transactionData.execMethod === 'call'?'调用方法':'发送交易'" :visible.sync="callDialogOpen" center>
-      <TransactionForm
-          :transaction="transactionData"
-          :submit-response="submitResponse"
-          @clearClick="onClearTransaction"
-          @submitClick="onSendTransaction">
-        <el-input slot="path" v-model="transactionData.path" readonly style="width: 75%;"></el-input>
-      </TransactionForm>
+    <el-dialog :title="'调用资源'" :visible.sync="callDialogOpen" :destroy-on-close="true" width="45%">
+      <el-row>
+        <el-col :span="18" :offset="2">
+          <el-form v-loading="loading">
+            <transaction-form
+              ref="transactionForm"
+              :transaction="transactionData"
+              @submitClick="onSubmit"
+              @clearClick="onClearTransaction"
+            >
+              <el-input slot="path" v-model="transactionData.path" style="width: calc(100% - 63px)" readonly />
+            </transaction-form>
+          </el-form>
+        </el-col>
+      </el-row>
     </el-dialog>
   </div>
 </template>
@@ -55,36 +71,46 @@ import {
   getResourceList
 } from '@/api/resource'
 
-import { sendTransaction } from '@/api/transaction'
+import { call, sendTransaction } from '@/api/transaction'
 
 export default {
   name: 'ResourceExplorer',
-  props: ['chain', 'pageSize'],
   components: {
-    TransactionForm: () => import('@/views/transactionAdmin/components/TransactionForm')
+    TransactionForm: () => import('@/views/transaction/components/TransactionForm')
   },
+  props: {
+    chain: {
+      type: String,
+      default: () => { return null }
+    },
+    pageSize: {
+      type: Number,
+      default: () => { return 0 }
+    }},
   data: function() {
     return {
-      loading: false,
       total: 0,
       page: 1,
       resources: [],
       queryStatus: {},
       callDialogOpen: false,
-      transactionDatas: {},
       transactionData: {
+        transactionID: null,
         path: null,
         method: null,
         args: [{
           value: null,
           key: 0
-        }]
+        }],
+        execMethod: 'sendTransaction',
+        isXATransaction: false
       },
-      submitResponse: null
+      selection: null,
+      loading: false
     }
   },
   watch: {
-    chain: function(val) {
+    chain: function() {
       this.refresh()
     }
   },
@@ -102,17 +128,15 @@ export default {
       return status
     },
     refresh() {
-      this.loading = true
-
+      this.selection = null
       var path = this.chain
       var status = this.getQueryStatus(path)
 
       getResourceList({
-        ignoreRemote: false,
         path: path,
         offset: status.page * this.pageSize,
         size: this.pageSize
-      }).then((response) => {
+      }, null).then((response) => {
         if (response.errorCode === 0) {
           this.resources = response.data.resourceDetails
           this.total = response.data.total
@@ -120,7 +144,7 @@ export default {
         } else {
           this.$message({
             type: 'error',
-            message: '查询资源列表失败, errorCode: ' + response.errorCode
+            message: '查询交易列表失败, errorCode: ' + response.errorCode
           })
         }
       }).catch((error) => {
@@ -130,8 +154,6 @@ export default {
           message: '网络异常'
         })
       })
-
-      this.loading = false
     },
     prevPage() {
       var status = this.getQueryStatus(this.chain)
@@ -157,67 +179,75 @@ export default {
 
       this.refresh()
     },
-    getTransactionData(path) {
-      var data = this.transactionDatas[path]
-      if (data === undefined) {
-        this.transactionDatas[path] = {
-          path: path,
-          method: null,
-          args: [{
-            value: null,
-            key: 0
-          }]
-        }
-
-        data = this.transactionDatas[path]
-      }
-
-      return data
-    },
-    clearTransactionData(path) {
-      delete this.transactionDatas[path]
-    },
     onCall(path) {
-      var data = this.getTransactionData(path)
-      data.execMethod = 'call'
-      this.transactionData = data
+      this.onClearTransaction()
+      this.selection = path
+      this.transactionData.path = path
+      this.transactionData.execMethod = 'call'
       this.callDialogOpen = true
     },
     onSend(path) {
-      var data = this.getTransactionData(path)
-      data.execMethod = 'sendTransaction'
-      this.transactionData = data
+      this.onClearTransaction()
+      this.selection = path
+      this.transactionData.path = path
+      this.transactionData.execMethod = 'sendTransaction'
       this.callDialogOpen = true
     },
     onClearTransaction() {
+      this.transactionData.method = null
+      this.transactionData.args = [{
+        value: null,
+        key: 0
+      }]
+      this.transactionData.path = this.selection
     },
-    onSendTransaction(transaction) {
+    onSubmit() {
       this.loading = true
       const args = []
-      for (const arg of transaction.args) {
+      for (const arg of this.transactionData.args) {
         args.push(arg.value)
       }
-      sendTransaction({
-        version: '1',
-        path: transaction.path,
-        data: {
-          method: transaction.method,
-          args: args
-        }
-      }).then(response => {
-        if (response.errorCode !== 0 || response.data.errorCode !== 0) {
-          this.submitResponse = null
-          this.$message({
-            message: '调用失败，错误：' + (response.data === null) ? response.message : response.data.errorMessage,
-            type: 'error',
-            center: true
-          })
-        } else {
-          this.submitResponse = JSON.stringify(response, null, 4)
+      if (this.transactionData.execMethod === 'sendTransaction') {
+        sendTransaction({
+          version: '1',
+          path: this.transactionData.path,
+          data: {
+            method: this.transactionData.method,
+            args: args
+          }
+        }).then(response => {
+          this.onResponse(response)
+        }).catch(error => {
           this.loading = false
-          this.clearTransactionData(transaction.path)
-        }
-      })
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
+        })
+      } else {
+        call({
+          version: '1',
+          path: this.transactionData.path,
+          data: {
+            method: this.transactionData.method,
+            args: args
+          }
+        }).then(response => {
+          this.onResponse(response)
+        }).catch(error => {
+          this.loading = false
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
+        })
+      }
+    },
+    onResponse(response) {
+      this.loading = false
+      this.$refs.transactionForm.onResponse(response)
     }
   }
 }

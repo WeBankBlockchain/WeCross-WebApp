@@ -1,19 +1,16 @@
 <template>
   <div class="wl-transfer" :style="{ width, height }">
     <!-- transfer left -->
-    <div class="transfer-left">
+    <div class="transfer-base">
       <h3 class="transfer-title">
-        <span>待选链列表</span>
+        <span>待选资源列表</span>
       </h3>
-      <!-- transfer left panel -->
-      <div class="transfer-main">
-        <el-input
-            placeholder='输入关键字进行过滤'
-            v-model="filterFrom"
-            size="small"
-            class="filter-tree">
-        </el-input>
-        <el-tree
+      <div class="transfer-left">
+
+        <!-- transfer left panel -->
+        <div class="transfer-main">
+          <el-input v-model="filterFrom" placeholder="输入关键字进行过滤" size="small" class="filter-tree" />
+          <el-tree
             ref="from-tree"
             lazy
             node-key="key"
@@ -21,62 +18,55 @@
             :props="defaultProps"
             highlight-current
             :filter-node-method="filterNodeFrom"
-            @node-click='onChainClick'
-        ></el-tree>
+            @node-click="onChainClick"
+          />
+        </div>
       </div>
-    </div>
-    <div class="transfer-left-table">
-      <h3 class="transfer-title">
-        <span>待选资源列表</span>
-      </h3>
-      <el-table
-          stripe
-          tooltip-effect="dark"
-          ref="transferTable"
-          :data="tableShowData"
-          height="80%"
-          @selection-change="handleSelectionChange">
-        <el-table-column
-            fixed
-            width="42px"
-            type="selection">
-        </el-table-column>
-        <el-table-column label="可选资源路径" show-overflow-tooltip>
-          <template slot-scope="scope">{{ scope.row.path }}</template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-          small
-          :pager-count="5"
-          :page-size='pageObject.pageSize'
-          layout="prev, pager, next, jumper"
-          :total="pageObject.totalPageNumber"
-          style="text-align: center; margin-top: 5px"
-          :current-page.sync="pageObject.currentPage"
-          @current-change="setPage"
-          @prev-click="prevPage"
-          @next-click="nextPage">
-      </el-pagination>
+      <div class="transfer-left-table">
+        <div class="transfer-main">
+          <el-table
+            ref="finderTable"
+            stripe
+            tooltip-effect="light"
+            :data="tableShowData"
+            height="calc(100% - 34px)"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column fixed width="42px" type="selection" :selectable="(row)=>{return !row.path.endsWith('.WeCrossHub')}" />
+            <el-table-column label="可选资源路径" prop="path" show-overflow-tooltip>
+              <template slot-scope="scope">{{ scope.row.path }}</template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            small
+            :pager-count="5"
+            :page-size="pageObject.pageSize"
+            layout="prev, pager, next"
+            :total="pageObject.totalPageNumber"
+            style="text-align: center; margin-top: 10px; height: 20px"
+            :current-page.sync="pageObject.currentPage"
+            @current-change="setPage"
+            @prev-click="prevPage"
+            @next-click="nextPage"
+          />
+        </div>
+      </div>
     </div>
     <!-- transfer button -->
     <div class="transfer-center">
       <template>
         <p class="transfer-center-item">
-          <el-button
-              type="primary"
-              @click="addToAims"
-              :disabled="from_disabled">
+          <el-button :disabled="from_disabled" @click="addToAims">
             {{ "添加" }}
-            <i class="el-icon-arrow-right"></i>
+            <i class="el-icon-arrow-right" />
           </el-button>
         </p>
         <p class="transfer-center-item">
           <el-button
-              type="primary"
-              @click="removeToSource"
-              :disabled="to_disabled"
-              icon="el-icon-arrow-left">
-            {{ "移除" }}
+            :disabled="to_disabled"
+            icon="el-icon-arrow-left"
+            @click="removeToSource"
+          >{{ "移除" }}
           </el-button>
         </p>
       </template>
@@ -85,29 +75,22 @@
     <div class="transfer-right">
       <h3 class="transfer-title">
         <el-checkbox
-            :indeterminate="to_is_indeterminate"
-            v-model="to_check_all"
-            @change="toAllBoxChange">
-        </el-checkbox>
+          v-model="to_check_all"
+          :indeterminate="to_is_indeterminate"
+          @change="toAllBoxChange"
+        />
         <span>已选资源列表</span>
       </h3>
       <!-- transfer right panel -->
       <div class="transfer-main">
-        <el-input
-            placeholder='输入关键字进行过滤'
-            v-model="filterTo"
-            size="small"
-            class="filter-tree"
-        ></el-input>
-        <el-checkbox-group
-            v-model="to_check_keys"
-            class="el-transfer-panel__list">
+        <el-input v-model="filterTo" placeholder="输入关键字进行过滤" size="small" class="filter-tree" />
+        <el-checkbox-group v-model="to_check_keys" class="transfer-right-panel">
           <el-checkbox
-              class="el-transfer-panel__item"
-              :label="item.path"
-              :key="item.path"
-              v-for="item in toDataFilter">
-          </el-checkbox>
+            v-for="item in toDataFilter"
+            :key="item.path"
+            class="el-transfer-panel__item"
+            :label="item.path"
+          />
         </el-checkbox-group>
       </div>
     </div>
@@ -121,21 +104,6 @@ import { uniqueObjectArray } from '@/utils'
 
 export default {
   name: 'ResourceTransfer',
-  data() {
-    return {
-      to_is_indeterminate: false,
-      to_check_all: false,
-      from_disabled: true,
-      to_disabled: true,
-      from_check_keys: [],
-      to_check_keys: [],
-      filterFrom: '',
-      filterTo: '',
-      tableShowData: [],
-      toShowData: this.to_data,
-      toDataFilter: []
-    }
-  },
   props: {
     width: {
       type: String,
@@ -143,7 +111,7 @@ export default {
     },
     height: {
       type: String,
-      default: '400px'
+      default: '450px'
     },
     resourceData: {
       type: Array,
@@ -160,7 +128,7 @@ export default {
         }
       }
     },
-    to_data: {
+    toData: {
       type: Array,
       default: () => []
     },
@@ -174,6 +142,49 @@ export default {
           isLeaf: 'hasChildren'
         }
       }
+    }
+  },
+  data() {
+    return {
+      to_is_indeterminate: false,
+      to_check_all: false,
+      from_disabled: true,
+      to_disabled: true,
+      from_check_keys: [],
+      to_check_keys: [],
+      filterFrom: '',
+      filterTo: '',
+      tableShowData: [],
+      toShowData: this.toData,
+      toDataFilter: []
+    }
+  },
+  watch: {
+    resourceData(val) {
+      this.tableShowData = val.filter((item) => {
+        return JSON.stringify(this.toShowData).indexOf(JSON.stringify(item)) === -1
+      })
+    },
+    from_check_keys(val) {
+      this.from_disabled = (val.length === 0)
+    },
+    to_check_keys(val) {
+      if (val.length > 0) {
+        this.to_disabled = false
+        this.to_is_indeterminate = val.length < this.toShowData.length
+        this.to_check_all = val.length === this.toShowData.length
+      } else {
+        this.to_disabled = true
+        this.to_is_indeterminate = false
+        this.to_check_all = false
+      }
+    },
+    filterFrom(val) {
+      this.$refs['from-tree'].filter(val)
+    },
+    filterTo(val) {
+      this.toDataFilter = this.toShowData
+      this.toFilter(val)
     }
   },
   created() {
@@ -200,11 +211,11 @@ export default {
       this.from_check_keys = []
 
       this.$emit('add-button')
-      this.$emit('update:to_data', this.toShowData)
+      this.$emit('update:toData', this.toShowData)
     },
     removeToSource() {
       for (const toDatum of this.to_check_keys) {
-        if (toDatum.startsWith(this.$refs['from-tree'].getCurrentKey())) {
+        if (toDatum.startsWith(this.$refs['from-tree'].getCurrentKey() + '.')) {
           this.tableShowData.push({ path: toDatum })
         }
         this.toShowData = this.toShowData.filter((item) => item.path !== toDatum)
@@ -214,12 +225,12 @@ export default {
       this.toFilter(this.filterTo)
 
       this.$emit('remove-button')
-      this.$emit('update:to_data', this.toShowData)
+      this.$emit('update:toData', this.toShowData)
     },
     handleSelectionChange(val) {
       this.from_check_keys = val
     },
-    onChainClick(data, node, self) {
+    onChainClick(data) {
       if (data.type === 'zone') {
         this.$emit('zone-click', data.key)
       } else if (data.type === 'chain') {
@@ -315,32 +326,6 @@ export default {
         return item.path.indexOf(value) > -1
       })
     }
-  },
-  watch: {
-    resourceData(val) {
-      this.tableShowData = val
-    },
-    from_check_keys(val) {
-      this.from_disabled = (val.length === 0)
-    },
-    to_check_keys(val) {
-      if (val.length > 0) {
-        this.to_disabled = false
-        this.to_is_indeterminate = val.length < this.toShowData.length
-        this.to_check_all = val.length === this.toShowData.length
-      } else {
-        this.to_disabled = true
-        this.to_is_indeterminate = false
-        this.to_check_all = false
-      }
-    },
-    filterFrom(val) {
-      this.$refs['from-tree'].filter(val)
-    },
-    filterTo(val) {
-      this.toDataFilter = this.toShowData
-      this.toFilter(val)
-    }
   }
 }
 </script>
@@ -352,36 +337,70 @@ body {
   font-size: 14px;
 }
 
-body, h1, h2, h3, h4, h5, h6, ul, ol, li, p, dl, dt, dd, table, th, td {
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+ol,
+li,
+p,
+dl,
+dt,
+dd,
+table,
+th,
+td {
   margin: 0;
   padding: 0;
 }
 
-table, th, td, img {
+table,
+th,
+td,
+img {
   border: 0;
 }
 
-em, i, th {
+em,
+i,
+th {
   font-style: normal;
   text-decoration: none;
 }
 
-h1, h2, h3, h4, h5, h6, th, strong {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th,
+strong {
   font-size: 100%;
   font-weight: normal;
 }
 
-input, select, button, textarea, table {
+input,
+select,
+button,
+textarea,
+table {
   margin: 0;
   font-family: inherit;
   font-size: 100%;
 }
 
-input, button {
+input,
+button {
   outline: none;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -390,7 +409,8 @@ table {
   border-spacing: 0;
 }
 
-th, caption {
+th,
+caption {
   text-align: left;
 }
 
@@ -410,30 +430,33 @@ a {
     display: inline-block !important;
   }
 
+  .transfer-base {
+    border: 1px solid #ebeef5;
+    margin-left: 5%;
+    width: 50%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    vertical-align: middle;
+  }
+
   .transfer-left {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 41px;
+    left: 5%;
   }
 
   .transfer-left-table {
     position: absolute;
-    top: 0;
-    left: 31%;
+    top: 41px;
+    left: 30%;
   }
 
   .transfer-right {
     position: absolute;
     top: 0;
     right: 0;
-  }
-
-  .transfer-right-item {
-    height: calc((100% - 41px) / 2);
-  }
-
-  .transfer-right-small {
-    height: 41px;
+    margin-right: 5%;
   }
 
   .transfer-right-only {
@@ -442,27 +465,31 @@ a {
 
   .transfer-main {
     padding: 10px;
-    height: calc(100% - 41px);
+    height: calc(100% - 40px);
     box-sizing: border-box;
     overflow: auto;
   }
 
   .transfer-left {
-    border: 1px solid #ebeef5;
-    width: 30%;
+    width: 25%;
     height: 100%;
-    box-sizing: border-box;
-    border-radius: 5px;
     vertical-align: middle;
   }
 
   .transfer-left-table {
-    border: 1px solid #ebeef5;
-    width: 30%;
+    width: 25%;
     height: 100%;
-    box-sizing: border-box;
-    border-radius: 5px;
     vertical-align: middle;
+  }
+
+  .transfer-right-panel{
+    margin:0;
+    padding:6px 0;
+    list-style:none;
+    height: calc(100% - 40px);
+    overflow:auto;
+    -webkit-box-sizing:border-box;
+    box-sizing:border-box
   }
 
   .transfer-right {
@@ -477,8 +504,8 @@ a {
   .transfer-center {
     position: absolute;
     top: 50%;
-    left: 58%;
-    width: 20%;
+    left: 50%;
+    width: 25%;
     transform: translateY(-50%);
     text-align: center;
   }

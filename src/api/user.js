@@ -45,6 +45,22 @@ export function register(data) {
 }
 
 /**
+ * changePassword
+ * @param {string} data - encoded changePassword params
+ * @return {Promise<Response>} an axios promise object of response
+ */
+export function changePassword(data) {
+  return request({
+    url: '/auth/changePassword',
+    method: 'post',
+    data: {
+      version: '1',
+      data: data
+    }
+  })
+}
+
+/**
  * get a auth code for login/register
  * @return {Promise<Response>} an axios promise object of response
  */

@@ -7,7 +7,7 @@
       stripe
       fit
       tooltip-effect="light"
-      height="calc(100% - 75px)"
+      height="calc(100% - 55px)"
     >
       <el-table-column label="交易哈希" min-width="40px" show-overflow-tooltip>
         <template slot-scope="item">{{ item.row.txHash }}</template>

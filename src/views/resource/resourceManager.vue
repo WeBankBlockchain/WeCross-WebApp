@@ -5,9 +5,14 @@
         <el-card style="height: 80vh;">
           <div slot="header">
             <span>导航</span>
+            <el-tooltip effect="light" content="如何使用？" placement="top">
+              <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToUseResource">
+                <svg-icon style="vertical-align: 0px" icon-class="question" />
+              </el-button>
+            </el-tooltip>
           </div>
           <el-row style="height: calc(70vh - 20px); overflow-y:auto; padding: 10px;">
-            <ChainExplorer :chain="currentChain" @zone-click="onZoneClick" @chain-click="onChainClick" />
+            <ChainExplorer id="ChainExplorer" :chain="currentChain" @zone-click="onZoneClick" @chain-click="onChainClick" />
           </el-row>
         </el-card>
       </el-col>
@@ -21,10 +26,10 @@
                   <el-button icon="el-icon-refresh" size="mini" @click="() => {if(typeof currentChain !== 'undefined'){$refs['ResourceExplorer'].refresh()}}" />
                 </template>
               </el-input>
-              <el-button slot="append" icon="el-icon-upload" type="primary" style="margin-left: 10px;" @click="onDeploy">部署资源</el-button>
+              <el-button id="resourceDeploy" icon="el-icon-upload" type="primary" style="margin-left: 10px;" @click="onDeploy">部署资源</el-button>
             </div>
           </div>
-          <ResourceExplorer ref="ResourceExplorer" :chain="currentChain" :page-size="10" style="height: calc(80vh - 70px)" />
+          <ResourceExplorer id="ResourceExplorer" ref="ResourceExplorer" :chain="currentChain" :page-size="10" style="height: calc(80vh - 90px)" />
         </el-card>
       </el-col>
     </el-row>
@@ -34,6 +39,10 @@
 <script>
 import ChainExplorer from '@/components/ChainExplorer'
 import ResourceExplorer from '@/components/ResourceExplorer'
+import { resourceManagerSteps } from './resourceSteps/resourceManagerSteps'
+import introJS from 'intro.js'
+import 'intro.js/introjs.css'
+import 'intro.js/themes/introjs-modern.css'
 
 export default {
   name: 'ResourceManager',
@@ -78,6 +87,14 @@ export default {
           path: this.currentChain
         }
       })
+    },
+    howToUseResource() {
+      introJS().setOptions({
+        prevLabel: '上一步',
+        nextLabel: '下一步',
+        doneLabel: '结束',
+        steps: resourceManagerSteps
+      }).start()
     }
   }
 }

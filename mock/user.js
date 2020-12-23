@@ -67,6 +67,24 @@ module.exports = [
       }
     }
   },
+
+  // user changePassword
+  {
+    url: '/auth/changePassword',
+    type: 'post',
+    response: _ => {
+      return {
+        'version': '1',
+        'errorCode': 0,
+        'message': 'xxx',
+        'data': {
+          'errorCode': 0,
+          'message': 'success'
+        }
+      }
+    }
+  },
+
   // user authCode
   {
     url: '/auth/authCode',

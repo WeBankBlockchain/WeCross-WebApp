@@ -45,6 +45,12 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/account/index'),
         meta: { title: '账户管理', icon: 'el-icon-user' }
+      },
+      {
+        path: 'changePassword',
+        hidden: true,
+        component: () => import('@/views/account/changePassword'),
+        meta: { title: '修改密码', icon: 'el-icon-user' }
       }
     ]
   },

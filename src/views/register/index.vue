@@ -91,8 +91,14 @@
           </el-form-item>
         </el-col>
         <el-col style="float:right;margin-right:2px" :span="6">
-          <div style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right">
-            <i v-if="imageAuthCode.imageAuthCodeBase64URL === ''" style="margin-top:12%;" class="el-icon-loading" />
+          <div
+            style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right"
+          >
+            <i
+              v-if="imageAuthCode.imageAuthCodeBase64URL === ''"
+              style="margin-top:12%;"
+              class="el-icon-loading"
+            />
             <img
               v-else
               style="width:100%; height:auto;vertical-align: middle;"

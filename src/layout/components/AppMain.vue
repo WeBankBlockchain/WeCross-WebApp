@@ -1,7 +1,10 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <keep-alive v-if="isLogin" exclude="XATransaction,XATransactionList,ResourceDeploy,RawTransaction,Login,Register">
+      <keep-alive
+        v-if="isLogin"
+        exclude="XATransaction,XATransactionList,ResourceDeploy,RawTransaction,Login,Register,ChangePassword"
+      >
         <router-view :key="key" />
       </keep-alive>
       <router-view v-else :key="key" />
@@ -40,7 +43,7 @@ export default {
   position: relative;
   overflow: hidden;
 }
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   padding-top: 50px;
 }
 </style>

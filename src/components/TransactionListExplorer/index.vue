@@ -347,15 +347,20 @@ export default {
                 return value
               }
 
-              txs[txs.length] = {
-                txHash: defaultValue(response.data.txHash, 'unknown'),
-                username: defaultValue(response.data.username, 'unknown'),
-                txID: defaultValue(response.data.xaTransactionID, 'unknown'),
-                blockNumber: defaultValue(response.data.blockNumber, 'unknown'),
-                path: defaultValue(response.data.path, 'unknown'),
-                method: defaultValue(response.data.method, 'unknown'),
-                properties: defaultValue(response.data, 'unknown')
+              var newTx = {}
+              newTx.txHash = defaultValue(response.data.txHash, 'unknown')
+              newTx.username = defaultValue(response.data.username, 'unknown')
+              newTx.txID = defaultValue(response.data.txID, 'unknown')
+              newTx.blockNumber = defaultValue(response.data.blockNumber, 'unknown')
+              newTx.path = defaultValue(response.data.path, 'unknown')
+              newTx.method = defaultValue(response.data.method, 'unknown')
+              newTx.properties = defaultValue(response.data, 'unknown')
+
+              if (typeof response.data.errorCode !== 'undefined' && response.data.errorCode !== null && response.data.errorCode !== 0) {
+                newTx.errorCode = response.data.errorCode
+                newTx.message = defaultValue(response.data.message, 'unknown')
               }
+              txs[txs.length] = newTx
             }
 
             return txs

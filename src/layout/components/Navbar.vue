@@ -9,13 +9,8 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu" style="margin-right:20px">
-      <el-dropdown trigger="click" style="margin-right:10px">
-        <el-tooltip
-          class="item"
-          effect="light"
-          content="加鸡腿"
-          placement="left"
-        >
+      <el-dropdown id="issue" trigger="click" style="margin-right:10px">
+        <el-tooltip effect="light" content="加鸡腿" placement="bottom">
           <el-button circle effect="light" size="mini" icon="el-icon-chicken" />
         </el-tooltip>
         <el-dropdown-menu slot="dropdown">
@@ -89,13 +84,17 @@
           </body>
         </el-dropdown-menu>
       </el-dropdown>
-
-      <el-dropdown trigger="click">
-        <el-button round effect="light" size="mini">
-          <span
-            class="el-dropdown-link"
-          ><i class="el-icon-user" /> | {{ loginUser }}
+      <el-tooltip effect="light" content="需要帮助？" placement="bottom" style="margin-right: 10px">
+        <el-button circle effect="light" size="mini" @click="() => {this.$emit('help')}">
+          <span class="svg-container">
+            <svg-icon icon-class="question" />
           </span>
+        </el-button>
+      </el-tooltip>
+
+      <el-dropdown id="userAvatar" trigger="click">
+        <el-button round effect="light" size="mini">
+          <span><i class="el-icon-user" />  |  {{ loginUser }} </span>
         </el-button>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/account/index">

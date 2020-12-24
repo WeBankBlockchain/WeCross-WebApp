@@ -3,24 +3,19 @@
     <el-card>
       <template slot="header">
         <el-page-header
-          content="设置新的密码"
           title="账户管理"
-          @back="
-            () => {
-              this.$router.push({ path: '/account/index' });
-            }
-          "
-        />
+          @back="() => { this.$router.push({ path: '/account/index' }) }"
+        >
+          <span slot="content" style="font-size: 16px">设置新的密码</span>
+        </el-page-header>
       </template>
-      <el-form
-        ref="changePasswordForm"
-        :model="changePasswordForm"
-        :rules="changePasswordRules"
-        auto-complete="on"
-        label-position="left"
-      >
-        <el-row :gutter="20">
-          <el-col :span="8" :offset="1">
+      <el-row :gutter="10">
+        <el-col :span="10" :offset="7">
+          <el-form
+            ref="changePasswordForm"
+            :model="changePasswordForm"
+            :rules="changePasswordRules"
+          >
             <el-form-item prop="oldPassword">
               <el-input
                 ref="oldPassword"
@@ -30,18 +25,12 @@
                 name="oldPassword"
                 tabindex="1"
               />
+              <span class="show-pwd" @click="showPwd">
+                <svg-icon
+                  :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+                />
+              </span>
             </el-form-item>
-          </el-col>
-          <el-col style="float:left;margin-right:2px" :span="2">
-            <span class="show-pwd" @click="showPwd">
-              <svg-icon
-                :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
-              />
-            </span>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="8" :offset="1">
             <el-tooltip placement="right">
               <div slot="content">
                 密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
@@ -56,19 +45,13 @@
                   name="newPassword"
                   tabindex="2"
                 />
+                <span class="show-pwd" @click="showPwd">
+                  <svg-icon
+                    :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+                  />
+                </span>
               </el-form-item>
             </el-tooltip>
-          </el-col>
-          <el-col style="float:left;margin-right:2px" :span="2">
-            <span class="show-pwd" @click="showPwd">
-              <svg-icon
-                :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
-              />
-            </span>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="8" :offset="1">
             <el-tooltip placement="right">
               <div slot="content">
                 密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
@@ -82,58 +65,52 @@
                   name="confirmPassword"
                   tabindex="3"
                 />
+                <span class="show-pwd" @click="showPwd">
+                  <svg-icon
+                    :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+                  />
+                </span>
               </el-form-item>
             </el-tooltip>
-          </el-col>
-          <el-col style="float:left;margin-right:2px" :span="2">
-            <span class="show-pwd" @click="showPwd">
-              <svg-icon
-                :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
-              />
-            </span>
-          </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="5" :offset="1">
-            <el-form-item prop="authCode">
-              <el-input
-                v-model="changePasswordForm.authCode"
-                placeholder="验证码"
-                name="imageAuthCode"
-                tabindex="4"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col style="float:left;margin-right:24px" :span="3">
-            <div
-              style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right"
-            >
-              <i
-                v-if="imageAuthCode.imageAuthCodeBase64URL === ''"
-                style="margin-top:12%;"
-                class="el-icon-loading"
-              />
-              <img
-                v-else
-                style="width:100%; height:auto;vertical-align: middle;"
-                :src="imageAuthCode.imageAuthCodeBase64URL"
-                alt=""
-                tabindex="4"
-                @click="handleUpdateAuthCode"
-              >
-            </div>
-          </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="5" :offset="1">
+            <el-row :gutter="10">
+              <el-col :span="18">
+                <el-form-item prop="authCode">
+                  <el-input
+                    v-model="changePasswordForm.authCode"
+                    placeholder="验证码"
+                    name="imageAuthCode"
+                    tabindex="4"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col style="float:right;" :span="3">
+                <div
+                  style="margin-top:2px;width:104px;height:40px;text-align:center;background:white;float:right"
+                >
+                  <i
+                    v-if="imageAuthCode.imageAuthCodeBase64URL === ''"
+                    style="margin-top:12%;"
+                    class="el-icon-loading"
+                  />
+                  <img
+                    v-else
+                    style="width:100%; height:auto;vertical-align: middle;"
+                    :src="imageAuthCode.imageAuthCodeBase64URL"
+                    alt=""
+                    tabindex="4"
+                    @click="handleUpdateAuthCode"
+                  >
+                </div>
+              </el-col>
+            </el-row>
             <el-button
               type="primary"
               style="width:100%;margin-bottom:30px;"
               @click="handleChangePassword('changePasswordForm')"
             >确认</el-button>
-          </el-col>
-        </el-row>
-      </el-form>
+          </el-form>
+        </el-col>
+      </el-row>
     </el-card>
   </div>
 </template>
@@ -379,21 +356,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-body {
-  margin: 0;
-}
-.dynamicForm {
-  .el-input {
-    margin-right: 10px;
-    width: 100%;
-  }
-}
-.hoverButton {
-  font-size: 25px;
-  padding: 6px 0px;
-  color: #909399;
-  &:hover {
-    transform: rotate(180deg);
-  }
+.show-pwd {
+  position: absolute;
+  right: 10px;
+  font-size: 16px;
+  color: #889aa4;
+  cursor: pointer;
+  user-select: none;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row>
-      <el-card style="height: 90vh" header="Peer路由列表">
+      <el-card style="height: 90vh" header="跨链路由列表">
         <el-row>
           <el-button-group>
             <el-button plain icon="el-icon-refresh" :disabled="loading" @click="refresh">刷新</el-button>
@@ -17,7 +17,8 @@
             </el-table-column>
             <el-table-column label="跨链路由标识" :show-overflow-tooltip="true" min-width="60px">
               <template slot-scope="item">
-                {{ item.row.nodeID }}
+                {{ item.row.nodeID==='Local'?'':item.row.nodeID }}
+                <el-tag v-if="item.row.nodeID==='Local'" type="info">{{ item.row.nodeID }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="IP端口" min-width="60px">
@@ -27,8 +28,7 @@
             </el-table-column>
             <el-table-column label="已接入区块链" min-width="100px">
               <template slot-scope="item">
-                <li v-for="chainItem in item.row.chainInfos" :key="chainItem.name" style="list-style-type:none; margin: 5px">
-                  {{ chainItem.name }}
+                <li v-for="chainItem in item.row.chainInfos" :key="chainItem.stubType" style="list-style-type:none; margin: 5px">
                   <el-tag type="info">{{ chainItem.stubType }}</el-tag>
                 </li>
               </template>
@@ -65,6 +65,9 @@
 <script>
 import { listPeers } from '@/api/conn'
 import { addPeer } from '@/api/conn'
+import { routerStatus } from '@/api/status'
+import { getResourceList } from '@/api/resource'
+import { uniqueObjectArray } from '@/utils'
 
 export default {
   name: 'RouterManager',
@@ -84,15 +87,45 @@ export default {
   mounted() {
   },
   methods: {
+    loadLocalRouter() {
+      var chains = []
+      getResourceList(null,
+        { version: 1, data: { ignoreRemote: true }})
+        .then(res => {
+          for (const resourceDetail of res.data.resourceDetails) {
+            chains.push({ stubType: resourceDetail.stubType })
+          }
+          routerStatus().then(res => {
+            this.routers.push({
+              nodeID: 'Local',
+              address: res.data.p2pNetInfo,
+              chainInfos: uniqueObjectArray(chains)
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取路由信息失败，网络异常'
+            })
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: '获取路由信息失败，网络异常'
+          })
+        })
+    },
     refresh() {
       this.loading = true
+      this.routers = []
+      this.loadLocalRouter()
       listPeers({
         offset: (this.currentPage - 1) * 10,
         size: this.pageSize
       }).then(response => {
-        this.total = response.data.size
-        this.routers = response.data.data
-
+        this.total = response.data.size + 1
+        for (const datum of response.data.data) {
+          this.routers.push(datum)
+        }
         this.loading = false
       }).catch(() => {
         this.$message({

@@ -18,7 +18,6 @@
         :is-nest="true"
         :item="child"
         :base-path="resolvePath(child.path)"
-        class="nest-menu"
       />
     </el-submenu>
   </div>

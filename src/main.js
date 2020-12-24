@@ -10,14 +10,11 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
-import VueTour from 'vue-tour'
 
 import '@/icons' // icon
 import '@/permission' // permission control
 
-require('vue-tour/dist/vue-tour.css')
 Vue.use(ElementUI)
-Vue.use(VueTour)
 
 Vue.config.productionTip = false
 

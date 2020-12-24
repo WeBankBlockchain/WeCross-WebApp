@@ -27,6 +27,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
+    name: 'Home',
     redirect: '/home',
     children: [{
       path: 'home',
@@ -57,7 +58,7 @@ export const constantRoutes = [
   {
     path: '/router',
     component: Layout,
-    name: 'router',
+    name: 'Router',
     redirect: '/router/routerManager',
     children: [
       {
@@ -77,6 +78,7 @@ export const constantRoutes = [
   {
     path: '/resource',
     component: Layout,
+    name: 'Resource',
     redirect: '/resource/resourceList',
     children: [
       {
@@ -90,7 +92,7 @@ export const constantRoutes = [
         path: 'resourceDeployment',
         hidden: true,
         component: () => import('@/views/resource/resourceDeployment'),
-        meta: { title: '资源部署', icon: 'el-icon-upload' }
+        meta: { title: '资源部署', icon: 'el-icon-upload', activeMenu: '/resource/resourceList' }
       }
     ]
   },
@@ -104,7 +106,7 @@ export const constantRoutes = [
         path: 'rawTransaction',
         hidden: true,
         component: () => import('@/views/transaction/rawTransaction'),
-        meta: { title: '交易发起', icon: 'el-icon-s-opportunity' }
+        meta: { title: '交易发起', icon: 'el-icon-s-opportunity', activeMenu: '/transaction/transactionList' }
       },
       {
         path: 'transactionList',
@@ -117,14 +119,14 @@ export const constantRoutes = [
     path: '/xaTransaction',
     component: Layout,
     name: 'XATransaction',
-    redirect: 'transaction/xaTransactionList',
+    redirect: 'xaTransaction/xaTransactionList',
     children: [
       {
         name: 'xaTransaction',
         path: 'xaTransaction',
         hidden: true,
         component: () => import('@/views/transaction/xaTransaction'),
-        meta: { title: '事务交易', icon: 'el-icon-s-order' }
+        meta: { title: '事务交易', icon: 'el-icon-s-order', activeMenu: '/xaTransaction/xaTransactionList' }
       },
       {
         name: 'xaTransactionList',

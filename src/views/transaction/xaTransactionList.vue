@@ -129,6 +129,7 @@
 import { parseTime } from '@/utils'
 import { getXATransaction, listXATransactions } from '@/api/transaction'
 import { buildXAResponseError } from '@/utils/transaction'
+import { handleErrorMsgBox, handleWarningMsgBox } from '@/utils/messageBox'
 
 export default {
   name: 'XATransactionList',
@@ -238,19 +239,13 @@ export default {
         this.loadingList = false
 
         if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
-          this.$message({
-            type: 'error',
-            message: '查询事务列表失败: ' + buildXAResponseError(response)
-          })
+          handleErrorMsgBox('查询事务列表失败: ', '错误', buildXAResponseError(response), null).catch(_ => {})
           return
         }
 
         const xaResponse = response.data.xaResponse
         if (typeof (xaResponse) !== 'undefined' && xaResponse.status !== 0) {
-          this.$message({
-            type: 'warning',
-            message: '警告，有错误发生: ' + buildXAResponseError(response)
-          })
+          handleWarningMsgBox('警告，有错误发生: ', '警告', buildXAResponseError(response), null).catch(_ => {})
         }
 
         this.isFinished = response.data.finished
@@ -303,19 +298,13 @@ export default {
         this.loadingXA = false
 
         if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
-          this.$message({
-            type: 'error',
-            message: '查询事务详情失败: ' + JSON.stringify(response)
-          })
+          handleErrorMsgBox('查询事务详情失败: ', '错误', buildXAResponseError(response), null).catch(_ => {})
           return
         }
 
         const xaResponse = response.data.xaResponse
         if (typeof (xaResponse) !== 'undefined' && xaResponse.status !== 0) {
-          this.$message({
-            type: 'warning',
-            message: '警告，有错误发生: ' + buildXAResponseError(response)
-          })
+          handleWarningMsgBox('警告，有错误发生: ', '警告', buildXAResponseError(response), null).catch(_ => {})
         }
 
         this.xaTransaction = response.data.xaTransaction

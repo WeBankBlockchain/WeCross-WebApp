@@ -30,6 +30,16 @@ export default {
     return {
       guideSteps: [
         {
+          element: '#issue',
+          title: '意见和建议',
+          intro: '用不爽？有BUG？<br>欢迎向我们提出，让我们做得更好 😄',
+          position: 'left'
+        }, {
+          element: '#userAvatar',
+          title: '用户头像',
+          intro: '展示用户账号名，可点击按钮修改密码、退出登录',
+          position: 'left'
+        }, {
           element: '#Home',
           title: '平台首页',
           intro: '平台首页展示WeCross网络数据统计信息',
@@ -70,17 +80,6 @@ export default {
           title: '参考文档',
           intro: 'WeCross参考文档链接',
           position: 'right'
-        },
-        {
-          element: '#issue',
-          title: '意见和建议',
-          intro: '用不爽？有BUG？<br>欢迎向我们提出，让我们做得更好 😄',
-          position: 'left'
-        }, {
-          element: '#userAvatar',
-          title: '用户头像',
-          intro: '展示用户账号名，可点击按钮修改密码、退出登录',
-          position: 'left'
         }
       ]
     }
@@ -106,12 +105,25 @@ export default {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     },
     helpClick() {
-      introJS().setOptions({
-        prevLabel: '上一步',
-        nextLabel: '下一步',
-        doneLabel: '结束',
-        steps: this.guideSteps
-      }).start()
+      if (this.$store.getters.device === 'desktop') {
+        introJS().setOptions({
+          prevLabel: '上一步',
+          nextLabel: '下一步',
+          doneLabel: '结束',
+          steps: this.guideSteps
+        }).start()
+      } else {
+        this.$store.dispatch('app/openSideBar', { withoutAnimation: false }).then(_ => {
+          introJS().setOptions({
+            prevLabel: '上一步',
+            nextLabel: '下一步',
+            doneLabel: '结束',
+            steps: this.guideSteps
+          }).start().onexit(() => {
+            this.$store.dispatch('app/closeSideBar', { withoutAnimation: false }).then(() => {})
+          })
+        })
+      }
     }
   }
 }

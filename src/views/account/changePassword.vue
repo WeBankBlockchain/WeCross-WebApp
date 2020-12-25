@@ -131,7 +131,7 @@ export default {
 
   data() {
     const verifyOldPwd = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请输入旧密码'))
         return
       }
@@ -139,7 +139,7 @@ export default {
     }
 
     const verifyPwd = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请输入新密码'))
         return
       }
@@ -155,7 +155,7 @@ export default {
     }
 
     const confirmPwd = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请再次输入新密码'))
       } else if (value !== this.changePasswordForm.newPassword) {
         callback(new Error('两次新密码不一致!'))
@@ -166,8 +166,7 @@ export default {
 
     const confirmAuthCode = (rule, value, callback) => {
       if (
-        typeof value === 'undefined' ||
-        value === null ||
+        !value ||
         value.length !== 4
       ) {
         callback(new Error('请输入验证码'))

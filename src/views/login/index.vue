@@ -98,21 +98,21 @@ export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请输入用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请输入密码'))
       } else {
         callback()
       }
     }
     const validateAuthCode = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请输入验证码'))
       } else {
         callback()

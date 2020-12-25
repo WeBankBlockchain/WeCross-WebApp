@@ -28,7 +28,7 @@ export function buildXAResponseError(response) {
       response.data.xaResponse.chainErrorMessages !== []) {
     let str = ''
     for (const chainErrorMessage of response.data.xaResponse.chainErrorMessages) {
-      str += chainErrorMessage.path + ': ' + chainErrorMessage.message + '\n'
+      str += chainErrorMessage.path + ': ' + chainErrorMessage.message + '\n\n'
     }
     return str
   } else {
@@ -42,7 +42,7 @@ export function buildXAError(response) {
       response.data.chainErrorMessages !== []) {
     let str = ''
     for (const chainErrorMessage of response.data.chainErrorMessages) {
-      str += chainErrorMessage.path + ': ' + chainErrorMessage.message + '\n'
+      str += chainErrorMessage.path + ': ' + chainErrorMessage.message + '\n\n'
     }
     return str
   } else {

@@ -35,7 +35,7 @@ request.interceptors.request.use(
 // response interceptor
 request.interceptors.response.use(
   response => {
-    if (typeof response.status === 'undefined') {
+    if (!response.status) {
       Message({
         message: 'HTTP响应状态码为空!',
         type: 'error',

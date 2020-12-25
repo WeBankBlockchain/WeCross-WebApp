@@ -436,6 +436,8 @@ export default {
                 center: true,
                 duration: 5000
               })
+              removeXATX()
+              this.$store.commit('transaction/RESET_STATE')
             } else {
               if (response.data.xaResponse.status !== 0) {
                 this.$message.warning({
@@ -443,7 +445,8 @@ export default {
                   center: true,
                   duration: 5000
                 })
-                return
+                removeXATX()
+                this.$store.commit('transaction/RESET_STATE')
               }
               if (response.data.xaTransaction.status !== 'processing') {
                 this.$msgbox('恢复事务失败，该事务已经回滚/提交！', '错误', 'error')

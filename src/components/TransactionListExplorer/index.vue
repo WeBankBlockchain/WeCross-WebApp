@@ -293,7 +293,7 @@ export default {
             }
 
             for (const tx of txHashes) {
-              if (tx.txHash === null || tx.txHash === '') {
+              if (!tx.txHash) {
                 throw new Error('交易哈希不存在，详情: ' + JSON.stringify(tx))
               }
 
@@ -341,7 +341,7 @@ export default {
               delete response.data.receiptBytes
 
               const defaultValue = (value, defaultValue) => {
-                if (typeof value === 'undefined' || value === null) {
+                if (!value) {
                   return defaultValue
                 }
                 return value

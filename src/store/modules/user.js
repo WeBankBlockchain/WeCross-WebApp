@@ -1,5 +1,15 @@
 import { login, logout } from '@/api/user'
-import { getToken, setToken, removeToken, getPubKey, removePubKey, setUsername, removeUsername, getUsername } from '@/utils/auth'
+import {
+  getToken,
+  setToken,
+  removeToken,
+  getPubKey,
+  removePubKey,
+  setUsername,
+  removeUsername,
+  getUsername,
+  isUserFirstTimeUse
+} from '@/utils/auth'
 import { resetRouter } from '@/router'
 import { Message } from 'element-ui'
 import { rsa_encode } from '@/utils/rsa'
@@ -81,32 +91,34 @@ const actions = {
           }
 
           resolve()
-          if (typeof callback === 'function' && callback !== null) {
+          if (typeof callback === 'function') {
             callback(response.data)
           }
         } else {
-          listAccount().then(res => {
-            if (res.data.chainAccounts.length < 1) {
-              introJS().setOptions({
-                prevLabel: '上一步',
-                nextLabel: '下一步',
-                doneLabel: '结束',
-                tooltipClass: 'customTooltip',
-                steps: [
-                  {
-                    title: '欢迎✨',
-                    intro: '欢迎使用WeCross网页管理平台！<br><br><strong>请检查是否配置链账户</strong><li>未配置链账户将会影响基本使用</li>'
-                  },
-                  {
-                    element: '#Account',
-                    title: '账户管理',
-                    intro: '请在这里配置链账户信息<br><br>账户功能详情介绍请参考：<a class="text-blue" href="https://wecross.readthedocs.io/zh_CN/latest/docs/manual/account.html" target="_blank">账号服务</a>',
-                    position: 'right'
-                  }
-                ]
-              }).start()
-            }
-          })
+          if (isUserFirstTimeUse(username)) {
+            listAccount().then(res => {
+              if (res.data.chainAccounts.length < 1) {
+                introJS().setOptions({
+                  prevLabel: '上一步',
+                  nextLabel: '下一步',
+                  doneLabel: '结束',
+                  tooltipClass: 'customTooltip',
+                  steps: [
+                    {
+                      title: '欢迎✨',
+                      intro: '欢迎使用WeCross网页管理平台！<br><br><strong>请检查是否配置链账户</strong><li>未配置链账户将会影响基本使用</li>'
+                    },
+                    {
+                      element: '#Account',
+                      title: '账户管理',
+                      intro: '请在这里配置链账户信息<br><br>账户功能详情介绍请参考：<a class="text-blue" href="https://wecross.readthedocs.io/zh_CN/latest/docs/manual/account.html" target="_blank">账号服务</a>',
+                      position: 'right'
+                    }
+                  ]
+                }).start()
+              }
+            })
+          }
           commit('SET_TOKEN', response.data.credential)
           commit('SET_NAME', username)
           setToken(response.data.credential)

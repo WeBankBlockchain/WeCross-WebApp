@@ -150,7 +150,7 @@ export default {
       }
     }
     const verifyPwd = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请输入密码'))
         return
       }
@@ -165,7 +165,7 @@ export default {
       }
     }
     const confirmPwd = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请再次输入密码'))
       } else if (value !== this.registerForm.password) {
         callback(new Error('两次输入密码不一致!'))
@@ -174,7 +174,7 @@ export default {
       }
     }
     const confirmAuthCode = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请输入验证码'))
       } else {
         callback()

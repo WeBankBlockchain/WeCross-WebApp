@@ -92,6 +92,8 @@
 <script>
 
 import { handleErrorMsgBox } from '@/utils/messageBox'
+import { isChainAccountFit } from '@/utils/chainAccountIntro'
+import { detail } from '@/api/resource'
 
 export default {
   name: 'TransactionForm',
@@ -174,23 +176,27 @@ export default {
       this.submitResponse = null
       this.$refs['transactionForm'].validate((validate) => {
         if (validate) {
-          if (this.transaction.execMethod === 'sendTransaction') {
-            this.$confirm(`确定执行该调用？`, '确认信息', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning',
-              center: true
-            }).then(() => {
-              this.$emit('submitClick', this.transaction)
-            }).catch(_ => {
-              this.$message({
-                message: '已取消执行',
-                type: 'info'
-              })
+          detail(this.transaction.path).then(res => {
+            isChainAccountFit(res.data.stubType, () => {
+              if (this.transaction.execMethod === 'sendTransaction') {
+                this.$confirm(`确定执行该调用？`, '确认信息', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning',
+                  center: true
+                }).then(() => {
+                  this.$emit('submitClick', this.transaction)
+                }).catch(_ => {
+                  this.$message({
+                    message: '已取消执行',
+                    type: 'info'
+                  })
+                })
+              } else {
+                this.$emit('submitClick', this.transaction)
+              }
             })
-          } else {
-            this.$emit('submitClick', this.transaction)
-          }
+          })
         } else {
           this.$message({
             message: '请检查所有输入',
@@ -210,7 +216,7 @@ export default {
           code = response.data.errorCode
           message = response.data.message
         }
-        handleErrorMsgBox('执行错误：', '错误码: ' + code, message, null)
+        handleErrorMsgBox('执行错误：', '错误码: ' + code, message, null).catch(_ => {})
       } else {
         this.submitResponse = JSON.stringify(response.data.result)
       }

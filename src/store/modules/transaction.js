@@ -27,7 +27,7 @@ const actions = {
       startXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
           const errMessage = buildXAError(response)
-          handleErrorMsgBox('开启事务失败，错误：', '错误', errMessage).then(_ => {})
+          handleErrorMsgBox('开启事务失败，错误：', '错误', errMessage, null).then(_ => {})
           reject()
         } else {
           commit('SET_TRANSACTION', { transactionID: transaction.data.xaTransactionID, paths: transaction.data.paths })
@@ -35,7 +35,7 @@ const actions = {
           resolve()
         }
       }).catch(error => {
-        handleErrorMsgBox('开启事务失败，错误：', '错误', error.message).then(_ => {})
+        handleErrorMsgBox('开启事务失败，错误：', '错误', error.message, null).then(_ => {})
         reject(error)
       })
     })
@@ -45,7 +45,7 @@ const actions = {
       commitXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
           const errMessage = buildXAError(response)
-          handleErrorMsgBox('提交事务失败，错误：', '错误', errMessage)
+          handleErrorMsgBox('提交事务失败，错误：', '错误', errMessage, null)
             .then(_ => {
               if (/(committed|rolledback)/.test(errMessage)) {
                 commit('RESET_STATE')
@@ -59,7 +59,7 @@ const actions = {
           resolve()
         }
       }).catch(error => {
-        handleErrorMsgBox('提交事务失败，错误：', '错误', error.message)
+        handleErrorMsgBox('提交事务失败，错误：', '错误', error.message, null)
           .then(_ => {})
         reject(error)
       })
@@ -70,7 +70,7 @@ const actions = {
       rollbackXATransaction(transaction).then(response => {
         if (response.errorCode !== 0 || response.data.status !== 0) {
           const errMessage = buildXAError(response)
-          handleErrorMsgBox('回滚事务失败，错误：', '错误', errMessage)
+          handleErrorMsgBox('回滚事务失败，错误：', '错误', errMessage, null)
             .then(_ => {
               if (/(committed|rolledback)$/.test(errMessage)) {
                 commit('RESET_STATE')
@@ -84,7 +84,7 @@ const actions = {
           resolve()
         }
       }).catch(error => {
-        handleErrorMsgBox('回滚事务失败，错误：', '错误', error.message)
+        handleErrorMsgBox('回滚事务失败，错误：', '错误', error.message, null)
           .then(_ => {})
         reject(error)
       })

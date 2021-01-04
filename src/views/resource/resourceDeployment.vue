@@ -257,6 +257,7 @@ import introJS from 'intro.js'
 import 'intro.js/introjs.css'
 import 'intro.js/themes/introjs-modern.css'
 import { stepRoute } from './resourceSteps/resourceDeploySteps'
+import { isChainAccountFit } from '@/utils/chainAccountIntro'
 
 const JSZip = require('jszip')
 
@@ -386,30 +387,32 @@ export default {
     onSubmit() {
       this.$refs['deployForm'].validate((validate) => {
         if (validate) {
-          this.loading = true
-          switch (this.form.method) {
-            case 'deploy' :
-              this.sourceContractLine = []
-              this.dependenciesLine = []
-              this.onBCOSDeploy()
-              break
-            case 'register':
-              this.sourceContractLine = []
-              this.dependenciesLine = []
-              this.onBCOSRegister()
-              break
-            case 'install':
-              this.onFabricInstall()
-              break
-            case 'instantiate':
-              this.onFabricInstantiate()
-              break
-            case 'upgrade':
-              this.onFabricUpgrade()
-              break
-            default:
-              console.log(this.form)
-          }
+          isChainAccountFit(this.form.stubType, () => {
+            this.loading = true
+            switch (this.form.method) {
+              case 'deploy' :
+                this.sourceContractLine = []
+                this.dependenciesLine = []
+                this.onBCOSDeploy()
+                break
+              case 'register':
+                this.sourceContractLine = []
+                this.dependenciesLine = []
+                this.onBCOSRegister()
+                break
+              case 'install':
+                this.onFabricInstall()
+                break
+              case 'instantiate':
+                this.onFabricInstantiate()
+                break
+              case 'upgrade':
+                this.onFabricUpgrade()
+                break
+              default:
+                console.log(this.form)
+            }
+          })
         } else {
           this.$message({
             message: '请检查所有输入',

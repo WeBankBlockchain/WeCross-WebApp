@@ -52,8 +52,6 @@
             :total="total"
             :current-page="currentPage"
             :disabled="loading"
-            @prev-click="prevPage"
-            @next-click="nextPage"
             @current-change="setPage"
           />
         </el-row>
@@ -173,14 +171,6 @@ export default {
     },
     getAlias(nodeID) {
       return localStorage.getItem('routerAlias-' + nodeID)
-    },
-    nextPage() {
-      ++this.currentPage
-      this.refresh()
-    },
-    prevPage() {
-      --this.currentPage
-      this.refresh()
     },
     setPage(page) {
       this.currentPage = page

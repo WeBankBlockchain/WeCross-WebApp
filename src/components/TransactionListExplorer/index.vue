@@ -61,7 +61,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="资源路径" min-width="40px" show-overflow-tooltip>
+      <el-table-column label="资源路径" min-width="50px" show-overflow-tooltip>
         <template slot-scope="item">
           <div v-if="item.row.path === 'unknown'">
             <el-popover trigger="hover" placement="top">
@@ -95,43 +95,41 @@
       </el-table-column>
       <el-table-column label="回执" min-width="20px">
         <template slot-scope="item">
-          <el-tooltip
-            effect="light"
-            content="点击查看交易回执详情"
-            placement="top"
+          <el-popover
+            width="600"
+            trigger="click"
+            @show="handleReceiptDetails(item.row)"
           >
-            <el-button
-              type="text"
-              size="small"
-              @click="handleReceiptDetails(item.row)"
-            >详情</el-button>
-          </el-tooltip>
+            <div class="el-popover__title">
+              交易回执详情
+              <clipboard :input-data="JSON.stringify(txReceipt)" style="float:right;" />
+            </div>
+            <div class="json_css">
+              <vue-json-pretty
+                :expand-depth="2"
+                :deep="3"
+                show-length
+                copyable
+                :data="txReceipt"
+                @click="handleClick"
+              />
+            </div>
+            <el-tooltip
+              slot="reference"
+              effect="light"
+              content="点击查看交易回执详情"
+              placement="top"
+            >
+              <el-button
+                type="text"
+                size="small"
+                @click="handleReceiptDetails(item.row)"
+              >详情</el-button>
+            </el-tooltip>
+          </el-popover>
         </template>
       </el-table-column>
     </el-table>
-    <el-drawer :visible.sync="drawer" :with-header="false">
-      <el-card style="height:100%">
-        <div slot="header" class="clearfix">
-          <span> 交易回执详情 </span>
-          <i
-            class="el-icon-close"
-            style="float:right;cursor:pointer"
-            @click="drawer = false"
-          />
-        </div>
-        <div class="json_css">
-          <vue-json-pretty
-            :expand-depth="2"
-            :deep="3"
-            show-length
-            copyable
-            :data="txReceipt"
-            @click="handleClick"
-          />
-        </div>
-        <div />
-      </el-card>
-    </el-drawer>
     <!--pagination-->
     <el-row :gutter="20" style="margin-top: 10px; text-align: center">
       <el-button
@@ -155,13 +153,15 @@
 <script>
 import { listTransactions } from '@/api/transaction'
 import { getTransaction } from '@/api/transaction'
+import Clipboard from '@/components/Clipboard/index'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
 
 export default {
   name: 'TransactionList',
   components: {
-    VueJsonPretty
+    VueJsonPretty,
+    Clipboard
   },
   props: {
     chain: {
@@ -184,7 +184,6 @@ export default {
       nextBlockNumber: -1,
       currentStep: 0,
       historyData: [],
-      drawer: false,
       txReceipt: '',
       controlVersion: 0
     }
@@ -209,7 +208,6 @@ export default {
       this.buttonState.disableNextClick = false
     },
     handleReceiptDetails(val) {
-      this.drawer = true
       this.txReceipt = val
     },
     handlePrevClick() {
@@ -350,7 +348,7 @@ export default {
               var newTx = {}
               newTx.txHash = defaultValue(response.data.txHash, 'unknown')
               newTx.username = defaultValue(response.data.username, 'unknown')
-              newTx.txID = defaultValue(response.data.txID, 'unknown')
+              newTx.txID = defaultValue(response.data.xaTransactionID, 'unknown')
               newTx.blockNumber = defaultValue(response.data.blockNumber, 'unknown')
               newTx.path = defaultValue(response.data.path, 'unknown')
               newTx.method = defaultValue(response.data.method, 'unknown')
@@ -410,13 +408,25 @@ export default {
 </script>
 
 <style lang="scss">
-.el-drawer.rtl {
-  overflow-y: scroll;
+.vjs-key {
+  color: #BC2C10;
+}
+.vjs-tree {
+  .vjs-value__string {
+    color: #458385;
+  }
+  .vjs-value__number {
+    color: #9D2DA7;
+  }
+  .vjs-value__null {
+    color: #fb030d;
+  }
 }
 
 .json_css {
   width: autosize;
-  height: autosize;
+  height: 250px;
+  overflow-y: auto;
   word-break: break-all;
 }
 </style>

@@ -66,13 +66,18 @@
           </el-form-item>
         </div>
         <el-form-item style="margin-bottom: 20px">
-          <el-button
-            v-loading.fullscreen.lock="loading"
-            size="small"
-            type="primary"
-            @click="onSubmit"
-          >执行调用</el-button>
-          <el-button size="small" @click="clearForm">重置表单</el-button>
+          <el-popconfirm
+            title="确定执行该调用？"
+            @onConfirm="onSubmit"
+          >
+            <el-button
+              slot="reference"
+              v-loading.fullscreen.lock="loading"
+              size="small"
+              type="primary"
+            >执行调用</el-button>
+          </el-popconfirm>
+          <el-button size="small" style="margin-left: 10px" @click="clearForm">重置表单</el-button>
         </el-form-item>
         <el-form-item v-if="submitResponse !== null" label="调用结果:">
           <el-input
@@ -161,7 +166,7 @@ export default {
     addArg() {
       this.submitResponse = null
       this.transaction.args.push({
-        value: '',
+        value: null,
         key: Date.now()
       })
     },
@@ -178,23 +183,7 @@ export default {
         if (validate) {
           detail(this.transaction.path).then(res => {
             isChainAccountFit(res.data.stubType, () => {
-              if (this.transaction.execMethod === 'sendTransaction') {
-                this.$confirm(`确定执行该调用？`, '确认信息', {
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
-                  type: 'warning',
-                  center: true
-                }).then(() => {
-                  this.$emit('submitClick', this.transaction)
-                }).catch(_ => {
-                  this.$message({
-                    message: '已取消执行',
-                    type: 'info'
-                  })
-                })
-              } else {
-                this.$emit('submitClick', this.transaction)
-              }
+              this.$emit('submitClick', this.transaction)
             })
           })
         } else {

@@ -126,7 +126,7 @@
             <el-row>
               <div style="font-size: 14px">
                 <el-tooltip effect="light" content="复制事务ID" placement="top-start">
-                  <clipboard :input-data="this.$store.getters.transactionID" style="float:right;" />
+                  <clipboard :input-data="this.$store.getters.transactionID" style="float:right;z-index: 1000" />
                 </el-tooltip>
                 <el-tooltip effect="light" :content="this.$store.getters.transactionID" placement="top-start">
                   <div>

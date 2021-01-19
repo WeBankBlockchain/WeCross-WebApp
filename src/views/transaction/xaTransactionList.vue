@@ -43,12 +43,13 @@
             </el-table-column>
             <el-table-column type="expand" label="执行步骤" width="80%">
               <template slot-scope="scope">
-                <el-form v-loading="loadingXA" inline class="table-expand">
+                <div v-loading="loadingXA" class="table-expand">
                   <el-table
                     ref="singleTable"
                     :data="xaTransaction ? xaTransaction.xaTransactionSteps : null"
+                    max-height="400px"
                     fit
-                    highlight-current-row
+                    empty-text="无事务步骤"
                     tooltip-effect="light"
                   >
                     <el-table-column label="执行时间" min-width="10%">
@@ -98,7 +99,7 @@
                       </el-form-item>
                     </el-form>
                   </el-row>
-                </el-form>
+                </div>
               </template>
             </el-table-column>
           </el-table>

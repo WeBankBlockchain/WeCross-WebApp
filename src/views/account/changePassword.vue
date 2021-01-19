@@ -73,7 +73,7 @@
               </el-form-item>
             </el-tooltip>
             <el-row :gutter="10">
-              <el-col :span="18">
+              <el-col :span="16">
                 <el-form-item prop="authCode">
                   <el-input
                     v-model="changePasswordForm.authCode"
@@ -85,7 +85,7 @@
               </el-col>
               <el-col style="float:right;" :span="3">
                 <div
-                  style="margin-top:2px;width:104px;height:40px;text-align:center;background:white;float:right"
+                  style="width:104px;height:40px;text-align:center;background:white;float:right"
                 >
                   <i
                     v-if="imageAuthCode.imageAuthCodeBase64URL === ''"
@@ -221,6 +221,9 @@ export default {
     queryAuthCode(callback)
     this.timer = setInterval(queryAuthCode, 60000, callback)
   },
+  beforeDestroy() {
+    clearInterval(this.timer)
+  },
   methods: {
     reset() {
       this.changePasswordForm.newPassword = ''
@@ -273,7 +276,8 @@ export default {
                 type: 'success',
                 message: '密码修改成功!'
               })
-              // 退出？？？
+              this.$refs[formName].resetFields()
+              this.handleUpdateAuthCode()
             } else if (
               typeof errorCode !== 'undefined' &&
               errorCode === ErrorCode.InvalidParameters

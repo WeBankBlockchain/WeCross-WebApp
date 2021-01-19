@@ -87,6 +87,7 @@
               placeholder="验证码"
               name="imageAuthCode"
               tabindex="4"
+              @keyup.enter.native="handleRegister('registerForm')"
             />
           </el-form-item>
         </el-col>

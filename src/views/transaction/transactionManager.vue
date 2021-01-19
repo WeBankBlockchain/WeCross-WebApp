@@ -5,7 +5,7 @@
         <el-card style="height: 80vh">
           <div slot="header">
             <span>导航</span>
-            <el-tooltip effect="light" content="如何使用？" placement="top">
+            <el-tooltip id="transactionHelp" effect="light" content="如何使用？" placement="top">
               <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToUseTransaction">
                 <svg-icon style="vertical-align: 0px" icon-class="question" />
               </el-button>

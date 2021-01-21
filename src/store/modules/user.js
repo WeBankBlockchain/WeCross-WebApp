@@ -102,6 +102,7 @@ const actions = {
                   prevLabel: '上一步',
                   nextLabel: '下一步',
                   doneLabel: '结束',
+                  disableInteraction: true,
                   tooltipClass: 'customTooltip',
                   steps: [
                     {

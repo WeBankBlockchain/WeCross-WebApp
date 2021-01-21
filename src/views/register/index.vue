@@ -33,7 +33,7 @@
 
       <el-tooltip placement="right">
         <div slot="content">
-          密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
+          密码长度6~18个字符，至少包含一个数字和一个字母，支持特殊字符~!@#$%^&*()
         </div>
         <el-form-item prop="password">
           <span class="svg-container">
@@ -58,7 +58,7 @@
       </el-tooltip>
       <el-tooltip placement="right">
         <div slot="content">
-          密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
+          确认密码必须一致
         </div>
         <el-form-item prop="checkPass">
           <span class="svg-container">
@@ -158,7 +158,7 @@ export default {
       if (!validPassword(value)) {
         callback(
           new Error(
-            '密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和一个字母'
+            '密码长度6~18个字符，至少包含一个数字和一个字母，支持特殊字符~!@#$%^&*()'
           )
         )
       } else {

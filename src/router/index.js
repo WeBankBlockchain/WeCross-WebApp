@@ -44,6 +44,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
+        name: 'AccountManager',
         component: () => import('@/views/account/index'),
         meta: { title: '账户管理', icon: 'el-icon-user' }
       },
@@ -110,6 +111,7 @@ export const constantRoutes = [
       },
       {
         path: 'transactionList',
+        name: 'TransactionList',
         component: () => import('@/views/transaction/transactionManager'),
         meta: { title: '交易管理', icon: 'el-icon-sort' }
       }

@@ -4,7 +4,7 @@
       <el-card>
         <div slot="header">
           <span>跨链账户信息</span>
-          <el-tooltip effect="light" content="如何使用？" placement="top">
+          <el-tooltip id="accountHelp" effect="light" content="如何使用？" placement="top">
             <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToUse">
               <svg-icon style="vertical-align: 0px" icon-class="question" />
             </el-button>
@@ -667,6 +667,7 @@ export default {
         prevLabel: '上一步',
         nextLabel: '下一步',
         doneLabel: '结束',
+        disableInteraction: true,
         steps: [
           {
             element: '#UA',

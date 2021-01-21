@@ -35,6 +35,14 @@ request.interceptors.request.use(
 // response interceptor
 request.interceptors.response.use(
   response => {
+    if (!response) {
+      Message({
+        message: 'HTTP返回为空!',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error('HTTP返回为空'))
+    }
     if (!response.status) {
       Message({
         message: 'HTTP响应状态码为空!',

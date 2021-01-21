@@ -179,6 +179,7 @@ export default {
           prevLabel: '上一步',
           nextLabel: '下一步',
           doneLabel: '结束',
+          disableInteraction: true,
           steps: this.homePageSteps
         }).start()
       } else {
@@ -187,6 +188,7 @@ export default {
             prevLabel: '上一步',
             nextLabel: '下一步',
             doneLabel: '结束',
+            disableInteraction: true,
             steps: this.homePageSteps
           }).start().onexit(() => {
             this.$store.dispatch('app/closeSideBar', { withoutAnimation: false }).then(() => {})
@@ -201,6 +203,7 @@ export default {
           prevLabel: '上一步',
           nextLabel: '下一步',
           doneLabel: '结束',
+          disableInteraction: true,
           steps: this.accountSteps
         }).start()
       } else {
@@ -218,6 +221,7 @@ export default {
               }
             })
             .setOptions({
+              disableInteraction: true,
               prevLabel: '上一步',
               nextLabel: '下一步',
               doneLabel: '结束'
@@ -233,6 +237,7 @@ export default {
           prevLabel: '上一步',
           nextLabel: '下一步',
           doneLabel: '结束',
+          disableInteraction: true,
           steps: this.resourceSteps
         }).start()
       } else {
@@ -251,6 +256,7 @@ export default {
               }
             })
             .setOptions({
+              disableInteraction: true,
               prevLabel: '上一步',
               nextLabel: '下一步',
               doneLabel: '结束'
@@ -266,6 +272,7 @@ export default {
           prevLabel: '上一步',
           nextLabel: '下一步',
           doneLabel: '结束',
+          disableInteraction: true,
           steps: this.transactionStep
         }).start()
       } else {
@@ -284,6 +291,7 @@ export default {
               }
             })
             .setOptions({
+              disableInteraction: true,
               prevLabel: '上一步',
               nextLabel: '下一步',
               doneLabel: '结束'
@@ -298,6 +306,7 @@ export default {
         prevLabel: '上一步',
         nextLabel: '下一步',
         doneLabel: '结束',
+        disableInteraction: true,
         steps: [
           {
             title: '欢迎✨',
@@ -317,6 +326,7 @@ export default {
         prevLabel: '上一步',
         nextLabel: '下一步',
         doneLabel: '结束',
+        disableInteraction: true,
         steps: [
           {
             element: '#Router',
@@ -332,6 +342,7 @@ export default {
         prevLabel: '上一步',
         nextLabel: '下一步',
         doneLabel: '结束',
+        disableInteraction: true,
         steps: [
           {
             element: '#XATransaction',

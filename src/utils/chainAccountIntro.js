@@ -15,6 +15,7 @@ export function isChainAccountFit(chainTypes, callBack) {
       prevLabel: '上一步',
       nextLabel: '下一步',
       doneLabel: '结束',
+      disableInteraction: true,
       tooltipClass: 'customTooltip',
       steps: [
         {
@@ -42,6 +43,7 @@ export function isChainAccountFit(chainTypes, callBack) {
             prevLabel: '上一步',
             nextLabel: '下一步',
             doneLabel: '结束',
+            disableInteraction: true,
             tooltipClass: 'customTooltip',
             steps: [
               {
@@ -66,6 +68,7 @@ export function isChainAccountFit(chainTypes, callBack) {
           prevLabel: '上一步',
           nextLabel: '下一步',
           doneLabel: '结束',
+          disableInteraction: true,
           tooltipClass: 'customTooltip',
           steps: [
             {

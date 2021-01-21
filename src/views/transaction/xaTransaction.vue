@@ -705,6 +705,7 @@ export default {
         prevLabel: '上一步',
         nextLabel: '下一步',
         doneLabel: '结束',
+        disableInteraction: true,
         steps: this.startXASteps
       }).start()
     },
@@ -713,6 +714,7 @@ export default {
         prevLabel: '上一步',
         nextLabel: '下一步',
         doneLabel: '结束',
+        disableInteraction: true,
         steps: this.execXASteps
       }).start()
     }

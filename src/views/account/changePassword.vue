@@ -10,7 +10,7 @@
         </el-page-header>
       </template>
       <el-row :gutter="10">
-        <el-col :span="10" :offset="7">
+        <el-col :span="12" :offset="6">
           <el-form
             ref="changePasswordForm"
             :model="changePasswordForm"
@@ -33,7 +33,7 @@
             </el-form-item>
             <el-tooltip placement="right">
               <div slot="content">
-                密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
+                密码长度6~18个字符，至少包含一个数字和一个字母，支持特殊字符~!@#$%^&*()
               </div>
               <el-form-item prop="newPassword">
                 <el-input
@@ -54,7 +54,7 @@
             </el-tooltip>
             <el-tooltip placement="right">
               <div slot="content">
-                密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
+                密码长度6~18个字符，至少包含一个数字和一个字母，支持特殊字符~!@#$%^&*()
               </div>
               <el-form-item prop="confirmPassword">
                 <el-input
@@ -146,7 +146,13 @@ export default {
       if (!validPassword(value)) {
         callback(
           new Error(
-            '密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和一个字母'
+            '密码长度6~18个字符，至少包含一个数字和一个字母，支持特殊字符~!@#$%^&*()'
+          )
+        )
+      } else if (this.$refs.oldPassword.nativeInputValue === value) {
+        callback(
+          new Error(
+            '新密码不能与旧密码相同'
           )
         )
       } else {
@@ -262,8 +268,14 @@ export default {
 
         changePassword(encoded)
           .then((resp) => {
-            var data = resp.data
-            var errorCode = data.errorCode
+            if (!resp || !resp.data) {
+              this.$message({
+                type: 'error',
+                message: 'response is null, please check server status'
+              })
+            }
+            const data = resp.data
+            const errorCode = data.errorCode
 
             if (typeof resp.errorCode !== 'undefined' && resp.errorCode !== 0) {
               this.$message({

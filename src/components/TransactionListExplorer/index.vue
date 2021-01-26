@@ -156,6 +156,7 @@ import { getTransaction } from '@/api/transaction'
 import Clipboard from '@/components/Clipboard/index'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
+import { handleErrorMsgBox } from '@/utils/messageBox'
 
 export default {
   name: 'TransactionList',
@@ -273,12 +274,7 @@ export default {
       listTransactions(params)
         .then((resp) => {
           if (typeof resp.errorCode === 'undefined' || resp.errorCode !== 0) {
-            this.$message({
-              type: 'error',
-              message:
-                '查询交易列表失败, 请手动刷新后再尝试, 详情: ' +
-                JSON.stringify(resp)
-            })
+            handleErrorMsgBox('查询交易列表失败, 请手动刷新后再尝试, 详情: ', '错误', JSON.stringify(resp), null)
             this.buttonState.loading = false
             return
           }

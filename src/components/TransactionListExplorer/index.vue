@@ -229,6 +229,7 @@ export default {
         this.currentStep += 1
         this.updateButtonStatus()
       } else {
+        this.controlVersion = this.controlVersion + 1
         this.updateTransactionListForm(this.controlVersion, this.chainValue)
       }
     },
@@ -254,7 +255,86 @@ export default {
       // pre page
       this.buttonState.disablePreClick = this.currentStep <= 1
     },
-    updateTransactionListForm(version, chainValue) {
+    async fetchAllTx(chainValue, txHashes) {
+      var txs = []
+
+      if (txHashes.length === 0) {
+        return txs
+      }
+
+      for (const tx of txHashes) {
+        if (!tx.txHash) {
+          throw new Error('交易哈希不存在，详情: ' + JSON.stringify(tx))
+        }
+
+        const response = await getTransaction({
+          path: chainValue,
+          txHash: tx.txHash,
+          blockNumber: tx.blockNumber
+        }).catch(
+          (error) => {
+            this.$message({
+              message: '网络异常：' + error,
+              type: 'error',
+              duration: 5000
+            })
+          }
+        )
+        if (
+          typeof response.errorCode === 'undefined' ||
+            response.errorCode !== 0
+        ) {
+          throw new Error(
+            '查询交易失败，交易哈希: ' +
+              tx.txhash +
+              '，详情: ' +
+              JSON.stringify(response)
+          )
+        }
+        if (
+          typeof response.errorCode === 'undefined' ||
+            response.errorCode !== 0
+        ) {
+          throw new Error(
+            '查询交易失败，交易哈希: ' +
+              tx.txhash +
+              '，详情: ' +
+              JSON.stringify(response)
+          )
+        }
+
+        /**
+         remove raw transaction and receipt info
+         */
+        delete response.data.txBytes
+        delete response.data.receiptBytes
+
+        const defaultValue = (value, defaultValue) => {
+          if (!value) {
+            return defaultValue
+          }
+          return value
+        }
+
+        var newTx = {}
+        newTx.txHash = defaultValue(response.data.txHash, 'unknown')
+        newTx.username = defaultValue(response.data.username, 'unknown')
+        newTx.txID = defaultValue(response.data.xaTransactionID, 'unknown')
+        newTx.blockNumber = defaultValue(response.data.blockNumber, 'unknown')
+        newTx.path = defaultValue(response.data.path, 'unknown')
+        newTx.method = defaultValue(response.data.method, 'unknown')
+        newTx.properties = defaultValue(response.data, 'unknown')
+
+        if (typeof response.data.errorCode !== 'undefined' && response.data.errorCode !== null && response.data.errorCode !== 0) {
+          newTx.errorCode = response.data.errorCode
+          newTx.message = defaultValue(response.data.message, 'unknown')
+        }
+        txs[txs.length] = newTx
+      }
+
+      return txs
+    },
+    async updateTransactionListForm(version, chainValue) {
       if (chainValue === null) {
         this.$message({
           type: 'warning',
@@ -263,15 +343,13 @@ export default {
         return
       }
 
-      const params = {
+      this.buttonState.loading = true
+      await listTransactions({
         path: chainValue,
         blockNumber: this.nextBlockNumber,
         offset: this.nextOffset,
         size: 10
-      }
-
-      this.buttonState.loading = true
-      listTransactions(params)
+      })
         .then((resp) => {
           if (typeof resp.errorCode === 'undefined' || resp.errorCode !== 0) {
             handleErrorMsgBox('查询交易列表失败, 请手动刷新后再尝试, 详情: ', '错误', JSON.stringify(resp), null)
@@ -279,88 +357,7 @@ export default {
             return
           }
 
-          const fetchAllTx = async function(chainValue, txHashes) {
-            var txs = []
-
-            if (txHashes.length === 0) {
-              return txs
-            }
-
-            for (const tx of txHashes) {
-              if (!tx.txHash) {
-                throw new Error('交易哈希不存在，详情: ' + JSON.stringify(tx))
-              }
-
-              const paramsInGetTX = {
-                path: chainValue,
-                txHash: tx.txHash,
-                blockNumber: tx.blockNumber
-              }
-              const response = await getTransaction(paramsInGetTX).catch(
-                (error) => {
-                  this.$message({
-                    message: '网络异常：' + error,
-                    type: 'error',
-                    duration: 5000
-                  })
-                }
-              )
-              if (
-                typeof response.errorCode === 'undefined' ||
-                response.errorCode !== 0
-              ) {
-                throw new Error(
-                  '查询交易失败，交易哈希: ' +
-                    tx.txhash +
-                    '，详情: ' +
-                    JSON.stringify(response)
-                )
-              }
-              if (
-                typeof response.errorCode === 'undefined' ||
-                response.errorCode !== 0
-              ) {
-                throw new Error(
-                  '查询交易失败，交易哈希: ' +
-                    tx.txhash +
-                    '，详情: ' +
-                    JSON.stringify(response)
-                )
-              }
-
-              /**
-              remove raw transaction and receipt info
-              */
-              delete response.data.txBytes
-              delete response.data.receiptBytes
-
-              const defaultValue = (value, defaultValue) => {
-                if (!value) {
-                  return defaultValue
-                }
-                return value
-              }
-
-              var newTx = {}
-              newTx.txHash = defaultValue(response.data.txHash, 'unknown')
-              newTx.username = defaultValue(response.data.username, 'unknown')
-              newTx.txID = defaultValue(response.data.xaTransactionID, 'unknown')
-              newTx.blockNumber = defaultValue(response.data.blockNumber, 'unknown')
-              newTx.path = defaultValue(response.data.path, 'unknown')
-              newTx.method = defaultValue(response.data.method, 'unknown')
-              newTx.properties = defaultValue(response.data, 'unknown')
-
-              if (typeof response.data.errorCode !== 'undefined' && response.data.errorCode !== null && response.data.errorCode !== 0) {
-                newTx.errorCode = response.data.errorCode
-                newTx.message = defaultValue(response.data.message, 'unknown')
-              }
-              txs[txs.length] = newTx
-            }
-
-            return txs
-          }
-
-          fetchAllTx(chainValue, resp.data.transactions)
+          this.fetchAllTx(chainValue, resp.data.transactions)
             .then((response) => {
               this.buttonState.loading = false
               this.nextBlockNumber = resp.data.nextBlockNumber

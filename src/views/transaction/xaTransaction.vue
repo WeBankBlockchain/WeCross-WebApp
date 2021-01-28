@@ -19,7 +19,7 @@
         <el-card>
           <template slot="header">
             <span>开启事务</span>
-            <el-tooltip effect="light" content="如何开启事务？" placement="top">
+            <el-tooltip class="XAHelp" effect="light" content="如何开启事务？" placement="top">
               <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToStartXA">
                 <svg-icon style="vertical-align: 0px" icon-class="question" />
               </el-button>
@@ -84,7 +84,7 @@
             <el-row>
               <el-col :span="11" style="text-align: left">
                 <span>执行事务</span>
-                <el-tooltip effect="light" content="如何执行事务？" placement="top">
+                <el-tooltip class="XAHelp" effect="light" content="如何执行事务？" placement="top">
                   <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToExecXA">
                     <svg-icon style="vertical-align: 0px" icon-class="question" />
                   </el-button>

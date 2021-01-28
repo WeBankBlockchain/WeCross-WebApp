@@ -30,16 +30,6 @@ export default {
     return {
       homePageSteps: [
         {
-          element: '#issue',
-          title: '意见和建议',
-          intro: '用不爽？有BUG？<br>欢迎向我们提出，让我们做得更好 😄',
-          position: 'left'
-        }, {
-          element: '#userAvatar',
-          title: '用户头像',
-          intro: '展示用户账号名，可点击按钮修改密码、退出登录',
-          position: 'left'
-        }, {
           element: '#Home',
           title: '平台首页',
           intro: '平台首页展示WeCross网络数据统计信息',
@@ -80,6 +70,17 @@ export default {
           title: '参考文档',
           intro: 'WeCross参考文档链接',
           position: 'right'
+        },
+        {
+          element: '#issue',
+          title: '意见和建议',
+          intro: '用不爽？有BUG？<br>欢迎向我们提出，让我们做得更好 😄',
+          position: 'left'
+        }, {
+          element: '#userAvatar',
+          title: '用户头像',
+          intro: '展示用户账号名，可点击按钮修改密码、退出登录',
+          position: 'left'
         }
       ],
       accountSteps: [
@@ -169,6 +170,9 @@ export default {
         case 'xaTransactionList':
           this.xaHelp()
           break
+        case 'xaTransaction':
+          this.XATransactionHelp()
+          break
         default:
           this.homePageHelp()
       }
@@ -184,12 +188,14 @@ export default {
         }).start()
       } else {
         this.$store.dispatch('app/openSideBar', { withoutAnimation: false }).then(_ => {
-          introJS().setOptions({
+          introJS().addStep({
+            title: '欢迎✨',
+            intro: '欢迎使用WeCross网页管理平台'
+          }).addSteps(this.homePageSteps).setOptions({
             prevLabel: '上一步',
             nextLabel: '下一步',
             doneLabel: '结束',
-            disableInteraction: true,
-            steps: this.homePageSteps
+            disableInteraction: true
           }).start().onexit(() => {
             this.$store.dispatch('app/closeSideBar', { withoutAnimation: false }).then(() => {})
           })
@@ -352,6 +358,24 @@ export default {
           }
         ]
       }).start()
+    },
+    XATransactionHelp() {
+      if (document.querySelector('.XAHelp')) {
+        introJS().setOptions({
+          prevLabel: '上一步',
+          nextLabel: '下一步',
+          doneLabel: '结束',
+          disableInteraction: true,
+          steps: [
+            {
+              element: '.XAHelp',
+              title: '获取详细步骤 🔍',
+              intro: '点击按钮，查看更多帮助信息',
+              position: 'bottom'
+            }
+          ]
+        }).start()
+      }
     }
   }
 }

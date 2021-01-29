@@ -44,7 +44,7 @@
                 </el-col>
               </el-row>
               <el-row>
-                <div style="margin-top: 40px;font-size: 32px;font-weight: bolder;display:inline-block">{{ routerNumber + 1 }}</div>
+                <div style="margin-top: 40px;font-size: 32px;font-weight: bolder;display:inline-block">{{ routerNumber }}</div>
                 <div style="margin-left: 3px; display:inline-block">个</div>
               </el-row>
             </el-card>

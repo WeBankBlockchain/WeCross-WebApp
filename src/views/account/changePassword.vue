@@ -273,6 +273,7 @@ export default {
                 type: 'error',
                 message: 'response is null, please check server status'
               })
+              return
             }
             const data = resp.data
             const errorCode = data.errorCode

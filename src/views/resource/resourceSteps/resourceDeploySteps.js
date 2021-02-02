@@ -130,7 +130,7 @@ const FabricInstantSteps = [
   }, {
     element: '#policy',
     title: '6. 选择背书文件',
-    intro: '<p>选择实例化时的背书</p><li>只能上传policy的yaml格式文件, 不上传默认为default</li><li>default为所有机构以OR链接</li>',
+    intro: '<p>选择实例化时的背书</p><li>只能上传policy的yaml格式文件, 不上传默认为default</li><li>default为所有机构以OR连接</li>',
     position: 'top'
   }, {
     element: '#args',

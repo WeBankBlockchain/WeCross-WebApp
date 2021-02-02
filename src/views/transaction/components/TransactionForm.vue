@@ -182,9 +182,23 @@ export default {
       this.$refs['transactionForm'].validate((validate) => {
         if (validate) {
           detail(this.transaction.path).then(res => {
-            isChainAccountFit(res.data.stubType, () => {
-              this.$emit('submitClick', this.transaction)
-            })
+            if (!res) {
+              this.$message.error('response 为空，请检查后台运行状态')
+              return
+            }
+            if (res.errorCode !== 0) {
+              this.$message.error(res.message)
+              return
+            }
+            if (!res.data || !res.data.stubType) {
+              this.$message.error('当前资源不存在，请重试！')
+            } else {
+              isChainAccountFit(res.data.stubType, () => {
+                this.$emit('submitClick', this.transaction)
+              })
+            }
+          }).catch(err => {
+            this.$message.error('网络错误：' + err)
           })
         } else {
           this.$message({

@@ -369,6 +369,7 @@ table {
     font-size: 14px;
     min-width: 180px;
     vertical-align: top;
+    word-break: break-word;
   }
 }
 </style>

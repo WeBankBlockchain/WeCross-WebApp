@@ -441,6 +441,10 @@ export default {
     getUA() {
       this.show = false
       return listAccount().then((response) => {
+        if (!response) {
+          this.$message.error('response 为空，请检查后台运行状态')
+          return
+        }
         this.ua = response.data
         this.chainAccountTable = buildChainAccountTable(this.ua)
         this.show = true
@@ -579,6 +583,13 @@ export default {
       })
     },
     handleResponse(response) {
+      if (!response) {
+        this.$message({
+          message: 'response为空，请查看后台运行状态',
+          type: 'error'
+        })
+        return
+      }
       if (response.errorCode !== 0) {
         this.$message({
           message: '设置失败：' + response.message,

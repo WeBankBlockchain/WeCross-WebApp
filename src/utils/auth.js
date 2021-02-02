@@ -27,6 +27,16 @@ export function removeUsername() {
   return localStorage.removeItem(UsernameKey)
 }
 
+export function isUserFirstTimeUse(username) {
+  // not first time
+  if (localStorage.getItem(username)) {
+    return false
+  } else {
+    localStorage.setItem(username, '1')
+    return true
+  }
+}
+
 export function getPubKey(pub) {
   return localStorage.getItem(PubKey)
 }

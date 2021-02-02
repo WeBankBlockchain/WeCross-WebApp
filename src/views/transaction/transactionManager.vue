@@ -5,9 +5,14 @@
         <el-card style="height: 80vh">
           <div slot="header">
             <span>导航</span>
+            <el-tooltip id="transactionHelp" effect="light" content="如何使用？" placement="top">
+              <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToUseTransaction">
+                <svg-icon style="vertical-align: 0px" icon-class="question" />
+              </el-button>
+            </el-tooltip>
           </div>
           <el-row style="height: calc(70vh - 20px); overflow-y:auto;padding: 10px">
-            <ChainExplorer :chain="currentChain" @zone-click="onZoneClick" @chain-click="onChainClick" />
+            <ChainExplorer id="ChainExplorer" :chain="currentChain" @zone-click="onZoneClick" @chain-click="onChainClick" />
           </el-row>
         </el-card>
       </el-col>
@@ -21,16 +26,17 @@
                   <el-button icon="el-icon-refresh" size="mini" @click="handleSearch" />
                 </template>
               </el-input>
-              <el-button icon="el-icon-notebook-2" style="margin-left: 10px" type="primary" @click="handleSendTransaction">
+              <el-button id="sendTransaction" icon="el-icon-notebook-2" style="margin-left: 10px" type="primary" @click="handleSendTransaction">
                 发交易
               </el-button>
             </div>
           </div>
           <TransactionListExplorer
+            id="TransactionListExplorer"
             ref="transactionList"
             :chain="currentChain"
             :page-size="10"
-            style="height: calc(80vh - 70px)"
+            style="height: calc(80vh - 90px)"
           />
         </el-card>
       </el-col>
@@ -41,6 +47,10 @@
 <script>
 import ChainExplorer from '@/components/ChainExplorer'
 import TransactionListExplorer from '@/components/TransactionListExplorer'
+import { transactionManagerSteps } from './transactionSteps/transactionManagerSteps'
+import introJS from 'intro.js'
+import 'intro.js/introjs.css'
+import 'intro.js/themes/introjs-modern.css'
 
 export default {
   name: 'TransactionManager',
@@ -92,6 +102,15 @@ export default {
       this.$router.push({
         path: 'rawTransaction'
       })
+    },
+    howToUseTransaction() {
+      introJS().setOptions({
+        prevLabel: '上一步',
+        nextLabel: '下一步',
+        doneLabel: '结束',
+        disableInteraction: true,
+        steps: transactionManagerSteps
+      }).start()
     }
   }
 }

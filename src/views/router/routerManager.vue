@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row>
-      <el-card style="height: 90vh" header="Peer路由列表">
+      <el-card style="height: 90vh" header="跨链路由列表">
         <el-row>
           <el-button-group>
             <el-button plain icon="el-icon-refresh" :disabled="loading" @click="refresh">刷新</el-button>
@@ -9,7 +9,7 @@
           </el-button-group>
         </el-row>
         <el-row style="margin-top: 10px">
-          <el-table ref="singleTable" v-loading="loading" :data="routers" fit tooltip-effect="light" height="calc(90vh - 180px)">
+          <el-table v-loading="loading" :data="routers" fit tooltip-effect="light" height="calc(90vh - 180px)">
             <el-table-column label="跨链路由别名" min-width="40px" show-overflow-tooltip>
               <template slot-scope="item">
                 {{ getAlias(item.row.nodeID) !== null ? getAlias(item.row.nodeID) : '未设置' }}
@@ -17,7 +17,8 @@
             </el-table-column>
             <el-table-column label="跨链路由标识" :show-overflow-tooltip="true" min-width="60px">
               <template slot-scope="item">
-                {{ item.row.nodeID }}
+                {{ item.row.nodeID==='Local'?'':item.row.nodeID }}
+                <el-tag v-if="item.row.nodeID==='Local'" type="info">{{ item.row.nodeID }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="IP端口" min-width="60px">
@@ -28,7 +29,6 @@
             <el-table-column label="已接入区块链" min-width="100px">
               <template slot-scope="item">
                 <li v-for="chainItem in item.row.chainInfos" :key="chainItem.name" style="list-style-type:none; margin: 5px">
-                  {{ chainItem.name }}
                   <el-tag type="info">{{ chainItem.stubType }}</el-tag>
                 </li>
               </template>
@@ -52,8 +52,6 @@
             :total="total"
             :current-page="currentPage"
             :disabled="loading"
-            @prev-click="prevPage"
-            @next-click="nextPage"
             @current-change="setPage"
           />
         </el-row>
@@ -86,13 +84,15 @@ export default {
   methods: {
     refresh() {
       this.loading = true
+      this.routers = []
       listPeers({
         offset: (this.currentPage - 1) * 10,
         size: this.pageSize
       }).then(response => {
-        this.total = response.data.size
-        this.routers = response.data.data
-
+        this.total = response.data.size + 1
+        for (const datum of response.data.data) {
+          this.routers.push(datum)
+        }
         this.loading = false
       }).catch(() => {
         this.$message({
@@ -140,14 +140,6 @@ export default {
     },
     getAlias(nodeID) {
       return localStorage.getItem('routerAlias-' + nodeID)
-    },
-    nextPage() {
-      ++this.currentPage
-      this.refresh()
-    },
-    prevPage() {
-      --this.currentPage
-      this.refresh()
     },
     setPage(page) {
       this.currentPage = page

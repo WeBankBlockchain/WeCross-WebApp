@@ -2,12 +2,21 @@
   <div class="app-container">
     <el-card>
       <template slot="header">
-        <el-page-header content="资源部署页面" title="资源管理" @back="() => {this.$router.push({ path: 'resourceList' })}" />
+        <el-page-header content="资源部署页面" title="资源管理" @back="() => {this.$router.push({ path: 'resourceList' })}">
+          <div slot="content">
+            <span style="color: #303133;font-size: 16px">资源部署页面</span>
+            <el-tooltip id="deployHelp" effect="light" content="如何部署资源？" placement="top">
+              <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToUse">
+                <svg-icon style="vertical-align: 0px" icon-class="question" />
+              </el-button>
+            </el-tooltip>
+          </div>
+        </el-page-header>
       </template>
       <el-row>
         <el-col :span="18" :offset="2">
           <el-form ref="deployForm" :model="form" label-width="120px" :rules="formRules">
-            <el-form-item label="选择链类型：" prop="stubType">
+            <el-form-item id="stubType" label="选择链类型：" prop="stubType">
               <el-select v-model="form.stubType" :disabled="lockDown" placeholder="请选择部署的链类型" style="width:100%" @change="stubTypeChange">
                 <el-option-group label="FISCO BCOS">
                   <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
@@ -18,7 +27,7 @@
                 </el-option-group>
               </el-select>
             </el-form-item>
-            <el-form-item label="选择操作：" prop="method">
+            <el-form-item id="method" label="选择操作：" prop="method">
               <el-select key="methodSelect" v-model="form.method" placeholder="选择操作类型" @change="methodChange">
                 <el-option
                   v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')"
@@ -50,28 +59,30 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item
-              v-if="form.prependPath !== null"
-              label="资源路径："
-              prop="appendPath"
-            >
-              <el-input v-model.trim="form.appendPath" placeholder="Path">
-                <template slot="prepend" style="padding: 5px">{{ form.prependPath }}</template>
-              </el-input>
-            </el-form-item>
+            <div id="Path">
+              <el-form-item
+                v-if="form.prependPath !== null"
+                label="资源路径："
+                prop="appendPath"
+              >
+                <el-input v-model.trim="form.appendPath" placeholder="Path">
+                  <template slot="prepend" style="padding: 5px">{{ form.prependPath }}</template>
+                </el-input>
+              </el-form-item>
 
-            <el-form-item
-              v-else
-              label="资源路径："
-              prop="fullPath"
-            >
-              <el-input v-model.trim="form.fullPath" placeholder="Path" />
-            </el-form-item>
+              <el-form-item
+                v-else
+                label="资源路径："
+                prop="fullPath"
+              >
+                <el-input v-model.trim="form.fullPath" placeholder="Path" />
+              </el-form-item>
+            </div>
 
             <!-- BCOS -->
             <div v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
               <el-row type="flex">
-                <el-form-item label="上传文件：" prop="zipContract">
+                <el-form-item id="zipContract" label="上传文件：" prop="zipContract">
                   <el-upload
                     ref="uploadContract"
                     action=""
@@ -82,11 +93,14 @@
                     :http-request="uploadContractSourceHandler"
                     :auto-upload="false"
                   >
-                    <div slot="tip" class="el-upload__tip">只能上传合约文件打包的zip文件</div>
+                    <div slot="tip" class="el-upload__tip">
+                      只能上传合约文件打包的zip文件<br>
+                      注意：zip打包最外层必须有合约入口文件
+                    </div>
                     <el-button slot="trigger">选取文件</el-button>
                   </el-upload>
                 </el-form-item>
-                <el-form-item label="合约入口文件：" prop="chosenSolidity">
+                <el-form-item id="chosenSolidity" label="合约入口文件：" prop="chosenSolidity">
                   <el-select v-model="form.chosenSolidity" placeholder="选择编译的合约文件">
                     <el-option
                       v-for="item in solidityFiles"
@@ -98,12 +112,14 @@
                 </el-form-item>
               </el-row>
               <el-form-item
+                id="className"
                 label="合约类名："
                 prop="className"
               >
                 <el-input v-model.trim="form.className" placeholder="Class Name" />
               </el-form-item>
               <el-form-item
+                id="bcosVersion"
                 label="合约版本号："
                 prop="version"
               >
@@ -123,6 +139,7 @@
             <div v-else-if="form.stubType==='Fabric1.4'">
               <el-form-item
                 v-if="form.method==='install'"
+                id="org"
                 label="所属机构名："
                 prop="org"
               >
@@ -132,6 +149,7 @@
               </el-form-item>
               <el-form-item
                 v-if="form.method !=='install'"
+                id="orgs"
                 label="机构列表："
                 prop="org"
               >
@@ -140,7 +158,7 @@
                   <el-input v-model="form.org" placeholder="Organizations" />
                 </el-tooltip>
               </el-form-item>
-              <el-form-item v-if="form.method === 'install'" label="合约文件：" prop="compressedContent">
+              <el-form-item v-if="form.method === 'install'" id="compressedContent" label="合约文件：" prop="compressedContent">
                 <el-upload
                   ref="uploadChaincode"
                   action=""
@@ -159,12 +177,13 @@
                 </el-upload>
               </el-form-item>
               <el-form-item
+                id="fabricVersion"
                 label="合约版本号："
                 prop="version"
               >
                 <el-input v-model.trim="form.version" placeholder="Version" />
               </el-form-item>
-              <el-form-item label="合约语言：" prop="lang">
+              <el-form-item id="lang" label="合约语言：" prop="lang">
                 <el-select v-model="form.lang" placeholder="请选择合约语言" style="width:100%">
                   <el-option label="Golang" value="GO_LANG" />
                   <el-option label="Java" value="JAVA" />
@@ -172,6 +191,7 @@
               </el-form-item>
               <el-form-item
                 v-if="form.method==='instantiate'||form.method==='upgrade'"
+                id="policy"
                 label="背书策略："
                 prop="policy"
               >
@@ -191,6 +211,7 @@
               </el-form-item>
               <el-form-item
                 v-if="form.method==='instantiate'||form.method==='upgrade'"
+                id="args"
                 label="其他参数："
                 prop="args"
               >
@@ -201,7 +222,7 @@
               </el-form-item>
             </div>
             <el-form-item>
-              <el-button v-loading.fullscreen.lock="loading" type="primary" @click="onSubmit">执行</el-button>
+              <el-button id="onSubmit" v-loading.fullscreen.lock="loading" type="primary" @click="onSubmit">执行</el-button>
               <el-button @click="onCancel">重置表单</el-button>
             </el-form-item>
             <el-form-item>
@@ -232,6 +253,11 @@ import {
   bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade
 } from '@/api/resource'
 import { handleSuccessMsgBox, handleErrorMsgBox } from '@/utils/messageBox'
+import introJS from 'intro.js'
+import 'intro.js/introjs.css'
+import 'intro.js/themes/introjs-modern.css'
+import { stepRoute } from './resourceSteps/resourceDeploySteps'
+import { isChainAccountFit } from '@/utils/chainAccountIntro'
 
 const JSZip = require('jszip')
 
@@ -361,30 +387,32 @@ export default {
     onSubmit() {
       this.$refs['deployForm'].validate((validate) => {
         if (validate) {
-          this.loading = true
-          switch (this.form.method) {
-            case 'deploy' :
-              this.sourceContractLine = []
-              this.dependenciesLine = []
-              this.onBCOSDeploy()
-              break
-            case 'register':
-              this.sourceContractLine = []
-              this.dependenciesLine = []
-              this.onBCOSRegister()
-              break
-            case 'install':
-              this.onFabricInstall()
-              break
-            case 'instantiate':
-              this.onFabricInstantiate()
-              break
-            case 'upgrade':
-              this.onFabricUpgrade()
-              break
-            default:
-              console.log(this.form)
-          }
+          isChainAccountFit(this.form.stubType, () => {
+            this.loading = true
+            switch (this.form.method) {
+              case 'deploy' :
+                this.sourceContractLine = []
+                this.dependenciesLine = []
+                this.onBCOSDeploy()
+                break
+              case 'register':
+                this.sourceContractLine = []
+                this.dependenciesLine = []
+                this.onBCOSRegister()
+                break
+              case 'install':
+                this.onFabricInstall()
+                break
+              case 'instantiate':
+                this.onFabricInstantiate()
+                break
+              case 'upgrade':
+                this.onFabricUpgrade()
+                break
+              default:
+                console.log(this.form)
+            }
+          })
         } else {
           this.$message({
             message: '请检查所有输入',
@@ -800,6 +828,15 @@ export default {
       this.dependenciesLine = []
       this.$refs.deployForm.clearValidate()
       clearForm(this.form)
+    },
+    howToUse() {
+      introJS().setOptions({
+        prevLabel: '上一步',
+        nextLabel: '下一步',
+        doneLabel: '结束',
+        disableInteraction: true,
+        steps: stepRoute(this.form.stubType, this.form.method)
+      }).start()
     }
   }
 }

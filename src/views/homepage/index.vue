@@ -44,7 +44,7 @@
                 </el-col>
               </el-row>
               <el-row>
-                <div style="margin-top: 40px;font-size: 32px;font-weight: bolder;display:inline-block">{{ routerNumber + 1 }}</div>
+                <div style="margin-top: 40px;font-size: 32px;font-weight: bolder;display:inline-block">{{ routerNumber }}</div>
                 <div style="margin-left: 3px; display:inline-block">个</div>
               </el-row>
             </el-card>
@@ -120,13 +120,36 @@
             <el-table-column
               prop="type"
               label="链类型"
-              min-width="100px"
-            />
+              min-width="80px"
+            >
+              <template slot-scope="scope"><el-tag type="info">{{ scope.row.type }}</el-tag></template>
+            </el-table-column>
             <el-table-column
               prop="number"
               label="区块高度"
-              min-width="100px"
+              min-width="60px"
             />
+            <el-table-column
+              label="资源详情"
+              min-width="60px"
+            >
+              <template slot-scope="scope">
+                <el-popover
+                  placement="bottom"
+                  width="600"
+                  trigger="click"
+                  @show="pushToResourceDetail(scope.row.path)"
+                >
+                  <ResourceShower :ref="scope.row.path" :key="chainSelect" :chain="chainSelect" :page-size="10" style="height: 400px;width: 100%" />
+                  <el-button
+                    slot="reference"
+                    type="text"
+                    size="mini"
+                  >
+                    详情</el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
           </el-table>
         </el-card>
       </el-col>
@@ -219,10 +242,11 @@ import { systemStatus } from '@/api/status'
 import { routerStatus } from '@/api/status'
 import { listChains, listPeers, listZones } from '@/api/conn'
 import { getResourceList } from '@/api/resource'
+import ResourceShower from '@/components/ResourceShower'
 
 export default {
   name: 'Homepage',
-  components: {},
+  components: { ResourceShower },
   props: {},
   data() {
     return {
@@ -240,7 +264,8 @@ export default {
       {
         label: 'HTLC',
         disabled: true
-      }]
+      }],
+      chainSelect: null
     }
   },
   created() {
@@ -328,9 +353,12 @@ export default {
         })
         this.chainsInfoLoading = false
       })
+    },
+    pushToResourceDetail(path) {
+      this.chainSelect = path
+      this.$nextTick(() => { this.$refs[this.chainSelect].refresh() })
     }
   }
-
 }
 </script>
 
@@ -341,6 +369,7 @@ table {
     font-size: 14px;
     min-width: 180px;
     vertical-align: top;
+    word-break: break-word;
   }
 }
 </style>

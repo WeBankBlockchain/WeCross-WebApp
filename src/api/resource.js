@@ -20,6 +20,19 @@ export function getResourceList(params, data) {
 }
 
 /**
+ * get a detail info of a resource
+ * @param {String} path - request path
+ * @return {Promise<resourceResponse>} an axios promise object of response
+ */
+export function detail(path) {
+  return request({
+    url: 'resource' + path2Url(path) + '/detail',
+    method: 'post',
+    data: { version: 1, data: null }
+  })
+}
+
+/**
  * deploy a BCOS contract
  * @param {CustomRequest|*} data - body data to request
  * @return {Promise<Response>} an axios promise object of response

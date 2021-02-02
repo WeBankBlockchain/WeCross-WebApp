@@ -43,12 +43,13 @@
             </el-table-column>
             <el-table-column type="expand" label="执行步骤" width="80%">
               <template slot-scope="scope">
-                <el-form v-loading="loadingXA" inline class="table-expand">
+                <div v-loading="loadingXA" class="table-expand">
                   <el-table
                     ref="singleTable"
                     :data="xaTransaction ? xaTransaction.xaTransactionSteps : null"
+                    max-height="400px"
                     fit
-                    highlight-current-row
+                    empty-text="无事务步骤"
                     tooltip-effect="light"
                   >
                     <el-table-column label="执行时间" min-width="10%">
@@ -98,7 +99,7 @@
                       </el-form-item>
                     </el-form>
                   </el-row>
-                </el-form>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -129,6 +130,7 @@
 import { parseTime } from '@/utils'
 import { getXATransaction, listXATransactions } from '@/api/transaction'
 import { buildXAResponseError } from '@/utils/transaction'
+import { handleErrorMsgBox, handleWarningMsgBox } from '@/utils/messageBox'
 
 export default {
   name: 'XATransactionList',
@@ -237,20 +239,19 @@ export default {
       }).then(response => {
         this.loadingList = false
 
+        if (!response) {
+          this.$message.error('response为空，请检查后台运行状态')
+          return
+        }
+
         if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
-          this.$message({
-            type: 'error',
-            message: '查询事务列表失败: ' + buildXAResponseError(response)
-          })
+          handleErrorMsgBox('查询事务列表失败: ', '错误', buildXAResponseError(response), null).catch(_ => {})
           return
         }
 
         const xaResponse = response.data.xaResponse
         if (typeof (xaResponse) !== 'undefined' && xaResponse.status !== 0) {
-          this.$message({
-            type: 'warning',
-            message: '警告，有错误发生: ' + buildXAResponseError(response)
-          })
+          handleWarningMsgBox('警告，有错误发生: ', '警告', buildXAResponseError(response), null).catch(_ => {})
         }
 
         this.isFinished = response.data.finished
@@ -303,19 +304,13 @@ export default {
         this.loadingXA = false
 
         if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
-          this.$message({
-            type: 'error',
-            message: '查询事务详情失败: ' + JSON.stringify(response)
-          })
+          handleErrorMsgBox('查询事务详情失败: ', '错误', buildXAResponseError(response), null).catch(_ => {})
           return
         }
 
         const xaResponse = response.data.xaResponse
         if (typeof (xaResponse) !== 'undefined' && xaResponse.status !== 0) {
-          this.$message({
-            type: 'warning',
-            message: '警告，有错误发生: ' + buildXAResponseError(response)
-          })
+          handleWarningMsgBox('警告，有错误发生: ', '警告', buildXAResponseError(response), null).catch(_ => {})
         }
 
         this.xaTransaction = response.data.xaTransaction

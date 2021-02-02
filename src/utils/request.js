@@ -27,7 +27,7 @@ request.interceptors.request.use(
   },
   error => {
     // do something with request error
-    console.log(error) // for debug
+    console.log('err: ', error) // for debug
     return Promise.reject(error)
   }
 )
@@ -35,7 +35,15 @@ request.interceptors.request.use(
 // response interceptor
 request.interceptors.response.use(
   response => {
-    if (typeof response.status === 'undefined') {
+    if (!response) {
+      Message({
+        message: 'HTTP返回为空!',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error('HTTP返回为空'))
+    }
+    if (!response.status) {
       Message({
         message: 'HTTP响应状态码为空!',
         type: 'error',

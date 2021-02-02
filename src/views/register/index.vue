@@ -33,7 +33,7 @@
 
       <el-tooltip placement="right">
         <div slot="content">
-          密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
+          密码长度6~18个字符，至少包含一个数字和一个字母，支持特殊字符~!@#$%^&*()
         </div>
         <el-form-item prop="password">
           <span class="svg-container">
@@ -58,7 +58,7 @@
       </el-tooltip>
       <el-tooltip placement="right">
         <div slot="content">
-          密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和字母
+          确认密码必须一致
         </div>
         <el-form-item prop="checkPass">
           <span class="svg-container">
@@ -87,12 +87,19 @@
               placeholder="验证码"
               name="imageAuthCode"
               tabindex="4"
+              @keyup.enter.native="handleRegister('registerForm')"
             />
           </el-form-item>
         </el-col>
         <el-col style="float:right;margin-right:2px" :span="6">
-          <div style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right">
-            <i v-if="imageAuthCode.imageAuthCodeBase64URL === ''" style="margin-top:12%;" class="el-icon-loading" />
+          <div
+            style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right"
+          >
+            <i
+              v-if="imageAuthCode.imageAuthCodeBase64URL === ''"
+              style="margin-top:12%;"
+              class="el-icon-loading"
+            />
             <img
               v-else
               style="width:100%; height:auto;vertical-align: middle;"
@@ -144,14 +151,14 @@ export default {
       }
     }
     const verifyPwd = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请输入密码'))
         return
       }
       if (!validPassword(value)) {
         callback(
           new Error(
-            '密码长度6~18个字符，支持数字、大小写字母、特殊字符~!@#$%^&*()，至少包含一个数字和一个字母'
+            '密码长度6~18个字符，至少包含一个数字和一个字母，支持特殊字符~!@#$%^&*()'
           )
         )
       } else {
@@ -159,7 +166,7 @@ export default {
       }
     }
     const confirmPwd = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请再次输入密码'))
       } else if (value !== this.registerForm.password) {
         callback(new Error('两次输入密码不一致!'))
@@ -168,7 +175,7 @@ export default {
       }
     }
     const confirmAuthCode = (rule, value, callback) => {
-      if (typeof value === 'undefined' || value === null || value === '') {
+      if (!value) {
         callback(new Error('请输入验证码'))
       } else {
         callback()

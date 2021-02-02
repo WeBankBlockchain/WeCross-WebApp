@@ -197,6 +197,8 @@ module.exports = [
               'xaTransactionID': '001',
               'xaTransactionSeq': 1,
               'method': 'set',
+              'errorCode': 1,
+              'message': 'Transaction rolled back.',
               'args': [
                 '0x11',
                 '0x22',

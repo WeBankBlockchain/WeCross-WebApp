@@ -3,30 +3,32 @@
     <el-table
       :data="resources"
       tooltip-effect="light"
-      height="calc(100% - 80px)"
+      height="calc(100% - 60px)"
     >
-      <el-table-column label="资源路径" min-width="80px" show-overflow-tooltip>
+      <el-table-column label="资源路径" min-width="100px" show-overflow-tooltip>
         <template slot-scope="scope">{{ scope.row.path }}</template>
       </el-table-column>
-      <el-table-column label="资源类型" min-width="50px">
+      <el-table-column label="资源类型" width="120px">
         <template slot-scope="scope"><el-tag type="info">{{ scope.row.stubType }}</el-tag></template>
       </el-table-column>
-      <el-table-column label="属性" min-width="100px" show-overflow-tooltip>
+      <el-table-column label="属性" min-width="150px" show-overflow-tooltip>
         <template slot-scope="scope">
           <span>{{ JSON.stringify(scope.row.properties) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" style="min-width: 70px">
+      <el-table-column fixed="right" label="操作" width="180px">
         <template slot-scope="scope">
-          <el-button-group style="padding: 5px">
+          <el-button-group style="padding: 5px; width: 100%">
             <el-button
               plain
+              size="mini"
               icon="el-icon-edit-outline"
               style="padding: 8px"
               @click="onSend(scope.row.path)"
             >发交易</el-button>
             <el-button
               plain
+              size="mini"
               icon="el-icon-view"
               style="padding: 8px"
               @click="onCall(scope.row.path)"
@@ -42,8 +44,6 @@
       :total="total"
       style="text-align: center; margin-top: 10px; min-height: 40px"
       :current-page="page"
-      @prev-click="prevPage"
-      @next-click="nextPage"
       @current-change="setPage"
     />
 
@@ -111,40 +111,27 @@ export default {
   },
   watch: {
     chain: function() {
+      this.page = 1
       this.refresh()
     }
   },
   methods: {
-    getQueryStatus(path) {
-      var status = this.queryStatus[path]
-      if (status === undefined) {
-        this.queryStatus[path] = {
-          page: 0
-        }
-
-        status = this.queryStatus[path]
-      }
-
-      return status
-    },
     refresh() {
       this.selection = null
       var path = this.chain
-      var status = this.getQueryStatus(path)
 
       getResourceList({
         path: path,
-        offset: status.page * this.pageSize,
+        offset: (this.page - 1) * this.pageSize,
         size: this.pageSize
       }, null).then((response) => {
         if (response.errorCode === 0) {
           this.resources = response.data.resourceDetails
           this.total = response.data.total
-          this.page = status.page + 1
         } else {
           this.$message({
             type: 'error',
-            message: '查询交易列表失败, errorCode: ' + response.errorCode
+            message: '查询资源列表失败, errorCode: ' + response.errorCode
           })
         }
       }).catch((error) => {
@@ -155,27 +142,8 @@ export default {
         })
       })
     },
-    prevPage() {
-      var status = this.getQueryStatus(this.chain)
-
-      --status.page
-      this.page = status.page + 1
-
-      this.refresh()
-    },
-    nextPage() {
-      var status = this.getQueryStatus(this.chain)
-
-      ++status.page
-      this.page = status.page + 1
-
-      this.refresh()
-    },
     setPage(value) {
-      var status = this.getQueryStatus(this.chain)
-
-      status.page = value - 1
-      this.page = status.page + 1
+      this.page = value
 
       this.refresh()
     },

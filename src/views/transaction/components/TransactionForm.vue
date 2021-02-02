@@ -66,13 +66,18 @@
           </el-form-item>
         </div>
         <el-form-item style="margin-bottom: 20px">
-          <el-button
-            v-loading.fullscreen.lock="loading"
-            size="small"
-            type="primary"
-            @click="onSubmit"
-          >执行调用</el-button>
-          <el-button size="small" @click="clearForm">重置表单</el-button>
+          <el-popconfirm
+            title="确定执行该调用？"
+            @onConfirm="onSubmit"
+          >
+            <el-button
+              slot="reference"
+              v-loading.fullscreen.lock="loading"
+              size="small"
+              type="primary"
+            >执行调用</el-button>
+          </el-popconfirm>
+          <el-button size="small" style="margin-left: 10px" @click="clearForm">重置表单</el-button>
         </el-form-item>
         <el-form-item v-if="submitResponse !== null" label="调用结果:">
           <el-input
@@ -92,6 +97,8 @@
 <script>
 
 import { handleErrorMsgBox } from '@/utils/messageBox'
+import { isChainAccountFit } from '@/utils/chainAccountIntro'
+import { detail } from '@/api/resource'
 
 export default {
   name: 'TransactionForm',
@@ -159,7 +166,7 @@ export default {
     addArg() {
       this.submitResponse = null
       this.transaction.args.push({
-        value: '',
+        value: null,
         key: Date.now()
       })
     },
@@ -174,23 +181,25 @@ export default {
       this.submitResponse = null
       this.$refs['transactionForm'].validate((validate) => {
         if (validate) {
-          if (this.transaction.execMethod === 'sendTransaction') {
-            this.$confirm(`确定执行该调用？`, '确认信息', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning',
-              center: true
-            }).then(() => {
-              this.$emit('submitClick', this.transaction)
-            }).catch(_ => {
-              this.$message({
-                message: '已取消执行',
-                type: 'info'
+          detail(this.transaction.path).then(res => {
+            if (!res) {
+              this.$message.error('response 为空，请检查后台运行状态')
+              return
+            }
+            if (res.errorCode !== 0) {
+              this.$message.error(res.message)
+              return
+            }
+            if (!res.data || !res.data.stubType) {
+              this.$message.error('当前资源不存在，请重试！')
+            } else {
+              isChainAccountFit(res.data.stubType, () => {
+                this.$emit('submitClick', this.transaction)
               })
-            })
-          } else {
-            this.$emit('submitClick', this.transaction)
-          }
+            }
+          }).catch(err => {
+            this.$message.error('网络错误：' + err)
+          })
         } else {
           this.$message({
             message: '请检查所有输入',
@@ -210,7 +219,7 @@ export default {
           code = response.data.errorCode
           message = response.data.message
         }
-        handleErrorMsgBox('执行错误：', '错误码: ' + code, message, null)
+        handleErrorMsgBox('执行错误：', '错误码: ' + code, message, null).catch(_ => {})
       } else {
         this.submitResponse = JSON.stringify(response.data.result)
       }

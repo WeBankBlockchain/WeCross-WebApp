@@ -2,16 +2,25 @@
   <transition name="el-fade-in-linear">
     <div v-show="show" class="app-container">
       <el-card>
+        <div slot="header">
+          <span>跨链账户信息</span>
+          <el-tooltip id="accountHelp" effect="light" content="如何使用？" placement="top">
+            <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToUse">
+              <svg-icon style="vertical-align: 0px" icon-class="question" />
+            </el-button>
+          </el-tooltip>
+        </div>
         <el-form label-position="left" size="small" label-width="80px">
-          <el-form-item label="跨链账户">
-            <el-tag :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
-            <el-button style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
+          <el-form-item label="跨链账户：">
+            <el-tag id="UA" :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
+            <el-button id="addChainAccount" style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
           </el-form-item>
-          <el-form-item label="公钥">
+          <el-form-item id="uaPK" label="公钥信息：">
             <el-input v-model="ua.pubKey" type="textarea" readonly autosize resize="none" />
           </el-form-item>
         </el-form>
         <el-table
+          id="chainAccountTable"
           :data="chainAccountTable"
           style="width: 100%"
           row-key="id"
@@ -25,7 +34,7 @@
               <el-tag type="info">{{ scope.row.type }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="keyID" label="KeyID" width="180">
+          <el-table-column prop="keyID" label="链账户ID" width="180">
             <template slot-scope="scope">
               <div>{{ scope.row.keyID }}</div>
             </template>
@@ -337,6 +346,9 @@
 <script>
 import { listAccount, addChainAccount, removeChainAccount, setDefaultAccount } from '@/api/ua.js'
 import { pem, ecdsa, sm2 } from '@/utils/pem.js'
+import introJS from 'intro.js'
+import 'intro.js/introjs.css'
+import 'intro.js/themes/introjs-modern.css'
 
 export default {
   name: 'AccountAdmin',
@@ -429,6 +441,10 @@ export default {
     getUA() {
       this.show = false
       return listAccount().then((response) => {
+        if (!response) {
+          this.$message.error('response 为空，请检查后台运行状态')
+          return
+        }
         this.ua = response.data
         this.chainAccountTable = buildChainAccountTable(this.ua)
         this.show = true
@@ -567,6 +583,13 @@ export default {
       })
     },
     handleResponse(response) {
+      if (!response) {
+        this.$message({
+          message: 'response为空，请查看后台运行状态',
+          type: 'error'
+        })
+        return
+      }
       if (response.errorCode !== 0) {
         this.$message({
           message: '设置失败：' + response.message,
@@ -649,6 +672,38 @@ export default {
         this.addChainAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
+    },
+    howToUse() {
+      introJS().setOptions({
+        prevLabel: '上一步',
+        nextLabel: '下一步',
+        doneLabel: '结束',
+        disableInteraction: true,
+        steps: [
+          {
+            element: '#UA',
+            title: '跨链账户',
+            intro: '展示跨链账户名',
+            position: 'right'
+          }, {
+            element: '#uaPK',
+            title: '跨链账户公钥',
+            intro: '展示跨链账户的公钥信息',
+            position: 'top'
+          }, {
+            element: '#chainAccountTable',
+            title: '链账户信息',
+            intro: '展示跨链账户的所有链账户信息，可点击表行查看详细信息<br>也可展开某种链账户类型,设置默认链账户',
+            position: 'top'
+          },
+          {
+            element: '#addChainAccount',
+            title: '添加链账户',
+            intro: '点击"添加链账户"按钮进行链账户添加操作',
+            position: 'left'
+          }
+        ]
+      }).start()
     }
   }
 }

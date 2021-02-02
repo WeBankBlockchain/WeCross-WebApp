@@ -19,8 +19,10 @@
         <el-card>
           <template slot="header">
             <span>开启事务</span>
-            <el-tooltip effect="light" content="如何开启事务？" placement="top">
-              <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" icon="el-icon-question" @click="() => {$tours['startXAGuide'].start()}" />
+            <el-tooltip class="XAHelp" effect="light" content="如何开启事务？" placement="top">
+              <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToStartXA">
+                <svg-icon style="vertical-align: 0px" icon-class="question" />
+              </el-button>
             </el-tooltip>
           </template>
           <el-row>
@@ -82,8 +84,10 @@
             <el-row>
               <el-col :span="11" style="text-align: left">
                 <span>执行事务</span>
-                <el-tooltip effect="light" content="如何执行事务？" placement="top">
-                  <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" icon="el-icon-question" @click="() => {$tours['execXAGuide'].start()}" />
+                <el-tooltip class="XAHelp" effect="light" content="如何执行事务？" placement="top">
+                  <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToExecXA">
+                    <svg-icon style="vertical-align: 0px" icon-class="question" />
+                  </el-button>
                 </el-tooltip>
               </el-col>
               <el-col :span="13" style="text-align: left">
@@ -122,7 +126,7 @@
             <el-row>
               <div style="font-size: 14px">
                 <el-tooltip effect="light" content="复制事务ID" placement="top-start">
-                  <clipboard :input-data="this.$store.getters.transactionID" style="float:right;" />
+                  <clipboard :input-data="this.$store.getters.transactionID" style="float:right;z-index: 1000" />
                 </el-tooltip>
                 <el-tooltip effect="light" :content="this.$store.getters.transactionID" placement="top-start">
                   <div>
@@ -287,37 +291,6 @@
         </el-button-group>
       </el-row>
     </el-card>
-
-    <v-tour
-      name="startXAGuide"
-      :steps="startXASteps"
-      :options="{
-        highlight: true,
-        enabledButtons: {
-          buttonSkip: false,
-        },
-        labels: {
-          buttonPrevious: '上一个',
-          buttonNext: '下一个',
-          buttonStop: '结束'
-        }
-      }"
-    />
-    <v-tour
-      name="execXAGuide"
-      :steps="execXASteps"
-      :options="{
-        highlight: true,
-        enabledButtons: {
-          buttonSkip: false,
-        },
-        labels: {
-          buttonPrevious: '上一个',
-          buttonNext: '下一个',
-          buttonStop: '结束'
-        }
-      }"
-    />
   </div>
 </template>
 
@@ -330,6 +303,9 @@ import { call, getXATransaction, sendTransaction } from '@/api/transaction'
 import { parseTime, limitString } from '@/utils'
 import { buildXAResponseError, removeXATX } from '@/utils/transaction'
 import { execXASteps, startXASteps } from '@/views/transaction/transactionSteps/xaTransactionStep'
+import introJS from 'intro.js'
+import 'intro.js/introjs.css'
+import 'intro.js/themes/introjs-modern.css'
 
 export default {
   name: 'XATransaction',
@@ -460,6 +436,8 @@ export default {
                 center: true,
                 duration: 5000
               })
+              removeXATX()
+              this.$store.commit('transaction/RESET_STATE')
             } else {
               if (response.data.xaResponse.status !== 0) {
                 this.$message.warning({
@@ -467,7 +445,8 @@ export default {
                   center: true,
                   duration: 5000
                 })
-                return
+                removeXATX()
+                this.$store.commit('transaction/RESET_STATE')
               }
               if (response.data.xaTransaction.status !== 'processing') {
                 this.$msgbox('恢复事务失败，该事务已经回滚/提交！', '错误', 'error')
@@ -720,18 +699,30 @@ export default {
       this.stepActive = 0
       Object.assign(this.$data, this.$options.data())
       this.creatUUID()
+    },
+    howToStartXA() {
+      introJS().setOptions({
+        prevLabel: '上一步',
+        nextLabel: '下一步',
+        doneLabel: '结束',
+        disableInteraction: true,
+        steps: this.startXASteps
+      }).start()
+    },
+    howToExecXA() {
+      introJS().setOptions({
+        prevLabel: '上一步',
+        nextLabel: '下一步',
+        doneLabel: '结束',
+        disableInteraction: true,
+        steps: this.execXASteps
+      }).start()
     }
   }
 }
 </script>
 
 <style lang="scss">
-.v-tour__target--highlighted {
-  box-shadow: 0 0 0 99999px rgba(0,0,0,.4);
-}
-.v-step__content{
-  text-align: left;
-}
 .el-page-header__content{
   font-size: 16px;
 }

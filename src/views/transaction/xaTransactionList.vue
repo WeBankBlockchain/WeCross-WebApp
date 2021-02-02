@@ -239,6 +239,11 @@ export default {
       }).then(response => {
         this.loadingList = false
 
+        if (!response) {
+          this.$message.error('response为空，请检查后台运行状态')
+          return
+        }
+
         if (typeof (response.errorCode) === 'undefined' || response.errorCode !== 0) {
           handleErrorMsgBox('查询事务列表失败: ', '错误', buildXAResponseError(response), null).catch(_ => {})
           return

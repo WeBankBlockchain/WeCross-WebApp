@@ -191,7 +191,7 @@ export default {
               return
             }
             if (!res.data || !res.data.stubType) {
-              this.$message.error('当前资源不存在，请重试！')
+              this.$message.error('Resource not found')
             } else {
               isChainAccountFit(res.data.stubType, () => {
                 this.$emit('submitClick', this.transaction)

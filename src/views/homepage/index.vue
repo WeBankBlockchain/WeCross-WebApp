@@ -130,11 +130,13 @@
             :data="chainsInfo"
             style="width: 100%;"
             height="300px"
+            tooltip-effect="light"
           >
             <el-table-column
               prop="path"
               label="链路径"
               min-width="100px"
+              show-overflow-tooltip
             />
             <el-table-column
               prop="type"

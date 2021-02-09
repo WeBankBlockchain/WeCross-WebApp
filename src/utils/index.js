@@ -133,10 +133,10 @@ export function path2Url(path) {
   return '/' + part.join('/')
 }
 
-export function limitString(str) {
+export function limitString(str, limitNum = 40) {
   if (typeof str === 'string') {
-    if (str.length > 40) {
-      return str.substring(0, 40) + '...'
+    if (str.length > limitNum) {
+      return str.substring(0, limitNum) + '...'
     } else {
       return str
     }

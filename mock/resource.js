@@ -37,5 +37,21 @@ module.exports = [{
       })
     }
   }
+},
+{
+  url: '/detail',
+  type: 'post',
+  response: config => {
+    return {
+      ...Mock.mock({
+        'version': 1,
+        'errorCode': 0,
+        'message': 'Success: ' + config.body.command,
+        'data': {
+          'stubType': 'BCOS2.0'
+        }
+      })
+    }
+  }
 }
 ]

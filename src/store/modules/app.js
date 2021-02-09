@@ -5,7 +5,8 @@ const state = {
     opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
     withoutAnimation: false
   },
-  device: 'desktop'
+  device: 'desktop',
+  version: 'v1.1.0'
 }
 
 const mutations = {
@@ -30,6 +31,9 @@ const mutations = {
   },
   TOGGLE_DEVICE: (state, device) => {
     state.device = device
+  },
+  UPDATE_VERSION: (state, version) => {
+    state.version = version
   }
 }
 
@@ -45,6 +49,9 @@ const actions = {
   },
   toggleDevice({ commit }, device) {
     commit('TOGGLE_DEVICE', device)
+  },
+  updateVersion({ commit }, version) {
+    commit('UPDATE_VERSION', version)
   }
 }
 

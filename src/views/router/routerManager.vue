@@ -17,6 +17,7 @@
             </el-table-column>
             <el-table-column label="跨链路由标识" :show-overflow-tooltip="true" min-width="60px">
               <template slot-scope="item">
+                <clipboard v-if="item.row.nodeID!=='Local'" :input-data="item.row.nodeID" style="float: left;margin-right: 10px" />
                 {{ item.row.nodeID==='Local'?'':item.row.nodeID }}
                 <el-tag v-if="item.row.nodeID==='Local'" type="info">{{ item.row.nodeID }}</el-tag>
               </template>
@@ -63,9 +64,11 @@
 <script>
 import { listPeers } from '@/api/conn'
 import { addPeer } from '@/api/conn'
+import Clipboard from '@/components/Clipboard'
 
 export default {
   name: 'RouterManager',
+  components: { Clipboard },
   props: {},
   data() {
     return {

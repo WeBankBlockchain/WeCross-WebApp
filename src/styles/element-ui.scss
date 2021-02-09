@@ -86,3 +86,14 @@
 .el-form-item__label {
   padding: 0 10px 0 0;
 }
+
+.el-dropdown-menu__item {
+  line-height: 30px;
+}
+
+.el-form--label-top .el-form-item__label {
+  float: none;
+  display: inline;
+  text-align: left;
+  padding: 0 0 10px;
+}

@@ -9,9 +9,12 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu" style="margin-right:20px">
-      <el-dropdown id="issue" trigger="click" style="margin-right:10px">
+      <header-search id="header-search" class="right-menu-item" />
+      <el-dropdown id="issue" trigger="click" class="right-menu-item hover-effect">
         <el-tooltip effect="light" content="加鸡腿" placement="bottom">
-          <el-button circle effect="light" size="mini" icon="el-icon-chicken" />
+          <el-button circle effect="light" size="mini">
+            <svg-icon icon-class="chicken" />
+          </el-button>
         </el-tooltip>
         <el-dropdown-menu slot="dropdown">
           <body
@@ -79,26 +82,40 @@
                     )
                   "
                 ><i class="el-icon-mic" /> 指方向，提需求</el-button>
+                <el-button
+                  size="small"
+                  plain
+                  round
+                >
+                  <svg-icon icon-class="qrcode" />
+                  加入开源社区
+                </el-button>
               </el-button-group></el-footer>
             </el-container>
           </body>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-tooltip effect="light" content="需要帮助？" placement="bottom" style="margin-right: 10px">
-        <el-button circle effect="light" size="mini" @click="() => {this.$emit('help')}">
-          <span class="svg-container">
-            <svg-icon icon-class="question" />
-          </span>
-        </el-button>
-      </el-tooltip>
-
-      <el-dropdown id="userAvatar" trigger="click">
+      <div class="right-menu-item hover-effect">
+        <el-tooltip effect="light" content="需要帮助？" placement="bottom">
+          <el-button circle effect="light" size="mini" @click="() => {this.$emit('help')}">
+            <span class="svg-container">
+              <svg-icon icon-class="question" />
+            </span>
+          </el-button>
+        </el-tooltip>
+      </div>
+      <el-dropdown id="userAvatar" class="avatar-container right-menu-item hover-effect" trigger="click">
         <el-button round effect="light" size="mini">
           <span><i class="el-icon-user" />  |  {{ loginUser }} </span>
         </el-button>
         <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item>
+            <span style="display:block;text-align: center">
+              {{ this.$store.getters.version }}
+            </span>
+          </el-dropdown-item>
           <router-link to="/account/index">
-            <el-dropdown-item>
+            <el-dropdown-item divided>
               账户管理
             </el-dropdown-item>
           </router-link>
@@ -108,7 +125,7 @@
             </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">登出</span>
+            <span style="display:block;text-align: center">登出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -120,9 +137,11 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import HeaderSearch from '@/components/HeaderSearch'
 
 export default {
   components: {
+    HeaderSearch,
     Breadcrumb,
     Hamburger
   },
@@ -195,7 +214,7 @@ export default {
 
     .right-menu-item {
       display: inline-block;
-      padding: 0 8px;
+      padding: 0 5px;
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
@@ -212,7 +231,7 @@ export default {
     }
 
     .avatar-container {
-      margin-right: 30px;
+      margin-right: 10px;
 
       .avatar-wrapper {
         cursor: pointer;

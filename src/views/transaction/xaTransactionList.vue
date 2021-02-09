@@ -24,7 +24,12 @@
                 <span>{{ scope.row.timestamp | formatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="xaTransactionID" label="事务ID" min-width="17%" show-overflow-tooltip />
+            <el-table-column prop="xaTransactionID" label="事务ID" min-width="17%" show-overflow-tooltip>
+              <template slot-scope="scope">
+                <clipboard :input-data="scope.row.xaTransactionID" style="margin-right: 5px;float:left" />
+                {{ scope.row.xaTransactionID }}
+              </template>
+            </el-table-column>
             <el-table-column label="跨链账户" min-width="9%">
               <template slot-scope="scope">
                 <el-tag v-if="!nonNull(scope.row.username)" type="info" effect="plain">unknown</el-tag>
@@ -64,7 +69,7 @@
                         <span v-if="nonNull(step.row.username)">{{ step.row.username }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="path" label="资源路径" min-width="12%" />
+                    <el-table-column prop="path" label="资源路径" min-width="12%" show-overflow-tooltip />
                     <el-table-column prop="method" label="调用方法" min-width="8%" />
                     <el-table-column
                       prop="args"
@@ -131,10 +136,11 @@ import { parseTime } from '@/utils'
 import { getXATransaction, listXATransactions } from '@/api/transaction'
 import { buildXAResponseError } from '@/utils/transaction'
 import { handleErrorMsgBox, handleWarningMsgBox } from '@/utils/messageBox'
+import Clipboard from '@/components/Clipboard'
 
 export default {
   name: 'XATransactionList',
-
+  components: { Clipboard },
   filters: {
     formatDate(time) {
       time = time * 1000

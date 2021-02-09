@@ -21,7 +21,11 @@
                 </el-col>
               </el-row>
               <el-row>
-                <div style="margin-top: 40px;font-size: 32px;font-weight: bolder;display:inline-block">{{ chainNumber }}</div>
+                <div style="display:inline-block;">
+                  <el-button type="text" style="margin-top: 40px;font-size: 32px;font-weight: bolder;" @click="$router.push({path: 'transaction'})">
+                    {{ chainNumber }}
+                  </el-button>
+                </div>
                 <div style="margin-left: 3px; display:inline-block">条</div>
               </el-row>
             </el-card>
@@ -44,7 +48,11 @@
                 </el-col>
               </el-row>
               <el-row>
-                <div style="margin-top: 40px;font-size: 32px;font-weight: bolder;display:inline-block">{{ routerNumber }}</div>
+                <div style="display:inline-block">
+                  <el-button type="text" style="margin-top: 40px;font-size: 32px;font-weight: bolder;" @click="$router.push({path: 'router'})">
+                    {{ routerNumber }}
+                  </el-button>
+                </div>
                 <div style="margin-left: 3px; display:inline-block">个</div>
               </el-row>
             </el-card>
@@ -69,7 +77,11 @@
                 </el-col>
               </el-row>
               <el-row>
-                <div style="margin-top: 40px;font-size: 32px;font-weight: bolder; display:inline-block">{{ resourceNumber }}</div>
+                <div style="display:inline-block">
+                  <el-button type="text" style="margin-top: 40px;font-size: 32px;font-weight: bolder;" @click="$router.push({path: 'resource'})">
+                    {{ resourceNumber }}
+                  </el-button>
+                </div>
                 <div style="margin-left: 3px; display:inline-block">个</div>
               </el-row>
             </el-card>
@@ -92,8 +104,15 @@
                 </el-col>
               </el-row>
               <el-row>
-                <div style="margin-top: 40px">
-                  <li v-for="item in transactionType" :key="item.label" style="font-size: 16px;">{{ item.label }}</li>
+                <div style="margin-top: 42px">
+                  <li v-for="item in transactionType" :key="item.label" style="font-size: 16px;">
+                    <el-button v-if="!item.disabled" type="text" size="medium" style="font-weight: bolder;font-size: 16px;" @click="$router.push({path:'xaTransaction'})">
+                      {{ item.label }}
+                    </el-button>
+                    <span v-else>
+                      {{ item.label }}
+                    </span>
+                  </li>
                 </div>
               </el-row>
             </el-card>
@@ -101,7 +120,7 @@
         </el-row>
       </el-col>
       <el-col :span="12">
-        <el-card style="height: 346px">
+        <el-card style="height: 390px">
           <template slot="header">
             <span>区块链信息</span>
             <el-button icon="el-icon-refresh-left" type="text" style="padding: 0px;float:right" @click="refreshChainsInfo">刷新</el-button>
@@ -110,7 +129,7 @@
             v-loading="chainsInfoLoading"
             :data="chainsInfo"
             style="width: 100%;"
-            height="250px"
+            height="300px"
           >
             <el-table-column
               prop="path"
@@ -270,6 +289,9 @@ export default {
   },
   created() {
     systemStatus().then(response => {
+      if (!response.data) {
+        this.$message.error('本地系统信息返回为空，请检查后台信息')
+      }
       this.systemInfo = response.data
     }).catch(_ => {
       this.$message({
@@ -279,7 +301,13 @@ export default {
     })
 
     routerStatus().then(response => {
+      if (!response.data) {
+        this.$message.error('路由信息返回为空，请检查后台信息')
+      }
       this.routerInfo = response.data
+      this.$store.dispatch('app/updateVersion', response.data.version).catch(
+        err => { console.log('version:', response.data.version, 'err:', err) }
+      )
     }).catch(_ => {
       this.$message({
         type: 'error',

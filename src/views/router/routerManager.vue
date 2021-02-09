@@ -120,7 +120,7 @@ export default {
           if (response.errorCode === 0) {
             this.$message({
               type: 'success',
-              message: '添加路由 ' + data.value + ' 成功'
+              message: '发送添加路由' + data.value + '请求成功，请手动刷新查看'
             })
             this.refresh()
           } else {

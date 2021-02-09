@@ -30,10 +30,22 @@
             >
             <el-container v-if="!qrCodeShow">
               <el-header
-                style="text-align: left;line-height: 90px;margin-left:18px;font-size:25px"
-              ><span>
+                style="text-align: left;margin-left:18px;font-size:25px;display: inline"
+              ><div style="margin-top: 30px">
                 从Issue开始, 成为跨链达人
-                <i class="el-icon-magic-stick" /></span></el-header>
+                <i class="el-icon-magic-stick" />
+                <el-button
+                  size="small"
+                  plain
+                  round
+                  style="float: right;margin-right: 16px;margin-top: -2px"
+                >
+                  <svg-icon icon-class="qrcode" />
+                  加入开源社区
+                </el-button>
+              </div>
+
+              </el-header>
               <el-main style="height: 440px" />
               <el-footer
                 style="text-align: right;margin-right:36px;padding:0px"
@@ -82,14 +94,6 @@
                     )
                   "
                 ><i class="el-icon-mic" /> 指方向，提需求</el-button>
-                <el-button
-                  size="small"
-                  plain
-                  round
-                >
-                  <svg-icon icon-class="qrcode" />
-                  加入开源社区
-                </el-button>
               </el-button-group></el-footer>
             </el-container>
           </body>

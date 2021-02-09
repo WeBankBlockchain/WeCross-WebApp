@@ -16,7 +16,11 @@
             <el-button id="addChainAccount" style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
           </el-form-item>
           <el-form-item id="uaPK" label="公钥信息：">
-            <el-input v-model="ua.pubKey" type="textarea" readonly autosize resize="none" />
+            <el-input v-model="ua.pubKey" type="text" readonly autosize resize="none">
+              <el-tooltip slot="prefix" effect="light" content="复制公钥信息">
+                <clipboard :input-data="ua.pubKey" />
+              </el-tooltip>
+            </el-input>
           </el-form-item>
         </el-form>
         <el-table
@@ -88,14 +92,22 @@
             <el-form-item label="链账户类型">
               <el-tag type="info">{{ chainAccountDrawer.info.type }}</el-tag>
             </el-form-item>
-            <el-form-item label="Identity">
+            <el-form-item>
+              <div slot="label">
+                <clipboard :input-data="chainAccountDrawer.info.identity" style="float:right" />
+                <span>Identity</span>
+              </div>
               <el-tooltip effect="light" placement="bottom-start">
                 <div slot="content">含义：<br>FISCO BCOS：address<br> Fabric: 公钥证书 </div>
                 <el-input v-model=" chainAccountDrawer.info.identity" type="textarea" readonly autosize resize="none" />
               </el-tooltip>
             </el-form-item>
-            <el-form-item label="公钥">
-              <el-input v-model=" chainAccountDrawer.info.pubKey" type="textarea" readonly autosize resize="none" />
+            <el-form-item>
+              <div slot="label">
+                <clipboard :input-data="chainAccountDrawer.info.pubKey" style="float:right" />
+                <span>公钥</span>
+              </div>
+              <el-input v-model="chainAccountDrawer.info.pubKey" type="textarea" readonly autosize resize="none" />
             </el-form-item>
             <el-form-item label="私钥">
               <el-button size="mini" @click="chainAccountDrawer.showSec = !chainAccountDrawer.showSec">查看 <i class="el-icon-chat-line-round" /> </el-button>
@@ -346,12 +358,14 @@
 <script>
 import { listAccount, addChainAccount, removeChainAccount, setDefaultAccount } from '@/api/ua.js'
 import { pem, ecdsa, sm2 } from '@/utils/pem.js'
+import Clipboard from '@/components/Clipboard/index'
 import introJS from 'intro.js'
 import 'intro.js/introjs.css'
 import 'intro.js/themes/introjs-modern.css'
 
 export default {
   name: 'AccountAdmin',
+  components: { Clipboard },
   props: {},
   data() {
     return {

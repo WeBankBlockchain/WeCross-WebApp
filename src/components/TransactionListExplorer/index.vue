@@ -10,13 +10,16 @@
       height="calc(100% - 55px)"
     >
       <el-table-column label="交易哈希" min-width="40px" show-overflow-tooltip>
-        <template slot-scope="item">{{ item.row.txHash }}</template>
+        <template slot-scope="item">
+          <clipboard :input-data="item.row.txHash" style="float: left;margin-right: 5px" />
+          {{ item.row.txHash }}
+        </template>
       </el-table-column>
       <el-table-column label="跨链账户" min-width="30px" show-overflow-tooltip>
         <template slot-scope="item">
           <div v-if="item.row.username === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{
                   item.row.username
@@ -33,7 +36,7 @@
         <template slot-scope="item">
           <div v-if="item.row.txID === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{ item.row.txID }}</el-tag>
               </div>
@@ -48,7 +51,7 @@
         <template slot-scope="item">
           <div v-if="item.row.blockNumber === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{
                   item.row.blockNumber
@@ -65,7 +68,7 @@
         <template slot-scope="item">
           <div v-if="item.row.path === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{ item.row.path }}</el-tag>
               </div>
@@ -80,7 +83,7 @@
         <template slot-scope="item">
           <div v-if="item.row.method === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ item.row.txHash }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{
                   item.row.method
@@ -157,6 +160,7 @@ import Clipboard from '@/components/Clipboard/index'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
 import { handleErrorMsgBox } from '@/utils/messageBox'
+import { limitString } from '@/utils'
 
 export default {
   name: 'TransactionList',
@@ -199,6 +203,9 @@ export default {
   },
 
   methods: {
+    limitString(str) {
+      return limitString(str, 10)
+    },
     reset() {
       this.transactionList = []
       this.nextOffset = 0

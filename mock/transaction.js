@@ -154,7 +154,7 @@ module.exports = [
             'hash': '0x@word(9,15)',
             'extraHashes': ['xxx', 'xxx'],
             'blockNumber': 123,
-            'restult': ['xxx', 'XXX']
+            'result': []
           }
         })
       }

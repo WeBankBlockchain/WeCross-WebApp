@@ -14,7 +14,7 @@
             @submitClick="onSubmit"
           >
             <template slot="path">
-              <el-input v-model="transactionData.path" placeholder="请输入资源路径" readonly="true" style="width: calc(100% - 63px)">
+              <el-input v-model="transactionData.path" placeholder="请输入资源路径" readonly style="width: calc(100% - 63px)">
                 <el-button slot="append" icon="el-icon-search" @click="onClickSerch">浏览</el-button>
               </el-input>
               <el-dialog :visible.sync="startSelectPath">
@@ -332,6 +332,7 @@ export default {
     },
     onResponse(response) {
       this.loading = false
+      console.log(response)
       this.$refs.transactionForm.onResponse(response)
     }
   }

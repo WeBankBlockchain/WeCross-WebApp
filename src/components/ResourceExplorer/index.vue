@@ -13,6 +13,7 @@
       </el-table-column>
       <el-table-column label="属性" min-width="150px" show-overflow-tooltip>
         <template slot-scope="scope">
+          <clipboard :input-data="JSON.stringify(scope.row.properties)" style="margin-right: 10px;float:left" />
           <span>{{ JSON.stringify(scope.row.properties) }}</span>
         </template>
       </el-table-column>
@@ -72,10 +73,12 @@ import {
 } from '@/api/resource'
 
 import { call, sendTransaction } from '@/api/transaction'
+import Clipboard from '@/components/Clipboard'
 
 export default {
   name: 'ResourceExplorer',
   components: {
+    Clipboard,
     TransactionForm: () => import('@/views/transaction/components/TransactionForm')
   },
   props: {

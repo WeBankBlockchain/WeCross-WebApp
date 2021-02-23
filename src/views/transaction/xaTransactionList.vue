@@ -57,7 +57,7 @@
                     empty-text="无事务步骤"
                     tooltip-effect="light"
                   >
-                    <el-table-column label="执行时间" min-width="10%">
+                    <el-table-column label="执行时间" min-width="10%" show-overflow-tooltip>
                       <template slot-scope="step">
                         <span>{{ step.row.timestamp | formatDate }}</span>
                       </template>

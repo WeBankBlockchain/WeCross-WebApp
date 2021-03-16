@@ -206,11 +206,7 @@ export default {
             username: this.loginForm.username,
             password: confusePassword(this.loginForm.password),
             authCode: this.loginForm.authCode,
-            randomToken: this.imageAuthCode.randomToken,
-            callback: (resp) => {
-              console.log(' callback response => ' + JSON.stringify(resp))
-              this.handleUpdateAuthCode()
-            }
+            randomToken: this.imageAuthCode.randomToken
           }
 
           this.loading = true
@@ -220,7 +216,8 @@ export default {
               this.$router.push({ path: this.redirect || '/' })
               this.loading = false
             })
-            .catch(() => {
+            .catch(e => {
+              console.log('error in login: ' + e)
               this.loading = false
               this.handleUpdateAuthCode()
             })

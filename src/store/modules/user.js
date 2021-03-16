@@ -45,7 +45,7 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, loginParams) {
-    const { username, callback } = loginParams
+    const username = loginParams
     return new Promise((resolve, reject) => {
       // rsa encode parameters
       var pub = getPubKey()
@@ -90,10 +90,7 @@ const actions = {
             Message.error({ message: '未识别的错误', center: true })
           }
 
-          resolve()
-          if (typeof callback === 'function') {
-            callback(response.data)
-          }
+          reject(response.data)
         } else {
           if (isUserFirstTimeUse(username)) {
             listAccount().then(res => {

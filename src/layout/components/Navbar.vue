@@ -113,13 +113,8 @@
           <span><i class="el-icon-user" />  |  {{ loginUser }} </span>
         </el-button>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>
-            <span style="display:block;text-align: center">
-              {{ this.$store.getters.version }}
-            </span>
-          </el-dropdown-item>
           <router-link to="/account/index">
-            <el-dropdown-item divided>
+            <el-dropdown-item>
               账户管理
             </el-dropdown-item>
           </router-link>

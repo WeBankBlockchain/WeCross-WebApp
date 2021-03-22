@@ -102,7 +102,7 @@ export default {
         path: null,
         method: null,
         args: [{
-          value: null,
+          value: '',
           key: 0
         }],
         execMethod: 'sendTransaction',
@@ -167,7 +167,7 @@ export default {
     onClearTransaction() {
       this.transactionData.method = null
       this.transactionData.args = [{
-        value: null,
+        value: '',
         key: 0
       }]
       this.transactionData.path = this.selection

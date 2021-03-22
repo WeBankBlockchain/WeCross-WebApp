@@ -45,7 +45,7 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, loginParams) {
-    const username = loginParams
+    const username = loginParams.username
     return new Promise((resolve, reject) => {
       // rsa encode parameters
       var pub = getPubKey()

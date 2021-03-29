@@ -101,7 +101,7 @@
       </el-dropdown>
       <div class="right-menu-item hover-effect">
         <el-tooltip effect="light" content="需要帮助？" placement="bottom">
-          <el-button circle effect="light" size="mini" @click="() => {this.$emit('help')}">
+          <el-button circle effect="light" size="mini" @click="() => {$emit('help')}">
             <span class="svg-container">
               <svg-icon icon-class="question" />
             </span>

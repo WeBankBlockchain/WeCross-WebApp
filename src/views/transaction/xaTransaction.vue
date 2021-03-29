@@ -342,7 +342,7 @@ export default {
         path: null,
         method: null,
         args: [{
-          value: null,
+          value: '',
           key: 0
         }],
         execMethod: 'sendTransaction',
@@ -524,7 +524,7 @@ export default {
       this.transactionForm.method = null
       this.transactionForm.path = null
       this.transactionForm.args = [{
-        value: null,
+        value: '',
         key: 0
       }]
     },

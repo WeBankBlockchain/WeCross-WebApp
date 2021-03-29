@@ -3,7 +3,7 @@ export function stepRoute(type, method) {
   if (type === null) {
     return defaultSteps
   }
-  if (type === 'BCOS2.0') {
+  if (type === 'BCOS2.0' || type === 'GM_BCOS2.0') {
     return BCOSSteps
   } else if (type === 'Fabric1.4') {
     if (method === null) {

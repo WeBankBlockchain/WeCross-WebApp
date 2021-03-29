@@ -28,9 +28,8 @@
             <el-form-item
               :label="'调用参数:'"
               :prop="'args.' + index + '.value'"
-              :rules="[{ required: true, message: '参数输入不能为空，可删除该参数置空', trigger: 'blur'}]"
             >
-              <el-input v-model="arg.value" :placeholder="'请输入参数'+index" style="width: calc(100% - 63px)">
+              <el-input v-model="arg.value" :placeholder="'若为空则参数为空字符串'" style="width: calc(100% - 63px)">
                 <template slot="prepend">{{ index }}</template>
               </el-input>
               <el-button-group>
@@ -111,7 +110,7 @@ export default {
           path: null,
           method: null,
           args: [{
-            value: null,
+            value: '',
             key: 0
           }],
           execMethod: null,
@@ -166,7 +165,7 @@ export default {
     addArg() {
       this.submitResponse = null
       this.transaction.args.push({
-        value: null,
+        value: '',
         key: Date.now()
       })
     },
@@ -221,7 +220,11 @@ export default {
         }
         handleErrorMsgBox('执行错误：', '错误码: ' + code, message, null).catch(_ => {})
       } else {
-        this.submitResponse = JSON.stringify(response.data.result)
+        if (!response.data.result) {
+          this.submitResponse = 'response返回错误，result为空'
+        }
+        const res = JSON.stringify(response.data.result)
+        this.submitResponse = (res === '[]') ? '调用成功，返回结果为空' : res
       }
     },
     clearForm() {

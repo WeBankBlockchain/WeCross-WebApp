@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card>
       <template slot="header">
-        <el-page-header content="资源部署页面" title="资源管理" @back="() => {this.$router.push({ path: 'resourceList' })}">
+        <el-page-header content="资源部署页面" title="资源管理" @back="() => {$router.push({ path: 'resourceList' })}">
           <div slot="content">
             <span style="color: #303133;font-size: 16px">资源部署页面</span>
             <el-tooltip id="deployHelp" effect="light" content="如何部署资源？" placement="top">

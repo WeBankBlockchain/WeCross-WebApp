@@ -9,7 +9,6 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu" style="margin-right:20px">
-      <header-search id="header-search" class="right-menu-item" />
       <el-dropdown id="issue" trigger="click" class="right-menu-item hover-effect">
         <el-tooltip effect="light" content="加鸡腿" placement="bottom">
           <el-button circle effect="light" size="mini">
@@ -136,11 +135,11 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import HeaderSearch from '@/components/HeaderSearch'
+// import HeaderSearch from '@/components/HeaderSearch'
 
 export default {
   components: {
-    HeaderSearch,
+    // HeaderSearch,
     Breadcrumb,
     Hamburger
   },

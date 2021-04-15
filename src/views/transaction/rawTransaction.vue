@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card>
       <template slot="header">
-        <el-page-header content="交易发起页面" title="交易管理" @back="() => {this.$router.push({ path: 'transactionList' })}" />
+        <el-page-header content="交易发起页面" title="交易管理" @back="() => {$router.push({ path: 'transactionList' })}" />
       </template>
       <el-row type="flex" justify="center" style="margin-top: 20px">
         <el-col :span="12">
@@ -123,7 +123,7 @@ export default {
         path: null,
         method: null,
         args: [{
-          value: null,
+          value: '',
           key: 0
         }],
         execMethod: 'sendTransaction',
@@ -282,7 +282,7 @@ export default {
     onClearTransaction() {
       this.transactionData.method = null
       this.transactionData.args = [{
-        value: null,
+        value: '',
         key: 0
       }]
     },

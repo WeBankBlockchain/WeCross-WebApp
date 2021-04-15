@@ -307,9 +307,6 @@ export default {
         this.$message.error('路由信息返回为空，请检查后台信息')
       }
       this.routerInfo = response.data
-      this.$store.dispatch('app/updateVersion', response.data.version).catch(
-        err => { console.log('version:', response.data.version, 'err:', err) }
-      )
     }).catch(_ => {
       this.$message({
         type: 'error',

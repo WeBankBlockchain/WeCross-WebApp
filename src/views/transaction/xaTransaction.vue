@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card header="事务步骤">
       <template slot="header">
-        <el-page-header content="事务步骤" title="事务管理" @back="() => {this.$router.push({ path: 'xaTransactionList' })}" />
+        <el-page-header content="事务步骤" title="事务管理" @back="() => {$router.push({ path: 'xaTransactionList' })}" />
       </template>
       <el-row :gutter="24">
         <el-steps :active="stepActive" align-center finish-status="finish">
@@ -114,7 +114,7 @@
                 @change="onSelectionChange"
               >
                 <el-option
-                  v-for="path in this.$store.getters.XAPaths"
+                  v-for="path in $store.getters.XAPaths"
                   :key="path"
                   :value="path"
                   :label="limitString(path)"
@@ -126,11 +126,11 @@
             <el-row>
               <div style="font-size: 14px">
                 <el-tooltip effect="light" content="复制事务ID" placement="top-start">
-                  <clipboard :input-data="this.$store.getters.transactionID" style="float:right;z-index: 1000" />
+                  <clipboard :input-data="$store.getters.transactionID" style="float:right;z-index: 1000" />
                 </el-tooltip>
-                <el-tooltip effect="light" :content="this.$store.getters.transactionID" placement="top-start">
+                <el-tooltip effect="light" :content="$store.getters.transactionID" placement="top-start">
                   <div>
-                    {{ "当前事务ID： " + limitString(this.$store.getters.transactionID) }}
+                    {{ "当前事务ID： " + limitString($store.getters.transactionID) }}
                   </div>
                 </el-tooltip>
               </div>
@@ -258,7 +258,7 @@
                 </el-button>
                 <el-button
                   icon="el-icon-search"
-                  @click="() => {this.$router.push({ path: 'xaTransactionList' })}"
+                  @click="() => {$router.push({ path: 'xaTransactionList' })}"
                 >查看事务列表
                 </el-button>
               </el-button-group>
@@ -342,7 +342,7 @@ export default {
         path: null,
         method: null,
         args: [{
-          value: null,
+          value: '',
           key: 0
         }],
         execMethod: 'sendTransaction',
@@ -524,7 +524,7 @@ export default {
       this.transactionForm.method = null
       this.transactionForm.path = null
       this.transactionForm.args = [{
-        value: null,
+        value: '',
         key: 0
       }]
     },

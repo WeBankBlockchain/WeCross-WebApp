@@ -9,7 +9,6 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu" style="margin-right:20px">
-      <header-search id="header-search" class="right-menu-item" />
       <el-dropdown id="issue" trigger="click" class="right-menu-item hover-effect">
         <el-tooltip effect="light" content="加鸡腿" placement="bottom">
           <el-button circle effect="light" size="mini">
@@ -101,7 +100,7 @@
       </el-dropdown>
       <div class="right-menu-item hover-effect">
         <el-tooltip effect="light" content="需要帮助？" placement="bottom">
-          <el-button circle effect="light" size="mini" @click="() => {this.$emit('help')}">
+          <el-button circle effect="light" size="mini" @click="() => {$emit('help')}">
             <span class="svg-container">
               <svg-icon icon-class="question" />
             </span>
@@ -113,13 +112,8 @@
           <span><i class="el-icon-user" />  |  {{ loginUser }} </span>
         </el-button>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>
-            <span style="display:block;text-align: center">
-              {{ this.$store.getters.version }}
-            </span>
-          </el-dropdown-item>
           <router-link to="/account/index">
-            <el-dropdown-item divided>
+            <el-dropdown-item>
               账户管理
             </el-dropdown-item>
           </router-link>
@@ -141,11 +135,11 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import HeaderSearch from '@/components/HeaderSearch'
+// import HeaderSearch from '@/components/HeaderSearch'
 
 export default {
   components: {
-    HeaderSearch,
+    // HeaderSearch,
     Breadcrumb,
     Hamburger
   },

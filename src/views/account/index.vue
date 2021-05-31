@@ -153,6 +153,7 @@
                 <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
                 <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0" />
                 <el-option label="HyperLedger Fabric 1.4" value="Fabric1.4" />
+                <el-option label="HyperLedger Fabric 2.0" value="Fabric2.0" />
               </el-select>
             </el-form-item>
 
@@ -338,6 +339,69 @@
 
             </div>
 
+            <div v-if="addChainAccountDrawer.params.type === 'Fabric2.0'">
+              <el-form-item v-if="addChainAccountDrawer.params.type" prop="secKey">
+                <label>
+                  <span>私钥</span>
+                </label>
+                <el-upload
+                  style="float:right"
+                  action=""
+                  accept=".key,.pem"
+                  :show-file-list="false"
+                  :file-list="pubKeyFileList"
+                  :http-request="uploadSecKeyHandler"
+                  :auto-upload="true"
+                >
+                  <el-button slot="trigger" type="primary">上传</el-button>
+                </el-upload>
+                <el-input
+                  v-model="addChainAccountDrawer.params.secKey"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入"
+                  autosize
+                  style="margin-top:10px"
+                />
+              </el-form-item>
+
+              <el-form-item v-if="addChainAccountDrawer.params.type" prop="pubKey">
+                <label>
+                  <span>公钥证书</span>
+                </label>
+                <el-upload
+                  style="float:right"
+                  action=""
+                  accept=".crt"
+                  :show-file-list="false"
+                  :file-list="pubKeyFileList"
+                  :http-request="uploadPubKeyCertHandler"
+                  :auto-upload="true"
+                >
+                  <el-button slot="trigger" type="primary">上传</el-button>
+                </el-upload>
+                <el-input
+                  v-model="addChainAccountDrawer.params.pubKey"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入"
+                  autosize
+                  style="margin-top:10px"
+                />
+              </el-form-item>
+
+              <el-form-item v-if="addChainAccountDrawer.params.type === 'Fabric2.0'" prop="ext">
+                <label><div><span>MSPID</span></div></label>
+                <el-input
+                  v-model="addChainAccountDrawer.params.ext"
+                  style="margin-top:10px"
+                  placeholder="请输入"
+                  clearable
+                />
+              </el-form-item>
+
+            </div>
+
             <el-form-item v-if="addChainAccountDrawer.params.type">
               <label><div><span>设为默认账户</span></div></label>
               <el-switch v-model="addChainAccountDrawer.params.isDefault" style="margin-top:10px" />
@@ -438,6 +502,8 @@ export default {
           if (typeof (value) === 'undefined' || value.length === 0) {
             callback(new Error('请输入公钥'))
           } else if (this.addChainAccountDrawer.params.type === 'Fabric1.4' && !pem.isCertFormat(value)) {
+            callback(new Error('格式错误' + this.addChainAccountDrawer.params.type))
+          } else if (this.addChainAccountDrawer.params.type === 'Fabric2.0' && !pem.isCertFormat(value)) {
             callback(new Error('格式错误' + this.addChainAccountDrawer.params.type))
           } else {
             callback()

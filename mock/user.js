@@ -4,7 +4,7 @@ module.exports = [
     url: '/auth/login',
     type: 'post',
     response: _ => {
-      const token = 'admin-token'
+      const token = 'access-token'
 
       // mock error
       if (!token) {

@@ -11,7 +11,7 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            'username': 'org1-admin',
+            'username': 'org1-access',
             'uaID': '3059301306072a8648ce3d020106082a811ccf5501822d034200047cfc7f4488a171e4a80051cdf93e2febc3066181b17bccd81264b79e346affc1f684738aa565485a459bbc00f03bd1df3df7dac985e6a740a3ed5533d5a60874',
             'pubKey': '3059301306072a8648ce3d020106082a811ccf5501822d034200047cfc7f4488a171e4a80051cdf93e2febc3066181b17bccd81264b79e346affc1f684738aa565485a459bbc00f03bd1df3df7dac985e6a740a3ed5533d5a60874',
             'admin': true,
@@ -100,6 +100,56 @@ module.exports = [
       return {
         ...Mock.mock({
           version: 0,
+          errorCode: 0,
+          message: 'success',
+          data: {
+            errorCode: 0,
+            message: 'success'
+          }
+        })
+      }
+    }
+  },
+  {
+    url: '/auth/admin/accessControlList',
+    type: 'get',
+    response: _ => {
+      return {
+        ...Mock.mock({
+          version: 0,
+          errorCode: 0,
+          message: 'success',
+          data: [
+            {
+              'username': 'org1-admin',
+              'allowChainPaths': [
+                'payment.bcos2',
+                'payment.fabric1',
+                'payment.fabric2',
+                'payment.fabric3'
+              ],
+              'updateTimestamp': 1624517049308
+            },
+            {
+              'username': 'org2-admin',
+              'allowChainPaths': [
+                'payment.bcos2',
+                'payment.fabric3'
+              ],
+              'updateTimestamp': 1624517049308
+            }
+          ]
+        })
+      }
+    }
+  },
+  {
+    url: '/auth/accessControlList',
+    type: 'post',
+    response: _ => {
+      return {
+        ...Mock.mock({
+          version: 1,
           errorCode: 0,
           message: 'success',
           data: {

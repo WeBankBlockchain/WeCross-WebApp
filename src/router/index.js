@@ -139,6 +139,18 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/admin',
+    component: Layout,
+    name: 'AccessManager',
+    redirect: '/admin/index',
+    children: [{
+      path: 'index',
+      name: 'access',
+      component: () => import('@/views/access/index'),
+      meta: { title: '权限管理', icon: 'el-icon-lock' }
+    }]
+  },
+  {
     path: '/documents',
     component: Layout,
     name: 'Documents',

@@ -3,7 +3,7 @@ const resource = require('./resource')
 const conn = require('./conn')
 const ua = require('./ua')
 const transaction = require('./transaction')
-const staus = require('./status')
+const status = require('./status')
 
 const mocks = [
   ...user,
@@ -11,7 +11,7 @@ const mocks = [
   ...conn,
   ...ua,
   ...transaction,
-  ...staus
+  ...status
 ]
 
 module.exports = {

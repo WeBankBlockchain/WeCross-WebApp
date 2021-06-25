@@ -119,7 +119,7 @@
           <div style="text-emphasis: center;">
             <div>
               <el-transfer
-                v-model="chosenChains"
+                v-model="userState.chosenChains"
                 filterable
                 :titles="['待选链', '可操作链']"
                 :button-texts="['取消权限', '添加权限']"
@@ -142,7 +142,7 @@
 </template>
 <script>
 
-import { accessControlListGet, listAccount } from '@/api/ua'
+import { accessControlListGet, accessControlListPost, listAccount } from '@/api/ua'
 import Clipboard from '@/components/Clipboard/index'
 import { parseTime } from '@/utils'
 import { listChains, listZones } from '@/api/conn'
@@ -169,7 +169,10 @@ export default {
       userData: [],
       chainNumber: null,
       chainsInfo: [],
-      chosenChains: [],
+      userState: {
+        username: null,
+        chosenChains: []
+      },
       dialogOpen: false,
       search: ''
     }
@@ -202,6 +205,7 @@ export default {
           return
         }
         this.userData = response.data
+        this.userState.chosenChains = response.data.allowChainPaths
       }).catch(error => {
         this.$message({
           message: '网络异常：' + error,
@@ -246,10 +250,37 @@ export default {
     },
     handleAccessBtn(data) {
       this.dialogOpen = true
+      this.userState.username = data.username
       console.log(data)
     },
     handleSetAccess() {
-      this.dialogOpen = false
+      accessControlListPost({ username: this.userState.username }, { version: '1', data: this.userState.chosenChains })
+        .then(response => {
+          if (typeof response.errorCode === 'undefined' || response.errorCode !== 0) {
+            this.$message.error({
+              message: 'response返回错误',
+              center: true,
+              duration: 5000
+            })
+          } else if (response.data.errorCode !== 0) {
+            this.$message({
+              message: '设置失败：' + response.data.message,
+              type: 'error'
+            })
+          } else {
+            this.$message({
+              message: '设置成功：' + response.data.message,
+              type: 'success'
+            })
+            console.log(response)
+            this.dialogOpen = false
+          }
+        }).catch(_ => {
+          this.$message({
+            type: 'error',
+            message: '设定访问控制权限失败，网络错误'
+          })
+        })
     }
   }
 }

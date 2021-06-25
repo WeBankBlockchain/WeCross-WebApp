@@ -15,17 +15,18 @@ module.exports = [
       }
 
       return {
-        version: '1',
-        errorCode: 0,
-        message: 'xxx',
-        data: {
-          errorCode: 0,
-          message: 'success',
-          credential: 'Bearer XXXXX',
-          universalAccount: {
-            username: 'xxx',
-            pubKey: 'xxx',
-            uaID: 'xxx'
+        'version': '1.0',
+        'errorCode': 0,
+        'message': 'success',
+        'data': {
+          'errorCode': 0,
+          'message': 'success',
+          'credential': 'Bearer eyJpYXRtaWxsIjoxNjI0NDM3MDgwODk2LCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJvcmcxLWFkbWluIiwibmJmIjoxNjI0NDM3MDgwLCJpc3MiOiJvcmcxIiwiZXhwIjoxNjI0NDM3NjgwLCJpYXQiOjE2MjQ0MzcwODB9.0yIjh54NvVgeoOX2DqbfTEm_ukdJeF7f44lii0Unkzc',
+          'universalAccount': {
+            'username': 'org1-admin',
+            'uaID': '3059301306072a8648ce3d020106082a811ccf5501822d03420004c52c0d26c2fc5368127472d9f7cad96d5792c3c6781f8b9cedaffd14c45deb6eabec7b7598f0ae194262bd1b8b5b4fbf75ade010b1ad688fa3ba7112a00c5d72',
+            'pubKey': '3059301306072a8648ce3d020106082a811ccf5501822d03420004c52c0d26c2fc5368127472d9f7cad96d5792c3c6781f8b9cedaffd14c45deb6eabec7b7598f0ae194262bd1b8b5b4fbf75ade010b1ad688fa3ba7112a00c5d72',
+            'isAdmin': true
           }
         }
       }

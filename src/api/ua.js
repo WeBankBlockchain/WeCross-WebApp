@@ -87,7 +87,7 @@ export function accessControlListGet(params) {
  * @param {Object} data
  * @param {String} data.version
  * @param {Object} data.data
- * @param {Array} data.data.allowChainPaths
+ * @param {Array[String]} data.data.allowChainPaths
  * @return {Promise} an axios promise object of response
  */
 export function accessControlListPost(params, data) {

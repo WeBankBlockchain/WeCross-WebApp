@@ -109,5 +109,55 @@ module.exports = [
         })
       }
     }
+  },
+  {
+    url: '/auth/admin/accessControlList',
+    type: 'get',
+    response: _ => {
+      return {
+        ...Mock.mock({
+          version: 0,
+          errorCode: 0,
+          message: 'success',
+          data: [
+            {
+              'username': 'org1-admin',
+              'allowChainPaths': [
+                'payment.bcos2',
+                'payment.fabric1',
+                'payment.fabric2',
+                'payment.fabric3'
+              ],
+              'updateTimestamp': 1624517049308
+            },
+            {
+              'username': 'org2-admin',
+              'allowChainPaths': [
+                'payment.bcos2',
+                'payment.fabric3'
+              ],
+              'updateTimestamp': 1624517049308
+            }
+          ]
+        })
+      }
+    }
+  },
+  {
+    url: '/auth/admin/accessControlList',
+    type: 'post',
+    response: _ => {
+      return {
+        ...Mock.mock({
+          version: 1,
+          errorCode: 0,
+          message: 'success',
+          data: {
+            errorCode: 0,
+            message: 'success'
+          }
+        })
+      }
+    }
   }
 ]

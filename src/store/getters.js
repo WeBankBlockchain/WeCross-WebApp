@@ -6,6 +6,7 @@ const getters = {
   name: state => state.user.name,
   roles: state => state.user.roles,
   transactionID: state => state.transaction.transactionID,
-  XAPaths: state => state.transaction.paths
+  XAPaths: state => state.transaction.paths,
+  permissionRoutes: state => state.permission.routes
 }
 export default getters

@@ -81,7 +81,7 @@ module.exports = [{
         size: 1000,
         'data|10': [{
           zone: param.query.zone,
-          'chain|1': ['bcos@integer(1,100)', 'bcos_gm@integer(1,100)', 'fabric@integer(1,100)'],
+          'chain|1': ['bcos@integer(1,10000)', 'bcos_gm@integer(1,10000)', 'fabric@integer(1,10000)'],
           'type|1': ['BCOS2.0', 'GM_BCOS2.0', 'Fabric1.4'],
           blockNumber: '@integer(1,1000000)',
           isLocal: '@pick(true,false)',
@@ -106,7 +106,7 @@ module.exports = [{
       'errorCode': 0,
       'message': 'success',
       data: {
-        size: 10,
+        size: 1,
         'data|10': ["@pick([\'payment\',\'load\',\'resource\'])"]
       }
     }

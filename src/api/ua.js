@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 /**
  * list all chain account of UA
- * @return {Promise<Response>} an axios promise object of response
+ * @return {Promise} an axios promise object of response
  */
 export function listAccount() {
   return request({
@@ -19,7 +19,7 @@ export function listAccount() {
  * @param {Object} data.data - main body data of request
  * @param {string} data.data.type - the chain type
  * @param {number} data.data.keyID
- * @return {Promise<Response>} an axios promise object of response
+ * @return {Promise} an axios promise object of response
  */
 export function setDefaultAccount(data) {
   return request({
@@ -39,7 +39,7 @@ export function setDefaultAccount(data) {
  * @param {string} data.data.secKey
  * @param {string} data.data.ext
  * @param {boolean} data.data.isDefault
- * @return {Promise<Response>} an axios promise object of response
+ * @return {Promise} an axios promise object of response
  */
 export function addChainAccount(data) {
   return request({
@@ -56,7 +56,7 @@ export function addChainAccount(data) {
  * @param {Object} data.data - main body data of request
  * @param {string} data.data.type - the chain type
  * @param {number} data.data.keyID
- * @return {Promise<Response>} an axios promise object of response
+ * @return {Promise} an axios promise object of response
  */
 export function removeChainAccount(data) {
   return request({
@@ -66,3 +66,35 @@ export function removeChainAccount(data) {
   })
 }
 
+/**
+ * get all access chain of username
+ * @param {Object|null} params param include username, if null get all user
+ * @param {String} params.username username
+ * @return {Promise} an axios promise object of response
+ */
+export function accessControlListGet(params) {
+  return request({
+    url: '/auth/admin/accessControlList',
+    method: 'get',
+    params: params
+  })
+}
+
+/**
+ * post access chain of username
+ * @param {Object} params param include username, if null get all user
+ * @param {String} params.username username
+ * @param {Object} data
+ * @param {String} data.version
+ * @param {Object} data.data
+ * @param {Array[String]} data.data.allowChainPaths
+ * @return {Promise} an axios promise object of response
+ */
+export function accessControlListPost(params, data) {
+  return request({
+    url: '/auth/admin/accessControlList',
+    method: 'post',
+    params: params,
+    data: data
+  })
+}

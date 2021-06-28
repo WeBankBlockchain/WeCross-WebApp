@@ -24,6 +24,7 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: getUsername(),
+    roles: [],
     avatar: 'https://wecross.readthedocs.io/zh_CN/latest/_static/images/menu_logo_wecross.svg'
   }
 }
@@ -39,6 +40,9 @@ const mutations = {
   },
   SET_NAME: (state, name) => {
     state.name = name
+  },
+  SET_ROLE: (state, roles) => {
+    state.roles = roles
   }
 }
 
@@ -119,6 +123,8 @@ const actions = {
           }
           commit('SET_TOKEN', response.data.credential)
           commit('SET_NAME', username)
+          // const role = response.data.universalAccount.isAdmin === true ? ['admin'] : ['user']
+          // commit('SET_ROLE', role)
           setToken(response.data.credential)
           setUsername(username)
           resolve()
@@ -159,6 +165,16 @@ const actions = {
       removeUsername()
       commit('RESET_STATE')
       resolve()
+    })
+  },
+  getRole({ commit }) {
+    return new Promise(resolve => {
+      let role = []
+      listAccount().then(res => {
+        role = res.data.admin === true ? ['admin'] : ['user']
+        commit('SET_ROLE', role)
+        resolve(role)
+      })
     })
   }
 }

@@ -23,7 +23,6 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true
   },
-
   {
     path: '/',
     component: Layout,
@@ -35,7 +34,10 @@ export const constantRoutes = [
       component: () => import('@/views/homepage/index'),
       meta: { title: '平台首页', icon: 'el-icon-s-home' }
     }]
-  },
+  }
+]
+
+export const asyncRoutes = [
   {
     path: '/account',
     component: Layout,
@@ -46,13 +48,21 @@ export const constantRoutes = [
         path: 'index',
         name: 'AccountManager',
         component: () => import('@/views/account/index'),
-        meta: { title: '账户管理', icon: 'el-icon-user' }
+        meta: {
+          title: '账户管理',
+          icon: 'el-icon-user',
+          roles: ['admin', 'user']
+        }
       },
       {
         path: 'changePassword',
         hidden: true,
         component: () => import('@/views/account/changePassword'),
-        meta: { title: '修改密码', icon: 'el-icon-user' }
+        meta: {
+          title: '修改密码',
+          icon: 'el-icon-user',
+          roles: ['admin', 'user']
+        }
       }
     ]
   },
@@ -66,13 +76,21 @@ export const constantRoutes = [
         name: 'routerManager',
         path: 'routerManager',
         component: () => import('@/views/router/routerManager'),
-        meta: { title: '路由管理', icon: 'el-icon-connection' }
+        meta: {
+          title: '路由管理',
+          icon: 'el-icon-connection',
+          roles: ['admin', 'user']
+        }
       },
       {
         path: 'routerGuide',
         hidden: true,
         component: () => import('@/views/router/routerGuide'),
-        meta: { title: '路由部署', icon: 'el-icon-upload' }
+        meta: {
+          title: '路由部署',
+          icon: 'el-icon-upload',
+          roles: ['admin', 'user']
+        }
       }
     ]
   },
@@ -86,14 +104,23 @@ export const constantRoutes = [
         name: 'resourceList',
         path: 'resourceList',
         component: () => import('@/views/resource/resourceManager'),
-        meta: { title: '资源管理', icon: 'el-icon-files' }
+        meta: {
+          title: '资源管理',
+          icon: 'el-icon-files',
+          roles: ['admin', 'user']
+        }
       },
       {
         name: 'resourceDeployment',
         path: 'resourceDeployment',
         hidden: true,
         component: () => import('@/views/resource/resourceDeployment'),
-        meta: { title: '资源部署', icon: 'el-icon-upload', activeMenu: '/resource/resourceList' }
+        meta: {
+          title: '资源部署',
+          icon: 'el-icon-upload',
+          activeMenu: '/resource/resourceList',
+          roles: ['admin', 'user']
+        }
       }
     ]
   },
@@ -107,13 +134,22 @@ export const constantRoutes = [
         path: 'rawTransaction',
         hidden: true,
         component: () => import('@/views/transaction/rawTransaction'),
-        meta: { title: '交易发起', icon: 'el-icon-s-opportunity', activeMenu: '/transaction/transactionList' }
+        meta: {
+          title: '交易发起',
+          icon: 'el-icon-s-opportunity',
+          activeMenu: '/transaction/transactionList',
+          roles: ['admin', 'user']
+        }
       },
       {
         path: 'transactionList',
         name: 'TransactionList',
         component: () => import('@/views/transaction/transactionManager'),
-        meta: { title: '交易管理', icon: 'el-icon-sort' }
+        meta: {
+          title: '交易管理',
+          icon: 'el-icon-sort',
+          roles: ['admin', 'user']
+        }
       }
     ]
   },
@@ -128,15 +164,40 @@ export const constantRoutes = [
         path: 'xaTransaction',
         hidden: true,
         component: () => import('@/views/transaction/xaTransaction'),
-        meta: { title: '事务交易', icon: 'el-icon-s-order', activeMenu: '/xaTransaction/xaTransactionList' }
+        meta: {
+          title: '事务交易',
+          icon: 'el-icon-s-order',
+          activeMenu: '/xaTransaction/xaTransactionList',
+          roles: ['admin', 'user']
+        }
       },
       {
         name: 'xaTransactionList',
         path: 'xaTransactionList',
         component: () => import('@/views/transaction/xaTransactionList'),
-        meta: { title: '事务管理', icon: 'el-icon-finished' }
+        meta: {
+          title: '事务管理',
+          icon: 'el-icon-finished',
+          roles: ['admin', 'user']
+        }
       }
     ]
+  },
+  {
+    path: '/admin',
+    component: Layout,
+    name: 'AccessManager',
+    redirect: '/admin/index',
+    children: [{
+      path: 'index',
+      name: 'access',
+      component: () => import('@/views/access/index'),
+      meta: {
+        title: '权限管理',
+        icon: 'el-icon-lock',
+        roles: ['admin']
+      }
+    }]
   },
   {
     path: '/documents',
@@ -147,11 +208,14 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/document/index'),
-        meta: { title: '参考文档', icon: 'el-icon-document' }
+        meta: {
+          title: '参考文档',
+          icon: 'el-icon-document',
+          roles: ['admin', 'user']
+        }
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

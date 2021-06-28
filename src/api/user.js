@@ -3,7 +3,7 @@ import request from '@/utils/request'
 /**
  * login
  * @param {string} data - encoded login params
- * @return {Promise<Response>} an axios promise object of response
+ * @return {Promise} an axios promise object of response
  */
 export function login(data) {
   return request({

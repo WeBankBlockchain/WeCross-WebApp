@@ -254,7 +254,7 @@ export default {
       console.log(data)
     },
     handleSetAccess() {
-      accessControlListPost({ username: this.userState.username }, { version: '1', data: this.userState.chosenChains })
+      accessControlListPost({ username: this.userState.username }, { version: '1', data: { allowChainPaths: this.userState.chosenChains }})
         .then(response => {
           if (typeof response.errorCode === 'undefined' || response.errorCode !== 0) {
             this.$message.error({

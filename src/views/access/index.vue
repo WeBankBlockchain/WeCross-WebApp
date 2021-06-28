@@ -251,10 +251,10 @@ export default {
     handleAccessBtn(data) {
       this.dialogOpen = true
       this.userState.username = data.username
-      console.log(data)
+      this.userState.chosenChains = data.allowChainPaths
     },
     handleSetAccess() {
-      accessControlListPost({ username: this.userState.username }, { version: '1', data: { allowChainPaths: this.userState.chosenChains }})
+      accessControlListPost({ username: this.userState.username }, { version: '1', data: { 'allowChainPaths': this.userState.chosenChains }})
         .then(response => {
           if (typeof response.errorCode === 'undefined' || response.errorCode !== 0) {
             this.$message.error({
@@ -272,7 +272,9 @@ export default {
               message: '设置成功：' + response.data.message,
               type: 'success'
             })
-            console.log(response)
+            this.getUser()
+            this.userState.username = null
+            this.userState.chosenChains = []
             this.dialogOpen = false
           }
         }).catch(_ => {

@@ -19,6 +19,7 @@ import introJS from 'intro.js'
 import 'intro.js/introjs.css'
 import 'intro.js/themes/introjs-modern.css'
 import '@/styles/intro.scss'
+import store from '@/store'
 
 const getDefaultState = () => {
   return {
@@ -144,16 +145,18 @@ const actions = {
       logout().then(() => {
         removePubKey()
         removeToken()
-        removeUsername()
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
+        store.dispatch('permission/resetRoutes').then(_ => {
+          resetRouter()
+          commit('RESET_STATE')
+          resolve()
+        })
       }).catch(error => {
         removeToken()
-        removeUsername()
-        resetRouter()
-        commit('RESET_STATE')
-        reject(error)
+        store.dispatch('permission/resetRoutes').then(_ => {
+          resetRouter()
+          commit('RESET_STATE')
+          reject(error)
+        })
       })
     })
   },

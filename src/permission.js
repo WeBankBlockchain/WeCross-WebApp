@@ -35,18 +35,18 @@ router.beforeEach(async(to, from, next) => {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
       if (hasRoles) {
         next()
+        NProgress.done()
       } else {
         try {
           if (store.getters.permissionRoutes === null || store.getters.permissionRoutes.length === 0) {
-            // const roles = await store.dispatch('user/getRole')
-            store.dispatch('user/getRole').then(roles => {
-              store.dispatch('permission/generateRoutes', roles).then(accessRoutes => {
-                router.addRoutes(accessRoutes)
-                next({ ...to, replace: true })
-              })
-            })
+            const roles = await store.dispatch('user/getRole')
+            const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+            router.addRoutes(accessRoutes)
+            next({ ...to, replace: true })
+            NProgress.done()
           } else {
             next()
+            NProgress.done()
           }
         } catch (error) {
           // remove token and go to login page to re-login

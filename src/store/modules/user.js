@@ -20,6 +20,7 @@ import 'intro.js/introjs.css'
 import 'intro.js/themes/introjs-modern.css'
 import '@/styles/intro.scss'
 import store from '@/store'
+import { routerStatus } from '@/api/status'
 
 const getDefaultState = () => {
   return {
@@ -173,10 +174,21 @@ const actions = {
   getRole({ commit }) {
     return new Promise(resolve => {
       let role = []
-      listAccount().then(res => {
-        role = res.data.admin === true ? ['admin'] : ['user']
-        commit('SET_ROLE', role)
-        resolve(role)
+      routerStatus().then(statusRes => {
+        if (!statusRes.data) {
+          this.$message.error('路由信息返回为空，请检查后台信息')
+          resolve(['user'])
+        } else {
+          if (!statusRes.data.enableAccessControl || statusRes.data.enableAccessControl === false) {
+            resolve(['user'])
+          } else if (statusRes.data.enableAccessControl === true) {
+            listAccount().then(res => {
+              role = res.data.admin === true ? ['admin'] : ['user']
+              commit('SET_ROLE', role)
+              resolve(role)
+            })
+          }
+        }
       })
     })
   }

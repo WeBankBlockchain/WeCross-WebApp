@@ -94,7 +94,6 @@
             </el-form-item>
             <el-form-item>
               <div slot="label">
-                <clipboard :input-data="chainAccountDrawer.info.identity" style="float:right" />
                 <span>Identity</span>
               </div>
               <el-tooltip effect="light" placement="bottom-start">
@@ -104,7 +103,6 @@
             </el-form-item>
             <el-form-item>
               <div slot="label">
-                <clipboard :input-data="chainAccountDrawer.info.pubKey" style="float:right" />
                 <span>公钥</span>
               </div>
               <el-input v-model="chainAccountDrawer.info.pubKey" type="textarea" readonly autosize resize="none" />

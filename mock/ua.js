@@ -119,22 +119,11 @@ module.exports = [
           version: 0,
           errorCode: 0,
           message: 'success',
-          data: [
+          'data|20': [
             {
-              'username': 'org1-admin',
-              'allowChainPaths': [
-                'payment.bcos2',
-                'payment.fabric1',
-                'payment.fabric2',
-                'payment.fabric3'
-              ],
-              'updateTimestamp': 1624517049308
-            },
-            {
-              'username': 'org2-admin',
-              'allowChainPaths': [
-                'payment.bcos2',
-                'payment.fabric3'
+              'username': '@id',
+              'allowChainPaths|20': [
+                'payment.@id'
               ],
               'updateTimestamp': 1624517049308
             }

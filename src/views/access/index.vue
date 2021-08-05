@@ -71,10 +71,12 @@
             :data="userData.filter(data => !search || data.username.toLowerCase().includes(search.toLowerCase()))"
             size="medium"
             style="width: 100%"
+            height="calc(90vh - 300px)"
             :stripe="true"
             :fit="true"
+            tooltip-effect="light"
           >
-            <el-table-column label="用户名" prop="username" />
+            <el-table-column label="用户名" prop="username" :show-overflow-tooltip="true" />
             <el-table-column label="可操作区块链" prop="allowChainPaths" width="400px">
               <template slot-scope="item">
                 <div v-for="(chainItem, index) in item.row.allowChainPaths.slice(0,2)" :key="index" style="display: inline-block; margin: 5px">
@@ -86,15 +88,15 @@
                   width="400px"
                   trigger="click"
                 >
-                  <el-table :data="makeChainsTable(item.row.allowChainPaths)" max-height="260px">
+                  <el-table :data="makeChainsTable(item.row.allowChainPaths)" max-height="260px" tooltip-effect="light" :stripe="true">
                     <el-table-column property="id" width="50px" label="序列" />
-                    <el-table-column property="name" width="150px" label="区块链名" />
+                    <el-table-column property="name" width="150px" label="区块链名" :show-overflow-tooltip="true" />
                   </el-table>
                   <el-button slot="reference" type="text" style="margin-left: 5px">更多...</el-button>
                 </el-popover>
               </template>
             </el-table-column>
-            <el-table-column label="变更时间" prop="updateTimestamp">
+            <el-table-column label="变更时间" prop="updateTimestamp" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 {{ scope.row.updateTimestamp | formatDate }}
               </template>

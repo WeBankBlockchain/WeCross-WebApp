@@ -135,7 +135,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-// import HeaderSearch from '@/components/HeaderSearch'
+const accessAdmin = ['/admin/index']
 
 export default {
   components: {
@@ -166,10 +166,16 @@ export default {
           console.log('error: ', error)
         })
         .finally(() => {
-          this.$router.push({
-            path: '/login',
-            query: { redirect: this.$route.fullPath }
-          })
+          if (accessAdmin.indexOf(this.$route.fullPath) !== -1) {
+            this.$router.push({
+              path: '/login'
+            })
+          } else {
+            this.$router.push({
+              path: '/login',
+              query: { redirect: this.$route.fullPath }
+            })
+          }
         })
     }
   }

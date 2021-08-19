@@ -35,7 +35,8 @@ module.exports = [{
         'supportedStubs': 'BCOS2.0,GM_BCOS2.0',
         'rpcNetInfo': '127.0.0.1:8250',
         'p2pNetInfo': '0.0.0.0:25500',
-        'adminAccount': 'monan'
+        'adminAccount': 'monan',
+        'enableAccessControl': true
       }
     }
   }

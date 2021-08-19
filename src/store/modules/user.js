@@ -19,11 +19,14 @@ import introJS from 'intro.js'
 import 'intro.js/introjs.css'
 import 'intro.js/themes/introjs-modern.css'
 import '@/styles/intro.scss'
+import store from '@/store'
+import { routerStatus } from '@/api/status'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: getUsername(),
+    roles: [],
     avatar: 'https://wecross.readthedocs.io/zh_CN/latest/_static/images/menu_logo_wecross.svg'
   }
 }
@@ -39,6 +42,9 @@ const mutations = {
   },
   SET_NAME: (state, name) => {
     state.name = name
+  },
+  SET_ROLE: (state, roles) => {
+    state.roles = roles
   }
 }
 
@@ -119,6 +125,8 @@ const actions = {
           }
           commit('SET_TOKEN', response.data.credential)
           commit('SET_NAME', username)
+          // const role = response.data.universalAccount.isAdmin === true ? ['admin'] : ['user']
+          // commit('SET_ROLE', role)
           setToken(response.data.credential)
           setUsername(username)
           resolve()
@@ -138,16 +146,18 @@ const actions = {
       logout().then(() => {
         removePubKey()
         removeToken()
-        removeUsername()
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
+        store.dispatch('permission/resetRoutes').then(_ => {
+          resetRouter()
+          commit('RESET_STATE')
+          resolve()
+        })
       }).catch(error => {
         removeToken()
-        removeUsername()
-        resetRouter()
-        commit('RESET_STATE')
-        reject(error)
+        store.dispatch('permission/resetRoutes').then(_ => {
+          resetRouter()
+          commit('RESET_STATE')
+          reject(error)
+        })
       })
     })
   },
@@ -159,6 +169,27 @@ const actions = {
       removeUsername()
       commit('RESET_STATE')
       resolve()
+    })
+  },
+  getRole({ commit }) {
+    return new Promise(resolve => {
+      let role = []
+      routerStatus().then(statusRes => {
+        if (!statusRes.data) {
+          this.$message.error('路由信息返回为空，请检查后台信息')
+          resolve(['user'])
+        } else {
+          if (!statusRes.data.enableAccessControl || statusRes.data.enableAccessControl === false) {
+            resolve(['user'])
+          } else if (statusRes.data.enableAccessControl === true) {
+            listAccount().then(res => {
+              role = res.data.admin === true ? ['admin'] : ['user']
+              commit('SET_ROLE', role)
+              resolve(role)
+            })
+          }
+        }
+      })
     })
   }
 }

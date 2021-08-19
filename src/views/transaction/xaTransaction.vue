@@ -495,7 +495,7 @@ export default {
         } else {
           this.$message({
             type: 'error',
-            message: '查询资源列表失败, errorCode: ' + response.errorCode
+            message: '查询资源列表失败, errorCode: ' + response.errorCode + '，错误信息：' + response.message
           })
         }
       }).catch((error) => {

@@ -32,14 +32,29 @@ router.beforeEach(async(to, from, next) => {
         NProgress.done()
       }
     } else {
-      try {
+      const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      if (hasRoles) {
         next()
-      } catch (error) {
-        // remove token and go to login page to re-login
-        await store.dispatch('user/resetToken')
-        Message.error(error || 'Has Error')
-        next(`/login?redirect=${to.path}`)
         NProgress.done()
+      } else {
+        try {
+          if (store.getters.permissionRoutes === null || store.getters.permissionRoutes.length === 0) {
+            const roles = await store.dispatch('user/getRole')
+            const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+            router.addRoutes(accessRoutes)
+            next({ ...to, replace: true })
+            NProgress.done()
+          } else {
+            next()
+            NProgress.done()
+          }
+        } catch (error) {
+          // remove token and go to login page to re-login
+          await store.dispatch('user/resetToken')
+          Message.error(error || 'Has Error')
+          next(`/login?redirect=${to.path}`)
+          NProgress.done()
+        }
       }
     }
   } else {

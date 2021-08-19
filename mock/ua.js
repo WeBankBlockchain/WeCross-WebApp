@@ -109,5 +109,44 @@ module.exports = [
         })
       }
     }
+  },
+  {
+    url: '/auth/admin/accessControlList',
+    type: 'get',
+    response: _ => {
+      return {
+        ...Mock.mock({
+          version: 0,
+          errorCode: 0,
+          message: 'success',
+          'data|20': [
+            {
+              'username': '@id',
+              'allowChainPaths|20': [
+                'payment.@id'
+              ],
+              'updateTimestamp': 1624517049308
+            }
+          ]
+        })
+      }
+    }
+  },
+  {
+    url: '/auth/admin/accessControlList',
+    type: 'post',
+    response: _ => {
+      return {
+        ...Mock.mock({
+          version: 1,
+          errorCode: 0,
+          message: 'success',
+          data: {
+            errorCode: 0,
+            message: 'success'
+          }
+        })
+      }
+    }
   }
 ]

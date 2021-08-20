@@ -317,6 +317,9 @@ export default {
         delete response.data.receiptBytes
 
         const defaultValue = (value, defaultValue) => {
+          if (value === 0) {
+            return value
+          }
           if (!value) {
             return defaultValue
           }

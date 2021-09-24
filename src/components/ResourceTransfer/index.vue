@@ -32,7 +32,7 @@
             height="calc(100% - 34px)"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column fixed width="42px" type="selection" :selectable="(row)=>{return !row.path.endsWith('.WeCrossHub')}" />
+            <el-table-column fixed width="42px" type="selection" />
             <el-table-column label="可选资源路径" prop="path" show-overflow-tooltip>
               <template slot-scope="scope">{{ scope.row.path }}</template>
             </el-table-column>

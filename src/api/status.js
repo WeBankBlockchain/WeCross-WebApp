@@ -12,7 +12,7 @@ export function systemStatus() {
 }
 
 /**
- * list supported stub types in wecross
+ * list supported chain types
  * @return {Promise} an axios promise object of response
  */
 export function supportedStubs(params) {
@@ -24,7 +24,7 @@ export function supportedStubs(params) {
 }
 
 /**
- * get wecross router status
+ * get router status
  * @return {Promise} an axios promise object of response
  */
 export function routerStatus() {

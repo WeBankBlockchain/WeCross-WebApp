@@ -11,15 +11,15 @@
     >
       <el-table-column label="交易哈希" min-width="40px" show-overflow-tooltip>
         <template slot-scope="item">
-          <clipboard :input-data="item.row.txHash" style="float: left;margin-right: 5px" />
-          {{ item.row.txHash }}
+          <clipboard :input-data="item.row.transactionHash" style="float: left;margin-right: 5px" />
+          {{ item.row.transactionHash }}
         </template>
       </el-table-column>
-      <el-table-column label="跨链账户" min-width="30px" show-overflow-tooltip>
+      <!--      <el-table-column label="一级账户" min-width="30px" show-overflow-tooltip>
         <template slot-scope="item">
           <div v-if="item.row.username === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 区块链内部交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{
                   item.row.username
@@ -36,7 +36,7 @@
         <template slot-scope="item">
           <div v-if="item.row.txID === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 区块链内部交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{ item.row.txID }}</el-tag>
               </div>
@@ -47,11 +47,12 @@
           </div>
         </template>
       </el-table-column>
+      -->
       <el-table-column label="区块高度" min-width="30px">
         <template slot-scope="item">
           <div v-if="item.row.blockNumber === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 区块链内部交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{
                   item.row.blockNumber
@@ -68,7 +69,7 @@
         <template slot-scope="item">
           <div v-if="item.row.path === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 区块链内部交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{ item.row.path }}</el-tag>
               </div>
@@ -83,7 +84,7 @@
         <template slot-scope="item">
           <div v-if="item.row.method === 'unknown'">
             <el-popover trigger="hover" placement="top">
-              <p>注意: {{ limitString(item.row.txHash) }} 非WeCross交易</p>
+              <p>注意: {{ limitString(item.row.txHash) }} 区块链内部交易</p>
               <div slot="reference">
                 <el-tag type="info" effect="plain">{{
                   item.row.method
@@ -161,6 +162,7 @@ import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
 import { handleErrorMsgBox } from '@/utils/messageBox'
 import { limitString } from '@/utils'
+import { getReceiptHistory } from '@/utils/receiptHistory'
 
 export default {
   name: 'TransactionList',
@@ -262,21 +264,21 @@ export default {
       // pre page
       this.buttonState.disablePreClick = this.currentStep <= 1
     },
-    async fetchAllTx(chainValue, txHashes) {
+    async fetchAllTx(chainValue, receipts) {
       var txs = []
 
-      if (txHashes.length === 0) {
+      if (receipts.length === 0) {
         return txs
       }
 
-      for (const tx of txHashes) {
-        if (!tx.txHash) {
+      for (const tx of receipts) {
+        if (!tx.transactionHash) {
           throw new Error('交易哈希不存在，详情: ' + JSON.stringify(tx))
         }
 
         const response = await getTransaction({
           path: chainValue,
-          txHash: tx.txHash,
+          txHash: tx.transactionHash,
           blockNumber: tx.blockNumber
         }).catch(
           (error) => {
@@ -293,7 +295,7 @@ export default {
         ) {
           throw new Error(
             '查询交易失败，交易哈希: ' +
-              tx.txhash +
+              tx.transactionHash +
               '，详情: ' +
               JSON.stringify(response)
           )
@@ -304,7 +306,7 @@ export default {
         ) {
           throw new Error(
             '查询交易失败，交易哈希: ' +
-              tx.txhash +
+              tx.transactionHash +
               '，详情: ' +
               JSON.stringify(response)
           )
@@ -313,8 +315,7 @@ export default {
         /**
          remove raw transaction and receipt info
          */
-        delete response.data.txBytes
-        delete response.data.receiptBytes
+        delete response.data.transactionBytes
 
         const defaultValue = (value, defaultValue) => {
           if (value === 0) {
@@ -327,18 +328,27 @@ export default {
         }
 
         var newTx = {}
-        newTx.txHash = defaultValue(response.data.txHash, 'unknown')
-        newTx.username = defaultValue(response.data.username, 'unknown')
-        newTx.txID = defaultValue(response.data.xaTransactionID, 'unknown')
-        newTx.blockNumber = defaultValue(response.data.blockNumber, 'unknown')
-        newTx.path = defaultValue(response.data.path, 'unknown')
-        newTx.method = defaultValue(response.data.method, 'unknown')
-        newTx.properties = defaultValue(response.data, 'unknown')
-
-        if (typeof response.data.errorCode !== 'undefined' && response.data.errorCode !== null && response.data.errorCode !== 0) {
-          newTx.errorCode = response.data.errorCode
-          newTx.message = defaultValue(response.data.message, 'unknown')
+        var receipt = response.data
+        const receiptHistory = getReceiptHistory(receipt.transactionHash)
+        if (receiptHistory) {
+          receipt = receiptHistory
         }
+
+        newTx.result = defaultValue(receipt.result, 'unknown')
+        newTx.code = receipt.code
+        newTx.message = defaultValue(receipt.message, 'unknown')
+        newTx.path = defaultValue(receipt.path, 'unknown')
+        newTx.method = defaultValue(receipt.method, 'unknown')
+        newTx.args = defaultValue(receipt.args, 'unknown')
+        newTx.transactionHash = defaultValue(receipt.transactionHash, 'unknown')
+        newTx.blockNumber = defaultValue(receipt.blockNumber, 'unknown')
+        newTx.version = defaultValue(receipt.version, 'unknown')
+        /*
+        if (typeof receipt.code !== 'undefined' && receipt.code !== null && receipt.code !== 0) {
+          newTx.errorCode = receipt.code
+          newTx.message = defaultValue(receipt.message, 'unknown')
+        }
+        */
         txs[txs.length] = newTx
       }
 
@@ -367,7 +377,7 @@ export default {
             return
           }
 
-          this.fetchAllTx(chainValue, resp.data.transactions)
+          this.fetchAllTx(chainValue, resp.data.receipts)
             .then((response) => {
               this.buttonState.loading = false
               this.nextBlockNumber = resp.data.nextBlockNumber

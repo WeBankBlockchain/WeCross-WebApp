@@ -7,9 +7,8 @@ describe('Utils:validate', () => {
     expect(validUsername('xx')).toBe(false)
   })
   it('validURL', () => {
-    expect(validURL('https://github.com/WeBankBlockchain/WeCross-WebApp.git')).toBe(true)
-    expect(validURL('http://github.com/WeBankBlockchain/WeCross-WebApp.git')).toBe(true)
-    expect(validURL('github.com/WeBankBlockchain/WeCross-WebApp.git')).toBe(false)
+    expect(validURL('https://github.com')).toBe(true)
+    expect(validURL('https://gitee.com')).toBe(true)
   })
   it('validLowerCase', () => {
     expect(validLowerCase('abc')).toBe(true)

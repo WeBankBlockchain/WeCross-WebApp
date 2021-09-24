@@ -32,12 +32,12 @@ export function isChainAccountFit(chainTypes, callBack) {
             steps: [
               {
                 title: '警告⚠️',
-                intro: '<strong>请检查是否正确配置链账户</strong><li>未配置链账户将会影响基本使用</li>'
+                intro: '<strong>请检查是否正确配置二级账户</strong><li>未配置二级账户将会影响基本使用</li>'
               },
               {
                 element: '#Account',
                 title: '账户管理',
-                intro: '请在这里配置链账户信息<br><br>账户功能详情介绍请参考：<a class="text-blue" href="https://wecross.readthedocs.io/zh_CN/latest/docs/manual/account.html" target="_blank">账号服务</a>',
+                intro: '请在这里配置二级账户信息<br>',
                 position: 'right'
               }
             ]
@@ -57,12 +57,12 @@ export function isChainAccountFit(chainTypes, callBack) {
           steps: [
             {
               title: '警告⚠️',
-              intro: '<strong>请检查是否正确配置链账户</strong><li>未配置链账户将会影响基本使用</li>'
+              intro: '<strong>请检查是否正确配置二级账户</strong><li>未配置二级账户将会影响基本使用</li>'
             },
             {
               element: '#Account',
               title: '账户管理',
-              intro: '请在这里配置链账户信息<br><br>账户功能详情介绍请参考：<a class="text-blue" href="https://wecross.readthedocs.io/zh_CN/latest/docs/manual/account.html" target="_blank">账号服务</a>',
+              intro: '请在这里配置二级账户信息<br>',
               position: 'right'
             }
           ]

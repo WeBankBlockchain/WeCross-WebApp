@@ -91,8 +91,8 @@
               <el-row>
                 <el-col :span="16">
                   <el-row>
-                    <div style="font-size: 18px;font-weight: bolder">事务支持</div>
-                    <div style="font-size: 14px; color: #606266; margin-top: 5px">支持事务形式</div>
+                    <div style="font-size: 18px;font-weight: bolder">链插件</div>
+                    <div style="font-size: 14px; color: #606266; margin-top: 5px">已加载区块链插件</div>
                   </el-row>
                 </el-col>
                 <el-col :span="8">
@@ -104,15 +104,10 @@
                 </el-col>
               </el-row>
               <el-row>
-                <div style="margin-top: 42px">
-                  <li v-for="item in transactionType" :key="item.label" style="font-size: 16px;">
-                    <el-button v-if="!item.disabled" type="text" size="medium" style="font-weight: bolder;font-size: 16px;" @click="$router.push({path:'xaTransaction'})">
-                      {{ item.label }}
-                    </el-button>
-                    <span v-else>
-                      {{ item.label }}
-                    </span>
-                  </li>
+                <div style="margin-top: 66px">
+                  <a v-for="item in routerInfo.supportedStubs.split(',')" :key="item" style="font-size: 16px;">
+                    <el-tag type="info">{{ item }}</el-tag><a />
+                  </a>
                 </div>
               </el-row>
             </el-card>
@@ -278,14 +273,7 @@ export default {
       chainNumber: 0,
       routerNumber: 0,
       resourceNumber: 0,
-      transactionType: [{
-        label: '两阶段事务',
-        disabled: false
-      },
-      {
-        label: 'HTLC',
-        disabled: true
-      }],
+      chainType: [],
       chainSelect: null
     }
   },
@@ -372,7 +360,7 @@ export default {
           ignoreRemote: false
         }
       }).then(response => {
-        this.resourceNumber = response.data.resourceDetails.length
+        this.resourceNumber = response.data.resources.length
       }).catch(_ => {
         this.$message({
           type: 'error',

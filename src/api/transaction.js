@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 import { path2Url } from '@/utils'
+import { getIdentity } from '@/utils/auth'
 
 /**
  * start a XA transaction
@@ -75,8 +76,14 @@ export function listXATransactions(data) {
  * @return {Promise<Response>} an axios promise object of response
  */
 export function call(data) {
+  var req = data
+  req.data.sender = getIdentity()
+  if (!req.data.nonce) {
+    req.data.nonce = Math.round(Math.random() * 1000000000)
+  }
+  // TODO: sig the data
   return request({
-    url: 'resource' + path2Url(data.path) + '/call',
+    url: 'resource' + path2Url(data.data.path) + '/call',
     method: 'post',
     data: data
   })
@@ -88,10 +95,15 @@ export function call(data) {
  * @return {Promise<Response>} an axios promise object of response
  */
 export function sendTransaction(data) {
+  var req = data
+  req.data.sender = getIdentity()
+  if (!req.data.nonce) {
+    req.data.nonce = Math.round(Math.random() * 1000000000)
+  }
   return request({
-    url: 'resource' + path2Url(data.path) + '/sendTransaction',
+    url: 'resource' + path2Url(data.data.path) + '/sendTransaction',
     method: 'post',
-    data: data
+    data: req
   })
 }
 

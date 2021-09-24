@@ -9,7 +9,6 @@
  * @property {string} path - the path of resource
  * @property {number} distance - the distance of this resource
  * @property {Object} properties
- * @property {string} checksum
  */
 /**
  * @typedef {Object} CallRequest

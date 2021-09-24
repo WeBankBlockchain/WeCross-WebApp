@@ -3,12 +3,12 @@ import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
+import { getIdentity } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login', '/register'] // no redirect whitelist
+const whiteList = ['/login'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -18,19 +18,13 @@ router.beforeEach(async(to, from, next) => {
   document.title = getPageTitle(to.meta.title)
 
   // determine whether the user has logged in
-  const hasToken = getToken()
+  const hasLogin = getIdentity()
 
-  if (hasToken) {
+  if (hasLogin) {
     if (to.path === '/login') {
-      if (from.path === '/register') {
-        await store.dispatch('user/resetToken')
-        next({ path: '/login' })
-        NProgress.done()
-      } else {
-        // if is logged in, redirect to the home page
-        next({ path: '/' })
-        NProgress.done()
-      }
+      // if is logged in, redirect to the home page
+      next({ path: '/' })
+      NProgress.done()
     } else {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
       if (hasRoles) {
@@ -50,7 +44,7 @@ router.beforeEach(async(to, from, next) => {
           }
         } catch (error) {
           // remove token and go to login page to re-login
-          await store.dispatch('user/resetToken')
+          await store.dispatch('user/resetSecKey')
           Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()

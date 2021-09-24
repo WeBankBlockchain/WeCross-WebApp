@@ -13,12 +13,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/register',
-    component: () => import('@/views/register/index'),
-    name: 'Register',
-    hidden: true
-  },
-  {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
@@ -53,19 +47,10 @@ export const asyncRoutes = [
           icon: 'el-icon-user',
           roles: ['admin', 'user']
         }
-      },
-      {
-        path: 'changePassword',
-        hidden: true,
-        component: () => import('@/views/account/changePassword'),
-        meta: {
-          title: '修改密码',
-          icon: 'el-icon-user',
-          roles: ['admin', 'user']
-        }
       }
     ]
   },
+  /*
   {
     path: '/router',
     component: Layout,
@@ -94,6 +79,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  */
   {
     path: '/resource',
     component: Layout,
@@ -153,6 +139,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  /*
   {
     path: '/xaTransaction',
     component: Layout,
@@ -183,6 +170,7 @@ export const asyncRoutes = [
       }
     ]
   },
+
   {
     path: '/admin',
     component: Layout,
@@ -216,6 +204,7 @@ export const asyncRoutes = [
       }
     ]
   },
+   */
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

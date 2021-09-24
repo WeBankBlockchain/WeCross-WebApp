@@ -1,26 +1,147 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>favicon</title>
-    <defs>
-        <polygon id="path-1" points="0 0.592427907 24.7242002 0.592427907 24.7242002 27.9998698 0 27.9998698"></polygon>
-        <polygon id="path-3" points="0.614247162 0.573023256 27.4106977 0.573023256 27.4106977 27.9875628 0.614247162 27.9875628"></polygon>
-    </defs>
-    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="编组" transform="translate(4.000000, 10.000000)">
-            <g>
-                <mask id="mask-2" fill="white">
-                    <use xlink:href="#path-1"></use>
-                </mask>
-                <g id="Clip-2"></g>
-                <path d="M11.84375,22.8491721 C10.85625,23.1682419 9.82796053,23.3375442 8.79506579,23.3375442 L0.926644737,23.3375442 L-0.000328947368,27.9998698 L7.86151316,27.9998698 C10.1516447,27.9998698 12.4180921,27.452893 14.5161184,26.4702884 C13.3950658,25.4538233 12.4970395,24.2361488 11.84375,22.8491721 M24.1924342,8.11335814 C24.0667763,7.70312558 23.9141447,7.29940465 23.7391447,6.9152186 C23.1509868,5.58684651 22.2996711,4.41475349 21.2365132,3.45819535 C20.6345395,2.91056744 19.9713816,2.4352186 19.2457237,2.0380093 C17.5667763,1.11335814 15.5667763,0.592427907 13.3430921,0.592427907 L5.47467105,0.592427907 L4.54111842,5.25475349 L12.4095395,5.25475349 C13.3904605,5.25475349 14.3055921,5.40452093 15.13125,5.69103256 C15.9634868,5.97754419 16.6996711,6.39428837 17.34375,6.9152186 C18.56875,7.89847442 19.4128289,9.27893953 19.7476974,10.8944744 C19.8595395,11.4147535 19.9213816,11.9617302 19.9154605,12.5282419 C19.9213816,13.1012651 19.8601974,13.6938233 19.7371711,14.2994047 C19.6095395,14.9440558 19.4167763,15.5821953 19.1615132,16.1942884 C19.1753289,16.5003349 19.2161184,16.7998698 19.2786184,17.0863814 C19.5463816,18.3431256 20.1878289,19.4116837 21.1430921,20.1794047 C21.3101974,20.3161488 21.4845395,20.4398698 21.6674342,20.5570791 C23.0292763,18.6882419 24.0029605,16.5589395 24.4542763,14.2994047 C24.9009868,12.0724279 24.7792763,9.96982326 24.1924342,8.11335814" id="Fill-1" fill="#D80305" mask="url(#mask-2)"></path>
-            </g>
-            <g transform="translate(12.000000, 0.000000)">
-                <mask id="mask-4" fill="white">
-                    <use xlink:href="#path-3"></use>
-                </mask>
-                <g id="Clip-4"></g>
-                <path d="M17.3051721,0.57295814 C15.0391256,0.57295814 12.7952186,1.11993488 10.7186605,2.10384186 C11.8275907,3.12551628 12.7229395,4.3431907 13.3695442,5.73016744 C14.3469395,5.41174884 15.3581953,5.24179535 16.3805209,5.24179535 L26.4865674,5.24179535 L27.4112186,0.57295814 L17.3051721,0.57295814 Z M12.8023814,23.324586 C11.8321488,23.324586 10.9270326,23.168307 10.1098233,22.8817953 C9.28610233,22.6017953 8.55614884,22.1850512 7.91866047,21.6647721 C6.70814884,20.6743535 5.87856744,19.2938884 5.53996279,17.6855163 C5.42991628,17.164586 5.36805581,16.6182605 5.37391628,16.0517488 C5.36740465,15.4787256 5.42926512,14.8855163 5.54973023,14.2870977 C5.67735814,13.6359349 5.86749767,13.0036558 6.11884651,12.3980744 C6.10582326,12.0861674 6.0648,11.7866326 6.00489302,11.4936093 C5.73986977,10.2297023 5.10433488,9.16830698 4.16535814,8.40058605 C3.99996279,8.26384186 3.82154419,8.13295814 3.63986977,8.02226047 C2.29066047,9.8976093 1.32693953,12.0269116 0.880893023,14.2870977 C0.439404651,16.5075628 0.559869767,18.6101674 1.14070698,20.4659814 C1.26507907,20.8768651 1.4168,21.2799349 1.58935814,21.6647721 C2.1728,22.9859814 3.01475349,24.164586 4.07289302,25.1217953 C4.66284651,25.6622605 5.3192186,26.1376093 6.03745116,26.5348186 C7.69986977,27.4594698 9.67810233,27.9875628 11.8790326,27.9875628 L21.9850791,27.9875628 L22.9084279,23.324586 L12.8023814,23.324586 Z" id="Fill-3" fill="#1D509D" mask="url(#mask-4)"></path>
-            </g>
-        </g>
-    </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- 由 Microsoft Visio, SVG Export 生成 favicon.svg 页-1 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="1.08702in" height="1.00095in"
+		viewBox="0 0 78.2653 72.0684" xml:space="preserve" color-interpolation-filters="sRGB" class="st7">
+	<v:documentProperties v:langID="2052" v:metric="true" v:viewMarkup="false"/>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {visibility:visible}
+		.st2 {fill:#5b9bd5;fill-opacity:0.22;filter:url(#filter_2);stroke:#5b9bd5;stroke-opacity:0.22}
+		.st3 {fill:#5b9bd5;stroke:#c7c8c8;stroke-width:0.25}
+		.st4 {fill:#feffff;stroke:#c7c8c8;stroke-width:0.25}
+		.st5 {fill:#5b9bd5;fill-opacity:0.22;filter:url(#filter_2)}
+		.st6 {fill:#ffffff}
+		.st7 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<defs id="Filters">
+		<filter id="filter_2">
+			<feGaussianBlur stdDeviation="2"/>
+		</filter>
+	</defs>
+	<g v:mID="0" v:index="1" v:groupContext="foregroundPage">
+		<title>页-1</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
+				v:shadowOffsetY="-8.50394"/>
+		<g id="group775-1" transform="translate(3.35402,-1.20221)" v:mID="775" v:groupContext="group">
+			<v:custProps>
+				<v:cp v:nameU="AssetNumber" v:lbl="资产号" v:prompt="" v:type="0" v:format="" v:sortKey="Asset" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="SerialNumber" v:lbl="序列号" v:prompt="" v:type="0" v:format="" v:sortKey="Asset" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="Location" v:lbl="位置" v:prompt="" v:type="0" v:format="" v:sortKey="Asset" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="Building" v:lbl="构建" v:prompt="" v:type="0" v:format="" v:sortKey="Asset" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="Room" v:lbl="空间" v:prompt="" v:type="0" v:format="" v:sortKey="Asset" v:invis="false" v:ask="false"
+						v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="Manufacturer" v:lbl="制造商" v:prompt="" v:type="0" v:format="" v:sortKey="Equipment" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="ProductNumber" v:lbl="产品编号" v:prompt="" v:type="0" v:format="" v:sortKey="Equipment" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="PartNumber" v:lbl="部件号" v:prompt="" v:type="0" v:format="" v:sortKey="Equipment" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="ProductDescription" v:lbl="产品说明" v:prompt="" v:type="0" v:format="" v:sortKey="Equipment"
+						v:invis="false" v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="NetworkName" v:lbl="网络名称" v:prompt="" v:type="0" v:format="" v:sortKey="Network" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="IPAddress" v:lbl="IP 地址" v:prompt="" v:type="0" v:format="" v:sortKey="Network" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="SubnetMask" v:lbl="子网掩码" v:prompt="" v:type="0" v:format="" v:sortKey="Network" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="AdminInterface" v:lbl="管理接口" v:prompt="" v:type="0" v:format="" v:sortKey="Network" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="NumberofPorts" v:lbl="端口数目" v:prompt="" v:type="0" v:format="" v:sortKey="Network" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="CommunityString" v:lbl="团体字符串" v:prompt="" v:type="0" v:format="" v:sortKey="Network"
+						v:invis="false" v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="NetworkDescription" v:lbl="网络说明" v:prompt="" v:type="0" v:format="" v:sortKey="Network"
+						v:invis="false" v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="MACAddress" v:lbl="MAC 地址" v:prompt="" v:type="0" v:format="" v:sortKey="Network" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="CPU" v:lbl="CPU" v:prompt="" v:type="0" v:format="" v:sortKey="Workstation" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="Memory" v:lbl="内存" v:prompt="" v:type="0" v:format="" v:sortKey="Workstation" v:invis="false"
+						v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="OperatingSystem" v:lbl="操作系统" v:prompt="" v:type="0" v:format="" v:sortKey="Workstation"
+						v:invis="false" v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="HardDriveSize" v:lbl="硬盘容量" v:prompt="" v:type="0" v:format="" v:sortKey="Workstation"
+						v:invis="false" v:ask="false" v:langID="2052" v:cal="0"/>
+				<v:cp v:nameU="ShapeClass" v:lbl="ShapeClass" v:prompt="" v:type="0" v:format="" v:sortKey="" v:invis="true"
+						v:ask="false" v:langID="2052" v:cal="0" v:val="VT4(设备)"/>
+				<v:cp v:nameU="ShapeType" v:lbl="ShapeType" v:prompt="" v:type="0" v:format="" v:sortKey="" v:invis="true"
+						v:ask="false" v:langID="2052" v:cal="0" v:val="VT4(终端)"/>
+			</v:custProps>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+				<v:ud v:nameU="ShapeClass" v:prompt="" v:val="VT0(5):26"/>
+				<v:ud v:nameU="SolSH" v:prompt="" v:val="VT15({BF0433D9-CD73-4EB5-8390-8653BE590246}):41"/>
+				<v:ud v:nameU="visLegendShape" v:prompt="" v:val="VT0(2):26"/>
+			</v:userDefs>
+			<title>终端</title>
+			<g id="shape776-2" v:mID="776" v:groupContext="shape" transform="translate(0,-4.14563)">
+				<title>工作表.776</title>
+				<g id="shadow776-3" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+						transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+					<path d="M67.46 9.49 L4.12 9.49 L4.12 51.76 L67.46 51.76 L67.46 9.49 ZM70.87 72.07 L60.24 58.74 L10.63 58.74
+								 L0 72.07 L70.87 72.07 ZM41 51.76 L29.87 51.76 L29.87 58.74 L41 58.74 L41 51.76 Z" class="st2"/>
+				</g>
+				<path d="M67.46 9.49 L4.12 9.49 L4.12 51.76 L67.46 51.76 L67.46 9.49 ZM70.87 72.07 L60.24 58.74 L10.63 58.74 L0 72.07
+							 L70.87 72.07 ZM41 51.76 L29.87 51.76 L29.87 58.74 L41 58.74 L41 51.76 Z" class="st3"/>
+			</g>
+			<g id="shape777-7" v:mID="777" v:groupContext="shape" transform="translate(8.22949,-28.2604)">
+				<title>工作表.777</title>
+				<v:userDefs>
+					<v:ud v:nameU="SurroundingRegionColor" v:prompt="" v:val="VT5(1)"/>
+					<v:ud v:nameU="SurroundingRegionColor" v:prompt="" v:val="VT5(#5b9bd5)"/>
+				</v:userDefs>
+				<g id="shadow777-8" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+						transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+					<path d="M55.21 37.8 L0 37.8 L0 72.07 L55.21 72.07 L55.21 37.8 Z" class="st2"/>
+				</g>
+				<path d="M55.21 37.8 L0 37.8 L0 72.07 L55.21 72.07 L55.21 37.8 Z" class="st4"/>
+			</g>
+			<g id="shape778-12" v:mID="778" v:groupContext="shape" transform="translate(9.64422,-6.8964)">
+				<title>工作表.778</title>
+				<v:userDefs>
+					<v:ud v:nameU="SurroundingRegionColor" v:prompt="" v:val="VT5(1)"/>
+					<v:ud v:nameU="SurroundingRegionColor" v:prompt="" v:val="VT5(#5b9bd5)"/>
+				</v:userDefs>
+				<g id="shadow778-13" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+						transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+					<path d="M48.39 66.9 L45.24 66.9 L47.01 68.86 L50.4 68.86 L48.39 66.9 ZM44.83 63.42 L42.12 63.42 L44.01 65.53
+								 L46.99 65.53 L44.83 63.42 ZM43.55 66.9 L40.4 66.9 L41.78 68.86 L45.18 68.86 L43.55 66.9 ZM40.66
+								 63.42 L37.94 63.42 L39.43 65.53 L42.41 65.53 L40.66 63.42 ZM38.7 66.9 L35.55 66.9 L36.56 68.86 L39.96
+								 68.86 L38.7 66.9 ZM36.49 63.42 L33.78 63.42 L34.86 65.57 L37.85 65.57 L36.49 63.42 ZM33.86 66.9
+								 L30.71 66.9 L31.34 68.86 L34.73 68.86 L33.86 66.9 ZM32.38 63.57 L29.64 63.57 L30.28 65.57 L33.27
+								 65.57 L32.38 63.57 ZM29.01 66.9 L25.86 66.9 L26.11 68.86 L29.51 68.86 L29.01 66.9 ZM28.22 63.74
+								 L25.46 63.74 L25.71 65.7 L28.71 65.7 L28.22 63.74 ZM23.98 63.74 L21.23 63.74 L21.1 65.7 L24.1 65.7
+								 L23.98 63.74 ZM24.17 66.9 L21.02 66.9 L20.89 68.86 L24.29 68.86 L24.17 66.9 ZM19.75 63.74 L17 63.74
+								 L16.49 65.7 L19.49 65.7 L19.75 63.74 ZM19.33 66.9 L16.18 66.9 L15.67 68.86 L19.06 68.86 L19.33 66.9
+								 ZM36.6 70.11 L14.38 70.11 L13.8 72.07 L37.56 72.07 L36.6 70.11 ZM15.51 63.74 L12.76 63.74 L11.88
+								 65.7 L14.87 65.7 L15.51 63.74 ZM14.48 66.9 L11.33 66.9 L10.44 68.86 L13.84 68.86 L14.48 66.9 ZM11.28
+								 63.74 L8.53 63.74 L7.26 65.7 L10.26 65.7 L11.28 63.74 ZM9.64 66.9 L6.49 66.9 L5.22 68.86 L8.62 68.86
+								 L9.64 66.9 ZM7.05 63.74 L4.29 63.74 L2.65 65.7 L5.65 65.7 L7.05 63.74 ZM4.79 66.9 L1.64 66.9 L0
+								 68.86 L3.4 68.86 L4.79 66.9 Z" class="st5"/>
+				</g>
+				<path d="M48.39 66.9 L45.24 66.9 L47.01 68.86 L50.4 68.86 L48.39 66.9 ZM44.83 63.42 L42.12 63.42 L44.01 65.53 L46.99
+							 65.53 L44.83 63.42 ZM43.55 66.9 L40.4 66.9 L41.78 68.86 L45.18 68.86 L43.55 66.9 ZM40.66 63.42 L37.94
+							 63.42 L39.43 65.53 L42.41 65.53 L40.66 63.42 ZM38.7 66.9 L35.55 66.9 L36.56 68.86 L39.96 68.86 L38.7
+							 66.9 ZM36.49 63.42 L33.78 63.42 L34.86 65.57 L37.85 65.57 L36.49 63.42 ZM33.86 66.9 L30.71 66.9 L31.34
+							 68.86 L34.73 68.86 L33.86 66.9 ZM32.38 63.57 L29.64 63.57 L30.28 65.57 L33.27 65.57 L32.38 63.57 ZM29.01
+							 66.9 L25.86 66.9 L26.11 68.86 L29.51 68.86 L29.01 66.9 ZM28.22 63.74 L25.46 63.74 L25.71 65.7 L28.71
+							 65.7 L28.22 63.74 ZM23.98 63.74 L21.23 63.74 L21.1 65.7 L24.1 65.7 L23.98 63.74 ZM24.17 66.9 L21.02
+							 66.9 L20.89 68.86 L24.29 68.86 L24.17 66.9 ZM19.75 63.74 L17 63.74 L16.49 65.7 L19.49 65.7 L19.75 63.74
+							 ZM19.33 66.9 L16.18 66.9 L15.67 68.86 L19.06 68.86 L19.33 66.9 ZM36.6 70.11 L14.38 70.11 L13.8 72.07
+							 L37.56 72.07 L36.6 70.11 ZM15.51 63.74 L12.76 63.74 L11.88 65.7 L14.87 65.7 L15.51 63.74 ZM14.48 66.9
+							 L11.33 66.9 L10.44 68.86 L13.84 68.86 L14.48 66.9 ZM11.28 63.74 L8.53 63.74 L7.26 65.7 L10.26 65.7 L11.28
+							 63.74 ZM9.64 66.9 L6.49 66.9 L5.22 68.86 L8.62 68.86 L9.64 66.9 ZM7.05 63.74 L4.29 63.74 L2.65 65.7
+							 L5.65 65.7 L7.05 63.74 ZM4.79 66.9 L1.64 66.9 L0 68.86 L3.4 68.86 L4.79 66.9 Z" class="st6"/>
+			</g>
+		</g>
+	</g>
 </svg>

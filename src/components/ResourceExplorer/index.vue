@@ -9,7 +9,7 @@
         <template slot-scope="scope">{{ scope.row.path }}</template>
       </el-table-column>
       <el-table-column label="资源类型" width="120px">
-        <template slot-scope="scope"><el-tag type="info">{{ scope.row.stubType }}</el-tag></template>
+        <template slot-scope="scope"><el-tag type="info">{{ scope.row.type }}</el-tag></template>
       </el-table-column>
       <el-table-column label="属性" min-width="150px" show-overflow-tooltip>
         <template slot-scope="scope">
@@ -129,7 +129,7 @@ export default {
         size: this.pageSize
       }, null).then((response) => {
         if (response.errorCode === 0) {
-          this.resources = response.data.resourceDetails
+          this.resources = response.data.resources
           this.total = response.data.total
         } else {
           this.$message({
@@ -181,13 +181,13 @@ export default {
       if (this.transactionData.execMethod === 'sendTransaction') {
         sendTransaction({
           version: '1',
-          path: this.transactionData.path,
           data: {
+            path: this.transactionData.path,
             method: this.transactionData.method,
             args: args
           }
         }).then(response => {
-          this.onResponse(response)
+          this.onReceipt(response)
         }).catch(error => {
           this.loading = false
           this.$message({
@@ -199,13 +199,13 @@ export default {
       } else {
         call({
           version: '1',
-          path: this.transactionData.path,
           data: {
+            path: this.transactionData.path,
             method: this.transactionData.method,
             args: args
           }
         }).then(response => {
-          this.onResponse(response)
+          this.onCallResponse(response)
         }).catch(error => {
           this.loading = false
           this.$message({
@@ -216,9 +216,13 @@ export default {
         })
       }
     },
-    onResponse(response) {
+    onReceipt(response) {
       this.loading = false
-      this.$refs.transactionForm.onResponse(response)
+      this.$refs.transactionForm.onReceipt(response)
+    },
+    onCallResponse(response) {
+      this.loading = false
+      this.$refs.transactionForm.onCallResponse(response)
     }
   }
 }

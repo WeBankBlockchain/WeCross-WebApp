@@ -180,7 +180,7 @@ export default {
         size: this.pageObject.pageSize
       }, null).then((response) => {
         if (response.errorCode === 0) {
-          const resourceList = response.data.resourceDetails
+          const resourceList = response.data.resources
           for (const resource of resourceList) {
             this.paths.push({ path: resource.path })
           }
@@ -295,13 +295,13 @@ export default {
       if (transaction.execMethod === 'sendTransaction') {
         sendTransaction({
           version: '1',
-          path: transaction.path,
           data: {
+            path: transaction.path,
             method: transaction.method,
             args: args
           }
         }).then(response => {
-          this.onResponse(response)
+          this.onReceipt(response)
         }).catch(error => {
           this.loading = false
           this.$message({
@@ -313,13 +313,13 @@ export default {
       } else {
         call({
           version: '1',
-          path: transaction.path,
           data: {
+            path: transaction.path,
             method: transaction.method,
             args: args
           }
         }).then(response => {
-          this.onResponse(response)
+          this.onCallResponse(response)
         }).catch(error => {
           this.loading = false
           this.$message({
@@ -330,10 +330,15 @@ export default {
         })
       }
     },
-    onResponse(response) {
+    onReceipt(response) {
       this.loading = false
       console.log(response)
-      this.$refs.transactionForm.onResponse(response)
+      this.$refs.transactionForm.onReceipt(response)
+    },
+    onCallResponse(response) {
+      this.loading = false
+      console.log(response)
+      this.$refs.transactionForm.onCallResponse(response)
     }
   }
 }

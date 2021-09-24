@@ -87,11 +87,11 @@ module.exports = [{
           isLocal: '@pick(true,false)',
           'properties': {
             'BCOS_PROPERTY_CHAIN_ID': '1',
-            'WeCrossProxyABI': 'xxxxxxxxx',
+            'ProxyABI': 'xxxxxxxxx',
             'BCOS_PROPERTY_GROUP_ID': '1',
-            'WeCrossProxy': '0x8f9a2f54ca70f6a3f50b1ed27bdccad363b126f0',
+            'Proxy': '0x8f9a2f54ca70f6a3f50b1ed27bdccad363b126f0',
             'BCOS_PROPERTY_STUB_TYPE': 'BCOS2.0',
-            'WeCrossHub': '0x894b85761beec3aa08b00b9012c4ccd45c43ed84'
+            'Hub': '0x894b85761beec3aa08b00b9012c4ccd45c43ed84'
           }
         }]
       }

@@ -47,28 +47,6 @@ module.exports = [
     }
   },
 
-  // user register
-  {
-    url: '/auth/register',
-    type: 'post',
-    response: _ => {
-      return {
-        'version': '1',
-        'errorCode': 0,
-        'message': 'xxx',
-        'data': {
-          'errorCode': 0,
-          'message': 'success',
-          'universalAccount': {
-            'username': 'xxx',
-            'pubKey': 'xxx',
-            'uaID': 'xxx'
-          }
-        }
-      }
-    }
-  },
-
   // user changePassword
   {
     url: '/auth/changePassword',

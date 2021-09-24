@@ -1,4 +1,4 @@
-const title = 'WeCross Web App'
+const title = 'Cross-Chain Web App'
 
 export default function getPageTitle(pageTitle) {
   if (pageTitle) {

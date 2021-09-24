@@ -32,13 +32,13 @@ export default {
         {
           element: '#Home',
           title: '平台首页',
-          intro: '平台首页展示WeCross网络数据统计信息',
+          intro: '平台首页展示跨链网络数据统计信息',
           position: 'right'
         },
         {
           element: '#Account',
           title: '账户管理',
-          intro: '<li>查看跨链账户信息</li><li>添加链账户</li><li>设置默认链账户</li><li>删除链账户</li>',
+          intro: '<li>查看一级账户信息</li><li>添加二级账户</li><li>设置默认二级账户</li><li>删除二级账户</li>',
           position: 'right'
         },
         {
@@ -68,7 +68,7 @@ export default {
         {
           element: '#Documents',
           title: '参考文档',
-          intro: 'WeCross参考文档链接',
+          intro: '参考文档链接',
           position: 'right'
         },
         {
@@ -87,7 +87,7 @@ export default {
         {
           element: '#Account',
           title: '账户管理',
-          intro: '<li>查看跨链账户信息</li><li>添加链账户</li><li>设置默认链账户</li><li>删除链账户</li>',
+          intro: '<li>查看一级账户信息</li><li>添加二级账户</li><li>设置默认二级账户</li><li>删除二级账户</li>',
           position: 'right'
         },
         {
@@ -190,7 +190,7 @@ export default {
         this.$store.dispatch('app/openSideBar', { withoutAnimation: false }).then(_ => {
           introJS().addStep({
             title: '欢迎✨',
-            intro: '欢迎使用WeCross网页管理平台'
+            intro: '欢迎使用跨链管理平台'
           }).addSteps(this.homePageSteps).setOptions({
             prevLabel: '上一步',
             nextLabel: '下一步',
@@ -216,7 +216,7 @@ export default {
         this.$store.dispatch('app/openSideBar', { withoutAnimation: false }).then(_ => {
           introJS().addStep({
             title: '欢迎✨',
-            intro: '欢迎使用WeCross网页管理平台'
+            intro: '欢迎使用跨链管理平台'
           }).addSteps(this.accountSteps)
             .onbeforechange(function(element) {
               if (element && element.id && element.id === 'accountHelp') {
@@ -251,7 +251,7 @@ export default {
         this.$store.dispatch('app/openSideBar', { withoutAnimation: false }).then(_ => {
           introJS().addStep({
             title: '欢迎✨',
-            intro: '欢迎使用WeCross网页管理平台'
+            intro: '欢迎使用跨链管理平台'
           }).addSteps(this.resourceSteps)
             .onbeforechange(function(element) {
               if (element && element.id && element.id === 'resourceHelp') {
@@ -286,7 +286,7 @@ export default {
         this.$store.dispatch('app/openSideBar', { withoutAnimation: false }).then(_ => {
           introJS().addStep({
             title: '欢迎✨',
-            intro: '欢迎使用WeCross网页管理平台'
+            intro: '欢迎使用跨链管理平台'
           }).addSteps(this.transactionStep)
             .onbeforechange(function(element) {
               if (element && element.id && element.id === 'transactionHelp') {

@@ -9,70 +9,29 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">欢迎登录 WeCross</h3>
+        <h3 class="title">欢迎登录</h3>
       </div>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="用户名"
-          name="username"
-          type="text"
-          tabindex="1"
-        />
-      </el-form-item>
-
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="密码"
-          name="password"
-          tabindex="2"
-          @keyup.enter.native="handleLogin"
-        />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon
-            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+      <el-form-item prop="secKey">
+        <el-upload
+          action=""
+          accept=".key"
+          :show-file-list="false"
+          :http-request="uploadECDSASecPemHandler"
+          :auto-upload="true"
+        >
+          <span class="svg-container">
+            <svg-icon icon-class="user" />
+          </span>
+          <el-input
+            ref="identity"
+            v-model="loginForm.identity"
+            placeholder="账户（点击上传私钥）"
+            name="identity"
+            type="text"
           />
-        </span>
+        </el-upload>
       </el-form-item>
-
-      <el-row :gutter="20">
-        <el-col :span="17">
-          <el-form-item prop="authCode">
-            <el-input
-              v-model="loginForm.authCode"
-              placeholder="验证码"
-              name="imageAuthCode"
-              tabindex="3"
-              @keyup.enter.native="handleLogin"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col style="float:right;margin-right:2px" :span="6">
-          <div style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right">
-            <i v-if="imageAuthCode.imageAuthCodeBase64URL === ''" style="margin-top:12%;" class="el-icon-loading" />
-            <img
-              v-else
-              style="width:100%; height:auto;vertical-align: middle;"
-              :src="imageAuthCode.imageAuthCodeBase64URL"
-              alt=""
-              tabindex="4"
-              @click="handleUpdateAuthCode"
-            >
-          </div>
-        </el-col>
-      </el-row>
 
       <el-button
         :loading="loading"
@@ -82,66 +41,41 @@
       >登录</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">还没有账号？</span>
-        <el-button type="text" @click="handleRegister">注册</el-button>
+        <span style="margin-right:20px;">还没有账户？</span>
+        <el-button type="text" @click="genSecPem">生成</el-button>
       </div>
     </el-form>
   </div>
 </template>
 
 <script>
-import { queryPub } from '@/utils/authcode'
-import { queryAuthCode } from '@/utils/authcode'
-import { confusePassword } from '@/utils/validate'
+
+import { ecdsa } from '@/utils/pem'
+import { downloadAsFile } from '@/utils/download'
+import { MessageBox } from 'element-ui'
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('请输入用户名'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('请输入密码'))
-      } else {
-        callback()
-      }
-    }
-    const validateAuthCode = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('请输入验证码'))
+    const validateSecKey = (rule, value, callback) => {
+      if (!value || value.length === 0) {
+        callback(new Error('请上传私钥'))
       } else {
         callback()
       }
     }
     return {
+      loading: false,
+      secPem: '',
       loginForm: {
-        username: '',
-        password: '',
-        authCode: ''
-      },
-      timer: null,
-      imageAuthCode: {
-        imageAuthCodeBase64URL: '',
-        randomToken: ''
+        identity: null,
+        secKey: null
       },
       loginRules: {
-        username: [
-          { required: true, trigger: 'blur', validator: validateUsername }
-        ],
-        password: [
-          { required: true, trigger: 'blur', validator: validatePassword }
-        ],
-        authCode: [
-          { required: true, trigger: 'blur', validator: validateAuthCode }
+        secKey: [
+          { required: true, trigger: 'change', validator: validateSecKey }
         ]
       },
-      loading: false,
-      passwordType: 'password',
       redirect: undefined
     }
   },
@@ -154,59 +88,37 @@ export default {
     }
   },
   created() {
-    /**
-    query publicKey for data encrypt
-    */
-    queryPub(() => {
-      console.log(' [Login] queryPub successfully.')
-    })
-
-    /**
-     update the authentication code periodically
-     */
-    const callback = (resp) => {
-      this.imageAuthCode.randomToken = resp.randomToken
-      this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
-    }
-
-    queryAuthCode(callback)
-    this.timer = setInterval(queryAuthCode, 60000, callback)
   },
   beforeDestroy() {
-    clearInterval(this.timer)
   },
   methods: {
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
+    genSecPem() {
+      this.secPem = ecdsa.generateSecPem()
+      var address = ecdsa.build(this.secPem).address
+      MessageBox.confirm('账户地址：' + address, '账户已生成', {
+        confirmButtonText: '保存私钥',
+        cancelButtonText: '取消',
+        type: 'info'
+      }).then(() => {
+        downloadAsFile(this.secPem, address + '.key')
       })
     },
-    handleRegister() {
-      this.$router.push({
-        path: '/register'
-      })
-    },
-    handleUpdateAuthCode() {
-      const callback = (resp) => {
-        this.imageAuthCode.randomToken = resp.randomToken
-        this.imageAuthCode.imageAuthCodeBase64URL = `data:image/png;base64,${resp.imageBase64}`
+    uploadECDSASecPemHandler(params) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        this.secPem = event.target.result
+        var keyInfo = ecdsa.build(this.secPem)
+        this.loginForm.identity = keyInfo.address
+        this.loginForm.secKey = keyInfo.secKeyHex
       }
-
-      queryAuthCode(callback)
+      reader.readAsText(params.file)
     },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           var loginParams = {
-            username: this.loginForm.username,
-            password: confusePassword(this.loginForm.password),
-            authCode: this.loginForm.authCode,
-            randomToken: this.imageAuthCode.randomToken
+            identity: this.loginForm.identity,
+            secKey: this.loginForm.secKey
           }
 
           this.loading = true
@@ -219,7 +131,6 @@ export default {
             .catch(e => {
               console.log('error in login: ' + e)
               this.loading = false
-              this.handleUpdateAuthCode()
             })
         } else {
           return false
@@ -246,7 +157,7 @@ $cursor: #fff;
   .el-input {
     display: inline-block;
     height: 47px;
-    width: 85%;
+    width: 90%;
 
     input {
       background: transparent;
@@ -270,6 +181,10 @@ $cursor: #fff;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+  }
+
+  .el-upload {
+      width: 100%;
   }
 }
 </style>

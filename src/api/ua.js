@@ -1,14 +1,24 @@
 import request from '@/utils/request'
+import { getIdentity } from '@/utils/auth'
 
 /**
- * list all chain account of UA
+ * list all chain account belongs to this logged in cross chain account
  * @return {Promise} an axios promise object of response
  */
 export function listAccount() {
+  var accountIdentity = getIdentity()
   return request({
     url: '/auth/listAccount',
     method: 'post',
-    data: {}
+    data: {
+      version: '1.0.0',
+      data: {
+        luyuSign: null,
+        signData: {
+          sender: accountIdentity
+        }
+      }
+    }
   })
 }
 
@@ -41,9 +51,9 @@ export function setDefaultAccount(data) {
  * @param {boolean} data.data.isDefault
  * @return {Promise} an axios promise object of response
  */
-export function addChainAccount(data) {
+export function addAlgAccount(data) {
   return request({
-    url: '/auth/addChainAccount',
+    url: '/auth/addAlgAccount',
     method: 'post',
     data: data
   })
@@ -58,9 +68,9 @@ export function addChainAccount(data) {
  * @param {number} data.data.keyID
  * @return {Promise} an axios promise object of response
  */
-export function removeChainAccount(data) {
+export function removeAlgAccount(data) {
   return request({
-    url: '/auth/removeChainAccount',
+    url: '/auth/removeAlgAccount',
     method: 'post',
     data: data
   })

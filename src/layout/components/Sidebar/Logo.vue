@@ -14,8 +14,8 @@ export default {
   name: 'SidebarLogo',
   data() {
     return {
-      title: 'WeCross管理平台',
-      logo: require('@/assets/nav-logo.svg')
+      title: '跨链管理平台',
+      logo: require('@/assets/favicon.svg')
     }
   }
 }

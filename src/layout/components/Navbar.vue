@@ -9,95 +9,6 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu" style="margin-right:20px">
-      <el-dropdown id="issue" trigger="click" class="right-menu-item hover-effect">
-        <el-tooltip effect="light" content="加鸡腿" placement="bottom">
-          <el-button circle effect="light" size="mini">
-            <svg-icon icon-class="chicken" />
-          </el-button>
-        </el-tooltip>
-        <el-dropdown-menu slot="dropdown">
-          <body
-            :background="qrCodeShow ? undefined : require('@/assets/issue.png')"
-            style="text-align:center;background-size:cover;background-position-y:center;width:860px;height:550px;cursor:pointer"
-            @click="qrCodeShow = !qrCodeShow"
-          >
-            <img
-              v-if="qrCodeShow"
-              :src="require('@/assets/QRCode.jpg')"
-              alt=""
-              style="height:550px"
-            >
-            <el-container v-if="!qrCodeShow">
-              <el-header
-                style="text-align: left;margin-left:18px;font-size:25px;display: inline"
-              ><div style="margin-top: 30px">
-                从Issue开始, 成为跨链达人
-                <i class="el-icon-magic-stick" />
-                <el-button
-                  size="small"
-                  plain
-                  round
-                  style="float: right;margin-right: 16px;margin-top: -2px"
-                >
-                  <svg-icon icon-class="qrcode" />
-                  加入开源社区
-                </el-button>
-              </div>
-
-              </el-header>
-              <el-main style="height: 440px" />
-              <el-footer
-                style="text-align: right;margin-right:36px;padding:0px"
-              ><el-button-group>
-                <el-button
-                  size="small"
-                  plain
-                  type="primary"
-                  round
-                  @click.stop="
-                    openPage(
-                      'https://github.com/WeBankBlockchain/WeCross/issues/new?assignees=&labels=question'
-                    )
-                  "
-                ><i class="el-icon-chat-round" /> 不清楚，问问题
-                </el-button>
-                <el-button
-                  size="small"
-                  plain
-                  type="danger"
-                  @click.stop="
-                    openPage(
-                      'https://github.com/WeBankBlockchain/WeCross/issues/new?assignees=&labels=&template=bug_report_cn.md&title='
-                    )
-                  "
-                ><i class="el-icon-aim" /> 用不爽，怒提Bug
-                </el-button>
-                <el-button
-                  size="small"
-                  plain
-                  type="warning"
-                  @click.stop="
-                    openPage(
-                      'https://github.com/WeBankBlockchain/WeCross/issues?q=is%3Aissue+is%3Aopen+Task'
-                    )
-                  "
-                ><i class="el-icon-trophy" /> 领任务，拿奖品</el-button>
-                <el-button
-                  size="small"
-                  plain
-                  type="success"
-                  round
-                  @click.stop="
-                    openPage(
-                      'https://github.com/WeBankBlockchain/WeCross/issues/new?assignees=&labels=CIP&template=cip_request_cn.md&title='
-                    )
-                  "
-                ><i class="el-icon-mic" /> 指方向，提需求</el-button>
-              </el-button-group></el-footer>
-            </el-container>
-          </body>
-        </el-dropdown-menu>
-      </el-dropdown>
       <div class="right-menu-item hover-effect">
         <el-tooltip effect="light" content="需要帮助？" placement="bottom">
           <el-button circle effect="light" size="mini" @click="() => {$emit('help')}">
@@ -117,11 +28,11 @@
               账户管理
             </el-dropdown-item>
           </router-link>
-          <router-link to="/account/changePassword">
+          <!--<router-link to="/account/changePassword">
             <el-dropdown-item>
               修改密码
             </el-dropdown-item>
-          </router-link>
+          </router-link> -->
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;text-align: center">登出</span>
           </el-dropdown-item>

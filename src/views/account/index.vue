@@ -3,7 +3,7 @@
     <div v-show="show" class="app-container">
       <el-card>
         <div slot="header">
-          <span>跨链账户信息</span>
+          <span>账户信息</span>
           <el-tooltip id="accountHelp" effect="light" content="如何使用？" placement="top">
             <el-button type="text" size="mini" style="margin-left: 10px;padding: 0px" @click="howToUse">
               <svg-icon style="vertical-align: 0px" icon-class="question" />
@@ -11,39 +11,39 @@
           </el-tooltip>
         </div>
         <el-form label-position="left" size="small" label-width="80px">
-          <el-form-item label="跨链账户：">
+          <!--<el-form-item label="一级账户：">
             <el-tag id="UA" :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
-            <el-button id="addChainAccount" style="float: right" type="primary" @click="addChainAccountDrawer.show=true">添加链账户</el-button>
-          </el-form-item>
-          <el-form-item id="uaPK" label="公钥信息：">
-            <el-input v-model="ua.pubKey" type="text" readonly autosize resize="none">
+            <el-button id="addAlgAccount" style="float: right" type="primary" @click="addAlgAccountDrawer.show=true">添加二级账户</el-button>
+          </el-form-item> -->
+          <el-form-item id="uaPK" label="一级账户：">
+            <el-input v-model="ua.identity" type="text" readonly autosize resize="none">
               <el-tooltip slot="prefix" effect="light" content="复制公钥信息">
-                <clipboard :input-data="ua.pubKey" />
+                <clipboard :input-data="ua.identity" />
               </el-tooltip>
             </el-input>
           </el-form-item>
         </el-form>
         <el-table
-          id="chainAccountTable"
-          :data="chainAccountTable"
+          id="algAccountTable"
+          :data="algAccountTable"
           style="width: 100%"
           row-key="id"
           lazy
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-          @row-click="showChainAccount"
+          @row-click="showAlgAccount"
         >
           <el-table-column label="" width="30px" />
-          <el-table-column prop="type" label="链账户类型" width="180">
+          <el-table-column prop="type" label="二级账户类型" width="250">
             <template slot-scope="scope">
               <el-tag type="info">{{ scope.row.type }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="keyID" label="链账户ID" width="180">
+          <el-table-column prop="keyID" label="二级账户ID" width="180">
             <template slot-scope="scope">
               <div>{{ scope.row.keyID }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="details" label="摘要" @click="showChainAccount(scope.row)">
+          <el-table-column prop="details" label="摘要" @click="showAlgAccount(scope.row)">
             <template slot-scope="scope">
               <el-tooltip effect="light" content="点击查看详情" placement="top">
                 <div>{{ scope.row.details }}</div>
@@ -75,78 +75,71 @@
         </el-table>
       </el-card>
       <el-drawer
-        :visible.sync="chainAccountDrawer.show"
-        :direction="chainAccountDrawer.direction"
+        :visible.sync="algAccountDrawer.show"
+        :direction="algAccountDrawer.direction"
         :with-header="false"
         size="680px"
       >
         <el-card style="height:100%">
           <div slot="header" class="clearfix">
-            <span> 链账户 </span>
-            <i class="el-icon-close" style="float:right;cursor:pointer" @click="chainAccountDrawer.show = false" />
+            <span> 二级账户 </span>
+            <i class="el-icon-close" style="float:right;cursor:pointer" @click="algAccountDrawer.show = false" />
           </div>
           <el-form label-position="top" size="small" label-width="80px">
             <el-form-item label="KeyID">
-              <span>{{ chainAccountDrawer.info.keyID }}</span>
+              <span>{{ algAccountDrawer.info.keyID }}</span>
             </el-form-item>
-            <el-form-item label="链账户类型">
-              <el-tag type="info">{{ chainAccountDrawer.info.type }}</el-tag>
-            </el-form-item>
-            <el-form-item>
-              <div slot="label">
-                <span>Identity</span>
-              </div>
-              <el-tooltip effect="light" placement="bottom-start">
-                <div slot="content">含义：<br>FISCO BCOS：address<br> Fabric: 公钥证书 </div>
-                <el-input v-model=" chainAccountDrawer.info.identity" type="textarea" readonly autosize resize="none" />
-              </el-tooltip>
+            <el-form-item label="类型">
+              <el-tag type="info">{{ algAccountDrawer.info.type }}</el-tag>
             </el-form-item>
             <el-form-item>
               <div slot="label">
                 <span>公钥</span>
               </div>
-              <el-input v-model="chainAccountDrawer.info.pubKey" type="textarea" readonly autosize resize="none" />
+              <el-input v-model="algAccountDrawer.info.pubKey" type="textarea" readonly autosize resize="none" />
             </el-form-item>
             <el-form-item label="私钥">
-              <el-button size="mini" @click="chainAccountDrawer.showSec = !chainAccountDrawer.showSec">查看 <i class="el-icon-chat-line-round" /> </el-button>
-              <el-input v-if="chainAccountDrawer.showSec && chainAccountDrawer.show" v-model=" chainAccountDrawer.info.secKey" type="textarea" readonly autosize show-password resize="none" style="margin-top: 10px" />
+              <el-button size="mini" @click="algAccountDrawer.showSec = !algAccountDrawer.showSec">查看 <i class="el-icon-chat-line-round" /> </el-button>
+              <el-input v-if="algAccountDrawer.showSec && algAccountDrawer.show" v-model=" algAccountDrawer.info.secKey" type="textarea" readonly autosize show-password resize="none" style="margin-top: 10px" />
             </el-form-item>
+            <!--
             <el-form-item label="其它">
-              <span>{{ chainAccountDrawer.info.ext }}</span>
+              <span>{{ algAccountDrawer.info.ext }}</span>
             </el-form-item>
           </el-form>
           <el-row style="float: right">
             <el-button
-              v-if="!chainAccountDrawer.info.isDefault"
+              v-if="!algAccountDrawer.info.isDefault"
               type="primary"
               @click="querySetDefaultAccount()"
             >设为默认</el-button>
             <el-button
               type="danger"
-              @click="queryRemoveChainAccount()"
+              @click="queryRemoveAlgAccount()"
             >删除</el-button>
           </el-row>
-        </el-card>
+          -->
+          </el-form></el-card>
       </el-drawer>
       <el-drawer
-        :visible.sync="addChainAccountDrawer.show"
-        :direction="addChainAccountDrawer.direction"
+        :visible.sync="addAlgAccountDrawer.show"
+        :direction="addAlgAccountDrawer.direction"
         :with-header="false"
         size="680px"
       >
         <el-card style="height:100%">
           <div slot="header" class="clearfix">
-            <span> 添加链账户 </span>
-            <i class="el-icon-close" style="float:right;cursor:pointer" @click="addChainAccountDrawer.show = false" />
+            <span> 添加二级账户 </span>
+            <i class="el-icon-close" style="float:right;cursor:pointer" @click="addAlgAccountDrawer.show = false" />
           </div>
-          <el-form ref="addChainAccountDrawer" label-position="top" size="small" :rules="addChainAccountDrawerRules" :model="addChainAccountDrawer.params">
+          <el-form ref="addAlgAccountDrawer" label-position="top" size="small" :rules="addAlgAccountDrawerRules" :model="addAlgAccountDrawer.params">
             <el-form-item prop="type">
-              <label><div><span>链账户类型</span></div></label>
+              <label><div><span>二级账户类型</span></div></label>
               <el-select
-                v-model="addChainAccountDrawer.params.type"
+                v-model="addAlgAccountDrawer.params.type"
                 style="width:200px;margin-top:10px"
-                placeholder="请选择链账户类型"
-                @change="clearChainAccountDrawerParams()"
+                placeholder="请选择二级账户类型"
+                @change="clearAlgAccountDrawerParams()"
               >
                 <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
                 <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0" />
@@ -155,7 +148,7 @@
               </el-select>
             </el-form-item>
 
-            <div v-if="addChainAccountDrawer.params.type === 'BCOS2.0'">
+            <div v-if="addAlgAccountDrawer.params.type === 'BCOS2.0'">
               <el-form-item prop="secKey">
                 <label>
                   <span>私钥</span>
@@ -179,7 +172,7 @@
                   </el-button-group>
                 </el-upload>
                 <el-input
-                  v-model="addChainAccountDrawer.params.secKey"
+                  v-model="addAlgAccountDrawer.params.secKey"
                   :change="buildECDSAData()"
                   type="textarea"
                   :rows="2"
@@ -189,12 +182,12 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
+              <el-form-item v-if="typeof(addAlgAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
                 <label>
                   <span>公钥</span>
                 </label>
                 <el-input
-                  v-model="addChainAccountDrawer.params.pubKey"
+                  v-model="addAlgAccountDrawer.params.pubKey"
                   readonly
                   type="textarea"
                   :rows="2"
@@ -204,9 +197,9 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'" label="address">
+              <el-form-item v-if="typeof(addAlgAccountDrawer.params.ext) !== 'undefined'" label="address">
                 <el-input
-                  v-model="addChainAccountDrawer.params.ext"
+                  v-model="addAlgAccountDrawer.params.ext"
                   readonly
                   placeholder=""
                   clearable
@@ -215,7 +208,7 @@
 
             </div>
 
-            <div v-if="addChainAccountDrawer.params.type === 'GM_BCOS2.0'">
+            <div v-if="addAlgAccountDrawer.params.type === 'GM_BCOS2.0'">
               <el-form-item prop="secKey">
                 <label>
                   <span>私钥</span>
@@ -239,7 +232,7 @@
                   </el-button-group>
                 </el-upload>
                 <el-input
-                  v-model="addChainAccountDrawer.params.secKey"
+                  v-model="addAlgAccountDrawer.params.secKey"
                   :change="buildSM2Data()"
                   type="textarea"
                   :rows="2"
@@ -249,12 +242,12 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
+              <el-form-item v-if="typeof(addAlgAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
                 <label>
                   <span>公钥</span>
                 </label>
                 <el-input
-                  v-model="addChainAccountDrawer.params.pubKey"
+                  v-model="addAlgAccountDrawer.params.pubKey"
                   readonly
                   type="textarea"
                   :rows="2"
@@ -264,9 +257,9 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'" label="address">
+              <el-form-item v-if="typeof(addAlgAccountDrawer.params.ext) !== 'undefined'" label="address">
                 <el-input
-                  v-model="addChainAccountDrawer.params.ext"
+                  v-model="addAlgAccountDrawer.params.ext"
                   readonly
                   placeholder=""
                   clearable
@@ -274,8 +267,8 @@
               </el-form-item>
             </div>
 
-            <div v-if="addChainAccountDrawer.params.type === 'Fabric1.4'">
-              <el-form-item v-if="addChainAccountDrawer.params.type" prop="secKey">
+            <div v-if="addAlgAccountDrawer.params.type === 'Fabric1.4'">
+              <el-form-item v-if="addAlgAccountDrawer.params.type" prop="secKey">
                 <label>
                   <span>私钥</span>
                 </label>
@@ -291,7 +284,7 @@
                   <el-button slot="trigger" type="primary">上传</el-button>
                 </el-upload>
                 <el-input
-                  v-model="addChainAccountDrawer.params.secKey"
+                  v-model="addAlgAccountDrawer.params.secKey"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
@@ -300,7 +293,7 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="addChainAccountDrawer.params.type" prop="pubKey">
+              <el-form-item v-if="addAlgAccountDrawer.params.type" prop="pubKey">
                 <label>
                   <span>公钥证书</span>
                 </label>
@@ -316,7 +309,7 @@
                   <el-button slot="trigger" type="primary">上传</el-button>
                 </el-upload>
                 <el-input
-                  v-model="addChainAccountDrawer.params.pubKey"
+                  v-model="addAlgAccountDrawer.params.pubKey"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
@@ -325,10 +318,10 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="addChainAccountDrawer.params.type === 'Fabric1.4'" prop="ext">
+              <el-form-item v-if="addAlgAccountDrawer.params.type === 'Fabric1.4'" prop="ext">
                 <label><div><span>MSPID</span></div></label>
                 <el-input
-                  v-model="addChainAccountDrawer.params.ext"
+                  v-model="addAlgAccountDrawer.params.ext"
                   style="margin-top:10px"
                   placeholder="请输入"
                   clearable
@@ -337,8 +330,8 @@
 
             </div>
 
-            <div v-if="addChainAccountDrawer.params.type === 'Fabric2.0'">
-              <el-form-item v-if="addChainAccountDrawer.params.type" prop="secKey">
+            <div v-if="addAlgAccountDrawer.params.type === 'Fabric2.0'">
+              <el-form-item v-if="addAlgAccountDrawer.params.type" prop="secKey">
                 <label>
                   <span>私钥</span>
                 </label>
@@ -354,7 +347,7 @@
                   <el-button slot="trigger" type="primary">上传</el-button>
                 </el-upload>
                 <el-input
-                  v-model="addChainAccountDrawer.params.secKey"
+                  v-model="addAlgAccountDrawer.params.secKey"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
@@ -363,7 +356,7 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="addChainAccountDrawer.params.type" prop="pubKey">
+              <el-form-item v-if="addAlgAccountDrawer.params.type" prop="pubKey">
                 <label>
                   <span>公钥证书</span>
                 </label>
@@ -379,7 +372,7 @@
                   <el-button slot="trigger" type="primary">上传</el-button>
                 </el-upload>
                 <el-input
-                  v-model="addChainAccountDrawer.params.pubKey"
+                  v-model="addAlgAccountDrawer.params.pubKey"
                   type="textarea"
                   :rows="2"
                   placeholder="请输入"
@@ -388,10 +381,10 @@
                 />
               </el-form-item>
 
-              <el-form-item v-if="addChainAccountDrawer.params.type === 'Fabric2.0'" prop="ext">
+              <el-form-item v-if="addAlgAccountDrawer.params.type === 'Fabric2.0'" prop="ext">
                 <label><div><span>MSPID</span></div></label>
                 <el-input
-                  v-model="addChainAccountDrawer.params.ext"
+                  v-model="addAlgAccountDrawer.params.ext"
                   style="margin-top:10px"
                   placeholder="请输入"
                   clearable
@@ -400,16 +393,16 @@
 
             </div>
 
-            <el-form-item v-if="addChainAccountDrawer.params.type">
+            <el-form-item v-if="addAlgAccountDrawer.params.type">
               <label><div><span>设为默认账户</span></div></label>
-              <el-switch v-model="addChainAccountDrawer.params.isDefault" style="margin-top:10px" />
+              <el-switch v-model="addAlgAccountDrawer.params.isDefault" style="margin-top:10px" />
             </el-form-item>
           </el-form>
           <div class="clearfix" style="vertical-align: bottom;">
             <el-button
               style="float: right;"
               type="primary"
-              @click="queryAddChainAccount('addChainAccountDrawer')"
+              @click="queryAddAlgAccount('addAlgAccountDrawer')"
             >确认</el-button>
           </div>
         </el-card>
@@ -418,7 +411,7 @@
   </transition>
 </template>
 <script>
-import { listAccount, addChainAccount, removeChainAccount, setDefaultAccount } from '@/api/ua.js'
+import { listAccount, addAlgAccount, removeAlgAccount, setDefaultAccount } from '@/api/ua.js'
 import { pem, ecdsa, sm2 } from '@/utils/pem.js'
 import Clipboard from '@/components/Clipboard/index'
 import introJS from 'intro.js'
@@ -432,41 +425,33 @@ export default {
   data() {
     return {
       ua: {
-        uaID: null,
-        pubKey: null,
-        username: null,
-        admin: true,
-        version: 0,
-        chainAccounts: [
+        identity: null,
+        algAccounts: [
           {
             keyID: 0,
             type: null,
-            identity: null,
-            isDefault: null,
             pubKey: null,
             secKey: null,
-            ext: null
+            isDefault: true
           },
           {
             keyID: 1,
             type: null,
-            identity: null,
-            isDefault: null,
             pubKey: null,
             secKey: null,
-            ext: null
+            isDefault: false
           }
         ]
       },
-      chainAccountTable: [],
-      chainAccountDrawer: {
+      algAccountTable: [],
+      algAccountDrawer: {
         show: false,
         showSec: false,
         direction: 'rtl',
         header: '',
         info: {}
       },
-      addChainAccountDrawer: {
+      addAlgAccountDrawer: {
         show: false,
         direction: 'rtl',
         params: {
@@ -481,14 +466,14 @@ export default {
       show: true,
       pubKeyFileList: [],
       privateKeyFileList: [],
-      addChainAccountDrawerRules: {
+      addAlgAccountDrawerRules: {
         type: [{ required: true, trigger: 'change', message: '请选择' }],
         secKey: [{ required: true, trigger: 'blur', validator: (rule, value, callback) => {
           if (typeof (value) === 'undefined' || value.length === 0) {
             callback(new Error('请输入私钥'))
-          } else if (this.addChainAccountDrawer.params.type === 'BCOS2.0' && !ecdsa.isSecPem(value)) {
+          } else if (this.addAlgAccountDrawer.params.type === 'BCOS2.0' && !ecdsa.isSecPem(value)) {
             callback(new Error('FISCO BCOS 2.0 私钥格式错误'))
-          } else if (this.addChainAccountDrawer.params.type === 'GM_BCOS2.0' && !sm2.isSecPem(value)) {
+          } else if (this.addAlgAccountDrawer.params.type === 'GM_BCOS2.0' && !sm2.isSecPem(value)) {
             callback(new Error('FISCO BCOS 2.0 国密私钥格式错误'))
           } else if (!pem.isSecKeyFormat(value)) {
             callback(new Error('私钥格式错误'))
@@ -499,10 +484,10 @@ export default {
         pubKey: [{ required: true, trigger: 'blur', validator: (rule, value, callback) => {
           if (typeof (value) === 'undefined' || value.length === 0) {
             callback(new Error('请输入公钥'))
-          } else if (this.addChainAccountDrawer.params.type === 'Fabric1.4' && !pem.isCertFormat(value)) {
-            callback(new Error('格式错误' + this.addChainAccountDrawer.params.type))
-          } else if (this.addChainAccountDrawer.params.type === 'Fabric2.0' && !pem.isCertFormat(value)) {
-            callback(new Error('格式错误' + this.addChainAccountDrawer.params.type))
+          } else if (this.addAlgAccountDrawer.params.type === 'Fabric1.4' && !pem.isCertFormat(value)) {
+            callback(new Error('格式错误' + this.addAlgAccountDrawer.params.type))
+          } else if (this.addAlgAccountDrawer.params.type === 'Fabric2.0' && !pem.isCertFormat(value)) {
+            callback(new Error('格式错误' + this.addAlgAccountDrawer.params.type))
           } else {
             callback()
           }
@@ -523,8 +508,13 @@ export default {
           this.$message.error('response 为空，请检查后台运行状态')
           return
         }
+        if (response.errorCode !== 0) {
+          this.$message.error(response.message)
+          return
+        }
         this.ua = response.data
-        this.chainAccountTable = buildChainAccountTable(this.ua)
+        this.algAccountTable = buildAlgAccountTable(this.ua)
+        console.log(this.algAccountTable)
         this.show = true
       }).catch(error => {
         this.$message({
@@ -534,21 +524,21 @@ export default {
         })
       })
     },
-    showChainAccount(chainAccount) {
-      this.chainAccountDrawer.header = chainAccount.details
-      this.chainAccountDrawer.info = chainAccount
-      this.chainAccountDrawer.show = true
-      this.chainAccountDrawer.showSec = false
+    showAlgAccount(algAccount) {
+      this.algAccountDrawer.header = algAccount.details
+      this.algAccountDrawer.info = algAccount
+      this.algAccountDrawer.show = true
+      this.algAccountDrawer.showSec = false
     },
-    clearChainAccountDrawerParams() {
-      this.addChainAccountDrawer.params.pubKey = undefined
-      this.addChainAccountDrawer.params.secKey = undefined
-      this.addChainAccountDrawer.params.ext = undefined
-      this.addChainAccountDrawer.params.isDefault = false
+    clearAlgAccountDrawerParams() {
+      this.addAlgAccountDrawer.params.pubKey = undefined
+      this.addAlgAccountDrawer.params.secKey = undefined
+      this.addAlgAccountDrawer.params.ext = undefined
+      this.addAlgAccountDrawer.params.isDefault = false
 
-      const myAddChainAccountDrawer = this.$refs['addChainAccountDrawer']
-      if (typeof (myAddChainAccountDrawer) !== 'undefined') {
-        this.$refs['addChainAccountDrawer'].clearValidate(['secKey', 'pubKey', 'ext'])
+      const myAddAlgAccountDrawer = this.$refs['addAlgAccountDrawer']
+      if (typeof (myAddAlgAccountDrawer) !== 'undefined') {
+        this.$refs['addAlgAccountDrawer'].clearValidate(['secKey', 'pubKey', 'ext'])
       }
     },
     querySetDefaultAccount() {
@@ -563,12 +553,12 @@ export default {
           text: loadingText
         })
 
-        this.chainAccountDrawer.show = false
+        this.algAccountDrawer.show = false
         setDefaultAccount({
           version: '1',
           data: {
-            type: this.chainAccountDrawer.info.type,
-            keyID: this.chainAccountDrawer.info.keyID
+            type: this.algAccountDrawer.info.type,
+            keyID: this.algAccountDrawer.info.keyID
           }
         }).then((response) => {
           this.handleResponse(response)
@@ -585,16 +575,16 @@ export default {
         })
       })
     },
-    querySetDefaultAccountByColumn(chainAccount) {
-      this.chainAccountDrawer.header = chainAccount.details
-      this.chainAccountDrawer.info = chainAccount
+    querySetDefaultAccountByColumn(algAccount) {
+      this.algAccountDrawer.header = algAccount.details
+      this.algAccountDrawer.info = algAccount
 
       this.querySetDefaultAccount()
     },
-    queryAddChainAccount(formName) {
+    queryAddAlgAccount(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$confirm('添加链账户？', '提示', {
+          this.$confirm('添加二级账户？', '提示', {
             confirmButtonText: '确认',
             cancelButtonText: '取消',
             type: 'warning'
@@ -605,10 +595,10 @@ export default {
               text: loadingText
             })
 
-            this.addChainAccountDrawer.show = false
-            addChainAccount({
+            this.addAlgAccountDrawer.show = false
+            addAlgAccount({
               version: '1',
-              data: this.addChainAccountDrawer.params
+              data: this.addAlgAccountDrawer.params
             }).then((response) => {
               this.handleResponse(response)
               this.getUA().then(() => {
@@ -626,8 +616,8 @@ export default {
         }
       })
     },
-    queryRemoveChainAccount() {
-      this.$confirm('删除链账户？', '提示', {
+    queryRemoveAlgAccount() {
+      this.$confirm('删除二级账户？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
@@ -638,12 +628,12 @@ export default {
           text: loadingText
         })
 
-        this.chainAccountDrawer.show = false
-        removeChainAccount({
+        this.algAccountDrawer.show = false
+        removeAlgAccount({
           version: '1',
           data: {
-            type: this.chainAccountDrawer.info.type,
-            keyID: this.chainAccountDrawer.info.keyID
+            type: this.algAccountDrawer.info.type,
+            keyID: this.algAccountDrawer.info.keyID
           }
         }).then((response) => {
           this.handleResponse(response)
@@ -683,71 +673,71 @@ export default {
           message: '设置成功',
           type: 'success'
         })
-        this.clearChainAccountDrawerParams()
+        this.clearAlgAccountDrawerParams()
       }
     },
 
     generateECDSASecPem() {
-      this.clearChainAccountDrawerParams()
-      this.addChainAccountDrawer.params.secKey = ecdsa.generateSecPem()
+      this.clearAlgAccountDrawerParams()
+      this.addAlgAccountDrawer.params.secKey = ecdsa.generateSecPem()
     },
     generateSM2SecPem() {
-      this.clearChainAccountDrawerParams()
-      this.addChainAccountDrawer.params.secKey = sm2.generateSecPem()
+      this.clearAlgAccountDrawerParams()
+      this.addAlgAccountDrawer.params.secKey = sm2.generateSecPem()
     },
     uploadECDSASecPemHandler(params) {
-      this.clearChainAccountDrawerParams()
+      this.clearAlgAccountDrawerParams()
       const reader = new FileReader()
       reader.onload = (event) => {
-        this.addChainAccountDrawer.params.secKey = event.target.result
+        this.addAlgAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
     },
     uploadSM2SecPemHandler(params) {
-      this.clearChainAccountDrawerParams()
+      this.clearAlgAccountDrawerParams()
       const reader = new FileReader()
       reader.onload = (event) => {
-        this.addChainAccountDrawer.params.secKey = event.target.result
+        this.addAlgAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
     },
     buildECDSAData() {
-      const key = this.addChainAccountDrawer.params.secKey
+      const key = this.addAlgAccountDrawer.params.secKey
       if (typeof (key) === 'undefined' || !ecdsa.isSecPem(key)) {
-        this.addChainAccountDrawer.params.pubKey = undefined
-        this.addChainAccountDrawer.params.ext = undefined
+        this.addAlgAccountDrawer.params.pubKey = undefined
+        this.addAlgAccountDrawer.params.ext = undefined
         return
       }
 
       const data = ecdsa.build(key)
 
-      this.addChainAccountDrawer.params.pubKey = data.pubPem
-      this.addChainAccountDrawer.params.ext = data.address
+      this.addAlgAccountDrawer.params.pubKey = data.pubPem
+      this.addAlgAccountDrawer.params.ext = data.address
     },
     buildSM2Data() {
-      const key = this.addChainAccountDrawer.params.secKey
+      const key = this.addAlgAccountDrawer.params.secKey
       if (typeof (key) === 'undefined' || !sm2.isSecPem(key)) {
-        this.addChainAccountDrawer.params.pubKey = undefined
-        this.addChainAccountDrawer.params.ext = undefined
+        this.addAlgAccountDrawer.params.pubKey = undefined
+        this.addAlgAccountDrawer.params.ext = undefined
         return
       }
 
       const data = sm2.build(key)
 
-      this.addChainAccountDrawer.params.pubKey = data.pubPem
-      this.addChainAccountDrawer.params.ext = data.address
+      this.addAlgAccountDrawer.params.pubKey = data.pubPem
+      this.addAlgAccountDrawer.params.ext = data.address
     },
     uploadPubKeyCertHandler(params) {
       const reader = new FileReader()
       reader.onload = (event) => {
-        this.addChainAccountDrawer.params.pubKey = event.target.result
+        this.addAlgAccountDrawer.params.pubKey = event.target.result
       }
       reader.readAsText(params.file)
     },
     uploadSecKeyHandler(params) {
       const reader = new FileReader()
       reader.onload = (event) => {
-        this.addChainAccountDrawer.params.secKey = event.target.result
+        this.addAlgAccountDrawer.params.secKey = event.target.result
       }
       reader.readAsText(params.file)
     },
@@ -760,24 +750,24 @@ export default {
         steps: [
           {
             element: '#UA',
-            title: '跨链账户',
-            intro: '展示跨链账户名',
+            title: '一级账户',
+            intro: '展示一级账户名',
             position: 'right'
           }, {
             element: '#uaPK',
-            title: '跨链账户公钥',
-            intro: '展示跨链账户的公钥信息',
+            title: '一级账户公钥',
+            intro: '展示一级账户的公钥信息',
             position: 'top'
           }, {
-            element: '#chainAccountTable',
-            title: '链账户信息',
-            intro: '展示跨链账户的所有链账户信息，可点击表行查看详细信息<br>也可展开某种链账户类型,设置默认链账户',
+            element: '#algAccountTable',
+            title: '二级账户信息',
+            intro: '展示一级账户的所有二级账户信息，可点击表行查看详细信息<br>也可展开某种二级账户类型,设置默认二级账户',
             position: 'top'
           },
           {
-            element: '#addChainAccount',
-            title: '添加链账户',
-            intro: '点击"添加链账户"按钮进行链账户添加操作',
+            element: '#addAlgAccount',
+            title: '添加二级账户',
+            intro: '点击"添加二级账户"按钮进行二级账户添加操作',
             position: 'left'
           }
         ]
@@ -786,56 +776,56 @@ export default {
   }
 }
 
-function buildChainDetails(chainAccount) {
+function buildChainDetails(algAccount) {
   let details = ''
   details +=
-    chainAccount.type +
+    algAccount.type +
     '---' +
-    chainAccount.keyID +
+    algAccount.keyID +
     '---' +
-    chainAccount.identity.replace('-----BEGIN CERTIFICATE-----', '').substr(0, 64) +
+    algAccount.pubKey.replace('-----BEGIN CERTIFICATE-----', '').substr(0, 64) +
     '---' +
-    chainAccount.ext
+    algAccount.isDefault
   return details
 }
 
-function buildChainAccountTable(ua) {
-  let chainAccount
-  const localChainAccounts = []
+function buildAlgAccountTable(ua) {
+  let algAccount
+  const localAlgAccounts = []
 
   // build table requirements
-  for (chainAccount of ua.chainAccounts) {
-    chainAccount.details = buildChainDetails(chainAccount)
-    chainAccount.children = []
+  for (algAccount of ua.algAccounts) {
+    algAccount.details = buildChainDetails(algAccount)
+    algAccount.children = []
   }
 
   // add default account
   let id = 1
-  for (chainAccount of ua.chainAccounts) {
-    if (chainAccount.isDefault === true) {
-      chainAccount.id = id++
-      // chainAccount.hasChildren = true
-      localChainAccounts.push(chainAccount)
+  for (algAccount of ua.algAccounts) {
+    if (algAccount.isDefault === true) {
+      algAccount.id = id++
+      // algAccount.hasChildren = true
+      localAlgAccounts.push(algAccount)
     }
   }
 
   // add non-default to children
-  for (chainAccount of ua.chainAccounts) {
-    if (chainAccount.isDefault === false) {
-      const defaultChainAccount = localChainAccounts.find(
-        (u) => u.type === chainAccount.type
+  for (algAccount of ua.algAccounts) {
+    if (algAccount.isDefault === false) {
+      const defaultAlgAccount = localAlgAccounts.find(
+        (u) => u.type === algAccount.type
       )
-      if (typeof (defaultChainAccount) !== 'undefined') {
-        chainAccount.id = defaultChainAccount.id * 10000 + defaultChainAccount.children.length + 1
-        defaultChainAccount.children.push(chainAccount)
+      if (typeof (defaultAlgAccount) !== 'undefined') {
+        algAccount.id = defaultAlgAccount.id * 10000 + defaultAlgAccount.children.length + 1
+        defaultAlgAccount.children.push(algAccount)
       } else {
-        chainAccount.id = id++
-        chainAccount.isDefault = true
-        localChainAccounts.push(chainAccount)
+        algAccount.id = id++
+        algAccount.isDefault = true
+        localAlgAccounts.push(algAccount)
       }
     }
   }
-  return localChainAccounts
+  return localAlgAccounts
 }
 
 </script>

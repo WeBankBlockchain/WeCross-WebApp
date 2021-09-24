@@ -57,6 +57,10 @@
                   <span style="float: left">升级合约</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">Upgrade</span>
                 </el-option>
+                <el-option v-if="form.stubType ==='Fabric1.4'" label="安装&实例化合约" value="install-instantiate">
+                  <span style="float: left">安装&实例化合约</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">Install&Instantiate</span>
+                </el-option>
               </el-select>
             </el-form-item>
             <div id="Path">
@@ -148,7 +152,7 @@
                 </el-tooltip>
               </el-form-item>
               <el-form-item
-                v-if="form.method !=='install'"
+                v-if="form.method ==='instantiate'"
                 id="orgs"
                 label="机构列表："
                 prop="org"
@@ -158,7 +162,7 @@
                   <el-input v-model="form.org" placeholder="Organizations" />
                 </el-tooltip>
               </el-form-item>
-              <el-form-item v-if="form.method === 'install'" id="compressedContent" label="合约文件：" prop="compressedContent">
+              <el-form-item v-if="form.method === 'install' || form.method === 'install-instantiate'" id="compressedContent" label="合约文件：" prop="compressedContent">
                 <el-upload
                   ref="uploadChaincode"
                   action=""
@@ -190,7 +194,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item
-                v-if="form.method==='instantiate'||form.method==='upgrade'"
+                v-if="form.method==='instantiate'||form.method==='upgrade' || form.method === 'install-instantiate'"
                 id="policy"
                 label="背书策略："
                 prop="policy"
@@ -210,7 +214,7 @@
                 </el-upload>
               </el-form-item>
               <el-form-item
-                v-if="form.method==='instantiate'||form.method==='upgrade'"
+                v-if="form.method==='instantiate'||form.method==='upgrade' || form.method === 'install-instantiate'"
                 id="args"
                 label="其他参数："
                 prop="args"
@@ -222,7 +226,7 @@
               </el-form-item>
             </div>
             <el-form-item>
-              <el-button id="onSubmit" v-loading.fullscreen.lock="loading" type="primary" @click="onSubmit">执行</el-button>
+              <el-button id="onSubmit" v-loading.fullscreen.lock="loading" type="primary" @click="onSubmit">生成操作脚本</el-button>
               <el-button @click="onCancel">重置表单</el-button>
             </el-form-item>
             <el-form-item>
@@ -247,17 +251,17 @@ import {
   buildBCOSDeployRequest,
   buildBCOSRegisterRequest,
   buildFabricInstallRequest,
-  buildFabricInstantiateRequest, buildFabricUpgradeRequest, clearForm
+  buildFabricInstantiateRequest, buildFabricUpgradeRequest,
+  buildFabricInstallAndInstantiateRequest,
+  clearForm
 } from '@/utils/resource'
-import {
-  bcosDeploy, bcosRegister, fabricInstall, fabricInstantiate, fabricUpgrade
-} from '@/api/resource'
 import { handleSuccessMsgBox, handleErrorMsgBox } from '@/utils/messageBox'
 import introJS from 'intro.js'
 import 'intro.js/introjs.css'
 import 'intro.js/themes/introjs-modern.css'
 import { stepRoute } from './resourceSteps/resourceDeploySteps'
-import { isChainAccountFit } from '@/utils/chainAccountIntro'
+import { downloadAsFile } from '@/utils/download'
+import { buildPayload } from '@/utils/resourceDeployPayload'
 
 const JSZip = require('jszip')
 
@@ -387,32 +391,33 @@ export default {
     onSubmit() {
       this.$refs['deployForm'].validate((validate) => {
         if (validate) {
-          isChainAccountFit(this.form.stubType, () => {
-            this.loading = true
-            switch (this.form.method) {
-              case 'deploy' :
-                this.sourceContractLine = []
-                this.dependenciesLine = []
-                this.onBCOSDeploy()
-                break
-              case 'register':
-                this.sourceContractLine = []
-                this.dependenciesLine = []
-                this.onBCOSRegister()
-                break
-              case 'install':
-                this.onFabricInstall()
-                break
-              case 'instantiate':
-                this.onFabricInstantiate()
-                break
-              case 'upgrade':
-                this.onFabricUpgrade()
-                break
-              default:
-                console.log(this.form)
-            }
-          })
+          this.loading = true
+          switch (this.form.method) {
+            case 'deploy' :
+              this.sourceContractLine = []
+              this.dependenciesLine = []
+              this.onBCOSDeploy()
+              break
+            case 'register':
+              this.sourceContractLine = []
+              this.dependenciesLine = []
+              this.onBCOSRegister()
+              break
+            case 'install':
+              this.onFabricInstall()
+              break
+            case 'instantiate':
+              this.onFabricInstantiate()
+              break
+            case 'upgrade':
+              this.onFabricUpgrade()
+              break
+            case 'install-instantiate':
+              this.onFabricInstallAndInstantiate()
+              break
+            default:
+              console.log(this.form)
+          }
         } else {
           this.$message({
             message: '请检查所有输入',
@@ -446,37 +451,19 @@ export default {
       const h = this.$createElement
       this.$msgbox({
         message: h('div', null, [
-          h('p', { style: { fontSize: '16px' }}, '确认执行部署合约？'),
-          h('div', { style: { fontSize: '14px', marginTop: '5px' }}, '注意：若是升级FISCO BCOS合约，请勿修改/删除旧版本合约的ABI接口，否则会出现旧合约历史交易为空的情况！')
+          h('div', { style: { fontSize: '14px', marginTop: '5px' }}, '请将脚本放置于路由目录下执行')
         ]),
-        title: '注意',
-        type: 'warning',
+        title: '操作脚本已生成',
+        type: 'info',
         showCancelButton: true,
-        confirmButtonText: '确认部署',
-        cancelButtonText: '取消部署'
+        confirmButtonText: '保存',
+        cancelButtonText: '取消'
       }).then(_ => {
-        bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
-          this.loading = false
-          if (response.errorCode !== 0) {
-            handleErrorMsgBox(
-              '执行FISCO BCOS部署合约失败，错误：',
-              '错误码：' + response.errorCode,
-              (response.data === null) ? response.message : response.data.errorMessage,
-              null
-            )
-          } else {
-            this.onSubmitSuccess(response)
-          }
-        }).catch(err => {
-          this.loading = false
-          this.$message(
-            {
-              message: err,
-              type: 'error',
-              center: true
-            }
-          )
-        })
+        var data = buildBCOSDeployRequest(this.form)
+        var packageName = this.getDownloadPackageName(data, this.form)
+        var payload = buildPayload(this.form.stubType, JSON.stringify(data))
+        downloadAsFile(payload, packageName)
+        this.loading = false
       }).catch(_ => {
         this.loading = false
       })
@@ -489,125 +476,134 @@ export default {
         this.loading = false
         return
       }
-      bcosRegister(buildBCOSRegisterRequest(this.form)).then(response => {
+      const h = this.$createElement
+      this.$msgbox({
+        message: h('div', null, [
+          h('div', { style: { fontSize: '14px', marginTop: '5px' }}, '请将脚本放置于路由目录下执行')
+        ]),
+        title: '操作脚本已生成',
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonText: '保存安装包',
+        cancelButtonText: '取消'
+      }).then(_ => {
+        var data = buildBCOSRegisterRequest(this.form)
+        var packageName = this.getDownloadPackageName(data, this.form)
+        var payload = buildPayload(this.form.stubType, JSON.stringify(data))
+        downloadAsFile(payload, packageName)
         this.loading = false
-        if (response.errorCode !== 0) {
-          handleErrorMsgBox(
-            '执行FISCO BCOS注册合约失败，错误：',
-            '错误码：' + response.errorCode,
-            (response.data === null) ? response.message : response.data.errorMessage,
-            null
-          )
-        } else {
-          this.onSubmitSuccess(response)
-        }
-      }).catch(err => {
+      }).catch(_ => {
         this.loading = false
-        this.$message(
-          {
-            message: err,
-            type: 'error',
-            center: true
-          }
-        )
       })
     },
     onFabricInstall() {
-      fabricInstall(buildFabricInstallRequest(this.form)).then(response => {
+      const h = this.$createElement
+      this.$msgbox({
+        message: h('div', null, [
+          h('div', { style: { fontSize: '14px', marginTop: '5px' }}, '请将脚本放置于路由目录下执行')
+        ]),
+        title: '操作脚本已生成',
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonText: '保存安装包',
+        cancelButtonText: '取消'
+      }).then(_ => {
+        var data = buildFabricInstallRequest(this.form)
+        var packageName = this.getDownloadPackageNameExt(data, this.form, this.form.org)
+        var payload = buildPayload(this.form.stubType, JSON.stringify(data))
+        downloadAsFile(payload, packageName)
         this.loading = false
-        if (response.errorCode !== 0) {
-          handleErrorMsgBox(
-            '执行Hyperledger Fabric合约安装失败，错误：',
-            '错误码：' + response.errorCode,
-            (response.data === null) ? response.message : response.data.errorMessage,
-            null
-          )
-        } else {
-          const h = this.$createElement
-          this.$confirm('提示', {
-            message: h('div', null, [
-              h('p', null, '已执行成功，返回信息：'),
-              h('p', null, response.data),
-              h('p', { style: 'font-weight: bold;' }, '注意: 必须实例化合约/升级合约才能在资源列表显示')
-            ]),
-            title: '执行成功',
-            confirmButtonText: '实例化合约',
-            cancelButtonText: '继续安装合约',
-            type: 'success'
-          }).then(_ => {
-            this.form.compressedContent = null
-            this.form.method = 'instantiate'
-            this.form.policy = 'default'
-            this.form.org = null
-            this.$refs.deployForm.clearValidate()
-          }).catch(_ => {
-            this.fileList = []
-            this.policyFile = []
-            this.sourceContractLine = []
-            this.dependenciesLine = []
-            this.solidityFiles = []
-            this.zipContractFilesMap = {}
-            this.$refs.deployForm.resetFields()
-            this.form.sourceContent = null
-          })
-        }
-      }).catch(err => {
+
+        this.$confirm('提示', {
+          message: h('div', null, [
+            h('p', { style: 'font-weight: bold;' }, '注意: 必须实例化合约/升级合约才能在资源列表显示'),
+            h('p', null, '选择下一步')
+          ]),
+          title: '保存成功',
+          confirmButtonText: '实例化合约',
+          cancelButtonText: '继续安装合约',
+          type: 'success'
+        }).then(_ => {
+          this.form.compressedContent = null
+          this.form.method = 'instantiate'
+          this.form.policy = 'default'
+          this.form.org = null
+          this.$refs.deployForm.clearValidate()
+        }).catch(_ => {
+          this.fileList = []
+          this.policyFile = []
+          this.sourceContractLine = []
+          this.dependenciesLine = []
+          this.solidityFiles = []
+          this.zipContractFilesMap = {}
+          this.$refs.deployForm.resetFields()
+          this.form.sourceContent = null
+        })
+      }).catch(_ => {
         this.loading = false
-        this.$message(
-          {
-            message: err,
-            type: 'error',
-            center: true
-          }
-        )
       })
     },
     onFabricInstantiate() {
-      fabricInstantiate(buildFabricInstantiateRequest(this.form)).then(response => {
+      const h = this.$createElement
+      this.$msgbox({
+        message: h('div', null, [
+          h('div', { style: { fontSize: '14px', marginTop: '5px' }}, '请将脚本放置于路由目录下执行')
+        ]),
+        title: '操作脚本已生成',
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonText: '保存安装包',
+        cancelButtonText: '取消'
+      }).then(_ => {
+        var data = buildFabricInstantiateRequest(this.form)
+        var packageName = this.getDownloadPackageName(data, this.form)
+        var payload = buildPayload(this.form.stubType, JSON.stringify(data))
+        downloadAsFile(payload, packageName)
         this.loading = false
-        if (response.errorCode !== 0) {
-          handleErrorMsgBox(
-            '执行Hyperledger Fabric合约实例化失败，错误：',
-            '错误码：' + response.errorCode,
-            (response.data === null) ? response.message : response.data.errorMessage,
-            null
-          )
-        } else {
-          this.onSubmitSuccess(response)
-        }
-      }).catch(err => {
+      }).catch(_ => {
         this.loading = false
-        this.$message(
-          {
-            message: err,
-            type: 'error',
-            center: true
-          }
-        )
       })
     },
     onFabricUpgrade() {
-      fabricUpgrade(buildFabricUpgradeRequest(this.form)).then(response => {
+      const h = this.$createElement
+      this.$msgbox({
+        message: h('div', null, [
+          h('div', { style: { fontSize: '14px', marginTop: '5px' }}, '请将脚本放置于路由目录下执行')
+        ]),
+        title: '操作脚本已生成',
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonText: '保存安装包',
+        cancelButtonText: '取消'
+      }).then(_ => {
+        var data = buildFabricUpgradeRequest(this.form)
+        var packageName = this.getDownloadPackageName(data, this.form)
+        var payload = buildPayload(this.form.stubType, JSON.stringify(data))
+        downloadAsFile(payload, packageName)
         this.loading = false
-        if (response.errorCode !== 0) {
-          handleErrorMsgBox(
-            '执行Hyperledger Fabric合约升级失败，错误：',
-            '错误码：' + response.errorCode,
-            (response.data === null) ? response.message : response.data.errorMessage,
-            null
-          )
-        } else {
-          this.onSubmitSuccess(response)
-        }
-      }).catch(err => {
+      }).catch(_ => {
         this.loading = false
-        this.$message(
-          {
-            message: err,
-            type: 'error',
-            center: true
-          }
-        )
+      })
+    },
+    onFabricInstallAndInstantiate() {
+      const h = this.$createElement
+      this.$msgbox({
+        message: h('div', null, [
+          h('div', { style: { fontSize: '14px', marginTop: '5px' }}, '请将脚本放置于路由目录下执行')
+        ]),
+        title: '操作脚本已生成',
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonText: '保存安装包',
+        cancelButtonText: '取消'
+      }).then(_ => {
+        var data = buildFabricInstallAndInstantiateRequest(this.form)
+        var packageName = this.getDownloadPackageName(data, this.form)
+        var payload = buildPayload(this.form.stubType, JSON.stringify(data))
+        downloadAsFile(payload, packageName)
+        this.loading = false
+      }).catch(_ => {
+        this.loading = false
       })
     },
     onSubmitSuccess(response) {
@@ -773,7 +769,7 @@ export default {
       params.onProgress({ percent: 20 })
       if (params.file !== null && (/(gzip|tar)$/.test(params.file.type) || /.(gz|tar)$/.test(params.file.name))) {
         setTimeout(() => {
-          this.readBaseBytes(params)
+          this.readContractBaseBytes(params)
         }, 100)
         this.$refs.deployForm.clearValidate('compressedContent')
       } else {
@@ -789,7 +785,7 @@ export default {
       params.onProgress({ percent: 20 })
       if (params.file !== null && (/.(yaml|YAML)$/.test(params.file.name) || /(yaml)$/.test(params.file.type))) {
         setTimeout(() => {
-          this.readBaseBytes(params)
+          this.readPolicyBaseBytes(params)
         }, 100)
       } else {
         this.$alert('请选择yaml文件！', '错误', {
@@ -800,11 +796,27 @@ export default {
         params.onError()
       }
     },
-    async readBaseBytes(params) {
+    getDownloadPackageName(data, form) {
+      return data.command + '_' + data.path + '_' + form.version + '.sh'
+    },
+    getDownloadPackageNameExt(data, form, ext) {
+      return data.command + '_' + data.path + '_' + form.version + '_' + ext + '.sh'
+    },
+    async readContractBaseBytes(params) {
       const readFile = new FileReader()
       readFile.readAsDataURL(params.file)
       readFile.onload = (e) => {
         this.form.compressedContent = e.target.result.split('base64,')[1]
+        params.onProgress({ percent: 100 })
+        params.onSuccess()
+        this.$refs.deployForm.clearValidate('sourceContent')
+        this.$refs.deployForm.clearValidate('policy')
+      }
+    },
+    async readPolicyBaseBytes(params) {
+      const readFile = new FileReader()
+      readFile.readAsDataURL(params.file)
+      readFile.onload = (e) => {
         this.form.policy = e.target.result.split('base64,')[1]
         params.onProgress({ percent: 100 })
         params.onSuccess()

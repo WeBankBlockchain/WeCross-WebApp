@@ -30,7 +30,7 @@
                 {{ scope.row.xaTransactionID }}
               </template>
             </el-table-column>
-            <el-table-column label="跨链账户" min-width="9%">
+            <el-table-column label="一级账户" min-width="9%">
               <template slot-scope="scope">
                 <el-tag v-if="!nonNull(scope.row.username)" type="info" effect="plain">unknown</el-tag>
                 <span v-if="nonNull(scope.row.username)">{{ scope.row.username }}</span>
@@ -63,7 +63,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="10%" />
-                    <el-table-column label="跨链账户" min-width="8%">
+                    <el-table-column label="一级账户" min-width="8%">
                       <template slot-scope="step">
                         <el-tag v-if="!nonNull(step.row.username)" type="info" effect="plain">unknown</el-tag>
                         <span v-if="nonNull(step.row.username)">{{ step.row.username }}</span>

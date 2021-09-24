@@ -38,6 +38,15 @@ const ecdsaPubPemPrefix = '3056301006072a8648ce3d020106052b8104000a034200'
 
 const ecdsaSecPemFingerprint = '020100301006072a8648ce3d020106052b8104000a'
 
+function getSecKeyHexFromECDSASecPem(secKeyContent) {
+  var base64Content = secKeyContent.substr(0, secKeyContent.lastIndexOf('-----END')).replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
+
+  var buffer = Buffer.from(base64Content, 'base64')
+  var hexString = buffer.toString('hex')
+  var secKeyHex = hexString.substr(ecdsaSecPemPrefix.length, 64)
+  return secKeyHex
+}
+
 function getPubKeyHexFromECDSASecPem(secKeyContent) {
   var base64Content = secKeyContent.substr(0, secKeyContent.lastIndexOf('-----END')).replace('\n', '').replace('-----BEGIN PRIVATE KEY-----', '')
 
@@ -87,11 +96,13 @@ export const ecdsa = {
   },
   build(secPem) {
     var pubKeyHex = getPubKeyHexFromECDSASecPem(secPem)
-
+    var secKeyHex = getSecKeyHexFromECDSASecPem(secPem)
     return {
       secPem: secPem,
       pubPem: buildECDSAPubKeyPem(pubKeyHex),
-      address: ecdsaPub2Addr(pubKeyHex)
+      address: ecdsaPub2Addr(pubKeyHex),
+      secKeyHex: secKeyHex,
+      pubKeyHex: pubKeyHex
     }
   }
 }

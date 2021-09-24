@@ -96,8 +96,9 @@
 <script>
 
 import { handleErrorMsgBox } from '@/utils/messageBox'
-import { isChainAccountFit } from '@/utils/chainAccountIntro'
+// import { isChainAccountFit } from '@/utils/chainAccountIntro'
 import { detail } from '@/api/resource'
+import { putReceiptHistory } from '@/utils/receiptHistory'
 
 export default {
   name: 'TransactionForm',
@@ -189,12 +190,15 @@ export default {
               this.$message.error(res.message)
               return
             }
-            if (!res.data || !res.data.stubType) {
+            if (!res.data || !res.data.type) {
               this.$message.error('Resource not found')
             } else {
-              isChainAccountFit(res.data.stubType, () => {
+              /*
+              isChainAccountFit(res.data.type, () => {
                 this.$emit('submitClick', this.transaction)
               })
+              */
+              this.$emit('submitClick', this.transaction)
             }
           }).catch(err => {
             this.$message.error('网络错误：' + err)
@@ -207,15 +211,38 @@ export default {
         }
       })
     },
-    onResponse(response) {
-      if (response.errorCode !== 0 || response.data.errorCode !== 0) {
+    onReceipt(response) {
+      if (response.errorCode !== 0 || response.data.code !== 0) {
         this.submitResponse = null
         let code, message
         if (response.errorCode !== 0) {
           code = response.errorCode
           message = response.message
         } else {
-          code = response.data.errorCode
+          code = response.data.code
+          message = response.data.message
+        }
+        handleErrorMsgBox('执行错误：', '错误码: ' + code, message, null).catch(_ => {})
+      } else {
+        if (!response.data.result) {
+          this.submitResponse = 'response返回错误，result为空'
+        }
+        const res = JSON.stringify(response.data.result)
+        this.submitResponse = (res === '[]') ? '调用成功，返回结果为空' : res
+
+        var receipt = response.data
+        putReceiptHistory(receipt.transactionHash, receipt)
+      }
+    },
+    onCallResponse(response) {
+      if (response.errorCode !== 0 || response.data.code !== 0) {
+        this.submitResponse = null
+        let code, message
+        if (response.errorCode !== 0) {
+          code = response.errorCode
+          message = response.message
+        } else {
+          code = response.data.code
           message = response.data.message
         }
         handleErrorMsgBox('执行错误：', '错误码: ' + code, message, null).catch(_ => {})

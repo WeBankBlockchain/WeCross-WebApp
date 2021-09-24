@@ -3,7 +3,7 @@
     <transition name="fade-transform" mode="out-in">
       <keep-alive
         v-if="isLogin"
-        exclude="XATransaction,XATransactionList,ResourceDeploy,RawTransaction,Login,Register,ChangePassword"
+        exclude="XATransaction,XATransactionList,ResourceDeploy,RawTransaction,Login,ChangePassword"
       >
         <router-view :key="key" />
       </keep-alive>
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { getSecKey } from '@/utils/auth'
+
 export default {
   name: 'AppMain',
   data() {
@@ -28,8 +30,8 @@ export default {
   watch: {
     $route(to, from) {
       // if the route changes...
-      const token = localStorage.getItem('wecross-token')
-      this.isLogin = !!token
+      const secKey = getSecKey()
+      this.isLogin = !!secKey
     }
   }
 }

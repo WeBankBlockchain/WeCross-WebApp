@@ -1,30 +1,28 @@
+const IdentityKey = 'cross-chain-user'
+const SecKeyKey = 'cross-chain-sec'
 
-const TokenKey = 'wecross-token'
-const UsernameKey = 'wecross-user'
-const PubKey = 'wecross-pub'
-
-export function getToken() {
-  return localStorage.getItem(TokenKey)
+export function getIdentity() {
+  return localStorage.getItem(IdentityKey)
 }
 
-export function setToken(token) {
-  return localStorage.setItem(TokenKey, token)
+export function setIdentity(identity) {
+  return localStorage.setItem(IdentityKey, identity)
 }
 
-export function removeToken() {
-  return localStorage.removeItem(TokenKey)
+export function removeIdentity() {
+  return localStorage.removeItem(IdentityKey)
 }
 
-export function getUsername() {
-  return localStorage.getItem(UsernameKey)
+export function getSecKey() {
+  return localStorage.getItem(SecKeyKey)
 }
 
-export function setUsername(username) {
-  return localStorage.setItem(UsernameKey, username)
+export function setSecKey(secKey) {
+  return localStorage.setItem(SecKeyKey, secKey)
 }
 
-export function removeUsername() {
-  return localStorage.removeItem(UsernameKey)
+export function removeSecKey() {
+  return localStorage.removeItem(SecKeyKey)
 }
 
 export function isUserFirstTimeUse(username) {
@@ -35,16 +33,4 @@ export function isUserFirstTimeUse(username) {
     localStorage.setItem(username, '1')
     return true
   }
-}
-
-export function getPubKey(pub) {
-  return localStorage.getItem(PubKey)
-}
-
-export function setPubKey(pub) {
-  return localStorage.setItem(PubKey, pub)
-}
-
-export function removePubKey() {
-  return localStorage.removeItem(PubKey)
 }

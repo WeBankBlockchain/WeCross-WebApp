@@ -144,7 +144,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip />
-                <el-table-column prop="username" label="跨链账户" min-width="70px" show-overflow-tooltip />
+                <el-table-column prop="username" label="一级账户" min-width="70px" show-overflow-tooltip />
                 <el-table-column prop="path" label="资源路径" min-width="70px" show-overflow-tooltip />
                 <el-table-column prop="method" label="调用方法" min-width="70px" />
               </el-table>
@@ -177,7 +177,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="xaTransactionID" label="事务ID" min-width="90px" show-overflow-tooltip />
-                <el-table-column prop="username" label="跨链账户" min-width="50px" />
+                <el-table-column prop="username" label="一级账户" min-width="50px" />
                 <el-table-column min-width="80px" label="锁定资源">
                   <template slot-scope="scope">
                     <div v-for="path in scope.row.paths" :key="path">
@@ -194,7 +194,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="xaTransactionSeq" label="步骤序号" min-width="80px" show-overflow-tooltip />
-                      <el-table-column prop="username" label="跨链账户" min-width="60px" />
+                      <el-table-column prop="username" label="一级账户" min-width="60px" />
                       <el-table-column prop="path" label="资源路径" min-width="70px" />
                       <el-table-column prop="method" label="调用方法" min-width="70px" />
                     </el-table>
@@ -570,8 +570,8 @@ export default {
       if (transaction.execMethod === 'sendTransaction') {
         sendTransaction({
           version: '1',
-          path: transaction.path,
           data: {
+            path: transaction.path,
             method: transaction.method,
             args: args,
             options: {
@@ -580,7 +580,9 @@ export default {
             }
           }
         }).then(response => {
-          this.onResponse(response)
+          this.loading = false
+          this.$refs.originTransaction.onReceipt(response)
+          this.getXADetail()
         }).catch(error => {
           this.loading = false
           this.$message({
@@ -592,8 +594,8 @@ export default {
       } else {
         call({
           version: '1',
-          path: transaction.path,
           data: {
+            path: transaction.path,
             method: transaction.method,
             args: args,
             options: {
@@ -601,7 +603,9 @@ export default {
             }
           }
         }).then(response => {
-          this.onResponse(response)
+          this.loading = false
+          this.$refs.originTransaction.onCallResponse(response)
+          this.getXADetail()
         }).catch(error => {
           this.loading = false
           this.$message({
@@ -611,11 +615,6 @@ export default {
           })
         })
       }
-    },
-    onResponse(response) {
-      this.loading = false
-      this.$refs.originTransaction.onResponse(response)
-      this.getXADetail()
     },
     commitTransaction() {
       if (this.$store.getters.transactionID !== null && this.$store.getters.paths !== []) {

@@ -27,7 +27,8 @@
                 </el-option-group>
               </el-select>
             </el-form-item>
-            <el-form-item id="method" label="选择操作：" prop="method">
+            <!-- <el-form-item  id="method" label="选择操作：" prop="method">-->
+            <el-form-item v-if="false" id="method" label="选择操作：" prop="method">
               <el-select key="methodSelect" v-model="form.method" placeholder="选择操作类型" @change="methodChange">
                 <el-option
                   v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')"
@@ -45,6 +46,10 @@
                   <span style="float: left">注册已有合约</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">Register</span>
                 </el-option>
+                <el-option v-if="form.stubType ==='Fabric1.4'" label="安装&实例化合约" value="install-instantiate">
+                  <span style="float: left">安装&实例化合约</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">Install&Instantiate</span>
+                </el-option>
                 <el-option v-if="form.stubType ==='Fabric1.4'" label="安装合约" value="install">
                   <span style="float: left">安装合约</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">Install</span>
@@ -56,10 +61,6 @@
                 <el-option v-if="form.stubType ==='Fabric1.4'" label="升级合约" value="upgrade">
                   <span style="float: left">升级合约</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">Upgrade</span>
-                </el-option>
-                <el-option v-if="form.stubType ==='Fabric1.4'" label="安装&实例化合约" value="install-instantiate">
-                  <span style="float: left">安装&实例化合约</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">Install&Instantiate</span>
                 </el-option>
               </el-select>
             </el-form-item>
@@ -372,7 +373,7 @@ export default {
     if (typeof (this.$route.query.stubType) !== 'undefined' && this.$route.query.stubType !== null) {
       this.form.stubType = this.$route.query.stubType
       if (this.form.stubType === 'Fabric1.4') {
-        this.form.method = 'install'
+        this.form.method = 'install-instantiate'
       } else {
         this.form.method = 'deploy'
       }
@@ -484,7 +485,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存安装包',
+        confirmButtonText: '保存脚本',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildBCOSRegisterRequest(this.form)
@@ -505,7 +506,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存安装包',
+        confirmButtonText: '保存脚本',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildFabricInstallRequest(this.form)
@@ -552,7 +553,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存安装包',
+        confirmButtonText: '保存脚本',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildFabricInstantiateRequest(this.form)
@@ -573,7 +574,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存安装包',
+        confirmButtonText: '保存脚本',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildFabricUpgradeRequest(this.form)
@@ -594,7 +595,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存安装包',
+        confirmButtonText: '保存脚本',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildFabricInstallAndInstantiateRequest(this.form)

@@ -485,7 +485,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存脚本',
+        confirmButtonText: '保存',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildBCOSRegisterRequest(this.form)
@@ -506,7 +506,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存脚本',
+        confirmButtonText: '保存',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildFabricInstallRequest(this.form)
@@ -553,7 +553,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存脚本',
+        confirmButtonText: '保存',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildFabricInstantiateRequest(this.form)
@@ -574,7 +574,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存脚本',
+        confirmButtonText: '保存',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildFabricUpgradeRequest(this.form)
@@ -595,7 +595,7 @@ export default {
         title: '操作脚本已生成',
         type: 'info',
         showCancelButton: true,
-        confirmButtonText: '保存脚本',
+        confirmButtonText: '保存',
         cancelButtonText: '取消'
       }).then(_ => {
         var data = buildFabricInstallAndInstantiateRequest(this.form)

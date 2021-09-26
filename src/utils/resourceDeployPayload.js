@@ -61,15 +61,15 @@ main() {
 
     case \${TYPE} in
     BCOS2.0)
-        check_param1
+        check_param1 \$@
         java -cp conf/:lib/*:plugin/* com.webank.wecross.stub.bcos.normal.BCOSStubFactory customCommand \${1} "\${PAYLOAD}"
         ;;
     GM_BCOS2.0)
-        check_param1
+        check_param1 \$@
         java -cp conf/:lib/*:plugin/* com.webank.wecross.stub.bcos.guomi.BCOSGMStubFactory customCommand \${1} "\${PAYLOAD}"
         ;;
     Fabric1.4)
-        check_param0
+        check_param0 \$@
         java -cp conf/:lib/*:plugin/* com.webank.wecross.stub.fabric.FabricStubFactory customCommand "\${PAYLOAD}"
         ;;
     *)

@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 import { path2Url } from '@/utils'
 import { getIdentity } from '@/utils/auth'
+import { sign } from '@/utils/sign'
 
 /**
  * start a XA transaction
@@ -78,10 +79,14 @@ export function listXATransactions(data) {
 export function call(data) {
   var req = data
   req.data.sender = getIdentity()
+
   if (!req.data.nonce) {
     req.data.nonce = Math.round(Math.random() * 1000000000)
   }
-  // TODO: sig the data
+
+  // sign the data
+  req.data.luyuSign = sign(data.data)
+
   return request({
     url: 'resource' + path2Url(data.data.path) + '/call',
     method: 'post',
@@ -100,6 +105,10 @@ export function sendTransaction(data) {
   if (!req.data.nonce) {
     req.data.nonce = Math.round(Math.random() * 1000000000)
   }
+
+  // sign the data
+  req.data.luyuSign = sign(data.data)
+
   return request({
     url: 'resource' + path2Url(data.data.path) + '/sendTransaction',
     method: 'post',

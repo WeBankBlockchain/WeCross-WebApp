@@ -11,11 +11,11 @@ module.exports = [{
         message: 'success',
         data: {
           total: 1000,
-          'resourceDetails|10': [{
+          'resources|10': [{
             id: '@id',
             path: config.query.path ? config.query.path + '.@word(3,5)' : '@pick([\'payment\',\'load\',\'resource\']).@pick([\'bcos\',\'bcos_gm\',\'fabric\']).@word(3,5)',
             checksum: 'checksum',
-            'stubType|1': ['BCOS2.0', 'GM_BCOS2.0', 'Fabric1.4'],
+            'type|1': ['BCOS2.0', 'GM_BCOS2.0', 'Fabric1.4'],
             properties: '@sentence(3,3)',
             distance: '@integer(0, 3)'
           }]
@@ -48,7 +48,7 @@ module.exports = [{
         'errorCode': 0,
         'message': 'Success: ' + config.body.command,
         'data': {
-          'stubType': 'BCOS2.0'
+          'type': 'BCOS2.0'
         }
       })
     }

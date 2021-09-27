@@ -149,12 +149,16 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            'errorCode': 0,
-            'errorMessage': 'Success',
-            'hash': '0x@word(9,15)',
-            'extraHashes': ['xxx', 'xxx'],
+            'code': 0,
+            'message': 'Success',
+            'transactionHash': '0x@word(9,15)',
             'blockNumber': 123,
-            'result': []
+            'result': ['xxx', 'XXX'],
+            'path': 'a.b.c',
+            'method': 'mock method',
+            'args': [],
+            'version': '1.0.0'
+
           }
         })
       }
@@ -169,12 +173,13 @@ module.exports = [
           errorCode: 0,
           message: 'success',
           data: {
-            'errorCode': 0,
-            'errorMessage': 'Success',
-            'hash': '0x4342748923789',
-            'extraHashes': ['xxx', 'xxx'],
-            'blockNumber': 123,
-            'restult': ['xxx', 'XXX']
+            'code': 0,
+            'message': 'Success',
+            'restult': ['xxx', 'XXX'],
+            'path': 'a.b.c',
+            'method': 'mock method',
+            'args': [],
+            'version': '1.0.0'
           }
         })
       }
@@ -186,6 +191,7 @@ module.exports = [
       return {
         ...Mock.mock(
           {
+
             'version': 1,
             'errorCode': 0,
             'message': 'success',
@@ -193,11 +199,9 @@ module.exports = [
               'path': 'payment.bcos.hello',
               'username': 'hehe',
               'blockNumber': 1,
-              'txHash': '0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39',
-              'xaTransactionID': '001',
-              'xaTransactionSeq': 1,
+              'transactionHash': '0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39',
               'method': 'set',
-              'errorCode': 1,
+              'code': 1,
               'message': 'Transaction rolled back.',
               'args': [
                 '0x11',
@@ -209,17 +213,13 @@ module.exports = [
                 '0x22',
                 '0x33'
               ],
-              'byProxy': true,
-              'txBytes': [
+
+              'transactionBytes': [
                 0,
                 1,
                 0
               ],
-              'receiptBytes': [
-                0,
-                1,
-                0
-              ]
+              'version': '1.0.0'
             }
           }
         )
@@ -237,13 +237,13 @@ module.exports = [
           'data': {
             'nextBlockNumber': 10,
             'nextOffset': 20,
-            'transactions': [
+            'receipts': [
               {
-                'txHash': '0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39',
+                'transactionHash': '0xcf08b23b2568edc552a95baf6db1b81381803a1ab7f5aba24ab60c198c01bf39',
                 'blockNumber': 1
               },
               {
-                'txHash': '0xf83b79144ad8beba846f720bd81fe1e8df3753e3d38d9e526665647ac807937a',
+                'transactionHash': '0xf83b79144ad8beba846f720bd81fe1e8df3753e3d38d9e526665647ac807937a',
                 'blockNumber': 2
               }
             ]

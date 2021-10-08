@@ -1,5 +1,7 @@
 import request from '@/utils/request'
 import { getIdentity } from '@/utils/auth'
+import { sign } from '@/utils/sign'
+import { getSecKeyHexFromECDSASecPem, getPubKeyHexFromECDSASecPem, getSecKeyHexFromSM2SecPem, getPubKeyHexFromSM2SecPem, getSecKeyHexFromECDSAR1SecPem, getPubKeyHexFromECDSAR1Cert } from '@/utils/pem'
 
 /**
  * list all chain account belongs to this logged in cross chain account
@@ -32,10 +34,20 @@ export function listAccount() {
  * @return {Promise} an axios promise object of response
  */
 export function setDefaultAccount(data) {
+  var req = data
+  req.data.sender = getIdentity()
+  req.data.identity = getIdentity()
+  if (!req.data.nonce) {
+    req.data.nonce = Math.round(Math.random() * 1000000000)
+  }
+
+  // sign the data
+  req.data.luyuSign = sign(data.data)
+
   return request({
-    url: '/auth/setDefaultAccount',
+    url: '/auth/setDefaultAlgAccount',
     method: 'post',
-    data: data
+    data: req
   })
 }
 
@@ -52,11 +64,82 @@ export function setDefaultAccount(data) {
  * @return {Promise} an axios promise object of response
  */
 export function addAlgAccount(data) {
+  var req = data
+  req.data = buildAddAlgAccountRequest(data.data)
+  req.data.sender = getIdentity()
+  req.data.identity = getIdentity()
+  if (!req.data.nonce) {
+    req.data.nonce = Math.round(Math.random() * 1000000000)
+  }
+
+  // sign the data
+  req.data.luyuSign = sign(data.data)
+
   return request({
     url: '/auth/addAlgAccount',
     method: 'post',
     data: data
   })
+}
+
+/**
+    case 'SM2_WITH_SM3' : return data
+    case 'ECDSA_SECP256K1_WITH_SHA256': return data
+    case 'ECDSA_SECP256R1_WITH_SHA256': return buildR1Request(data)
+ */
+
+export function buildAddAlgAccountRequest(data) {
+  switch (data.type) {
+    case 'BCOS2.0' : return buildBCOS2Request(data)
+    case 'GM_BCOS2.0': return buildGMBCOS2Request(data)
+    case 'Fabric1.4': return buildFabricRequest(data)
+    default : return data
+  }
+}
+
+function buildBCOS2Request(data) {
+  return {
+    pubKey: hex2Base64(getPubKeyHexFromECDSASecPem(data.secKey).substr(2, 128)),
+    secKey: hex2Base64(getSecKeyHexFromECDSASecPem(data.secKey)),
+    type: 'ECDSA_SECP256K1_WITH_SHA256',
+    isDefault: data.isDefault,
+    properties: {}
+  }
+}
+
+function buildGMBCOS2Request(data) {
+  return {
+    pubKey: hex2Base64(getPubKeyHexFromSM2SecPem(data.secKey).substr(2, 128)),
+    secKey: hex2Base64(getSecKeyHexFromSM2SecPem(data.secKey)),
+    type: 'SM2_WITH_SM3',
+    isDefault: data.isDefault,
+    properties: {}
+  }
+}
+
+function buildFabricRequest(data) {
+  return {
+    pubKey: hex2Base64(getPubKeyHexFromECDSAR1Cert(data.pubKey)),
+    secKey: hex2Base64(getSecKeyHexFromECDSAR1SecPem(data.secKey)),
+    type: 'ECDSA_SECP256R1_WITH_SHA256',
+    isDefault: data.isDefault,
+    properties: JSON.parse(
+      '{' +
+      buildJsonKVPairString('Fabric1.4:' + data.ext2 + ':cert', data.pubKey.replaceAll('\n', '\\n')) + ',' +
+      buildJsonKVPairString('Fabric1.4:' + data.ext2 + ':name', 'name') + ',' +
+      buildJsonKVPairString('Fabric1.4:' + data.ext2 + ':mspid', data.ext) +
+      '}')
+  }
+}
+
+function buildJsonKVPairString(key, value) {
+  return '\"' + key + '\":' + '\"' + value + '\"'
+}
+
+function hex2Base64(hexStr) {
+  var buffer = Buffer.from(hexStr, 'hex')
+  var base64Str = buffer.toString('base64')
+  return base64Str
 }
 
 /**

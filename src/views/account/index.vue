@@ -11,16 +11,9 @@
           </el-tooltip>
         </div>
         <el-form label-position="left" size="small" label-width="80px">
-          <!--<el-form-item label="一级账户：">
-            <el-tag id="UA" :type="ua.admin ? 'warning': 'success'"><span>{{ ua.username }}</span></el-tag>
+          <el-form-item label="一级账户：">
+            <el-tag id="UA" :type="ua.admin ? 'warning': 'success'"><span>{{ ua.identity }}</span></el-tag>
             <el-button id="addAlgAccount" style="float: right" type="primary" @click="addAlgAccountDrawer.show=true">添加二级账户</el-button>
-          </el-form-item> -->
-          <el-form-item id="uaPK" label="一级账户：">
-            <el-input v-model="ua.identity" type="text" readonly autosize resize="none">
-              <el-tooltip slot="prefix" effect="light" content="复制公钥信息">
-                <clipboard :input-data="ua.identity" />
-              </el-tooltip>
-            </el-input>
           </el-form-item>
         </el-form>
         <el-table
@@ -98,15 +91,26 @@
               </div>
               <el-input v-model="algAccountDrawer.info.pubKey" type="textarea" readonly autosize resize="none" />
             </el-form-item>
-            <el-form-item label="私钥">
+            <el-form-item v-if="algAccountDrawer.info.secKey" label="私钥">
               <el-button size="mini" @click="algAccountDrawer.showSec = !algAccountDrawer.showSec">查看 <i class="el-icon-chat-line-round" /> </el-button>
               <el-input v-if="algAccountDrawer.showSec && algAccountDrawer.show" v-model=" algAccountDrawer.info.secKey" type="textarea" readonly autosize show-password resize="none" style="margin-top: 10px" />
             </el-form-item>
-            <!--
-            <el-form-item label="其它">
-              <span>{{ algAccountDrawer.info.ext }}</span>
+            <el-form-item label="其它属性">
+              <el-table ref="dynamicTable" :data="dynamicTableData.data" fit stripe max-height="400">
+                <template v-for="(col) in dynamicTableData.columns">
+                  <el-table-column
+                    :key="col.dataItem"
+                    :show-overflow-tooltip="true"
+                    :prop="col.dataItem"
+                    :label="col.dataName"
+                  />
+                </template>
+              </el-table>
+
             </el-form-item>
+            <!--
           </el-form>
+
           <el-row style="float: right">
             <el-button
               v-if="!algAccountDrawer.info.isDefault"
@@ -134,24 +138,24 @@
           </div>
           <el-form ref="addAlgAccountDrawer" label-position="top" size="small" :rules="addAlgAccountDrawerRules" :model="addAlgAccountDrawer.params">
             <el-form-item prop="type">
-              <label><div><span>二级账户类型</span></div></label>
+              <label><div><span>二级账户算法类型</span></div></label>
               <el-select
                 v-model="addAlgAccountDrawer.params.type"
                 style="width:200px;margin-top:10px"
-                placeholder="请选择二级账户类型"
+                placeholder="请选择二级账户算法类型"
                 @change="clearAlgAccountDrawerParams()"
               >
                 <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
                 <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0" />
                 <el-option label="HyperLedger Fabric 1.4" value="Fabric1.4" />
-                <el-option label="HyperLedger Fabric 2.0" value="Fabric2.0" />
+                <!--<el-option label="HyperLedger Fabric 2.0" value="Fabric2.0" />-->
               </el-select>
             </el-form-item>
 
             <div v-if="addAlgAccountDrawer.params.type === 'BCOS2.0'">
               <el-form-item prop="secKey">
                 <label>
-                  <span>私钥</span>
+                  <span>私钥文件</span>
                 </label>
                 <el-upload
                   style="float:right"
@@ -184,7 +188,7 @@
 
               <el-form-item v-if="typeof(addAlgAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
                 <label>
-                  <span>公钥</span>
+                  <span>公钥文件</span>
                 </label>
                 <el-input
                   v-model="addAlgAccountDrawer.params.pubKey"
@@ -211,7 +215,7 @@
             <div v-if="addAlgAccountDrawer.params.type === 'GM_BCOS2.0'">
               <el-form-item prop="secKey">
                 <label>
-                  <span>私钥</span>
+                  <span>私钥文件</span>
                 </label>
                 <el-upload
                   style="float:right"
@@ -244,7 +248,7 @@
 
               <el-form-item v-if="typeof(addAlgAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
                 <label>
-                  <span>公钥</span>
+                  <span>公钥文件</span>
                 </label>
                 <el-input
                   v-model="addAlgAccountDrawer.params.pubKey"
@@ -270,7 +274,7 @@
             <div v-if="addAlgAccountDrawer.params.type === 'Fabric1.4'">
               <el-form-item v-if="addAlgAccountDrawer.params.type" prop="secKey">
                 <label>
-                  <span>私钥</span>
+                  <span>私钥文件</span>
                 </label>
                 <el-upload
                   style="float:right"
@@ -318,6 +322,16 @@
                 />
               </el-form-item>
 
+              <el-form-item v-if="addAlgAccountDrawer.params.type === 'Fabric1.4'" prop="ext2">
+                <label><div><span>目的链Path</span></div></label>
+                <el-input
+                  v-model="addAlgAccountDrawer.params.ext2"
+                  style="margin-top:10px"
+                  placeholder="请输入"
+                  clearable
+                />
+              </el-form-item>
+
               <el-form-item v-if="addAlgAccountDrawer.params.type === 'Fabric1.4'" prop="ext">
                 <label><div><span>MSPID</span></div></label>
                 <el-input
@@ -329,7 +343,7 @@
               </el-form-item>
 
             </div>
-
+            <!--
             <div v-if="addAlgAccountDrawer.params.type === 'Fabric2.0'">
               <el-form-item v-if="addAlgAccountDrawer.params.type" prop="secKey">
                 <label>
@@ -392,11 +406,12 @@
               </el-form-item>
 
             </div>
-
+         -->
             <el-form-item v-if="addAlgAccountDrawer.params.type">
               <label><div><span>设为默认账户</span></div></label>
               <el-switch v-model="addAlgAccountDrawer.params.isDefault" style="margin-top:10px" />
             </el-form-item>
+
           </el-form>
           <div class="clearfix" style="vertical-align: bottom;">
             <el-button
@@ -413,14 +428,13 @@
 <script>
 import { listAccount, addAlgAccount, removeAlgAccount, setDefaultAccount } from '@/api/ua.js'
 import { pem, ecdsa, sm2 } from '@/utils/pem.js'
-import Clipboard from '@/components/Clipboard/index'
 import introJS from 'intro.js'
 import 'intro.js/introjs.css'
 import 'intro.js/themes/introjs-modern.css'
 
 export default {
   name: 'AccountAdmin',
-  components: { Clipboard },
+  components: { },
   props: {},
   data() {
     return {
@@ -459,8 +473,13 @@ export default {
           pubKey: '',
           secKey: '',
           ext: '',
+          ext2: '',
           isDefault: false
         }
+      },
+      dynamicTableData: {
+        columns: [],
+        data: []
       },
       fullscreenLoading: false,
       show: true,
@@ -492,7 +511,8 @@ export default {
             callback()
           }
         } }],
-        ext: [{ required: true, trigger: 'blur', message: '请输入' }]
+        ext: [{ required: true, trigger: 'blur', message: '请输入' }],
+        ext2: [{ required: true, trigger: 'blur', message: '请输入' }]
       }
     }
   },
@@ -527,6 +547,7 @@ export default {
     showAlgAccount(algAccount) {
       this.algAccountDrawer.header = algAccount.details
       this.algAccountDrawer.info = algAccount
+      this.dynamicTableData = propertyToDynamicTableData(algAccount.properties)
       this.algAccountDrawer.show = true
       this.algAccountDrawer.showSec = false
     },
@@ -826,6 +847,34 @@ function buildAlgAccountTable(ua) {
     }
   }
   return localAlgAccounts
+}
+
+function propertyToDynamicTableData(properties) {
+  var dynamicTableData = {
+    columns: [{
+      dataItem: 'key',
+      dataName: 'Key'
+    },
+    { dataItem: 'value',
+      dataName: 'Value' }],
+    data: []
+  }
+  console.log('try to')
+  if (!properties) {
+    console.log('properties is null')
+    return dynamicTableData
+  }
+  console.log(dynamicTableData)
+  for (var key in properties) {
+    dynamicTableData.data.push({
+      key: key,
+      value: properties[key]
+    })
+  }
+
+  console.log(dynamicTableData)
+
+  return dynamicTableData
 }
 
 </script>

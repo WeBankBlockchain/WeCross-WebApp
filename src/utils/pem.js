@@ -62,7 +62,8 @@ export function getPubKeyHexFromECDSAR1Cert(certContent) {
   var buffer = Buffer.from(base64Content, 'base64')
   var hexString = buffer.toString('hex')
   console.log(hexString)
-  var pubKeyHex = hexString.substr(328 * 2, 130)
+  var pubOffset = hexString.indexOf('034200') + 6
+  var pubKeyHex = hexString.substr(pubOffset, 130)
   console.log(pubKeyHex)
   return pubKeyHex
 }

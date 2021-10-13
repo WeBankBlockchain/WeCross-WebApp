@@ -65,7 +65,7 @@ export default {
         size: this.pageSize
       }, null).then((response) => {
         if (response.errorCode === 0) {
-          this.resources = response.data.resourceDetails
+          this.resources = response.data.resources
           this.total = response.data.total
         } else {
           this.$message({

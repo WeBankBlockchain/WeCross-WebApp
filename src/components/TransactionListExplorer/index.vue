@@ -162,7 +162,6 @@ import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
 import { handleErrorMsgBox } from '@/utils/messageBox'
 import { limitString } from '@/utils'
-import { getReceiptHistory } from '@/utils/receiptHistory'
 
 export default {
   name: 'TransactionList',
@@ -329,10 +328,6 @@ export default {
 
         var newTx = {}
         var receipt = response.data
-        const receiptHistory = getReceiptHistory(receipt.transactionHash)
-        if (receiptHistory) {
-          receipt = receiptHistory
-        }
 
         newTx.result = defaultValue(receipt.result, 'unknown')
         newTx.code = receipt.code

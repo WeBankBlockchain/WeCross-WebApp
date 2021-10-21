@@ -98,7 +98,6 @@
 import { handleErrorMsgBox } from '@/utils/messageBox'
 // import { isChainAccountFit } from '@/utils/chainAccountIntro'
 import { detail } from '@/api/resource'
-import { putReceiptHistory } from '@/utils/receiptHistory'
 
 export default {
   name: 'TransactionForm',
@@ -229,9 +228,6 @@ export default {
         }
         const res = JSON.stringify(response.data.result)
         this.submitResponse = (res === '[]') ? '调用成功，返回结果为空' : res
-
-        var receipt = response.data
-        putReceiptHistory(receipt.transactionHash, receipt)
       }
     },
     onCallResponse(response) {

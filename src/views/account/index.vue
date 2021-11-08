@@ -22,13 +22,14 @@
           style="width: 100%"
           row-key="id"
           lazy
+          :default-sort="{prop: 'type', order: 'descending'}"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           @row-click="showAlgAccount"
         >
           <el-table-column label="" width="30px" />
           <el-table-column prop="type" label="二级账户类型" width="250">
             <template slot-scope="scope">
-              <el-tag type="info">{{ scope.row.type }}</el-tag>
+              <el-tag :type="scope.row.type | algTypeTagFilter">{{ scope.row.type }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="keyID" label="二级账户ID" width="180">
@@ -83,7 +84,7 @@
               <span>{{ algAccountDrawer.info.keyID }}</span>
             </el-form-item>
             <el-form-item label="类型">
-              <el-tag type="info">{{ algAccountDrawer.info.type }}</el-tag>
+              <el-tag :type="algAccountDrawer.info.type | algTypeTagFilter">{{ algAccountDrawer.info.type }}</el-tag>
             </el-form-item>
             <el-form-item>
               <div slot="label">
@@ -435,6 +436,21 @@ import 'intro.js/themes/introjs-modern.css'
 export default {
   name: 'AccountAdmin',
   components: { },
+  filters: {
+    algTypeTagFilter(type) {
+      if (typeof type === 'undefined' || type === null || type === 0) {
+        return 'info' // UNKNOWN
+      } else if (type === 'SM2_WITH_SM3') {
+        return 'danger' // NOT_STARTED
+      } else if (type === 'ECDSA_SECP256K1_WITH_SHA256') {
+        return ''
+      } else if (type === 'ECDSA_SECP256R1_WITH_SHA256') {
+        return 'warning' // RUNNING
+      } else {
+        return 'info'
+      }
+    }
+  },
   props: {},
   data() {
     return {
@@ -482,7 +498,7 @@ export default {
         data: []
       },
       fullscreenLoading: false,
-      show: true,
+      show: false,
       pubKeyFileList: [],
       privateKeyFileList: [],
       addAlgAccountDrawerRules: {
@@ -516,9 +532,10 @@ export default {
       }
     }
   },
-
-  created() {
-    this.getUA()
+  activated() {
+    if (!this.show) {
+      this.getUA()
+    }
   },
   methods: {
     getUA() {
@@ -529,7 +546,7 @@ export default {
           return
         }
         if (response.errorCode !== 0) {
-          this.$message.error(response.message)
+          this.$message.error('账户服务错误：' + response.message)
           return
         }
         this.ua = response.data

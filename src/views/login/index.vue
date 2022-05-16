@@ -12,19 +12,36 @@
         <h3 class="title">欢迎登录 WeCross</h3>
       </div>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="用户名"
-          name="username"
-          type="text"
-          tabindex="1"
-        />
-      </el-form-item>
+      <el-row :gutter="20">
+        <el-col :span="17">
+          <el-form-item prop="username">
+            <span class="svg-container">
+              <svg-icon icon-class="user" />
+            </span>
+            <el-input
+              v-model="loginForm.username"
+              placeholder="用户名"
+              class="input-with-select"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col style="float: right; margin-right: 2px" :span="6">
+          <div
+            style="
+              margin-top: 2px;
+              width: 116px;
+              height: 45px;
+              text-align: center;
+              float: right;
+            "
+          >
+            <el-select v-model="isAdmin" placeholder="请选择">
+              <el-option label="管理员" value="true" />
+              <el-option label="普通用户" value="false" />
+            </el-select>
+          </div>
+        </el-col>
+      </el-row>
 
       <el-form-item prop="password">
         <span class="svg-container">
@@ -46,7 +63,30 @@
           />
         </span>
       </el-form-item>
-
+      <el-row v-if="needMailAuth && isAdmin === 'false'" :gutter="20">
+        <el-col :span="17">
+          <el-form-item>
+            <el-input
+              v-model="loginForm.mailCode"
+              placeholder="邮箱验证码"
+              tabindex="4"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col style="float: right; margin-right: 2px" :span="6">
+          <el-button
+            type="primary"
+            style="
+              margin-top: 2px;
+              width: 116px;
+              height: 45px;
+              text-align: center;
+              float: right;
+            "
+            @click="getEmailCode()"
+          >发送验证码</el-button>
+        </el-col>
+      </el-row>
       <el-row :gutter="20">
         <el-col :span="17">
           <el-form-item prop="authCode">
@@ -59,12 +99,25 @@
             />
           </el-form-item>
         </el-col>
-        <el-col style="float:right;margin-right:2px" :span="6">
-          <div style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right">
-            <i v-if="imageAuthCode.imageAuthCodeBase64URL === ''" style="margin-top:12%;" class="el-icon-loading" />
+        <el-col style="float: right; margin-right: 2px" :span="6">
+          <div
+            style="
+              margin-top: 2px;
+              width: 116px;
+              height: 45px;
+              text-align: center;
+              background: white;
+              float: right;
+            "
+          >
+            <i
+              v-if="imageAuthCode.imageAuthCodeBase64URL === ''"
+              style="margin-top: 12%"
+              class="el-icon-loading"
+            />
             <img
               v-else
-              style="width:100%; height:auto;vertical-align: middle;"
+              style="width: 100%; height: auto; vertical-align: middle"
               :src="imageAuthCode.imageAuthCodeBase64URL"
               alt=""
               tabindex="4"
@@ -77,12 +130,12 @@
       <el-button
         :loading="loading"
         type="primary"
-        style="width:100%;margin-bottom:30px;"
+        style="width: 100%; margin-bottom: 30px"
         @click.native.prevent="handleLogin"
       >登录</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">还没有账号？</span>
+        <span style="margin-right: 20px">还没有账号？</span>
         <el-button type="text" @click="handleRegister">注册</el-button>
       </div>
     </el-form>
@@ -93,6 +146,7 @@
 import { queryPub } from '@/utils/authcode'
 import { queryAuthCode } from '@/utils/authcode'
 import { confusePassword } from '@/utils/validate'
+import { isNeedMailAuth, sendMailCode } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -119,10 +173,13 @@ export default {
       }
     }
     return {
+      needMailAuth: false,
+      isAdmin: 'false',
       loginForm: {
         username: '',
         password: '',
-        authCode: ''
+        authCode: '',
+        mailCode: ''
       },
       timer: null,
       imageAuthCode: {
@@ -154,6 +211,16 @@ export default {
     }
   },
   created() {
+    isNeedMailAuth().then((response) => {
+      if (response.errorCode !== 0) {
+        this.$message({
+          type: 'error',
+          message: '获取邮箱验证配置失败'
+        })
+      }
+      this.needMailAuth = response.data
+    })
+
     /**
     query publicKey for data encrypt
     */
@@ -176,6 +243,22 @@ export default {
     clearInterval(this.timer)
   },
   methods: {
+    getEmailCode() {
+      sendMailCode(this.loginForm.username, '').then((response) => {
+        if (response.errorCode === 0) {
+          this.$message({
+            type: 'success',
+            message: '已将验证码发送至您的邮箱'
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: response.message
+          })
+        }
+      })
+    },
+
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -206,7 +289,9 @@ export default {
             username: this.loginForm.username,
             password: confusePassword(this.loginForm.password),
             authCode: this.loginForm.authCode,
-            randomToken: this.imageAuthCode.randomToken
+            randomToken: this.imageAuthCode.randomToken,
+            mailCode: this.loginForm.mailCode
+
           }
 
           this.loading = true

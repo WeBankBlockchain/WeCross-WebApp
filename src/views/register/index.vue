@@ -57,9 +57,7 @@
         </el-form-item>
       </el-tooltip>
       <el-tooltip placement="right">
-        <div slot="content">
-          确认密码必须一致
-        </div>
+        <div slot="content">确认密码必须一致</div>
         <el-form-item prop="checkPass">
           <span class="svg-container">
             <svg-icon icon-class="password" />
@@ -79,30 +77,70 @@
           </span>
         </el-form-item>
       </el-tooltip>
+      <el-form-item v-if="needMailAuth">
+        <span class="svg-container el-icon-s-promotion" />
+        <el-input
+          v-model="registerForm.email"
+          placeholder="邮箱"
+          type="text"
+          tabindex="1"
+        />
+      </el-form-item>
+      <el-row v-if="needMailAuth" :gutter="20">
+        <el-col :span="17">
+          <el-form-item>
+            <el-input
+              v-model="registerForm.mailCode"
+              placeholder="邮箱验证码"
+              tabindex="4"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col style="float: right; margin-right: 2px" :span="6">
+          <el-button
+            type="primary"
+            style="
+              margin-top: 2px;
+              width: 116px;
+              height: 45px;
+              text-align: center;
+              float: right;
+            "
+            @click="getEmailCode()"
+          >发送验证码</el-button>
+        </el-col>
+      </el-row>
       <el-row :gutter="20">
         <el-col :span="17">
           <el-form-item prop="authCode">
             <el-input
               v-model="registerForm.authCode"
-              placeholder="验证码"
+              placeholder="注册验证码"
               name="imageAuthCode"
               tabindex="4"
               @keyup.enter.native="handleRegister('registerForm')"
             />
           </el-form-item>
         </el-col>
-        <el-col style="float:right;margin-right:2px" :span="6">
+        <el-col style="float: right; margin-right: 2px" :span="6">
           <div
-            style="margin-top:2px;width:116px;height:45px;text-align:center;background:white;float:right"
+            style="
+              margin-top: 2px;
+              width: 116px;
+              height: 45px;
+              text-align: center;
+              background: white;
+              float: right;
+            "
           >
             <i
               v-if="imageAuthCode.imageAuthCodeBase64URL === ''"
-              style="margin-top:12%;"
+              style="margin-top: 12%"
               class="el-icon-loading"
             />
             <img
               v-else
-              style="width:100%; height:auto;vertical-align: middle;"
+              style="width: 100%; height: auto; vertical-align: middle"
               :src="imageAuthCode.imageAuthCodeBase64URL"
               alt=""
               tabindex="4"
@@ -114,12 +152,12 @@
 
       <el-button
         type="primary"
-        style="width:100%;margin-bottom:30px;"
+        style="width: 100%; margin-bottom: 30px"
         @click="handleRegister('registerForm')"
       >注册</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">已有账号？</span>
+        <span style="margin-right: 20px">已有账号？</span>
         <el-button type="text" @click="handleLogin">登录</el-button>
       </div>
     </el-form>
@@ -130,7 +168,7 @@
 import { validUsername, validPassword } from '@/utils/validate'
 import { queryAuthCode } from '@/utils/authcode'
 import { getPubKey } from '@/utils/auth'
-import { register } from '@/api/user'
+import { register, isNeedMailAuth, sendMailCode } from '@/api/user'
 import { rsa_encode } from '@/utils/rsa'
 import { queryPub } from '@/utils/authcode'
 import { confusePassword } from '@/utils/validate'
@@ -182,11 +220,15 @@ export default {
       }
     }
     return {
+      needMailAuth: false,
       registerForm: {
         password: '',
         checkPass: '',
         username: '',
-        authCode: ''
+        authCode: '',
+        email: '',
+        mailCode: ''
+
       },
       timer: null,
       imageAuthCode: {
@@ -209,6 +251,16 @@ export default {
     }
   },
   created() {
+    isNeedMailAuth().then((response) => {
+      if (response.errorCode !== 0) {
+        this.$message({
+          type: 'error',
+          message: '获取邮箱验证配置失败'
+        })
+      }
+      this.needMailAuth = response.data
+    })
+
     /**
     query publicKey for data encrypt
     */
@@ -229,6 +281,23 @@ export default {
     clearInterval(this.timer)
   },
   methods: {
+
+    getEmailCode() {
+      sendMailCode(this.registerForm.username, this.registerForm.email).then((response) => {
+        if (response.errorCode === 0) {
+          this.$message({
+            type: 'success',
+            message: '已将验证码发送至您的邮箱'
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: response.message
+          })
+        }
+      })
+    },
+
     showPwd() {
       this.passwordType = this.passwordType === 'password' ? '' : 'password'
 
@@ -262,9 +331,11 @@ export default {
 
         const params = {
           username: this.registerForm.username,
+          email: this.registerForm.email,
           password: confusePassword(this.registerForm.password),
           randomToken: this.imageAuthCode.randomToken,
-          authCode: this.registerForm.authCode
+          authCode: this.registerForm.authCode,
+          mailCode: this.registerForm.mailCode
         }
 
         // rsa encode parameters

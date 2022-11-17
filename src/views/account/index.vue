@@ -150,11 +150,14 @@
               >
                 <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
                 <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0" />
+                <el-option label="FISCO BCOS 3.0" value="BCOS3.0" />
+                <el-option label="FISCO BCOS 3.0 国密" value="GM_BCOS3.0" />
                 <el-option label="HyperLedger Fabric 1.4" value="Fabric1.4" />
                 <el-option label="HyperLedger Fabric 2.0" value="Fabric2.0" />
               </el-select>
             </el-form-item>
 
+            <!-- FIXME: reuse div -->
             <div v-if="addChainAccountDrawer.params.type === 'BCOS2.0'">
               <el-form-item prop="secKey">
                 <label>
@@ -215,7 +218,126 @@
 
             </div>
 
+            <div v-if="addChainAccountDrawer.params.type === 'BCOS3.0'">
+              <el-form-item prop="secKey">
+                <label>
+                  <span>私钥</span>
+                </label>
+                <el-upload
+                  style="float:right"
+                  action=""
+                  accept=".pem"
+                  :show-file-list="false"
+                  :file-list="pubKeyFileList"
+                  :http-request="uploadECDSASecPemHandler"
+                  :auto-upload="true"
+                >
+                  <el-button-group slot="trigger">
+                    <el-button type="primary">上传</el-button>
+                    <el-button
+                      size="small"
+                      type="primary"
+                      @click.stop="generateECDSASecPem()"
+                    >生成</el-button>
+                  </el-button-group>
+                </el-upload>
+                <el-input
+                  v-model="addChainAccountDrawer.params.secKey"
+                  :change="buildECDSAData()"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入"
+                  style="margin-top:10px"
+                  autosize
+                />
+              </el-form-item>
+
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
+                <label>
+                  <span>公钥</span>
+                </label>
+                <el-input
+                  v-model="addChainAccountDrawer.params.pubKey"
+                  readonly
+                  type="textarea"
+                  :rows="2"
+                  placeholder=""
+                  autosize
+                  style="margin-top:10px"
+                />
+              </el-form-item>
+
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'" label="address">
+                <el-input
+                  v-model="addChainAccountDrawer.params.ext"
+                  readonly
+                  placeholder=""
+                  clearable
+                />
+              </el-form-item>
+
+            </div>
+
             <div v-if="addChainAccountDrawer.params.type === 'GM_BCOS2.0'">
+              <el-form-item prop="secKey">
+                <label>
+                  <span>私钥</span>
+                </label>
+                <el-upload
+                  style="float:right"
+                  action=""
+                  accept=".pem"
+                  :show-file-list="false"
+                  :file-list="pubKeyFileList"
+                  :http-request="uploadSM2SecPemHandler"
+                  :auto-upload="true"
+                >
+                  <el-button-group slot="trigger">
+                    <el-button type="primary">上传</el-button>
+                    <el-button
+                      size="small"
+                      type="primary"
+                      @click.stop="generateSM2SecPem()"
+                    >生成</el-button>
+                  </el-button-group>
+                </el-upload>
+                <el-input
+                  v-model="addChainAccountDrawer.params.secKey"
+                  :change="buildSM2Data()"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入"
+                  autosize
+                  style="margin-top:10px"
+                />
+              </el-form-item>
+
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.pubKey) !== 'undefined'" prop="pubKey">
+                <label>
+                  <span>公钥</span>
+                </label>
+                <el-input
+                  v-model="addChainAccountDrawer.params.pubKey"
+                  readonly
+                  type="textarea"
+                  :rows="2"
+                  placeholder=""
+                  autosize
+                  style="margin-top:10px"
+                />
+              </el-form-item>
+
+              <el-form-item v-if="typeof(addChainAccountDrawer.params.ext) !== 'undefined'" label="address">
+                <el-input
+                  v-model="addChainAccountDrawer.params.ext"
+                  readonly
+                  placeholder=""
+                  clearable
+                />
+              </el-form-item>
+            </div>
+
+            <div v-if="addChainAccountDrawer.params.type === 'GM_BCOS3.0'">
               <el-form-item prop="secKey">
                 <label>
                   <span>私钥</span>

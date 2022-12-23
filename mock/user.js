@@ -122,5 +122,28 @@ module.exports = [
         }
       }
     }
+  },
+  {
+    url: '/auth/need-mail-auth',
+    type: 'get',
+    response: _ => {
+      return {
+        version: '1.0',
+        errorCode: 0,
+        message: 'success',
+        data: true
+      }
+    }
+  },
+  {
+    url: '/auth/mail-code',
+    type: 'post',
+    response: _ => {
+      return {
+        version: '1.0',
+        errorCode: 0,
+        message: 'success'
+      }
+    }
   }
 ]

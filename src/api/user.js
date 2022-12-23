@@ -81,3 +81,23 @@ export function authPub() {
     method: 'get'
   })
 }
+
+export function isNeedMailAuth() {
+  return request({
+    url: '/auth/need-mail-auth',
+    method: 'get'
+  })
+}
+
+export function sendMailCode(username, email) {
+  return request({
+    url: '/auth/mail-code',
+    method: 'post',
+    data: {
+      data: {
+        username: username,
+        email: email
+      }
+    }
+  })
+}

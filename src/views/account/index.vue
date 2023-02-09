@@ -150,8 +150,8 @@
               >
                 <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
                 <el-option label="FISCO BCOS 2.0 国密" value="GM_BCOS2.0" />
-                <el-option label="FISCO BCOS 3.0" value="BCOS3.0" />
-                <el-option label="FISCO BCOS 3.0 国密" value="GM_BCOS3.0" />
+                <el-option label="FISCO BCOS 3.0" value="BCOS3_ECDSA_EVM" />
+                <el-option label="FISCO BCOS 3.0 国密" value="BCOS3_GM_EVM" />
                 <el-option label="HyperLedger Fabric 1.4" value="Fabric1.4" />
                 <el-option label="HyperLedger Fabric 2.0" value="Fabric2.0" />
               </el-select>
@@ -218,7 +218,7 @@
 
             </div>
 
-            <div v-if="addChainAccountDrawer.params.type === 'BCOS3.0'">
+            <div v-if="addChainAccountDrawer.params.type === 'BCOS3_ECDSA_EVM'">
               <el-form-item prop="secKey">
                 <label>
                   <span>私钥</span>
@@ -337,7 +337,7 @@
               </el-form-item>
             </div>
 
-            <div v-if="addChainAccountDrawer.params.type === 'GM_BCOS3.0'">
+            <div v-if="addChainAccountDrawer.params.type === 'BCOS3_GM_EVM'">
               <el-form-item prop="secKey">
                 <label>
                   <span>私钥</span>

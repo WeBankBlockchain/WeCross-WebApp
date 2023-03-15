@@ -21,6 +21,8 @@
                 <el-option-group label="FISCO BCOS">
                   <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
                   <el-option label="FISCO BCOS 2.0 国密版" value="GM_BCOS2.0" />
+                  <el-option label="FISCO BCOS 3.0" value="BCOS3_ECDSA_EVM" />
+                  <el-option label="FISCO BCOS 3.0 国密版" value="BCOS3_GM_EVM" />
                 </el-option-group>
                 <el-option-group label="Hyperledger Fabric">
                   <el-option label="Hyperledger Fabric 1.4" value="Fabric1.4" />
@@ -30,7 +32,7 @@
             <el-form-item id="method" label="选择操作：" prop="method">
               <el-select key="methodSelect" v-model="form.method" placeholder="选择操作类型" @change="methodChange">
                 <el-option
-                  v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')"
+                  v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0' || form.stubType === 'BCOS3_ECDSA_EVM' || form.stubType === 'BCOS3_GM_EVM')"
                   label="部署合约"
                   value="deploy"
                 >
@@ -38,7 +40,7 @@
                   <span style="float: right; color: #8492a6; font-size: 13px">Deploy</span>
                 </el-option>
                 <el-option
-                  v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')"
+                  v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0' || form.stubType === 'BCOS3_ECDSA_EVM' || form.stubType === 'BCOS3_GM_EVM')"
                   label="注册已有合约"
                   value="register"
                 >
@@ -80,7 +82,7 @@
             </div>
 
             <!-- BCOS -->
-            <div v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')">
+            <div v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0' || form.stubType === 'BCOS3_ECDSA_EVM' || form.stubType === 'BCOS3_GM_EVM')">
               <el-row type="flex">
                 <el-form-item id="zipContract" label="上传文件：" prop="zipContract">
                   <el-upload

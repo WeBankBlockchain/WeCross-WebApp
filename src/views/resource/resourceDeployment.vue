@@ -121,6 +121,7 @@
                 <el-input v-model.trim="form.className" placeholder="Class Name" />
               </el-form-item>
               <el-form-item
+                v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0')"
                 id="bcosVersion"
                 label="合约版本号："
                 prop="version"

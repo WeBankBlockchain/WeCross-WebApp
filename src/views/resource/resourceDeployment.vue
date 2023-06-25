@@ -21,8 +21,10 @@
                 <el-option-group label="FISCO BCOS">
                   <el-option label="FISCO BCOS 2.0" value="BCOS2.0" />
                   <el-option label="FISCO BCOS 2.0 国密版" value="GM_BCOS2.0" />
-                  <el-option label="FISCO BCOS 3.0" value="BCOS3_ECDSA_EVM" />
-                  <el-option label="FISCO BCOS 3.0 国密版" value="BCOS3_GM_EVM" />
+                  <el-option label="FISCO BCOS 3.0 EVM" value="BCOS3_ECDSA_EVM" />
+                  <el-option label="FISCO BCOS 3.0 EVM 国密版" value="BCOS3_GM_EVM" />
+                  <el-option label="FISCO BCOS 3.0 WASM" value="BCOS3_ECDSA_WASM" />
+                  <el-option label="FISCO BCOS 3.0 WASM 国密版" value="BCOS3_GM_WASM" />
                 </el-option-group>
                 <el-option-group label="Hyperledger Fabric">
                   <el-option label="Hyperledger Fabric 1.4" value="Fabric1.4" />
@@ -32,7 +34,7 @@
             <el-form-item id="method" label="选择操作：" prop="method">
               <el-select key="methodSelect" v-model="form.method" placeholder="选择操作类型" @change="methodChange">
                 <el-option
-                  v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0' || form.stubType === 'BCOS3_ECDSA_EVM' || form.stubType === 'BCOS3_GM_EVM')"
+                  v-if="(form.stubType !== null && form.stubType.includes('BCOS'))"
                   label="部署合约"
                   value="deploy"
                 >
@@ -40,7 +42,7 @@
                   <span style="float: right; color: #8492a6; font-size: 13px">Deploy</span>
                 </el-option>
                 <el-option
-                  v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0' || form.stubType === 'BCOS3_ECDSA_EVM' || form.stubType === 'BCOS3_GM_EVM')"
+                  v-if="(form.stubType !== null && form.stubType.includes('BCOS'))"
                   label="注册已有合约"
                   value="register"
                 >
@@ -82,8 +84,11 @@
             </div>
 
             <!-- BCOS -->
-            <div v-if="(form.stubType ==='BCOS2.0'||form.stubType ==='GM_BCOS2.0' || form.stubType === 'BCOS3_ECDSA_EVM' || form.stubType === 'BCOS3_GM_EVM')">
-              <el-row type="flex">
+            <div v-if="(form.stubType !== null && form.stubType.includes('BCOS'))">
+              <el-row
+                v-if="(form.stubType !== null && !form.stubType.includes('WASM'))"
+                type="flex"
+              >
                 <el-form-item id="zipContract" label="上传文件：" prop="zipContract">
                   <el-upload
                     ref="uploadContract"
@@ -111,6 +116,28 @@
                       :value="item.value"
                     />
                   </el-select>
+                </el-form-item>
+              </el-row>
+              <el-row
+                v-if="(form.stubType !== null && form.stubType.includes('WASM'))"
+                type="flex"
+              >
+                <el-form-item id="wasmContract" label="上传文件：" prop="zipContract">
+                  <el-upload
+                    ref="uploadContract"
+                    action=""
+                    accept=".wasm,.abi"
+                    :file-list="fileList"
+                    :on-change="changeWasmContractFile"
+                    :before-remove="beforeRemove"
+                    :http-request="uploadWasmContractHandler"
+                    :auto-upload="false"
+                  >
+                    <div slot="tip" class="el-upload__tip">
+                      只能上传Liquid合约编译后的WASM文件和ABI文件<br>
+                    </div>
+                    <el-button slot="trigger">选取文件</el-button>
+                  </el-upload>
                 </el-form-item>
               </el-row>
               <el-form-item
@@ -248,6 +275,7 @@
 <script>
 import {
   buildBCOSDeployRequest,
+  buildBCOSDeployWasmRequest,
   buildBCOSRegisterRequest,
   buildFabricInstallRequest,
   buildFabricInstantiateRequest, buildFabricUpgradeRequest, clearForm
@@ -282,7 +310,10 @@ export default {
         policy: 'default',
         args: null,
         chosenSolidity: null,
+        chosenWasm: null,
+        chosenAbi: null,
         sourceContent: null,
+        abiContent: null,
         compressedContent: null
       },
       solidityFiles: [],
@@ -439,9 +470,24 @@ export default {
       this.zipContractFilesMap = {}
     },
     onBCOSDeploy() {
+      var isWASM = false
+      if (this.form.stubType !== null && this.form.stubType.includes('WASM')) {
+        isWASM = true
+      }
       try {
-        this.mergeSolidityFile('./' + this.form.chosenSolidity)
-        this.mergeSourceContractLineToString()
+        if (isWASM) {
+          if (this.form.sourceContent === null || this.form.abiContent === null) {
+            this.$alert('请同时增加二进制文件和ABI文件！', '错误', {
+              type: 'error'
+            }).catch(_ => {
+            })
+            this.loading = false
+            return
+          }
+        } else {
+          this.mergeSolidityFile('./' + this.form.chosenSolidity)
+          this.mergeSourceContractLineToString()
+        }
       } catch (e) {
         this.loading = false
         return
@@ -458,7 +504,7 @@ export default {
         confirmButtonText: '确认部署',
         cancelButtonText: '取消部署'
       }).then(_ => {
-        bcosDeploy(buildBCOSDeployRequest(this.form)).then(response => {
+        bcosDeploy(isWASM ? buildBCOSDeployWasmRequest(this.form) : buildBCOSDeployRequest(this.form)).then(response => {
           this.loading = false
           if (response.errorCode !== 0) {
             handleErrorMsgBox(
@@ -697,6 +743,25 @@ export default {
       this.form.chosenSolidity = null
       this.$refs.uploadContract.submit()
     },
+    changeWasmContractFile(file, fileList) {
+      if (fileList.length === 3) {
+        fileList.shift()
+      }
+      console.log(file)
+      const fileReader = new FileReader()
+      if (file !== null && /(wasm$)/.test(file.raw.type)) {
+        fileReader.onload = async(e) => {
+          this.form.sourceContent = Array.prototype.map.call(new Uint8Array(e.target.result), x => (x.toString(16).padStart(2, '0'))).join('')
+        }
+        fileReader.readAsArrayBuffer(file.raw)
+      } else if (file !== null && /(.abi$)/.test(file.raw.name)) {
+        fileReader.onload = async(e) => {
+          this.form.abiContent = e.target.result
+        }
+        fileReader.readAsText(file.raw)
+      }
+      this.$refs.uploadContract.submit()
+    },
     changeChaincodeFile(file, fileList) {
       if (fileList.length === 2) {
         fileList.shift()
@@ -801,6 +866,21 @@ export default {
         this.form.policy = 'default'
         params.onProgress({ percent: 0 })
         params.onError()
+      }
+    },
+    uploadWasmContractHandler(params) {
+      if ((this.form.stubType === 'BCOS3_GM_WASM' || this.form.stubType === 'BCOS3_ECDSA_WASM')) {
+        if (params.file !== null && /(wasm$)/.test(params.file.type)) {
+          this.form.chosenWasm = params.file.name
+        } else if (params.file !== null && /(.abi$)/.test(params.file.name)) {
+          this.form.chosenAbi = params.file.name
+        } else {
+          this.$alert('请选择WASM或者ABI文件！', '错误', {
+            type: 'error'
+          }).catch(_ => {})
+          params.onProgress({ percent: 0 })
+          params.onError()
+        }
       }
     },
     async readBaseBytes(params) {

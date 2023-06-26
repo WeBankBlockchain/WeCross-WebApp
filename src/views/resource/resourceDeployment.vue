@@ -141,6 +141,7 @@
                 </el-form-item>
               </el-row>
               <el-form-item
+                v-if="(form.stubType !== null && !form.stubType.includes('WASM'))"
                 id="className"
                 label="合约类名："
                 prop="className"

@@ -28,7 +28,7 @@ export function buildBCOSDeployWasmRequest(formData) {
     path: formData.fullPath || formData.prependPath + formData.appendPath,
     data: {
       command: formData.method,
-      args: [formData.appendPath || formData.fullPath.split('.')[2], formData.abiContent, formData.className, formData.sourceContent]
+      args: [formData.appendPath || formData.fullPath.split('.')[2], formData.abiContent, formData.sourceContent]
     }
   }
 }

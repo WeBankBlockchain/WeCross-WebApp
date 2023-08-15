@@ -180,6 +180,7 @@
         <el-card style="min-height: 45vh;overflow-y:auto">
           <div slot="header">
             <span>本地系统信息</span>
+            <el-button icon="el-icon-refresh-left" type="text" style="padding: 0px;float:right" @click="refreshSystemInfo">刷新</el-button>
           </div>
           <table>
             <tr>
@@ -193,6 +194,14 @@
             <tr>
               <td>操作系统版本：</td>
               <td>{{ systemInfo.osVersion }}</td>
+            </tr>
+            <tr>
+              <td>磁盘剩余情况：</td>
+              <td>{{ systemInfo.totalDiskFreeSpace }} / {{ systemInfo.totalDiskSpace }}</td>
+            </tr>
+            <tr>
+              <td>内存剩余情况：</td>
+              <td>{{ systemInfo.freeMemorySize }} / {{ systemInfo.totalMemorySize }}</td>
             </tr>
             <tr>
               <td>JVM名称：</td>
@@ -321,6 +330,19 @@ export default {
 
   },
   methods: {
+    refreshSystemInfo() {
+      systemStatus().then(response => {
+        if (!response.data) {
+          this.$message.error('本地系统信息返回为空，请检查后台信息')
+        }
+        this.systemInfo = response.data
+      }).catch(_ => {
+        this.$message({
+          type: 'error',
+          message: '获取系统信息失败，网络错误'
+        })
+      })
+    },
     refreshChainsInfo() {
       this.chainsInfoLoading = true
       this.chainsInfo = []

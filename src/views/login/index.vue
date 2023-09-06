@@ -22,6 +22,7 @@
               v-model="loginForm.username"
               placeholder="用户名"
               class="input-with-select"
+              tabindex="1"
             />
           </el-form-item>
         </el-col>

@@ -101,7 +101,6 @@
           <el-popover
             width="600"
             trigger="click"
-            @show="handleReceiptDetails(item.row)"
           >
             <div class="el-popover__title">
               交易回执详情
@@ -215,8 +214,49 @@ export default {
       this.buttonState.disablePreClick = true
       this.buttonState.disableNextClick = false
     },
-    handleReceiptDetails(val) {
-      this.txReceipt = val
+    async handleReceiptDetails(val) {
+      if (typeof val.properties.byProxy !== 'undefined') {
+        this.txReceipt = val
+        return
+      }
+      const response = await getTransaction({
+        path: this.chainValue,
+        txHash: val.txHash,
+        blockNumber: val.blockNumber
+      }).catch(
+        (error) => {
+          this.$message({
+            message: '网络异常：' + error,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
+      if (
+        typeof response.errorCode === 'undefined' ||
+          response.errorCode !== 0
+      ) {
+        throw new Error(
+          '查询交易失败，交易哈希: ' +
+              val.txHash +
+              '，详情: ' +
+              JSON.stringify(response)
+        )
+      }
+      if (
+        typeof response.errorCode === 'undefined' ||
+          response.errorCode !== 0
+      ) {
+        throw new Error(
+          '查询交易失败，交易哈希: ' +
+            val.txHash +
+            '，详情: ' +
+            JSON.stringify(response)
+        )
+      }
+      var tx = response.data
+      this.txReceipt = response.data
+      this.txHash = tx.txHash
     },
     handlePrevClick() {
       if (this.currentStep <= 0) {
@@ -366,36 +406,77 @@ export default {
             this.buttonState.loading = false
             return
           }
-
-          this.fetchAllTx(chainValue, resp.data.transactions)
-            .then((response) => {
-              this.buttonState.loading = false
-              this.nextBlockNumber = resp.data.nextBlockNumber
-              this.nextOffset = resp.data.nextOffset
-
-              if (response.length === 0) {
-                this.$message({
-                  type: 'info',
-                  message: '交易列表为空，已查询至数据末尾'
-                })
+          if (resp.data.transactions.length === 0 && resp.data.transactionWithDetails === 0) {
+            this.$message({
+              type: 'info',
+              message: '交易列表为空，已查询至数据末尾'
+            })
+            this.updateButtonStatus()
+            return
+          }
+          if (resp.data.transactionWithDetails.length !== 0) {
+            this.buttonState.loading = false
+            this.nextBlockNumber = resp.data.nextBlockNumber
+            this.nextOffset = resp.data.nextOffset
+            var txs = []
+            if (resp.data.transactionWithDetails.length === 0) {
+              return txs
+            }
+            const defaultValue = (value, defaultValue) => {
+              if (value === 0) {
+                return value
+              }
+              if (!value) {
+                return defaultValue
+              }
+              return value
+            }
+            if (this.controlVersion !== version) {
+              return
+            }
+            for (const tx of resp.data.transactionWithDetails) {
+              var newTx = {}
+              newTx.txHash = defaultValue(tx.txHash, 'unknown')
+              newTx.username = defaultValue(tx.username, 'unknown')
+              newTx.txID = defaultValue(tx.xaTransactionID, 'unknown')
+              newTx.blockNumber = defaultValue(tx.blockNumber, 'unknown')
+              newTx.path = defaultValue(tx, 'unknown')
+              newTx.method = defaultValue(tx, 'unknown')
+              newTx.properties = defaultValue(tx, 'unknown')
+              txs[txs.length] = newTx
+            }
+            this.transactionList = txs
+            this.historyData[this.currentStep] = txs
+            this.currentStep += 1
+            this.updateButtonStatus()
+          }
+          if (resp.data.transactions.length !== 0) {
+            this.fetchAllTx(chainValue, resp.data.transactions)
+              .then((response) => {
+                this.buttonState.loading = false
+                this.nextBlockNumber = resp.data.nextBlockNumber
+                this.nextOffset = resp.data.nextOffset
+                if (response.length === 0) {
+                  this.$message({
+                    type: 'info',
+                    message: '交易列表为空，已查询至数据末尾'
+                  })
+                  this.updateButtonStatus()
+                  return
+                }
+                if (this.controlVersion !== version) {
+                  return
+                }
+                this.transactionList = response
+                this.historyData[this.currentStep] = response
+                this.currentStep += 1
                 this.updateButtonStatus()
-                return
-              }
-
-              if (this.controlVersion !== version) {
-                return
-              }
-
-              this.transactionList = response
-              this.historyData[this.currentStep] = response
-              this.currentStep += 1
-
-              this.updateButtonStatus()
-            })
-            .catch((err) => {
-              this.buttonState.loading = false
-              this.$message({ type: 'error', message: err.toString() })
-            })
+              })
+              .catch((err) => {
+                this.buttonState.loading = false
+                this.$message({ type: 'error', message: err.toString() })
+              })
+          }
         })
         .catch((error) => {
           this.buttonState.loading = false

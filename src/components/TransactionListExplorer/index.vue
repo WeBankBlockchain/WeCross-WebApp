@@ -440,9 +440,9 @@ export default {
               newTx.username = defaultValue(tx.username, 'unknown')
               newTx.txID = defaultValue(tx.xaTransactionID, 'unknown')
               newTx.blockNumber = defaultValue(tx.blockNumber, 'unknown')
-              newTx.path = defaultValue(tx, 'unknown')
-              newTx.method = defaultValue(tx, 'unknown')
-              newTx.properties = defaultValue(tx, 'unknown')
+              newTx.path = defaultValue(tx.path, 'unknown')
+              newTx.method = defaultValue(tx.method, 'unknown')
+              newTx.properties = defaultValue(tx.properties, 'unknown')
               txs[txs.length] = newTx
             }
             this.transactionList = txs

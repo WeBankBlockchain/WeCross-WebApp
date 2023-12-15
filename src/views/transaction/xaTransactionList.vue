@@ -366,7 +366,7 @@ export default {
       this.loadingList = true
       this.xaList = []
       listXATransactions({
-        version: '1.4',
+        version: '1.0',
         data: {
           path: this.currentChain,
           size: this.tableSize,

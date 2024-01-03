@@ -486,7 +486,7 @@ export default {
         .catch((error) => {
           this.loadingList = false
           this.$message({
-            message: '网络异常：' + error,
+            message: '网络异常，详情：' + error,
             type: 'error',
             duration: 5000
           })

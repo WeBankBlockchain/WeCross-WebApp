@@ -1,3 +1,24 @@
+export const xaTransactionManagerSteps = [
+  {
+    element: '#ChainExplorer',
+    title: '1. 导航选择',
+    intro: '第一步：从zone-chain导航中选择对应的链',
+    position: 'right'
+  },
+  {
+    element: '#xaTransactionListExplorer',
+    title: '2. 事务列表展示',
+    intro: '第二步：选择好对应的链之后，就会在资源列表中展示这条链中所有事务',
+    position: 'left'
+  },
+  {
+    element: '#sendxaTransaction',
+    title: '发起交易',
+    intro: '若需要发起事务，请点击"发起事务"按钮',
+    position: 'left'
+  }
+]
+
 export const startXASteps = [
   {
     element: '#XAID',

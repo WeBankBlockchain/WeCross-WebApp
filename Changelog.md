@@ -1,3 +1,12 @@
+### v1.4.0
+
+(2024-03-01)
+
+**新增**
+
+- 适配 `systemStatus` 的GET接口，获取系统信息在首页展示 https://github.com/WeBankBlockchain/WeCross-WebApp/pull/180
+- 事务列表页面新增按链查询的功能，优化事务查询效率 https://github.com/WeBankBlockchain/WeCross-WebApp/pull/182
+
 ### v1.3.1
 
 (2023-07-31)
